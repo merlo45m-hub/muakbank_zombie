@@ -23,19 +23,13 @@ func update_timer(seconds: int) -> void:
 
 func update_health(current: int, maximum: int) -> void:
 	if health_bar:
-		health_bar.max_value = maximum
-		health_bar.value = current
-		if current > 60:
-			health_bar.tint_progress = Color(0.2, 0.8, 0.2)
-		elif current > 30:
-			health_bar.tint_progress = Color(0.9, 0.7, 0.2)
-		else:
-			health_bar.tint_progress = Color(0.9, 0.2, 0.2)
+		health_bar.max_value = float(maximum)
+		health_bar.set_value(float(current), true)
 
 func update_stamina(current: int, maximum: int) -> void:
 	if stamina_bar:
-		stamina_bar.max_value = maximum
-		stamina_bar.value = current
+		stamina_bar.max_value = float(maximum)
+		stamina_bar.set_value(float(current), true)
 
 func update_score(score: int) -> void:
 	if score_label:

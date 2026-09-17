@@ -224,6 +224,10 @@ func _perform_attack() -> void:
 						$HitFeedback.emit_hit(enemy.global_transform.origin, enemy.get_class())
 					
 					enemy.take_damage(damage)
+									
+					# Spawn damage number at enemy position
+					if damage_numbers:
+						damage_numbers.display_number(damage, enemy.global_transform.origin, MinosDamageNumbers3D.DamageType.CRITICAL_HIT if character_stats and randf() < character_stats.critical_chance else MinosDamageNumbers3D.DamageType.NORMAL)
 	
 	await get_tree().create_timer(weapon_swing_duration).timeout
 	is_attacking = false

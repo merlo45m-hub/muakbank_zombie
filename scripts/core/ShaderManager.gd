@@ -53,6 +53,22 @@ func _create_all_materials() -> void:
 		"u_fog_density": 0.4
 	})
 	
+	# VesperaFX post-processing shaders
+	_create_material("vignette", "vignette.gdshader", {
+		"u_vignette_intensity": 0.0,
+		"u_vignette_smoothness": 0.5
+	})
+	_create_material("grain", "grain.gdshader", {
+		"u_grain_intensity": 0.0
+	})
+	_create_material("chromatic_aberration", "chromatic_aberration.gdshader", {
+		"u_chromatic_offset": 0.0
+	})
+	_create_material("screen_shake", "screen_shake.gdshader", {
+		"u_shake_intensity": 0.0,
+		"u_shake_frequency": 15.0
+	})
+	
 	# Toxic zone material
 	_create_material("toxic_zone", "toxic_zone.gdshader", {
 		"u_zone_color": Color(0.2, 0.8, 0.3, 0.4),

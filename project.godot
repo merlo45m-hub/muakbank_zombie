@@ -20,6 +20,12 @@ SceneManager="*SceneManager.gd"
 Audio="*scripts/core/GameAudioManager.gd"
 Save="*scripts/core/SaveManager.gd"
 Level="*scripts/core/LevelManager.gd"
+SaveSystem="*addons/save_system/save_system.gd"
+SoundManager="*addons/sound_manager/sound_manager.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/VectorFieldNavigation/plugin.cfg", "res://addons/godotx_health_bar/plugin.cfg", "res://addons/minos_damage_numbers/plugin.cfg", "res://addons/save_system/plugin.cfg", "res://addons/sound_manager/plugin.cfg")
 
 [gui]
 
