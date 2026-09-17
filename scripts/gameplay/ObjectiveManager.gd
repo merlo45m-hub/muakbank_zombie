@@ -42,5 +42,23 @@ func get_objective_text(id: String) -> String:
 	var obj = objectives[id]
 	return "%s (%d/%d)" % [obj.title, obj.progress, obj.target]
 
+func get_all_objective_texts() -> Array:
+	var texts: Array = []
+	for id in objectives:
+		var obj = objectives[id]
+		var prefix = "[x] " if obj.completed else "[ ] "
+		texts.append(prefix + get_objective_text(id))
+	return texts
+
+func get_completed_count() -> int:
+	var count = 0
+	for obj in objectives.values():
+		if obj.completed:
+			count += 1
+	return count
+
+func is_objective_completed(id: String) -> bool:
+	return objectives.has(id) and objectives[id].completed
+
 func clear_objectives() -> void:
 	objectives.clear()

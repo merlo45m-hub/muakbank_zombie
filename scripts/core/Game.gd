@@ -38,6 +38,7 @@ var zombies_to_kill: int = 5  # Kill quota to clear level
 var wave_manager: Node = null
 var combo_system: Node = null
 var difficulty_manager: Node = null
+var objective_manager: Node = null
 
 func _ready() -> void:
 	print("[Game] Initializing Muak Bank Zombie...")
@@ -45,6 +46,10 @@ func _ready() -> void:
 	wave_manager = get_node_or_null("WaveManager")
 	combo_system = get_node_or_null("ComboSystem")
 	difficulty_manager = get_node_or_null("DifficultyManager")
+	objective_manager = get_node_or_null("ObjectiveManager")
+	
+	# Set up level objectives
+	_setup_objectives()
 	
 	# Connect player signals for reactive HUD updates
 	if player:
@@ -64,6 +69,15 @@ func _load_environment() -> void:
 	
 	# Play ambient layer for this environment
 	Audio.play_ambient_for(Level.get_ambient_name(level))
+
+func _setup_objectives() -> void:
+	if not objective_manager or not objective_manager.has_method("add_objective"):
+		return
+	objective_manager.clear_objectives()
+	# Core objectives for every level
+	objective_manager.add_objective("kill_zombies", "Kill zombies", zombies_to_kill)
+	objective_manager.add_objective("eat_food", "Eat to stay alive", 3)
+	objective_manager.add_objective("survive", "Survive the shift", 1)
 
 func start_game() -> void:
 	game_active = true
@@ -203,6 +217,10 @@ func on_zombie_killed(zombie_type: String) -> void:
 	emit_signal("kills_changed", zombies_killed)
 	emit_signal("score_changed", score)
 	
+	# Update objectives
+	if objective_manager and objective_manager.has_method("update_progress"):
+		objective_manager.update_progress("kill_zombies", 1)
+	
 	# Check for level completion
 	if zombies_killed >= zombies_to_kill:
 		# Level complete — survive the wave
@@ -231,6 +249,10 @@ func on_food_eaten(food_type: String, health_amount: int) -> void:
 	player.heal(health_amount)
 	emit_signal("food_eaten", food_type, health_amount)
 	emit_signal("health_changed", player.health, player.max_health)
+	
+	# Update objectives
+	if objective_manager and objective_manager.has_method("update_progress"):
+		objective_manager.update_progress("eat_food", 1)
 	
 	print("[Game] Ate: ", food_type, " +", health_amount, " HP")
 
