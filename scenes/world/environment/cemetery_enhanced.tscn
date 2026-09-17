@@ -1,10 +1,10 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=68 format=3]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
-size = Vector3(60, 0.2, 60)
+size = Vector3(100, 0.2, 100)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
-size = Vector3(60, 0.2, 60)
+size = Vector3(100, 0.2, 100)
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.35, 0.38, 0.32, 1.0)
@@ -63,10 +63,13 @@ cull_mode = 2
 no_depth_test = true
 
 [sub_resource type="DirectionalLight3D" id="DirectionalLight"]
+light_energy_multiplier = 1.3
+light_color = Color(0.6, 0.7, 1.0, 1.0)
 
 [node name="Cemetery" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = Environment(ambient_light_source=0, ambient_light_sky=0.2, ambient_light_energy=0.3, fog_enabled=true, fog_color=Color(0.3, 0.35, 0.4, 1.0), fog_depth_enabled=true, fog_depth_begin=5.0, fog_depth_end=80.0, fog_depth_exposure=0.0, fog_height_enabled=false, fog_height_min=-100.0, fog_height_max=-50.0, fog_sky_shader_albedo=Color(0.2, 0.25, 0.35, 1.0), fog_sky_shader_energy_multiplier=0.5, tonemapper=0, exposure_compensation=0.0, exposure_auto=true, exposure_scale=1.0, ss_avg_disables=false, ss_reflection_quality=0, ss_reflection_max_steps=64, ss_reflection_initial_step_size=2.0, ss_reflection_step_divisor=1.0, ss_reflection_temporal_reservoir_size=8, ss_reflection_initial_intensity=0.0, ss_reflection_attenuation=0.0, ss_decal_quality=0, ss_diffuse_quality=0, ss_shadow_quality=0, ss_shadow_max_distance=0.0, ss_shadow_initial_step_size=0.0, ss_shadow_step_divisor=1.0, ss_shadow_attenuation=0.0, ss_shadow_temporal_reservoir_size=32, ss_shadow_initial_intensity=0.0, ss_orm_quality=0, ss_orm_max_distance=0.0, ss_orm_initial_step_size=0.0, ss_orm_step_divisor=1.0, ss_orm_attenuation=0.0, ss_orm_temporal_reservoir_size=32, ss_orm_initial_intensity=0.0, ss_ambient_occlusion_quality=0, ss_ambient_occlusion_radius=0.0, ss_ambient_occlusion_power=1.0, ss_ambient_occlusion_bias=0.0, ss_ambient_occlusion_temporal_reservoir_size=16, ss_ambient_occlusion_initial_intensity=0.0, ss_ambient_occlusion_upsampling_quality=0, ss_ambient_occlusion_sample_quality_downscale=0.0, ss_ambient_occlusion_adaptive_downsample=4, ss_ambient_occlusion_use_horizon_based_depth=0, ss_screen_space_reflections=true, ss_screen_space_reflections_roughness_fade=true, ss_screen_space_reflections_max_slope=1.0, ss_screen_space_reflections_fade_based_on_geometry=true, ss_screen_space_reflections_fade_based_on_normal=true, ss_ambient_cavity_enabled=false, ss_ambient_cavity_strength=1.0, ss_ambient_cavity_min_lighting=0.0, ss_ambient_cavity_contrast=0.0, ss_motion_vectors_enabled=true, ss_hot_mirror_enabled=false, glow_enabled=false, glow_bloom=0.0, glow_threshold=0.88, glow_intensity=0.0, glow_strength=1.0, glow_tint=Color(1, 1, 1, 1.0), glow_hdr=0, glow_bake_mode=0, glow_upscaling_quality=0, glow_2d_feathering=0.0, glow_2d_pre_pass=false, glow_1d_dir=false, glow_1d_sigma=0.32, glow_1d_near=0.64, glow_1d_far=1.0, glow_1d_multiply=3.0, glow_1d_depth_cutoff=0.5, glow_1d_ignore_local=1, glow_1d_upscaling_quality=0, glow_1d_bank_scale=1.5, glow_1d_bank_speed=1.0, glow_1d_depth_sensitivity=0.2, glow_1d_near_skip=0.05, glow_1d_full_res_search_distance=0.0, glow_1d_speed_upscaling_quality=0, glow_1d_speed_quality=0, glow_1d_speed_base_falloff=0.0, glow_1d_speed_near_falloff=0.0, glow_1d_store_flares=false, glow_1d_t_0=1.2, glow_1d_num_banks=7, glow_1d_bank_size=2.0, glow_1d_bank_offset=0.0, glow_1d_overlap=false, glow_1d_optimize_half_res=false, glow_1d_workflow_type=0, glow_1d_fix_noise=true, glow_1d_fix_ghosts=false, glow_1d_fix_halos=true, glow_1d_fix_color=false, glow_1d_fix_clumping=true, glow_1d_framerate_std=60.0, glow_1d_framerate_min=30.0, glow_1d_numpy_fast_opt=0, glow_1d_numpy_fast_res=512, glow_1d_numpy_fast_except_reflection=true, glow_1d_numpy_res_scale=1.0, glow_1d_num_pingpong_passes=0, glow_1d_bloom_adaptation=true, tonemapper_near=0.0, tonemapper_far=1.0, tonemapper_shoulders=0.5, tonemapper_linear_slope=0.5, tonemapper_linear_angle=0.18, tonemapper_exposure=1.0, tonemapper_overshoot=0.0, tonemapper_toe=0.0, tonemapper_shadow_exponent=1.0, tonemapper_toe_shaper=1.0, tonemapper_shadow_quality=0, tonemapper_shadow_shoulder_point=0.0, tonemapper_shadow_burn=0.0, tonemapper_shadow_boost=0.0, tonemapper_shadow_quality_2d_feathering=0.0, tonemapper_shadow_2d_pre_pass=true, tonemapper_shadow_2d_tone_curve_blue=0.0, tonemapper_shadow_2d_tone_curve_shadow_blue=0.0, tonemapper_shadow_2d_tone_curve_shadow_red=0.0, tonemapper_shadow_2d_tone_curve_shadow_green=0.0, tonemapper_shadow_2d_tone_curve_midtone_green=0.0, tonemapper_shadow_2d_tone_curve_midtone_red=0.0, tonemapper_shadow_2d_tone_curve_highlight_red=0.0, tonemapper_shadow_2d_tone_curve_highlight_green=0.0, tonemapper_shadow_2d_tone_curve_highlight_blue=0.0, tonemapper_shadow_2d_gain_red=0.0, tonemapper_shadow_2d_gain_green=0.0, tonemmapper_shadow_2d_gain_blue=0.0, tonemapper_shadow_2d_shadow_gain_red=0.0, tonemapper_shadow_2d_shadow_gain_green=0.0, tonemapper_shadow_2d_shadow_gain_blue=0.0, tonemapper_shadow_2d_binary_mask=false, tonemapper_shadow_2d_mask_curve_0=0.0, tonemapper_shadow_2d_mask_curve_1=0.0, tonemapper_shadow_2d_mask_curve_2=0.0, tonemapper_shadow_2d_mask_curve_3=0.0, tonemapper_shadow_2d_mask_curve_4=0.0, tonemapper_shadow_2d_mask_curve_5=0.0, tonemapper_shadow_2d_mask_curve_6=0.0, tonemapper_shadow_2d_mask_curve_7=0.0, tonemapper_shadow_2d_mask_curve_8=0.0, tonemapper_shadow_2d_mask_curve_9=0.0, tonemapper_shadow_2d_mask_curve_10=0.0, tonemapper_shadow_2d_mask_curve_11=0.0, tonemapper_shadow_2d_mask_curve_12=0.0, tonemapper_shadow_2d_mask_curve_13=0.0, tonemapper_shadow_2d_mask_curve_14=0.0, tonemapper_shadow_2d_mask_curve_15=0.0, tonemapper_shadow_2d_mask_curve_16=0.0, tonemapper_shadow_2d_mask_curve_17=0.0, tonemapper_shadow_2d_mask_curve_18=0.0, tonemapper_shadow_2d_mask_curve_19=0.0, tonemapper_shadow_2d_mask_curve_20=0.0, tonemapper_shadow_2d_mask_curve_21=0.0, tonemapper_shadow_2d_mask_curve_22=0.0, tonemapper_shadow_2d_mask_curve_23=0.0, tonemapper_shadow_2d_mask_curve_24=0.0, tonemapper_shadow_2d_mask_curve_25=0.0, tonemmapper_shadow_2d_mask_curve_26=0.0, tonemmapper_shadow_2d_mask_curve_27=0.0, tonemmanager_shadow_2d_mask_curve_28=0.0, tonemmanager_shadow_2d_mask_curve_29=0.0, tonemmanager_shadow_2d_mask_curve_30=0.0, tonemmanager_shadow_2d_mask_curve_31=0.0, tonemmanager_shadow_2d_mask_curve_32=0.0, tonemmanager_shadow_2d_mask_curve_33=0.0, tonemmanager_shadow_2d_mask_curve_34=0.0, tonemmanager_shadow_2d_mask_curve_35=0.0, tonemmanager_shadow_2d_mask_curve_36=0.0, tonemmanager_shadow_2d_mask_curve_37=0.0, tonemmanager_shadow_2d_mask_curve_38=0.0, tonemmanager_shadow_2d_mask_curve_39=0.0, tonemmanager_shadow_2d_mask_curve_40=0.0, tonemmanager_shadow_2d_mask_curve_41=0.0, tonemmanager_shadow_2d_mask_curve_42=0.0, tonemmanager_shadow_2d_mask_curve_43=0.0, tonemmanager_shadow_2d_mask_curve_44=0.0, tonemmanager_shadow_2d_mask_curve_45=0.0, tonemmanager_shadow_2d_mask_curve_46=0.0, tonemmanager_shadow_2d_mask_curve_47=0.0, tonemmanager_shadow_2d_mask_curve_48=0.0, tonemmanager_shadow_2d_mask_curve_49=0.0, tonemmanager_shadow_2d_mask_curve_50=0.0, tonemmanager_shadow_2d_mask_curve_51=0.0, tonemmanager_shadow_2d_mask_curve_52=0.0, tonemmanager_shadow_2d_mask_curve_53=0.0, tonemmanager_shadow_2d_mask_curve_54=0.0, tonemmanager_shadow_2d_mask_curve_55=0.0, tonemmanager_shadow_2d_mask_curve_56=0.0, tonemmanager_shadow_2d_mask_curve_57=0.0, tonemmanager_shadow_2d_mask_curve_58=0.0, tonemmanager_shadow_2d_mask_curve_59=0.0, tonemmanager_shadow_2d_mask_curve_60=0.0, tonemmanager_shadow_2d_mask_curve_61=0.0, tonemmanager_shadow_2d_mask_curve_62=0.0, tonemmanager_shadow_2d_mask_curve_63=0.0)
 
 [node name="Floor" type="StaticBody3D" parent="."]
 collision_layer = 1
@@ -77,6 +80,28 @@ material_override = SubResource("GroundMaterial")
 
 [node name="FloorCol" type="CollisionShape3D" parent="Floor"]
 shape = SubResource("BoxShape3D_floor")
+
+[node name="FogVolume" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_mist")
+material_override = SubResource("MistMaterial")
+
+[node name="AmbientLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
+light_energy_multiplier = 0.25
+omni_range = 60.0
+omni_attenuation = 2.0
+light_color = Color(0.4, 0.5, 0.7, 1.0)
+
+[node name="DirectionalLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.4, -0.7, 0.6, 0.1, 0.6, 0.8, -0.75, -0.45, 0.45, 5, 12, 0)
+light_energy_multiplier = 1.3
+light_color = Color(0.55, 0.65, 0.95, 1.0)
+shadow_enabled = true
+directional_shadow_mode = 0
+directional_shadow_camera_near = 0.5
+directional_shadow_camera_far = 50.0
+directional_shadow_camera_fov = 45.0
+directional_shadow_opacity = 0.8
 
 [node name="Graves" type="Node3D" parent="."]
 
@@ -145,6 +170,201 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
 mesh = SubResource("BoxMesh_cross")
 material_override = SubResource("CrossMaterial")
 
+[node name="Grave6" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.75, -4)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave6"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross6" type="MeshInstance3D" parent="Grave6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave7" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.75, -5)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave7"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross7" type="MeshInstance3D" parent="Grave7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave8" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.75, -14)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave8"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross8" type="MeshInstance3D" parent="Grave8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave9" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.75, -14)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave9"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross9" type="MeshInstance3D" parent="Grave9"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave10" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.75, 8)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave10"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross10" type="MeshInstance3D" parent="Grave10"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave11" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.75, 6)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave11"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross11" type="MeshInstance3D" parent="Grave11"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave12" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.75, 12)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave12"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross12" type="MeshInstance3D" parent="Grave12"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave13" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0.75, 14)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave13"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross13" type="MeshInstance3D" parent="Grave13"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave14" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.75, 10)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave14"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross14" type="MeshInstance3D" parent="Grave14"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave15" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.75, -6)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave15"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross15" type="MeshInstance3D" parent="Grave15"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave16" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.75, -16)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave16"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross16" type="MeshInstance3D" parent="Grave16"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave17" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.75, 5)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave17"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross17" type="MeshInstance3D" parent="Grave17"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave18" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.75, 2)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave18"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross18" type="MeshInstance3D" parent="Grave18"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave19" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.75, 6)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave19"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross19" type="MeshInstance3D" parent="Grave19"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave20" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.75, -18)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave20"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross20" type="MeshInstance3D" parent="Grave20"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
 [node name="Monument" type="Node3D" parent="Graves"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1.5, -12)
 
@@ -190,17 +410,755 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
 mesh = SubResource("SphereMesh_leaves")
 material_override = SubResource("LeavesMaterial")
 
-[node name="AmbientLight" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
-light_energy_multiplier = 0.4
-omni_range = 50.0
-omni_attenuation = 2.0
+[node name="Tree4" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -22)
 
-[node name="DirectionalLight" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 10, 15, 8)
-light_energy_multiplier = 1.2
-shadow_enabled = true
-directional_shadow_mode = 0
+[node name="Trunk" type="MeshInstance3D" parent="Tree4"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("BarkMaterial")
+
+[node name="Leaves" type="MeshInstance3D" parent="Tree4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0, 0)
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="Tree5" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, -20)
+
+[node name="Trunk" type="MeshInstance3D" parent="Tree5"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("BarkMaterial")
+
+[node name="Leaves" type="MeshInstance3D" parent="Tree5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="Tree6" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, 15)
+
+[node name="Trunk" type="MeshInstance3D" parent="Tree6"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("BarkMaterial")
+
+[node name="Leaves" type="MeshInstance3D" parent="Tree6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="Tree7" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 18)
+
+[node name="Trunk" type="MeshInstance3D" parent="Tree7"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("BarkMaterial")
+
+[node name="Leaves" type="MeshInstance3D" parent="Tree7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7, 0)
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="Tree8" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, 28)
+
+[node name="Trunk" type="MeshInstance3D" parent="Tree8"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("BarkMaterial")
+
+[node name="Leaves" type="MeshInstance3D" parent="Tree8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9, 0)
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="Tree9" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 22)
+
+[node name="Trunk" type="MeshInstance3D" parent="Tree9"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("BarkMaterial")
+
+[node name="Leaves" type="MeshInstance3D" parent="Tree9"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 0)
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="Tree10" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, -20)
+
+[node name="Trunk" type="MeshInstance3D" parent="Tree10"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("BarkMaterial")
+
+[node name="Leaves" type="MeshInstance3D" parent="Tree10"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0, 0)
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="StoneWalls" type="Node3D" parent="."]
+
+[node name="Wall1" type="StaticBody3D" parent="StoneWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 1.0, -50)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="Wall1"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="WallCol" type="CollisionShape3D" parent="Wall1"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Wall2" type="StaticBody3D" parent="StoneWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 1.0, -50)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="Wall2"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="WallCol" type="CollisionShape3D" parent="Wall2"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Wall3" type="StaticBody3D" parent="StoneWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 1.0, 50)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="Wall3"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="WallCol" type="CollisionShape3D" parent="Wall3"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Wall4" type="StaticBody3D" parent="StoneWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 1.0, 50)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="Wall4"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="WallCol" type="CollisionShape3D" parent="Wall4"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Wall5" type="StaticBody3D" parent="StoneWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 1.0, 0)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="Wall5"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="WallCol" type="CollisionShape3D" parent="Wall5"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Wall6" type="StaticBody3D" parent="StoneWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 1.0, 0)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="Wall6"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="WallCol" type="CollisionShape3D" parent="Wall6"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Fence1" type="StaticBody3D" parent="StoneWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.0, -35)
+collision_layer = 1
+
+[node name="FenceMesh" type="MeshInstance3D" parent="Fence1"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="FenceCol" type="CollisionShape3D" parent="Fence1"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Fence2" type="StaticBody3D" parent="StoneWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.0, -35)
+collision_layer = 1
+
+[node name="FenceMesh" type="MeshInstance3D" parent="Fence2"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="FenceCol" type="CollisionShape3D" parent="Fence2"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Fence3" type="StaticBody3D" parent="StoneWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.0, 35)
+collision_layer = 1
+
+[node name="FenceMesh" type="MeshInstance3D" parent="Fence3"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="FenceCol" type="CollisionShape3D" parent="Fence3"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Fence4" type="StaticBody3D" parent="StoneWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.0, 35)
+collision_layer = 1
+
+[node name="FenceMesh" type="MeshInstance3D" parent="Fence4"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="FenceCol" type="CollisionShape3D" parent="Fence4"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Crypts" type="Node3D" parent="."]
+
+[node name="Crypt1" type="StaticBody3D" parent="Crypts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.5, -25)
+collision_layer = 1
+
+[node name="CryptMesh" type="MeshInstance3D" parent="Crypt1"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="CryptCol" type="CollisionShape3D" parent="Crypt1"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Crypt2" type="StaticBody3D" parent="Crypts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.5, -25)
+collision_layer = 1
+
+[node name="CryptMesh" type="MeshInstance3D" parent="Crypt2"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="CryptCol" type="CollisionShape3D" parent="Crypt2"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Crypt3" type="StaticBody3D" parent="Crypts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.5, 25)
+collision_layer = 1
+
+[node name="CryptMesh" type="MeshInstance3D" parent="Crypt3"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="CryptCol" type="CollisionShape3D" parent="Crypt3"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Crypt4" type="StaticBody3D" parent="Crypts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.5, 25)
+collision_layer = 1
+
+[node name="CryptMesh" type="MeshInstance3D" parent="Crypt4"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="CryptCol" type="CollisionShape3D" parent="Crypt4"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="BrokenHeadstone1" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, -20)
+rotation = Vector3(0.3, 0.1, 0.05)
+collision_layer = 1
+
+[node name="HeadstoneMesh" type="MeshInstance3D" parent="BrokenHeadstone1"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="HeadstoneCol" type="CollisionShape3D" parent="BrokenHeadstone1"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="BrokenHeadstone2" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.5, -18)
+rotation = Vector3(-0.2, 0.15, 0.1)
+collision_layer = 1
+
+[node name="HeadstoneMesh" type="MeshInstance3D" parent="BrokenHeadstone2"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="HeadstoneCol" type="CollisionShape3D" parent="BrokenHeadstone2"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="BrokenHeadstone3" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.5, 22)
+rotation = Vector3(0.1, -0.2, 0.05)
+collision_layer = 1
+
+[node name="HeadstoneMesh" type="MeshInstance3D" parent="BrokenHeadstone3"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="HeadstoneCol" type="CollisionShape3D" parent="BrokenHeadstone3"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="BrokenHeadstone4" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.5, 18)
+rotation = Vector3(-0.15, 0.2, -0.1)
+collision_layer = 1
+
+[node name="HeadstoneMesh" type="MeshInstance3D" parent="BrokenHeadstone4"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="HeadstoneCol" type="CollisionShape3D" parent="BrokenHeadstone4"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="CentralMausoleum" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+collision_layer = 1
+
+[node name="MausoleumBase" type="MeshInstance3D" parent="CentralMausoleum"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="MausoleumCol" type="CollisionShape3D" parent="CentralMausoleum"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="MausoleumPillar1" type="MeshInstance3D" parent="CentralMausoleum"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1.5, -4)
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="MausoleumPillar2" type="MeshInstance3D" parent="CentralMausoleum"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.5, -4)
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="MausoleumPillar3" type="MeshInstance3D" parent="CentralMausoleum"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1.5, 4)
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="MausoleumPillar4" type="MeshInstance3D" parent="CentralMausoleum"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.5, 4)
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="MausoleumArch" type="MeshInstance3D" parent="CentralMausoleum"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="Bones" type="Node3D" parent="."]
+
+[node name="Bone1" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.25, -12)
+collision_layer = 1
+
+[node name="BoneMesh" type="MeshInstance3D" parent="Bone1"]
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("StoneMaterial")
+
+[node name="BoneCol" type="CollisionShape3D" parent="Bone1"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bone2" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.25, -14)
+collision_layer = 1
+
+[node name="BoneMesh" type="MeshInstance3D" parent="Bone2"]
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("StoneMaterial")
+
+[node name="BoneCol" type="CollisionShape3D" parent="Bone2"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bone3" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0.25, -6)
+collision_layer = 1
+
+[node name="BoneMesh" type="MeshInstance3D" parent="Bone3"]
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("StoneMaterial")
+
+[node name="BoneCol" type="CollisionShape3D" parent="Bone3"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bone4" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.25, -8)
+collision_layer = 1
+
+[node name="BoneMesh" type="MeshInstance3D" parent="Bone4"]
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("StoneMaterial")
+
+[node name="BoneCol" type="CollisionShape3D" parent="Bone4"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bone5" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.25, 8)
+collision_layer = 1
+
+[node name="BoneMesh" type="MeshInstance3D" parent="Bone5"]
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("StoneMaterial")
+
+[node name="BoneCol" type="CollisionShape3D" parent="Bone5"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bone6" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.25, 14)
+collision_layer = 1
+
+[node name="BoneMesh" type="MeshInstance3D" parent="Bone6"]
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("StoneMaterial")
+
+[node name="BoneCol" type="CollisionShape3D" parent="Bone6"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bone7" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.25, 10)
+collision_layer = 1
+
+[node name="BoneMesh" type="MeshInstance3D" parent="Bone7"]
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("StoneMaterial")
+
+[node name="BoneCol" type="CollisionShape3D" parent="Bone7"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Skull1" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.5, -4)
+collision_layer = 1
+
+[node name="SkullMesh" type="MeshInstance3D" parent="Skull1"]
+mesh = SubResource("SphereMesh_mist")
+material_override = SubResource("StoneMaterial")
+
+[node name="SkullCol" type="CollisionShape3D" parent="Skull1"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Skull2" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.5, -12)
+collision_layer = 1
+
+[node name="SkullMesh" type="MeshInstance3D" parent="Skull2"]
+mesh = SubResource("SphereMesh_mist")
+material_override = SubResource("StoneMaterial")
+
+[node name="SkullCol" type="CollisionShape3D" parent="Skull2"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Skull3" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.5, 10)
+collision_layer = 1
+
+[node name="SkullMesh" type="MeshInstance3D" parent="Skull3"]
+mesh = SubResource("SphereMesh_mist")
+material_override = SubResource("StoneMaterial")
+
+[node name="SkullCol" type="CollisionShape3D" parent="Skull3"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="DeadBushes" type="Node3D" parent="."]
+
+[node name="Bush1" type="StaticBody3D" parent="DeadBushes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.4, -10)
+collision_layer = 1
+
+[node name="BushMesh" type="MeshInstance3D" parent="Bush1"]
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="BushCol" type="CollisionShape3D" parent="Bush1"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bush2" type="StaticBody3D" parent="DeadBushes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.4, -10)
+collision_layer = 1
+
+[node name="BushMesh" type="MeshInstance3D" parent="Bush2"]
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="BushCol" type="CollisionShape3D" parent="Bush2"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bush3" type="StaticBody3D" parent="DeadBushes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.4, 10)
+collision_layer = 1
+
+[node name="BushMesh" type="MeshInstance3D" parent="Bush3"]
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="BushCol" type="CollisionShape3D" parent="Bush3"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bush4" type="StaticBody3D" parent="DeadBushes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.4, 10)
+collision_layer = 1
+
+[node name="BushMesh" type="MeshInstance3D" parent="Bush4"]
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="BushCol" type="CollisionShape3D" parent="Bush4"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bush5" type="StaticBody3D" parent="DeadBushes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.4, -22)
+collision_layer = 1
+
+[node name="BushMesh" type="MeshInstance3D" parent="Bush5"]
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="BushCol" type="CollisionShape3D" parent="Bush5"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bush6" type="StaticBody3D" parent="DeadBushes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.4, -22)
+collision_layer = 1
+
+[node name="BushMesh" type="MeshInstance3D" parent="Bush6"]
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="BushCol" type="CollisionShape3D" parent="Bush6"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bush7" type="StaticBody3D" parent="DeadBushes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.4, 22)
+collision_layer = 1
+
+[node name="BushMesh" type="MeshInstance3D" parent="Bush7"]
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="BushCol" type="CollisionShape3D" parent="Bush7"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Bush8" type="StaticBody3D" parent="DeadBushes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.4, 22)
+collision_layer = 1
+
+[node name="BushMesh" type="MeshInstance3D" parent="Bush8"]
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="BushCol" type="CollisionShape3D" parent="Bush8"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Gate" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, -48)
+collision_layer = 1
+
+[node name="GatePost1" type="MeshInstance3D" parent="Gate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.0, 0.0)
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="GateCol1" type="CollisionShape3D" parent="Gate"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="GatePost2" type="MeshInstance3D" parent="Gate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.0, 0.0)
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="GateCol2" type="CollisionShape3D" parent="Gate"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="GateTop" type="MeshInstance3D" parent="Gate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 0.0)
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="GateColTop" type="CollisionShape3D" parent="Gate"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Fountain" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0.0, 35)
+collision_layer = 1
+
+[node name="FountainBase" type="MeshInstance3D" parent="Fountain"]
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="FountainCol" type="CollisionShape3D" parent="Fountain"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="FountainColumn" type="MeshInstance3D" parent="Fountain"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, 0.0)
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="FountainBowl" type="MeshInstance3D" parent="Fountain"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.2, 0.0)
+mesh = SubResource("SphereMesh_mist")
+material_override = SubResource("StoneMaterial")
+
+[node name="Lanterns" type="Node3D" parent="."]
+
+[node name="Lantern1" type="StaticBody3D" parent="Lanterns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.2, -42)
+collision_layer = 1
+
+[node name="LanternPost" type="MeshInstance3D" parent="Lantern1"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("StoneMaterial")
+
+[node name="LanternCol" type="CollisionShape3D" parent="Lantern1"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="LanternLight1" type="OmniLight3D" parent="Lantern1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 0.0)
+light_energy_multiplier = 0.8
+omni_range = 8.0
+omni_attenuation = 2.0
+light_color = Color(1.0, 0.7, 0.3, 1.0)
+
+[node name="Lantern2" type="StaticBody3D" parent="Lanterns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.2, -42)
+collision_layer = 1
+
+[node name="LanternPost" type="MeshInstance3D" parent="Lantern2"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("StoneMaterial")
+
+[node name="LanternCol" type="CollisionShape3D" parent="Lantern2"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="LanternLight2" type="OmniLight3D" parent="Lantern2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 0.0)
+light_energy_multiplier = 0.8
+omni_range = 8.0
+omni_attenuation = 2.0
+light_color = Color(1.0, 0.7, 0.3, 1.0)
+
+[node name="Lantern3" type="StaticBody3D" parent="Lanterns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.2, 42)
+collision_layer = 1
+
+[node name="LanternPost" type="MeshInstance3D" parent="Lantern3"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("StoneMaterial")
+
+[node name="LanternCol" type="CollisionShape3D" parent="Lantern3"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="LanternLight3" type="OmniLight3D" parent="Lantern3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 0.0)
+light_energy_multiplier = 0.8
+omni_range = 8.0
+omni_attenuation = 2.0
+light_color = Color(1.0, 0.7, 0.3, 1.0)
+
+[node name="Lantern4" type="StaticBody3D" parent="Lanterns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.2, 42)
+collision_layer = 1
+
+[node name="LanternPost" type="MeshInstance3D" parent="Lantern4"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("StoneMaterial")
+
+[node name="LanternCol" type="CollisionShape3D" parent="Lantern4"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="LanternLight4" type="OmniLight3D" parent="Lantern4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 0.0)
+light_energy_multiplier = 0.8
+omni_range = 8.0
+omni_attenuation = 2.0
+light_color = Color(1.0, 0.7, 0.3, 1.0)
+
+[node name="Brazier1" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.6, -48)
+collision_layer = 1
+
+[node name="BrazierMesh" type="MeshInstance3D" parent="Brazier1"]
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="BrazierCol" type="CollisionShape3D" parent="Brazier1"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="BrazierLight" type="OmniLight3D" parent="Brazier1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, 0.0)
+light_energy_multiplier = 0.6
+omni_range = 6.0
+omni_attenuation = 2.0
+light_color = Color(1.0, 0.5, 0.1, 1.0)
+
+[node name="Brazier2" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.6, -48)
+collision_layer = 1
+
+[node name="BrazierMesh" type="MeshInstance3D" parent="Brazier2"]
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="BrazierCol" type="CollisionShape3D" parent="Brazier2"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="BrazierLight" type="OmniLight3D" parent="Brazier2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, 0.0)
+light_energy_multiplier = 0.6
+omni_range = 6.0
+omni_attenuation = 2.0
+light_color = Color(1.0, 0.5, 0.1, 1.0)
+
+[node name="Brazier3" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.6, 48)
+collision_layer = 1
+
+[node name="BrazierMesh" type="MeshInstance3D" parent="Brazier3"]
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="BrazierCol" type="CollisionShape3D" parent="Brazier3"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="BrazierLight" type="OmniLight3D" parent="Brazier3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, 0.0)
+light_energy_multiplier = 0.6
+omni_range = 6.0
+omni_attenuation = 2.0
+light_color = Color(1.0, 0.5, 0.1, 1.0)
+
+[node name="Brazier4" type="StaticBody3D" parent="Bones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.6, 48)
+collision_layer = 1
+
+[node name="BrazierMesh" type="MeshInstance3D" parent="Brazier4"]
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="BrazierCol" type="CollisionShape3D" parent="Brazier4"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="BrazierLight" type="OmniLight3D" parent="Brazier4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, 0.0)
+light_energy_multiplier = 0.6
+omni_range = 6.0
+omni_attenuation = 2.0
+light_color = Color(1.0, 0.5, 0.1, 1.0)
+
+[node name="BellTower" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0.0, 0)
+collision_layer = 1
+
+[node name="TowerBase" type="MeshInstance3D" parent="BellTower"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("StoneMaterial")
+
+[node name="TowerCol" type="CollisionShape3D" parent="BellTower"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="TowerPole" type="MeshInstance3D" parent="BellTower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 5.0, 0.0)
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("StoneMaterial")
+
+[node name="TowerColPole" type="CollisionShape3D" parent="BellTower"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="TowerBell" type="MeshInstance3D" parent="BellTower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 4.5, 0.0)
+mesh = SubResource("SphereMesh_mist")
+material_override = SubResource("StoneMaterial")
+
+[node name="TowerColBell" type="CollisionShape3D" parent="BellTower"]
+shape = SubResource("BoxShape3D_floor")
 
 [node name="Mist" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_mist")
