@@ -28,6 +28,12 @@ func change_state(new_state: GameState) -> void:
 func is_playing() -> bool:
 	return current_state == GameState.PLAYING
 
+func is_paused() -> bool:
+	return current_state == GameState.PAUSED
+
+func get_state_name() -> String:
+	return GameState.keys()[current_state]
+
 func toggle_pause() -> void:
 	if current_state == GameState.PLAYING:
 		change_state(GameState.PAUSED)

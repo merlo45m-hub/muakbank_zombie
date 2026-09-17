@@ -1,12 +1,15 @@
 extends Node
 class_name AchievementManager
 
-## AchievementManager — Achievement tracking
+## AchievementManager — Achievement tracking with persistence
 ## Autoload or attach to root. Tracks and unlocks achievements.
 
 signal achievement_unlocked(achievement_id)
 
 var achievements: Dictionary = {}  # id -> {title, desc, unlocked}
+
+func _ready() -> void:
+	_load_progress()
 
 func register_achievement(id: String, title: String, desc: String) -> void:
 	achievements[id] = {
@@ -20,6 +23,7 @@ func unlock(id: String) -> void:
 		return
 	achievements[id].unlocked = true
 	achievement_unlocked.emit(id)
+	_save_progress()
 	print("[Achievement] Unlocked: ", achievements[id].title)
 
 func is_unlocked(id: String) -> bool:
@@ -34,3 +38,23 @@ func get_unlocked_count() -> int:
 
 func get_total_count() -> int:
 	return achievements.size()
+
+# === PERSISTENCE ===
+
+func _save_progress() -> void:
+	"""Save unlocked achievement ids via the Save singleton."""
+	var unlocked_ids: Array = []
+	for id in achievements:
+		if achievements[id].unlocked:
+			unlocked_ids.append(id)
+	if Save and Save.has_method("set_unlocked_achievements"):
+		Save.set_unlocked_achievements(unlocked_ids)
+
+func _load_progress() -> void:
+	"""Load unlocked achievement ids from the Save singleton."""
+	if not Save or not Save.has_method("get_unlocked_achievements"):
+		return
+	var unlocked_ids: Array = Save.get_unlocked_achievements()
+	for id in unlocked_ids:
+		if achievements.has(id):
+			achievements[id].unlocked = true

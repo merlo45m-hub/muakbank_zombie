@@ -18,6 +18,7 @@ var save_data: Dictionary = {
 	"total_likes_earned": 0,
 	"unlocked_foods": ["burger", "noodles", "soda", "donut", "pizza", "taco"],
 	"unlocked_levels": [1],
+	"unlocked_achievements": [],
 	"current_level": 1,
 	"difficulty": 0,  # 0=normal, 1=hard, 2=insane
 	"tutorial_completed": false,
@@ -104,6 +105,7 @@ func _default_save_data() -> Dictionary:
 		"total_likes_earned": 0,
 		"unlocked_foods": ["burger", "noodles", "soda", "donut", "pizza", "taco"],
 		"unlocked_levels": [1],
+	"unlocked_achievements": [],
 		"current_level": 1,
 		"difficulty": 0,
 		"tutorial_completed": false,
@@ -119,6 +121,7 @@ func _get_defaults() -> Dictionary:
 		"total_likes_earned": 0,
 		"unlocked_foods": ["burger", "noodles", "soda", "donut", "pizza", "taco"],
 		"unlocked_levels": [1],
+	"unlocked_achievements": [],
 		"current_level": 1,
 		"difficulty": 0,
 		"tutorial_completed": false,
@@ -211,3 +214,12 @@ func unlock_level(level: int) -> void:
 func complete_tutorial() -> void:
 	save_data["tutorial_completed"] = true
 	save_game()
+
+func set_unlocked_achievements(ids: Array) -> void:
+	save_data["unlocked_achievements"] = ids
+	save_game()
+
+func get_unlocked_achievements() -> Array:
+	if save_data.has("unlocked_achievements"):
+		return save_data["unlocked_achievements"]
+	return []
