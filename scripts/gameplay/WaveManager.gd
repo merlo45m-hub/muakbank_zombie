@@ -12,6 +12,7 @@ signal all_waves_cleared
 @export var base_zombies_per_wave: int = 5
 @export var zombies_per_wave_increment: int = 2
 @export var wave_break_time: float = 10.0
+@export var boss_scene: PackedScene = preload("res://scenes/characters/zombie_boss.tscn")
 
 var current_wave: int = 0
 var zombies_alive: int = 0
@@ -43,7 +44,29 @@ func _next_wave() -> void:
 		spawner.max_zombies = count
 		spawner.start_spawning()
 	
+	# Spawn boss on the final wave
+	if current_wave == waves_per_level and boss_scene:
+		_spawn_boss()
+	
 	print("[WaveManager] Wave ", current_wave, " started — ", count, " zombies")
+
+func _spawn_boss() -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		return
+	var boss = boss_scene.instantiate()
+	var angle = randf() * TAU
+	var dist = 12.0
+	boss.global_position = player.global_position + Vector3(cos(angle) * dist, 0, sin(angle) * dist)
+	add_child(boss)
+	zombies_alive += 1
+	if boss.has_signal("died"):
+		boss.died.connect(_on_boss_died)
+	print("[WaveManager] BOSS spawned!")
+
+func _on_boss_died() -> void:
+	zombies_alive -= 1
+	_on_zombie_killed("boss")
 
 func _on_zombie_killed(_type: String) -> void:
 	zombies_alive -= 1
