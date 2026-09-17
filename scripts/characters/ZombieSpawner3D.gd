@@ -42,7 +42,7 @@ func _ready() -> void:
 
 	# --- Try to find a VFN map in the scene ---
 	vfn_map = get_node_or_null("VFNMap")
-	if vfn_map:
+	if not vfn_map:
 		push_warning("[ZombieSpawner] VFNMap node not found — zombies will use legacy direct-chase AI")
 		return
 
@@ -110,7 +110,7 @@ func _get_pool_for_type(zombie_type: String) -> Dictionary:
 	for key in pools.keys():
 		var entry = pools[key]
 		if zombie_type in entry["types"]:
-			return entry
+		return entry
 	return {}
 
 
@@ -170,7 +170,7 @@ func _spawn_random_zombie() -> void:
 		zombie = pool.get_first_dead()
 		if zombie == null:
 			print("[ZombieSpawner] Still no zombie after pool expansion — skipping")
-			return
+		return
 
 	# Position the zombie
 	var angle = randf() * TAU
