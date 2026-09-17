@@ -1,0 +1,23 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/WeaponPickup.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/models/weapon_bat.glb" id="model_bat"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pickup"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_fallback"]
+radius = 0.1
+height = 1.0
+
+[node name="WeaponPickup" type="Area3D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1")
+weapon_id = "bat"
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_fallback")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_pickup")

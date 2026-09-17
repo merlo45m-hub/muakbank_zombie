@@ -89,6 +89,45 @@ const WEAPONS = {
 		"recoil": 0.05,
 		"icon": "🔫"
 	},
+	"axe": {
+		"name": "Fire Axe",
+		"damage": 45,
+		"fire_rate": 0.9,
+		"range": 2.2,
+		"ammo": -1,
+		"max_ammo": -1,
+		"auto": false,
+		"projectile": false,
+		"spread": 0.0,
+		"recoil": 0.0,
+		"icon": "🪓"
+	},
+	"lightsaber": {
+		"name": "Lightsaber",
+		"damage": 50,
+		"fire_rate": 0.35,
+		"range": 3.0,
+		"ammo": -1,
+		"max_ammo": -1,
+		"auto": false,
+		"projectile": false,
+		"spread": 0.0,
+		"recoil": 0.0,
+		"icon": "⚔️"
+	},
+	"firegun": {
+		"name": "Fire Gun",
+		"damage": 12,
+		"fire_rate": 0.08,
+		"range": 6.0,
+		"ammo": 200,
+		"max_ammo": 200,
+		"auto": true,
+		"projectile": true,
+		"spread": 0.08,
+		"recoil": 0.02,
+		"icon": "🔥"
+	},
 	"medkit": {
 		"name": "Medkit",
 		"damage": 0,
