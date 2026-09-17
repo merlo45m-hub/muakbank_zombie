@@ -1,0 +1,155 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/Player.gd" id="1"]
+
+[sub_resource type="CapsuleShape3D" id="PlayerCollision"]
+radius = 0.3
+height = 1.6
+
+[sub_resource type="CapsuleMesh" id="PlayerMesh"]
+radius = 0.3
+height = 1.6
+
+[sub_resource type="StandardMaterial3D" id="PlayerMaterial"]
+albedo_color = Color(0.05, 0.05, 0.1, 1.0)
+roughness = 0.7
+metallic = 0.1
+
+[sub_resource type="SphereMesh" id="HeadMesh"]
+radius = 0.25
+
+[sub_resource type="StandardMaterial3D" id="HeadMaterial"]
+albedo_color = Color(0.9, 0.75, 0.65, 1.0)
+roughness = 0.6
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="HoodieMesh"]
+size = Vector3(0.7, 0.8, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="HoodieMaterial"]
+albedo_color = Color(0.8, 0.1, 0.6, 1.0)
+roughness = 0.8
+metallic = 0.05
+
+[sub_resource type="TorusMesh" id="RingLightMesh"]
+inner_radius = 0.08
+outer_radius = 0.12
+
+[sub_resource type="StandardMaterial3D" id="RingLightMaterial"]
+albedo_color = Color(1.0, 1.0, 1.0, 1.0)
+emission_enabled = true
+emission = Color(1.0, 1.0, 1.0, 1.0)
+emission_energy_multiplier = 1.5
+
+[sub_resource type="BoxMesh" id="PhoneMesh"]
+size = Vector3(0.1, 0.18, 0.02)
+
+[sub_resource type="StandardMaterial3D" id="PhoneMaterial"]
+albedo_color = Color(0.1, 0.1, 0.12, 1.0)
+roughness = 0.4
+metallic = 0.2
+
+[sub_resource type="CylinderMesh" id="StickMesh"]
+radius = 0.02
+height = 1.5
+radial_segments = 6
+
+[sub_resource type="StandardMaterial3D" id="StickMaterial"]
+albedo_color = Color(0.15, 0.15, 0.15, 1.0)
+roughness = 0.5
+metallic = 0.3
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1")
+
+[node name="PlayerVisuals" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="PlayerVisuals"]
+mesh = SubResource("PlayerMesh")
+material_override = SubResource("PlayerMaterial")
+
+[node name="Head" type="MeshInstance3D" parent="PlayerVisuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("HeadMesh")
+material_override = SubResource("HeadMaterial")
+
+[node name="Hoodie" type="MeshInstance3D" parent="PlayerVisuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+mesh = SubResource("HoodieMesh")
+material_override = SubResource("HoodieMaterial")
+
+[node name="RingLight" type="MeshInstance3D" parent="PlayerVisuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, 0.25, 0.1)
+mesh = SubResource("RingLightMesh")
+material_override = SubResource("RingLightMaterial")
+
+[node name="Phone" type="MeshInstance3D" parent="PlayerVisuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, 0.25, 0.16)
+mesh = SubResource("PhoneMesh")
+material_override = SubResource("PhoneMaterial")
+
+[node name="Stick" type="MeshInstance3D" parent="PlayerVisuals"]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0.7, 0, -0.7, 0.7, 0.25, 0.5, 0)
+mesh = SubResource("StickMesh")
+material_override = SubResource("StickMaterial")
+
+[node name="PlayerCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("PlayerCollision")
+
+[node name="Camera" type="SpringArm3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+spring_length = 4.0
+
+[node name="Camera3D" type="Camera3D" parent="Camera"]
+transform = Transform3D(-1, 0, 0, 0, 0.985, 0.174, 0, 0.174, -0.985, 0, 0.5, -4)
+keep_aspect = 0
+
+[node name="FoodDetection" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="FoodCollision" type="CollisionShape3D" parent="FoodDetection"]
+shape = SubResource("PlayerCollision")
+
+[ext_resource type="Script" path="res://scripts/WeaponSystem.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/MobileControls.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/HitFeedback.gd" id="4"]
+
+[node name="WeaponSystem" type="Node" parent="."]
+script = ExtResource("2")
+
+[node name="MobileControls" type="CanvasLayer" parent="."]
+layer = 10
+script = ExtResource("3")
+
+[node name="JoystickArea" type="Control" parent="MobileControls"]
+anchors_preset = 10
+offset_left = 20.0
+offset_top = -140.0
+offset_right = 120.0
+offset_bottom = -40.0
+
+[node name="JoystickBg" type="Panel" parent="MobileControls/JoystickArea"]
+layout_mode = 1
+anchors_preset = 15
+
+[node name="JoystickKnob" type="Panel" parent="MobileControls/JoystickArea"]
+layout_mode = 1
+anchors_preset = 8
+offset_left = 25.0
+offset_top = 25.0
+offset_right = 75.0
+offset_bottom = 75.0
+
+[node name="AttackBtn" type="Button" parent="MobileControls"]
+layout_mode = 1
+anchors_preset = 6
+offset_left = -120.0
+offset_top = -120.0
+offset_right = -20.0
+offset_bottom = -20.0
+text = "ATTACK"
+
+[node name="HitFeedback" type="Node3D" parent="."]
+script = ExtResource("4")

@@ -1,0 +1,22 @@
+# Godot
+.godot/
+.import/
+
+# System
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+*~
+
+# Editor
+.vscode/
+.idea/
+
+# Build
+build/
+dist/
+*.apk
+
+# Large binary caches (textures are re-imported)
+*.stex

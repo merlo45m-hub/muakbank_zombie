@@ -1,0 +1,134 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/TitleScreen.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/world/title_background.tscn" id="bg"]
+
+[sub_resource type="StyleBoxFlat" id="ButtonStyle"]
+bg_color = Color(0.12, 0.06, 0.18, 1.0)
+border_color = Color(0.6, 0.2, 0.3, 1.0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="LabelSettings" id="TitleSettings"]
+font_sizes/font_size = 72
+font_colors/font_color = Color(0.8, 0.15, 0.1, 1.0)
+outline_size = 4
+outline_color = Color(0.1, 0.02, 0.05, 1.0)
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+script = ExtResource("1")
+
+[node name="Background3D" parent="."]
+layout_mode = 1
+anchors_preset = 15
+scene = ExtResource("bg")
+
+[node name="VBoxMain" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+alignment = 1
+
+[node name="Spacer1" type="Control" parent="VBoxMain"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TitleLabel" type="Label" parent="VBoxMain"]
+layout_mode = 2
+text = "MUAK BANK ZOMBIE"
+label_settings = SubResource("TitleSettings")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="VBoxMain"]
+layout_mode = 2
+text = "Survive the pet cemetery apocalypse"
+custom_minimum_size = Vector2(640, 40)
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="VBoxMain"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="ButtonContainer" type="VBoxContainer" parent="VBoxMain"]
+layout_mode = 2
+alignment = 1
+custom_minimum_size = Vector2(200, 0)
+size_flags_horizontal = 4
+
+[node name="PlayBtn" type="Button" parent="VBoxMain/ButtonContainer"]
+layout_mode = 2
+text = "▶ PLAY"
+custom_minimum_size = Vector2(200, 50)
+theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/font_sizes/font_size = 24
+
+[node name="LevelBtn" type="Button" parent="VBoxMain/ButtonContainer"]
+layout_mode = 2
+text = "📋 LEVELS"
+custom_minimum_size = Vector2(200, 50)
+theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/font_sizes/font_size = 24
+
+[node name="SettingsBtn" type="Button" parent="VBoxMain/ButtonContainer"]
+layout_mode = 2
+text = "⚙ SETTINGS"
+custom_minimum_size = Vector2(200, 50)
+theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/font_sizes/font_size = 24
+
+[node name="CreditsBtn" type="Button" parent="VBoxMain/ButtonContainer"]
+layout_mode = 2
+text = "👤 CREDITS"
+custom_minimum_size = Vector2(200, 50)
+theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/font_sizes/font_size = 24
+
+[node name="QuitBtn" type="Button" parent="VBoxMain/ButtonContainer"]
+layout_mode = 2
+text = "✕ QUIT"
+custom_minimum_size = Vector2(200, 50)
+theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/font_sizes/font_size = 24
+
+[node name="Spacer3" type="Control" parent="VBoxMain"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StatsContainer" type="HBoxContainer" parent="VBoxMain"]
+layout_mode = 2
+alignment = 1
+
+[node name="HighScoreLabel" type="Label" parent="VBoxMain/StatsContainer"]
+layout_mode = 2
+text = "🏆 High Score: 0"
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="VBoxMain/StatsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TotalFedLabel" type="Label" parent="VBoxMain/StatsContainer"]
+layout_mode = 2
+text = "🧟 Total Zombies Fed: 0"
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+
+[connection signal="pressed" from="VBoxMain/ButtonContainer/PlayBtn" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxMain/ButtonContainer/LevelBtn" to="." method="_on_levels_pressed"]
+[connection signal="pressed" from="VBoxMain/ButtonContainer/SettingsBtn" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="VBoxMain/ButtonContainer/CreditsBtn" to="." method="_on_credits_pressed"]
+[connection signal="pressed" from="VBoxMain/ButtonContainer/QuitBtn" to="." method="_on_quit_pressed"]

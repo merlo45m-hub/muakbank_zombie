@@ -1,0 +1,12 @@
+[sub_resource type="StandardMaterial3D" id="food_food_takis"]
+albedo_color = Color(0.8000, 0.1333, 0.1333, 1.0)
+albedo_texture = null
+roughness = 0.5
+metallic = 0.0
+specular = Color(0.2, 0.2, 0.2, 1.0)
+emission_enabled = false
+normal_map_enabled = false
+ambient_light_usage = 2
+
+[vertex shaders]
+fragment shaders

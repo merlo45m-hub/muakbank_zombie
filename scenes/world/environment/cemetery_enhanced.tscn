@@ -1,0 +1,207 @@
+[gd_scene load_steps=18 format=3]
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(60, 0.2, 60)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(60, 0.2, 60)
+
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.35, 0.38, 0.32, 1.0)
+roughness = 0.8
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_grave"]
+size = Vector3(1, 1.5, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="GraveMaterial"]
+albedo_color = Color(0.25, 0.25, 0.25, 1.0)
+roughness = 0.9
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_cross"]
+size = Vector3(0.1, 1.2, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="CrossMaterial"]
+albedo_color = Color(0.15, 0.15, 0.15, 1.0)
+roughness = 0.7
+metallic = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_trunk"]
+radius = 0.3
+height = 4.5
+
+[sub_resource type="StandardMaterial3D" id="BarkMaterial"]
+albedo_color = Color(0.2, 0.15, 0.12, 1.0)
+roughness = 0.85
+metallic = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_leaves"]
+radius = 1.8
+height = 3.6
+
+[sub_resource type="StandardMaterial3D" id="LeavesMaterial"]
+albedo_color = Color(0.15, 0.25, 0.12, 1.0)
+roughness = 0.6
+metallic = 0.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_monument"]
+radius = 0.4
+height = 3.0
+
+[sub_resource type="StandardMaterial3D" id="StoneMaterial"]
+albedo_color = Color(0.55, 0.52, 0.5, 1.0)
+roughness = 0.75
+metallic = 0.1
+
+[sub_resource type="SphereMesh" id="SphereMesh_mist"]
+radius = 30.0
+
+[sub_resource type="StandardMaterial3D" id="MistMaterial"]
+albedo_color = Color(0.5, 0.5, 0.55, 0.15)
+cull_mode = 2
+no_depth_test = true
+
+[sub_resource type="DirectionalLight3D" id="DirectionalLight"]
+
+[node name="Cemetery" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 1
+
+[node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_floor")
+material_override = SubResource("GroundMaterial")
+
+[node name="FloorCol" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Graves" type="Node3D" parent="."]
+
+[node name="Grave1" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.75, -8)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave1"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross1" type="MeshInstance3D" parent="Grave1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave2" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.75, -10)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave2"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross2" type="MeshInstance3D" parent="Grave2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave3" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.75, -7)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave3"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross3" type="MeshInstance3D" parent="Grave3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave4" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.75, -9)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave4"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross4" type="MeshInstance3D" parent="Grave4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Grave5" type="StaticBody3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.75, -2)
+collision_layer = 1
+
+[node name="GraveMesh" type="MeshInstance3D" parent="Grave5"]
+mesh = SubResource("BoxMesh_grave")
+material_override = SubResource("GraveMaterial")
+
+[node name="Cross5" type="MeshInstance3D" parent="Grave5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.2)
+mesh = SubResource("BoxMesh_cross")
+material_override = SubResource("CrossMaterial")
+
+[node name="Monument" type="Node3D" parent="Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1.5, -12)
+
+[node name="Obelisk" type="MeshInstance3D" parent="Monument"]
+mesh = SubResource("CapsuleMesh_monument")
+material_override = SubResource("StoneMaterial")
+
+[node name="Trees" type="Node3D" parent="."]
+
+[node name="Tree1" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -15)
+
+[node name="Trunk" type="MeshInstance3D" parent="Tree1"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("BarkMaterial")
+
+[node name="Leaves" type="MeshInstance3D" parent="Tree1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="Tree2" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -18)
+
+[node name="Trunk" type="MeshInstance3D" parent="Tree2"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("BarkMaterial")
+
+[node name="Leaves" type="MeshInstance3D" parent="Tree2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="Tree3" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 12)
+
+[node name="Trunk" type="MeshInstance3D" parent="Tree3"]
+mesh = SubResource("CylinderMesh_trunk")
+material_override = SubResource("BarkMaterial")
+
+[node name="Leaves" type="MeshInstance3D" parent="Tree3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+mesh = SubResource("SphereMesh_leaves")
+material_override = SubResource("LeavesMaterial")
+
+[node name="AmbientLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+light_energy_multiplier = 0.4
+omni_range = 50.0
+omni_attenuation = 2.0
+
+[node name="DirectionalLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 10, 15, 8)
+light_energy_multiplier = 1.2
+shadow_enabled = true
+directional_shadow_mode = 0
+
+[node name="Mist" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_mist")
+material_override = SubResource("MistMaterial")

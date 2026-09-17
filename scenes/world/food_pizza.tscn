@@ -1,0 +1,95 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/FoodItem3D.gd" id="1"]
+
+[sub_resource type="BoxShape3D" id="CollisionBox"]
+size = Vector3(0.3, 0.08, 0.2)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_base"]
+radius = 0.25
+height = 0.03
+
+[sub_resource type="StandardMaterial3D" id="CrustMaterial"]
+albedo_color = Color(0.88, 0.72, 0.48, 1.0)
+roughness = 0.7
+metallic = 0.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cheese"]
+radius = 0.24
+height = 0.025
+
+[sub_resource type="StandardMaterial3D" id="CheeseMaterial"]
+albedo_color = Color(0.82, 0.65, 0.18, 1.0)
+roughness = 0.45
+metallic = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_pepperoni"]
+radius = 0.03
+
+[sub_resource type="StandardMaterial3D" id="PepperoniMaterial"]
+albedo_color = Color(0.75, 0.1, 0.08, 1.0)
+roughness = 0.5
+metallic = 0.1
+
+[sub_resource type="BoxMesh" id="BoxMesh_sauce"]
+size = Vector3(0.2, 0.01, 0.18)
+
+[sub_resource type="StandardMaterial3D" id="SauceMaterial"]
+albedo_color = Color(0.7, 0.15, 0.1, 1.0)
+roughness = 0.6
+metallic = 0.0
+
+[node name="FoodPizza" type="Area3D"]
+script = ExtResource("1")
+food_type = "pizza"
+health_amount = 30
+collision_layer = 4
+collision_mask = 0
+
+[node name="Mesh" type="Node3D" parent="."]
+
+[node name="Crust" type="MeshInstance3D" parent="Mesh"]
+mesh = SubResource("CylinderMesh_base")
+material_override = SubResource("CrustMaterial")
+
+[node name="Sauce" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05, 0.015, 0)
+mesh = SubResource("BoxMesh_sauce")
+material_override = SubResource("SauceMaterial")
+
+[node name="Cheese" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.018, 0)
+mesh = SubResource("CylinderMesh_cheese")
+material_override = SubResource("CheeseMaterial")
+
+[node name="Toppings" type="Node3D" parent="Mesh"]
+
+[node name="Pepperoni1" type="MeshInstance3D" parent="Mesh/Toppings"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.025, -0.08)
+mesh = SubResource("SphereMesh_pepperoni")
+material_override = SubResource("PepperoniMaterial")
+
+[node name="Pepperoni2" type="MeshInstance3D" parent="Mesh/Toppings"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.025, -0.06)
+mesh = SubResource("SphereMesh_pepperoni")
+material_override = SubResource("PepperoniMaterial")
+
+[node name="Pepperoni3" type="MeshInstance3D" parent="Mesh/Toppings"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03, 0.025, 0.05)
+mesh = SubResource("SphereMesh_pepperoni")
+material_override = SubResource("PepperoniMaterial")
+
+[node name="Pepperoni4" type="MeshInstance3D" parent="Mesh/Toppings"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07, 0.025, 0.03)
+mesh = SubResource("SphereMesh_pepperoni")
+material_override = SubResource("PepperoniMaterial")
+
+[node name="Pepperoni5" type="MeshInstance3D" parent="Mesh/Toppings"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.025, -0.02)
+mesh = SubResource("SphereMesh_pepperoni")
+material_override = SubResource("PepperoniMaterial")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CollisionBox")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

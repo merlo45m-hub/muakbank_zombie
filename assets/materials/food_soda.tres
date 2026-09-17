@@ -1,0 +1,12 @@
+[sub_resource type="StandardMaterial3D" id="food_food_soda"]
+albedo_color = Color(0.2275, 0.5412, 0.8000, 1.0)
+albedo_texture = null
+roughness = 0.1
+metallic = 0.3
+specular = Color(0.2, 0.2, 0.2, 1.0)
+emission_enabled = false
+normal_map_enabled = false
+ambient_light_usage = 2
+
+[vertex shaders]
+fragment shaders

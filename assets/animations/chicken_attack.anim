@@ -1,0 +1,41 @@
+[gd_resource type="Animation" load_steps=0 format=3]
+
+[resource]
+length = 0.4000
+loop = false
+autoplay = false
+
+[sub_resource type="AnimationTrack" id="anim_track_0"]
+connection = 0
+export_type = 0
+length = 0.4000
+loop = false
+imported = false
+keys = []
+method = 1
+op_code = 1
+unique_id = 0
+interp = linear
+
+[sub_resource type="TrackKeyArray" id="track_keys_0"]
+keys/0/time = 0.0000
+keys/0/value = Transform3D(1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000)
+keys/1/time = 0.1500
+keys/1/value = Transform3D(0.955336, 0.000000, 0.295520, 0.000000, 1.000000, 0.000000, -0.295520, 0.000000, 0.955336, 0.000000, 0.100000, 0.200000)
+keys/2/time = 0.2500
+keys/2/value = Transform3D(0.995004, 0.000000, 0.099833, 0.000000, 1.000000, 0.000000, -0.099833, 0.000000, 0.995004, 0.000000, 0.050000, 0.150000)
+keys/3/time = 0.4000
+keys/3/value = Transform3D(1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000)
+
+[sub_resource type="AnimationNodeTrack" id="anim_node_0"]
+autoplay = false
+blend_time = 0.0
+root_node = NodePath("")
+track = SubResource("anim_track_0")
+unique_name = false
+walk_mode = 0
+
+tracks/0/type = "transform"
+tracks/0/path = NodePath("Mesh")
+tracks/0/abstract_path = NodePath("Mesh")
+tracks/0/data = SubResource("anim_node_0")

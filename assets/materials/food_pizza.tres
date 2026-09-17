@@ -1,0 +1,12 @@
+[sub_resource type="StandardMaterial3D" id="food_food_pizza"]
+albedo_color = Color(0.8314, 0.5176, 0.2275, 1.0)
+albedo_texture = null
+roughness = 0.6
+metallic = 0.0
+specular = Color(0.2, 0.2, 0.2, 1.0)
+emission_enabled = false
+normal_map_enabled = false
+ambient_light_usage = 2
+
+[vertex shaders]
+fragment shaders

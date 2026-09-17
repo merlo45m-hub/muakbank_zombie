@@ -1,0 +1,101 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/HUD.gd" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="ProgressBarBg"]
+bg_color = Color(0.1, 0.1, 0.1, 0.8)
+border_color = Color(0.3, 0.3, 0.3, 1.0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="ProgressBarFill"]
+bg_color = Color(1.0, 0.2, 0.5, 1.0)
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1")
+
+[node name="VBoxLeft" type="VBoxContainer" parent="."]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 216.0
+offset_bottom = 100.0
+theme_override_constants/separation = 8
+
+[node name="HypeContainer" type="VBoxContainer" parent="VBoxLeft"]
+layout_mode = 2
+custom_minimum_size = Vector2(200, 0)
+
+[node name="HypeLabel" type="Label" parent="VBoxLeft/HypeContainer"]
+layout_mode = 2
+text = "🔥 HYPE"
+theme_override_font_sizes/font_size = 16
+custom_minimum_size = Vector2(0, 24)
+
+[node name="HypeBar" type="ProgressBar" parent="VBoxLeft/HypeContainer"]
+layout_mode = 2
+max_value = 100.0
+value = 0.0
+show_percentage = false
+custom_minimum_size = Vector2(200, 20)
+theme_overrides/styles/background = SubResource("ProgressBarBg")
+theme_overrides/styles/fill = SubResource("ProgressBarFill")
+
+[node name="OverwhelmContainer" type="VBoxContainer" parent="VBoxLeft"]
+layout_mode = 2
+custom_minimum_size = Vector2(200, 0)
+
+[node name="OverwhelmLabel" type="Label" parent="VBoxLeft/OverwhelmContainer"]
+layout_mode = 2
+text = "⚠ OVERWHELM"
+theme_override_font_sizes/font_size = 16
+custom_minimum_size = Vector2(0, 24)
+
+[node name="OverwhelmBar" type="ProgressBar" parent="VBoxLeft/OverwhelmContainer"]
+layout_mode = 2
+max_value = 100.0
+value = 0.0
+show_percentage = false
+custom_minimum_size = Vector2(200, 20)
+theme_overrides/styles/background = SubResource("ProgressBarBg")
+theme_overrides/styles/fill = SubResource("ProgressBarFill")
+
+[node name="VBoxRight" type="VBoxContainer" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -216.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 100.0
+alignment = 2
+theme_override_constants/separation = 8
+
+[node name="TimerLabel" type="Label" parent="VBoxRight"]
+layout_mode = 2
+text = "⏱ 3:00"
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 2
+custom_minimum_size = Vector2(200, 32)
+
+[node name="LikesLabel" type="Label" parent="VBoxRight"]
+layout_mode = 2
+text = "❤ Likes: 0"
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 2
+custom_minimum_size = Vector2(200, 28)
+
+[node name="CenterLabel" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -50.0
+offset_right = 200.0
+offset_bottom = 50.0
+text = ""
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1.0, 0.84, 0.0, 1.0)
+horizontal_alignment = 1
+vertical_alignment = 1

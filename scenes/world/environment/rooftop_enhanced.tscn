@@ -1,0 +1,383 @@
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(60, 0.3, 60)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(60, 0.3, 60)
+
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.25, 0.22, 0.2, 1.0)
+roughness = 0.92
+metallic = 0.05
+
+[sub_resource type="BoxMesh" id="BoxMesh_building"]
+size = Vector3(50, 3, 50)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_building"]
+size = Vector3(50, 3, 50)
+
+[sub_resource type="StandardMaterial3D" id="BuildingMaterial"]
+albedo_color = Color(0.35, 0.32, 0.3, 1.0)
+roughness = 0.85
+metallic = 0.1
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall"]
+size = Vector3(50, 3, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_parapet"]
+size = Vector3(50, 1, 0.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_parapet"]
+size = Vector3(50, 1, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="ParapetMaterial"]
+albedo_color = Color(0.4, 0.38, 0.35, 1.0)
+roughness = 0.85
+metallic = 0.1
+
+[sub_resource type="BoxMesh" id="BoxMesh_ac_unit"]
+size = Vector3(2, 1.5, 2)
+
+[sub_resource type="StandardMaterial3D" id="ACMaterial"]
+albedo_color = Color(0.5, 0.52, 0.55, 1.0)
+roughness = 0.5
+metallic = 0.6
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ac"]
+size = Vector3(2, 1.5, 2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vent"]
+size = Vector3(1.5, 0.8, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="VentMaterial"]
+albedo_color = Color(0.45, 0.42, 0.4, 1.0)
+roughness = 0.6
+metallic = 0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_door"]
+size = Vector3(1.2, 2.5, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="DoorMaterial"]
+albedo_color = Color(0.2, 0.2, 0.22, 1.0)
+roughness = 0.4
+metallic = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_chimney"]
+size = Vector3(1.5, 4, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_chimney"]
+size = Vector3(1.5, 4, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="ChimneyMaterial"]
+albedo_color = Color(0.3, 0.25, 0.22, 1.0)
+roughness = 0.9
+metallic = 0.05
+
+[sub_resource type="BoxMesh" id="BoxMesh_antenna"]
+size = Vector3(0.15, 6, 0.15)
+
+[sub_resource type="StandardMaterial3D" id="AntennaMaterial"]
+albedo_color = Color(0.6, 0.55, 0.5, 1.0)
+roughness = 0.4
+metallic = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_satellite"]
+size = Vector3(1.5, 0.3, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="SatelliteMaterial"]
+albedo_color = Color(0.7, 0.72, 0.75, 1.0)
+roughness = 0.3
+metallic = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_barrel"]
+size = Vector3(0.8, 1.2, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="BarrelMaterial"]
+albedo_color = Color(0.35, 0.3, 0.25, 1.0)
+roughness = 0.7
+metallic = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_crate"]
+size = Vector3(1.5, 1.5, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="CrateMaterial"]
+albedo_color = Color(0.45, 0.35, 0.22, 1.0)
+roughness = 0.8
+metallic = 0.05
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_crate"]
+size = Vector3(1.5, 1.5, 1.5)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tank"]
+radius = 0.6
+height = 2
+
+[sub_resource type="StandardMaterial3D" id="TankMaterial"]
+albedo_color = Color(0.3, 0.35, 0.4, 1.0)
+roughness = 0.5
+metallic = 0.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_sky"]
+radius = 80
+
+[sub_resource type="StandardMaterial3D" id="SkyMaterial"]
+albedo_color = Color(0.15, 0.12, 0.1, 0.3)
+cull_mode = 2
+no_depth_test = true
+
+[node name="Rooftop" type="Node3D"]
+
+[node name="Building" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+collision_layer = 1
+
+[node name="BuildingMesh" type="MeshInstance3D" parent="Building"]
+mesh = SubResource("BoxMesh_building")
+material_override = SubResource("BuildingMaterial")
+
+[node name="BuildingCol" type="CollisionShape3D" parent="Building"]
+shape = SubResource("BoxShape3D_building")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 1
+
+[node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_floor")
+material_override = SubResource("GroundMaterial")
+
+[node name="FloorCol" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Parapets" type="Node3D" parent="."]
+
+[node name="ParapetN" type="StaticBody3D" parent="Parapets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -25)
+collision_layer = 1
+
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetN"]
+mesh = SubResource("BoxMesh_parapet")
+material_override = SubResource("ParapetMaterial")
+
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetN"]
+shape = SubResource("BoxShape3D_parapet")
+
+[node name="ParapetS" type="StaticBody3D" parent="Parapets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 25)
+collision_layer = 1
+
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetS"]
+mesh = SubResource("BoxMesh_parapet")
+material_override = SubResource("ParapetMaterial")
+
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetS"]
+shape = SubResource("BoxShape3D_parapet")
+
+[node name="ParapetE" type="StaticBody3D" parent="Parapets"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 25, 0.5, 0)
+collision_layer = 1
+
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetE"]
+mesh = SubResource("BoxMesh_parapet")
+material_override = SubResource("ParapetMaterial")
+
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetE"]
+shape = SubResource("BoxShape3D_parapet")
+
+[node name="ParapetW" type="StaticBody3D" parent="Parapets"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -25, 0.5, 0)
+collision_layer = 1
+
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetW"]
+mesh = SubResource("BoxMesh_parapet")
+material_override = SubResource("ParapetMaterial")
+
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetW"]
+shape = SubResource("BoxShape3D_parapet")
+
+[node name="ACUnits" type="Node3D" parent="."]
+
+[node name="AC1" type="StaticBody3D" parent="ACUnits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.75, -15)
+collision_layer = 1
+
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC1"]
+mesh = SubResource("BoxMesh_ac_unit")
+material_override = SubResource("ACMaterial")
+
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC1"]
+shape = SubResource("BoxShape3D_ac")
+
+[node name="AC2" type="StaticBody3D" parent="ACUnits"]
+transform = Transform3D(0.9, 0.4, 0, -0.4, 0.9, 0, 0, 0, 1, 15, 0.75, -12)
+collision_layer = 1
+
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC2"]
+mesh = SubResource("BoxMesh_ac_unit")
+material_override = SubResource("ACMaterial")
+
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC2"]
+shape = SubResource("BoxShape3D_ac")
+
+[node name="AC3" type="StaticBody3D" parent="ACUnits"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 18)
+collision_layer = 1
+
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC3"]
+mesh = SubResource("BoxMesh_ac_unit")
+material_override = SubResource("ACMaterial")
+
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC3"]
+shape = SubResource("BoxShape3D_ac")
+
+[node name="Vents" type="Node3D" parent="."]
+
+[node name="Vent1" type="MeshInstance3D" parent="Vents"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.4, 10)
+mesh = SubResource("BoxMesh_vent")
+material_override = SubResource("VentMaterial")
+
+[node name="Vent2" type="MeshInstance3D" parent="Vents"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.4, -8)
+mesh = SubResource("BoxMesh_vent")
+material_override = SubResource("VentMaterial")
+
+[node name="Vent3" type="MeshInstance3D" parent="Vents"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.4, 5)
+mesh = SubResource("BoxMesh_vent")
+material_override = SubResource("VentMaterial")
+
+[node name="Stairwell" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
+
+[node name="StairwellMesh" type="MeshInstance3D" parent="Stairwell"]
+mesh = SubResource("BoxMesh_building")
+material_override = SubResource("BuildingMaterial")
+
+[node name="Door" type="MeshInstance3D" parent="Stairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -2.6)
+mesh = SubResource("BoxMesh_door")
+material_override = SubResource("DoorMaterial")
+
+[node name="Chimneys" type="Node3D" parent="."]
+
+[node name="Chimney1" type="StaticBody3D" parent="Chimneys"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 2, -18)
+collision_layer = 1
+
+[node name="ChimneyMesh" type="MeshInstance3D" parent="Chimneys/Chimney1"]
+mesh = SubResource("BoxMesh_chimney")
+material_override = SubResource("ChimneyMaterial")
+
+[node name="ChimneyCol" type="CollisionShape3D" parent="Chimneys/Chimney1"]
+shape = SubResource("BoxShape3D_chimney")
+
+[node name="Chimney2" type="StaticBody3D" parent="Chimneys"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 2, 18)
+collision_layer = 1
+
+[node name="ChimneyMesh" type="MeshInstance3D" parent="Chimneys/Chimney2"]
+mesh = SubResource("BoxMesh_chimney")
+material_override = SubResource("ChimneyMaterial")
+
+[node name="ChimneyCol" type="CollisionShape3D" parent="Chimneys/Chimney2"]
+shape = SubResource("BoxShape3D_chimney")
+
+[node name="Antennas" type="Node3D" parent="."]
+
+[node name="Antenna1" type="MeshInstance3D" parent="Antennas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 3, -5)
+mesh = SubResource("BoxMesh_antenna")
+material_override = SubResource("AntennaMaterial")
+
+[node name="Satellite1" type="MeshInstance3D" parent="Antennas/Antenna1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+mesh = SubResource("BoxMesh_satellite")
+material_override = SubResource("SatelliteMaterial")
+
+[node name="Antenna2" type="MeshInstance3D" parent="Antennas"]
+transform = Transform3D(0.7, 0, -0.7, 0, 1, 0, 0.7, 0, 0.7, -12, 3, 8)
+mesh = SubResource("BoxMesh_antenna")
+material_override = SubResource("AntennaMaterial")
+
+[node name="Barrels" type="Node3D" parent="."]
+
+[node name="Barrel1" type="MeshInstance3D" parent="Barrels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.6, 0)
+mesh = SubResource("BoxMesh_barrel")
+material_override = SubResource("BarrelMaterial")
+
+[node name="Barrel2" type="MeshInstance3D" parent="Barrels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 0.6, 1)
+mesh = SubResource("BoxMesh_barrel")
+material_override = SubResource("BarrelMaterial")
+
+[node name="Barrel3" type="MeshInstance3D" parent="Barrels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.6, -20)
+mesh = SubResource("BoxMesh_barrel")
+material_override = SubResource("BarrelMaterial")
+
+[node name="Crates" type="Node3D" parent="."]
+
+[node name="Crate1" type="StaticBody3D" parent="Crates"]
+transform = Transform3D(0.95, 0.3, 0, -0.3, 0.95, 0, 0, 0, 1, -10, 0.75, -20)
+collision_layer = 1
+
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates/Crate1"]
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("CrateMaterial")
+
+[node name="CrateCol" type="CollisionShape3D" parent="Crates/Crate1"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Crate2" type="StaticBody3D" parent="Crates"]
+transform = Transform3D(0.98, -0.17, 0, 0.17, 0.98, 0, 0, 0, 1, -8, 0.75, -20)
+collision_layer = 1
+
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates/Crate2"]
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("CrateMaterial")
+
+[node name="CrateCol" type="CollisionShape3D" parent="Crates/Crate2"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Crate3" type="StaticBody3D" parent="Crates"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.75, 15)
+collision_layer = 1
+
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates/Crate3"]
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("CrateMaterial")
+
+[node name="CrateCol" type="CollisionShape3D" parent="Crates/Crate3"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Tanks" type="Node3D" parent="."]
+
+[node name="Tank1" type="MeshInstance3D" parent="Tanks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1, 10)
+mesh = SubResource("CylinderMesh_tank")
+material_override = SubResource("TankMaterial")
+
+[node name="Tank2" type="MeshInstance3D" parent="Tanks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1, 12)
+mesh = SubResource("CylinderMesh_tank")
+material_override = SubResource("TankMaterial")
+
+[node name="Lighting" type="Node3D" parent="."]
+
+[node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+light_color = Color(0.6, 0.55, 0.5, 1.0)
+light_energy_multiplier = 0.5
+omni_range = 60.0
+omni_attenuation = 2.0
+
+[node name="DirectionalLight" type="DirectionalLight3D" parent="Lighting"]
+transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 15, 18, 10)
+light_color = Color(0.85, 0.8, 0.75, 1.0)
+light_energy_multiplier = 1.2
+shadow_enabled = true
+directional_shadow_mode = 0
+
+[node name="Sky" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_sky")
+material_override = SubResource("SkyMaterial")

@@ -1,0 +1,19 @@
+{
+  "audio_status": "audio/music/menu_music.wav is 705,644 bytes (generated replacement; original was 1,411,244 bytes — LOST). audio/music/game_music.wav is 882,044 bytes (neither original 1,058,444 nor generated 705,644 — a third version; original LOST). All SFX files are generated replacements. assets/audio/ contains duplicate copies of all audio files. Original audio files are overwritten and unrecoverable from this project.",
+  "broken_paths": [
+    "res://player/character_gamer.tscn (CharacterSelect.gd line 9) — player/ directory does not exist; should be res://scenes/characters/character_gamer.tscn",
+    "res://player/character_doctor.tscn (CharacterSelect.gd line 10) — player/ directory does not exist; should be res://scenes/characters/character_doctor.tscn",
+    "res://player/character_nurse.tscn (CharacterSelect.gd line 11) — player/ directory does not exist; should be res://scenes/characters/character_nurse.tscn",
+    "res://player/character_streamer.tscn (CharacterSelect.gd line 12) — player/ directory does not exist; should be res://scenes/characters/character_streamer.tscn",
+    "res://player/character_hunter.tscn (CharacterSelect.gd line 13) — player/ directory does not exist; should be res://scenes/characters/character_hunter.tscn",
+    "res://player/stats_%s.tres (CharacterSelect.gd line 92) — player/ directory does not exist; should be res://materials/stats_%s.tres"
+  ],
+  "game_loads": false,
+  "recommendations": [
+    "Fix CharacterSelect.gd: change all 5 character_scenes paths from res://player/character_*.tscn to res://scenes/characters/character_*.tscn (lines 9-13)",
+    "Fix CharacterSelect.gd: change stats_path from res://player/stats_%s.tres to res://materials/stats_%s.tres (line 92)",
+    "The original menu_music.wav (1.4MB) and game_music.wav (1.1MB) are permanently lost — reacquire or regenerate original audio files",
+    "Remove assets/audio/ duplicate directory to avoid confusion (optional, harmless)",
+    "After fixing CharacterSelect.gd paths, the game should load and run correctly from title screen through game over"
+  ]
+}

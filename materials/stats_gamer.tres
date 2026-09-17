@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CharacterStats" format=3]
+
+[resource]
+script = ExtResource("1")
+character_id = "gamer"
+display_name = "Gamer"
+description = "Quick and agile. Fast attacks, extra dodge chance."
+max_health = 100
+max_stamina = 120
+move_speed = 5.5
+sprint_speed = 9.0
+stamina_regen = 18.0
+attack_damage = 18
+attack_speed = 0.7
+attack_range = 1.8
+critical_chance = 0.15
+critical_multiplier = 1.5
+damage_reduction = 0.05
+dodge_chance = 0.1
+knockback_resistance = 0.1
+special_ability = "rush"
+special_cooldown = 8.0
+special_duration = 2.0
+food_healing_multiplier = 1.0
+weapon_damage_multiplier = 1.0
+ammo_efficiency = 1.2
+character_color = Color(0.5, 0.4, 0.9, 1.0)

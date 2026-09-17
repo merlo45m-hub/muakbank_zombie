@@ -1,0 +1,132 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/FoodItem3D.gd" id="1"]
+
+[sub_resource type="BoxShape3D" id="CollisionBox"]
+size = Vector3(0.2, 0.1, 0.15)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_piece"]
+radius = 0.04
+height = 0.08
+
+[sub_resource type="SphereMesh" id="SphereMesh_rice"]
+radius = 0.06
+height = 0.12
+
+[sub_resource type="StandardMaterial3D" id="RiceMaterial"]
+albedo_color = Color(0.95, 0.93, 0.88, 1.0)
+roughness = 0.65
+metallic = 0.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_nori"]
+radius = 0.065
+height = 0.01
+
+[sub_resource type="StandardMaterial3D" id="NoriMaterial"]
+albedo_color = Color(0.15, 0.15, 0.12, 1.0)
+roughness = 0.7
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_salmon"]
+size = Vector3(0.08, 0.015, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="SalmonMaterial"]
+albedo_color = Color(0.9, 0.45, 0.35, 1.0)
+roughness = 0.55
+metallic = 0.1
+
+[sub_resource type="BoxMesh" id="BoxMesh_wasabi"]
+size = Vector3(0.03, 0.02, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="WasabiMaterial"]
+albedo_color = Color(0.35, 0.6, 0.25, 1.0)
+roughness = 0.7
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_sesame"]
+size = Vector3(0.015, 0.01, 0.015)
+
+[sub_resource type="StandardMaterial3D" id="SesameMaterial"]
+albedo_color = Color(0.95, 0.95, 0.88, 1.0)
+roughness = 0.8
+metallic = 0.0
+
+[node name="FoodSushi" type="Area3D"]
+script = ExtResource("1")
+food_type = "sushi"
+health_amount = 25
+collision_layer = 4
+collision_mask = 0
+
+[node name="Mesh" type="Node3D" parent="."]
+
+[node name="SushiPiece1" type="Node3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.06, 0, 0.05)
+
+[node name="Rice" type="MeshInstance3D" parent="Mesh/SushiPiece1"]
+mesh = SubResource("SphereMesh_rice")
+material_override = SubResource("RiceMaterial")
+
+[node name="Nori" type="MeshInstance3D" parent="Mesh/SushiPiece1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("CylinderMesh_nori")
+material_override = SubResource("NoriMaterial")
+
+[node name="Salmon" type="MeshInstance3D" parent="Mesh/SushiPiece1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, 0)
+mesh = SubResource("BoxMesh_salmon")
+material_override = SubResource("SalmonMaterial")
+
+[node name="SushiPiece2" type="Node3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, -0.02, -0.02)
+
+[node name="Rice" type="MeshInstance3D" parent="Mesh/SushiPiece2"]
+mesh = SubResource("SphereMesh_rice")
+material_override = SubResource("RiceMaterial")
+
+[node name="Nori" type="MeshInstance3D" parent="Mesh/SushiPiece2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("CylinderMesh_nori")
+material_override = SubResource("NoriMaterial")
+
+[node name="Salmon" type="MeshInstance3D" parent="Mesh/SushiPiece2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, 0)
+mesh = SubResource("BoxMesh_salmon")
+material_override = SubResource("SalmonMaterial")
+
+[node name="SushiPiece3" type="Node3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.02, 0.01, -0.06)
+
+[node name="Rice" type="MeshInstance3D" parent="Mesh/SushiPiece3"]
+mesh = SubResource("SphereMesh_rice")
+material_override = SubResource("RiceMaterial")
+
+[node name="Nori" type="MeshInstance3D" parent="Mesh/SushiPiece3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("CylinderMesh_nori")
+material_override = SubResource("NoriMaterial")
+
+[node name="Salmon" type="MeshInstance3D" parent="Mesh/SushiPiece3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, 0)
+mesh = SubResource("BoxMesh_salmon")
+material_override = SubResource("SalmonMaterial")
+
+[node name="Wasabi" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 0.02, 0.02)
+mesh = SubResource("BoxMesh_wasabi")
+material_override = SubResource("WasabiMaterial")
+
+[node name="Sesame1" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05, 0.05, 0.04)
+mesh = SubResource("BoxMesh_sesame")
+material_override = SubResource("SesameMaterial")
+
+[node name="Sesame2" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.06, -0.04)
+mesh = SubResource("BoxMesh_sesame")
+material_override = SubResource("SesameMaterial")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CollisionBox")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

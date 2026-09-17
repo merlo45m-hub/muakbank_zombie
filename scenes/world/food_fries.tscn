@@ -1,0 +1,92 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/FoodItem3D.gd" id="1"]
+
+[sub_resource type="BoxShape3D" id="CollisionBox"]
+size = Vector3(0.35, 0.25, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_container"]
+size = Vector3(0.3, 0.15, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="ContainerMaterial"]
+albedo_color = Color(0.95, 0.85, 0.65, 1.0)
+roughness = 0.7
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_fry"]
+size = Vector3(0.04, 0.15, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="FryMaterial"]
+albedo_color = Color(0.75, 0.65, 0.45, 1.0)
+roughness = 0.6
+metallic = 0.0
+
+[sub_resource type="StandardMaterial3D" id="DarkFryMaterial"]
+albedo_color = Color(0.65, 0.52, 0.35, 1.0)
+roughness = 0.7
+metallic = 0.0
+
+[sub_resource type="StandardMaterial3D" id="LightFryMaterial"]
+albedo_color = Color(0.85, 0.75, 0.55, 1.0)
+roughness = 0.5
+metallic = 0.0
+
+[node name="FoodFries" type="Area3D"]
+script = ExtResource("1")
+food_type = "fries"
+health_amount = 20
+collision_layer = 4
+collision_mask = 0
+
+[node name="Mesh" type="Node3D" parent="."]
+
+[node name="Container" type="MeshInstance3D" parent="Mesh"]
+mesh = SubResource("BoxMesh_container")
+material_override = SubResource("ContainerMaterial")
+
+[node name="Fries" type="Node3D" parent="Mesh"]
+
+[node name="Fry1" type="MeshInstance3D" parent="Mesh/Fries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.02, -0.05)
+mesh = SubResource("BoxMesh_fry")
+material_override = SubResource("FryMaterial")
+
+[node name="Fry2" type="MeshInstance3D" parent="Mesh/Fries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03, 0.01, 0.0)
+mesh = SubResource("BoxMesh_fry")
+material_override = SubResource("DarkFryMaterial")
+
+[node name="Fry3" type="MeshInstance3D" parent="Mesh/Fries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.03, -0.03)
+mesh = SubResource("BoxMesh_fry")
+material_override = SubResource("FryMaterial")
+
+[node name="Fry4" type="MeshInstance3D" parent="Mesh/Fries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06, 0.0, 0.04)
+mesh = SubResource("BoxMesh_fry")
+material_override = SubResource("LightFryMaterial")
+
+[node name="Fry5" type="MeshInstance3D" parent="Mesh/Fries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.06, -0.02, 0.02)
+mesh = SubResource("BoxMesh_fry")
+material_override = SubResource("DarkFryMaterial")
+
+[node name="Fry6" type="MeshInstance3D" parent="Mesh/Fries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01, 0.04, 0.05)
+mesh = SubResource("BoxMesh_fry")
+material_override = SubResource("FryMaterial")
+
+[node name="Fry7" type="MeshInstance3D" parent="Mesh/Fries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.04, -0.01, -0.06)
+mesh = SubResource("BoxMesh_fry")
+material_override = SubResource("LightFryMaterial")
+
+[node name="Fry8" type="MeshInstance3D" parent="Mesh/Fries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0.02, 0.0)
+mesh = SubResource("BoxMesh_fry")
+material_override = SubResource("FryMaterial")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CollisionBox")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

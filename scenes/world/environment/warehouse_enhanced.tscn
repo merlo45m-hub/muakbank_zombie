@@ -1,0 +1,478 @@
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(70, 0.3, 70)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(70, 0.3, 70)
+
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.28, 0.26, 0.24, 1.0)
+roughness = 0.92
+metallic = 0.05
+
+[sub_resource type="BoxMesh" id="BoxMesh_column"]
+size = Vector3(1.2, 8, 1.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_column"]
+size = Vector3(1.2, 8, 1.2)
+
+[sub_resource type="StandardMaterial3D" id="ColumnMaterial"]
+albedo_color = Color(0.35, 0.32, 0.28, 1.0)
+roughness = 0.85
+metallic = 0.15
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall"]
+size = Vector3(24, 5, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="WallMaterial"]
+albedo_color = Color(0.22, 0.2, 0.18, 1.0)
+roughness = 0.9
+metallic = 0.05
+
+[sub_resource type="BoxMesh" id="BoxMesh_catwalk"]
+size = Vector3(3, 0.15, 18)
+
+[sub_resource type="StandardMaterial3D" id="CatwalkMaterial"]
+albedo_color = Color(0.4, 0.35, 0.3, 1.0)
+roughness = 0.7
+metallic = 0.4
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_catwalk"]
+size = Vector3(3, 0.15, 18)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_rail"]
+radius = 0.05
+height = 3
+
+[sub_resource type="StandardMaterial3D" id="RailMaterial"]
+albedo_color = Color(0.6, 0.5, 0.4, 1.0)
+roughness = 0.5
+metallic = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_crane_base"]
+size = Vector3(3, 1.5, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crane_arm"]
+size = Vector3(0.6, 0.6, 16)
+
+[sub_resource type="StandardMaterial3D" id="CraneMaterial"]
+albedo_color = Color(0.75, 0.55, 0.15, 1.0)
+roughness = 0.6
+metallic = 0.5
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_crane"]
+size = Vector3(3, 1.5, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crate"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="StandardMaterial3D" id="CrateMaterial"]
+albedo_color = Color(0.45, 0.35, 0.22, 1.0)
+roughness = 0.8
+metallic = 0.05
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_crate"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_drum"]
+radius = 0.5
+height = 1.4
+
+[sub_resource type="StandardMaterial3D" id="DrumMaterial"]
+albedo_color = Color(0.2, 0.25, 0.35, 1.0)
+roughness = 0.5
+metallic = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_shelf"]
+size = Vector3(6, 0.2, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="ShelfMaterial"]
+albedo_color = Color(0.5, 0.45, 0.4, 1.0)
+roughness = 0.7
+metallic = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_shelf"]
+size = Vector3(6, 0.2, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_door"]
+size = Vector3(4, 4.5, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="DoorMaterial"]
+albedo_color = Color(0.3, 0.3, 0.32, 1.0)
+roughness = 0.4
+metallic = 0.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_fog"]
+radius = 35
+
+[sub_resource type="StandardMaterial3D" id="FogMaterial"]
+albedo_color = Color(0.35, 0.32, 0.3, 0.2)
+cull_mode = 2
+no_depth_test = true
+
+[node name="Warehouse" type="Node3D"]
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 1
+
+[node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_floor")
+material_override = SubResource("GroundMaterial")
+
+[node name="FloorCol" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Columns" type="Node3D" parent="."]
+
+[node name="Column1" type="StaticBody3D" parent="Columns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4, -20)
+collision_layer = 1
+
+[node name="ColumnMesh" type="MeshInstance3D" parent="Columns/Column1"]
+mesh = SubResource("BoxMesh_column")
+material_override = SubResource("ColumnMaterial")
+
+[node name="ColumnCol" type="CollisionShape3D" parent="Columns/Column1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_column")
+
+[node name="Column2" type="StaticBody3D" parent="Columns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 4, -20)
+collision_layer = 1
+
+[node name="ColumnMesh" type="MeshInstance3D" parent="Columns/Column2"]
+mesh = SubResource("BoxMesh_column")
+material_override = SubResource("ColumnMaterial")
+
+[node name="ColumnCol" type="CollisionShape3D" parent="Columns/Column2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_column")
+
+[node name="Column3" type="StaticBody3D" parent="Columns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4, 20)
+collision_layer = 1
+
+[node name="ColumnMesh" type="MeshInstance3D" parent="Columns/Column3"]
+mesh = SubResource("BoxMesh_column")
+material_override = SubResource("ColumnMaterial")
+
+[node name="ColumnCol" type="CollisionShape3D" parent="Columns/Column3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_column")
+
+[node name="Column4" type="StaticBody3D" parent="Columns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 4, 20)
+collision_layer = 1
+
+[node name="ColumnMesh" type="MeshInstance3D" parent="Columns/Column4"]
+mesh = SubResource("BoxMesh_column")
+material_override = SubResource("ColumnMaterial")
+
+[node name="ColumnCol" type="CollisionShape3D" parent="Columns/Column4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_column")
+
+[node name="Column5" type="StaticBody3D" parent="Columns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -20)
+collision_layer = 1
+
+[node name="ColumnMesh" type="MeshInstance3D" parent="Columns/Column5"]
+mesh = SubResource("BoxMesh_column")
+material_override = SubResource("ColumnMaterial")
+
+[node name="ColumnCol" type="CollisionShape3D" parent="Columns/Column5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_column")
+
+[node name="Column6" type="StaticBody3D" parent="Columns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 20)
+collision_layer = 1
+
+[node name="ColumnMesh" type="MeshInstance3D" parent="Columns/Column6"]
+mesh = SubResource("BoxMesh_column")
+material_override = SubResource("ColumnMaterial")
+
+[node name="ColumnCol" type="CollisionShape3D" parent="Columns/Column6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_column")
+
+[node name="Walls" type="Node3D" parent="."]
+
+[node name="WallN" type="StaticBody3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -34.8)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="Walls/WallN"]
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("WallMaterial")
+
+[node name="WallS" type="StaticBody3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 34.8)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="Walls/WallS"]
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("WallMaterial")
+
+[node name="WallE" type="StaticBody3D" parent="Walls"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 34.8, 2.5, 0)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="Walls/WallE"]
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("WallMaterial")
+
+[node name="WallW" type="StaticBody3D" parent="Walls"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -34.8, 2.5, 0)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="Walls/WallW"]
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("WallMaterial")
+
+[node name="Catwalks" type="Node3D" parent="."]
+
+[node name="Catwalk1" type="StaticBody3D" parent="Catwalks"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 15, 6, 0)
+collision_layer = 1
+
+[node name="CatwalkMesh" type="MeshInstance3D" parent="Catwalks/Catwalk1"]
+mesh = SubResource("BoxMesh_catwalk")
+material_override = SubResource("CatwalkMaterial")
+
+[node name="CatwalkCol" type="CollisionShape3D" parent="Catwalks/Catwalk1"]
+shape = SubResource("BoxShape3D_catwalk")
+
+[node name="Rail1" type="MeshInstance3D" parent="Catwalks/Catwalk1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 0)
+mesh = SubResource("CylinderMesh_rail")
+material_override = SubResource("RailMaterial")
+
+[node name="Rail2" type="MeshInstance3D" parent="Catwalks/Catwalk1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1.2, 0)
+mesh = SubResource("CylinderMesh_rail")
+material_override = SubResource("RailMaterial")
+
+[node name="Catwalk2" type="StaticBody3D" parent="Catwalks"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -15, 6, 0)
+collision_layer = 1
+
+[node name="CatwalkMesh" type="MeshInstance3D" parent="Catwalks/Catwalk2"]
+mesh = SubResource("BoxMesh_catwalk")
+material_override = SubResource("CatwalkMaterial")
+
+[node name="CatwalkCol" type="CollisionShape3D" parent="Catwalks/Catwalk2"]
+shape = SubResource("BoxShape3D_catwalk")
+
+[node name="Rail3" type="MeshInstance3D" parent="Catwalks/Catwalk2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 0)
+mesh = SubResource("CylinderMesh_rail")
+material_override = SubResource("RailMaterial")
+
+[node name="Rail4" type="MeshInstance3D" parent="Catwalks/Catwalk2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1.2, 0)
+mesh = SubResource("CylinderMesh_rail")
+material_override = SubResource("RailMaterial")
+
+[node name="Cranes" type="Node3D" parent="."]
+
+[node name="Crane1" type="StaticBody3D" parent="Cranes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -15)
+collision_layer = 1
+
+[node name="CraneBase" type="MeshInstance3D" parent="Cranes/Crane1"]
+mesh = SubResource("BoxMesh_crane_base")
+material_override = SubResource("CraneMaterial")
+
+[node name="CraneCol" type="CollisionShape3D" parent="Cranes/Crane1"]
+shape = SubResource("BoxShape3D_crane")
+
+[node name="CraneArm" type="MeshInstance3D" parent="Cranes/Crane1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+mesh = SubResource("BoxMesh_crane_arm")
+material_override = SubResource("CraneMaterial")
+
+[node name="Crane2" type="StaticBody3D" parent="Cranes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 15)
+collision_layer = 1
+
+[node name="CraneBase" type="MeshInstance3D" parent="Cranes/Crane2"]
+mesh = SubResource("BoxMesh_crane_base")
+material_override = SubResource("CraneMaterial")
+
+[node name="CraneCol" type="CollisionShape3D" parent="Cranes/Crane2"]
+shape = SubResource("BoxShape3D_crane")
+
+[node name="CraneArm" type="MeshInstance3D" parent="Cranes/Crane2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+mesh = SubResource("BoxMesh_crane_arm")
+material_override = SubResource("CraneMaterial")
+
+[node name="Crates" type="Node3D" parent="."]
+
+[node name="Crate1" type="StaticBody3D" parent="Crates"]
+transform = Transform3D(0.98, -0.17, 0, 0.17, 0.98, 0, 0, 0, 1, -8, 1, -8)
+collision_layer = 1
+
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates/Crate1"]
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("CrateMaterial")
+
+[node name="CrateCol" type="CollisionShape3D" parent="Crates/Crate1"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Crate2" type="StaticBody3D" parent="Crates"]
+transform = Transform3D(0.95, 0.3, 0, -0.3, 0.95, 0, 0, 0, 1, -6, 1, -6)
+collision_layer = 1
+
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates/Crate2"]
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("CrateMaterial")
+
+[node name="CrateCol" type="CollisionShape3D" parent="Crates/Crate2"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Crate3" type="StaticBody3D" parent="Crates"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 8)
+collision_layer = 1
+
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates/Crate3"]
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("CrateMaterial")
+
+[node name="CrateCol" type="CollisionShape3D" parent="Crates/Crate3"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Crate4" type="StaticBody3D" parent="Crates"]
+transform = Transform3D(0.9, 0.43, 0, -0.43, 0.9, 0, 0, 0, 1, 10, 1, 6)
+collision_layer = 1
+
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates/Crate4"]
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("CrateMaterial")
+
+[node name="CrateCol" type="CollisionShape3D" parent="Crates/Crate4"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="CrateStack1" type="StaticBody3D" parent="Crates"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 1, 5)
+collision_layer = 1
+
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates/CrateStack1"]
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("CrateMaterial")
+
+[node name="CrateCol" type="CollisionShape3D" parent="Crates/CrateStack1"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="CrateStack1B" type="StaticBody3D" parent="Crates"]
+transform = Transform3D(0.97, 0.2, 0, -0.2, 0.97, 0, 0, 0, 1, -22, 3, 5)
+collision_layer = 1
+
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates/CrateStack1B"]
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("CrateMaterial")
+
+[node name="CrateCol" type="CollisionShape3D" parent="Crates/CrateStack1B"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Drums" type="Node3D" parent="."]
+
+[node name="Drum1" type="StaticBody3D" parent="Drums"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.7, -22)
+collision_layer = 1
+
+[node name="DrumMesh" type="MeshInstance3D" parent="Drums/Drum1"]
+mesh = SubResource("CylinderMesh_drum")
+material_override = SubResource("DrumMaterial")
+
+[node name="DrumCol" type="CollisionShape3D" parent="Drums/Drum1"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Drum2" type="StaticBody3D" parent="Drums"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.7, -20)
+collision_layer = 1
+
+[node name="DrumMesh" type="MeshInstance3D" parent="Drums/Drum2"]
+mesh = SubResource("CylinderMesh_drum")
+material_override = SubResource("DrumMaterial")
+
+[node name="DrumCol" type="CollisionShape3D" parent="Drums/Drum2"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Drum3" type="StaticBody3D" parent="Drums"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0.7, -24)
+collision_layer = 1
+
+[node name="DrumMesh" type="MeshInstance3D" parent="Drums/Drum3"]
+mesh = SubResource("CylinderMesh_drum")
+material_override = SubResource("DrumMaterial")
+
+[node name="DrumCol" type="CollisionShape3D" parent="Drums/Drum3"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Shelves" type="Node3D" parent="."]
+
+[node name="Shelf1" type="StaticBody3D" parent="Shelves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 3, 0)
+collision_layer = 1
+
+[node name="ShelfMesh" type="MeshInstance3D" parent="Shelves/Shelf1"]
+mesh = SubResource("BoxMesh_shelf")
+material_override = SubResource("ShelfMaterial")
+
+[node name="ShelfCol" type="CollisionShape3D" parent="Shelves/Shelf1"]
+shape = SubResource("BoxShape3D_shelf")
+
+[node name="Shelf2" type="StaticBody3D" parent="Shelves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 3.5, 4)
+collision_layer = 1
+
+[node name="ShelfMesh" type="MeshInstance3D" parent="Shelves/Shelf2"]
+mesh = SubResource("BoxMesh_shelf")
+material_override = SubResource("ShelfMaterial")
+
+[node name="ShelfCol" type="CollisionShape3D" parent="Shelves/Shelf2"]
+shape = SubResource("BoxShape3D_shelf")
+
+[node name="Shelf3" type="StaticBody3D" parent="Shelves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 3, 0)
+collision_layer = 1
+
+[node name="ShelfMesh" type="MeshInstance3D" parent="Shelves/Shelf3"]
+mesh = SubResource("BoxMesh_shelf")
+material_override = SubResource("ShelfMaterial")
+
+[node name="ShelfCol" type="CollisionShape3D" parent="Shelves/Shelf3"]
+shape = SubResource("BoxShape3D_shelf")
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="Door1" type="MeshInstance3D" parent="Doors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, -34.8)
+mesh = SubResource("BoxMesh_door")
+material_override = SubResource("DoorMaterial")
+
+[node name="Door2" type="MeshInstance3D" parent="Doors"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 34.8, 2.25, 0)
+mesh = SubResource("BoxMesh_door")
+material_override = SubResource("DoorMaterial")
+
+[node name="Lighting" type="Node3D" parent="."]
+
+[node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+light_color = Color(0.6, 0.55, 0.5, 1.0)
+light_energy_multiplier = 0.5
+omni_range = 70.0
+omni_attenuation = 2.0
+
+[node name="DirectionalLight" type="DirectionalLight3D" parent="Lighting"]
+transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 15, 18, 10)
+light_color = Color(0.7, 0.65, 0.6, 1.0)
+light_energy_multiplier = 1.2
+shadow_enabled = true
+directional_shadow_mode = 0
+
+[node name="Fog" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_fog")
+material_override = SubResource("FogMaterial")

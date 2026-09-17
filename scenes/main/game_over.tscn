@@ -1,0 +1,94 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/GameOver.gd" id="1"]
+
+[node name="GameOver" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+color = Color(0.08, 0.03, 0.12, 1)
+
+[node name="VBoxMain" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+alignment = 1
+
+[node name="Spacer1" type="Control" parent="VBoxMain"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="VBoxMain"]
+layout_mode = 2
+text = "GAME OVER"
+theme_override_font_sizes/font_size = 64
+theme_override_colors/font_color = Color(1.0, 0.2, 0.2, 1.0)
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="VBoxMain"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+
+[node name="StatsContainer" type="VBoxContainer" parent="VBoxMain"]
+layout_mode = 2
+alignment = 1
+custom_minimum_size = Vector2(400, 0)
+size_flags_horizontal = 4
+
+[node name="LikesLabel" type="Label" parent="VBoxMain/StatsContainer"]
+layout_mode = 2
+text = "❤ Likes: 0"
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
+[node name="ZombiesLabel" type="Label" parent="VBoxMain/StatsContainer"]
+layout_mode = 2
+text = "🧟 Zombies Fed: 0"
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
+[node name="HighScoreLabel" type="Label" parent="VBoxMain/StatsContainer"]
+layout_mode = 2
+text = "🏆 High Score: 0"
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
+[node name="NewRecordLabel" type="Label" parent="VBoxMain/StatsContainer"]
+visible = false
+layout_mode = 2
+text = "🏆 NEW HIGH SCORE! 🏆"
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(1.0, 0.84, 0.0, 1.0)
+horizontal_alignment = 1
+
+[node name="Spacer3" type="Control" parent="VBoxMain"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="ButtonContainer" type="VBoxContainer" parent="VBoxMain"]
+layout_mode = 2
+alignment = 1
+custom_minimum_size = Vector2(200, 0)
+size_flags_horizontal = 4
+
+[node name="RestartBtn" type="Button" parent="VBoxMain/ButtonContainer"]
+layout_mode = 2
+text = "🔄 PLAY AGAIN"
+custom_minimum_size = Vector2(200, 50)
+theme_overrides/font_sizes/font_size = 24
+
+[node name="MenuBtn" type="Button" parent="VBoxMain/ButtonContainer"]
+layout_mode = 2
+text = "🏠 MAIN MENU"
+custom_minimum_size = Vector2(200, 50)
+theme_overrides/font_sizes/font_size = 24
+
+[node name="Spacer4" type="Control" parent="VBoxMain"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[connection signal="pressed" from="VBoxMain/ButtonContainer/RestartBtn" to="." method="_on_restart_pressed"]
+[connection signal="pressed" from="VBoxMain/ButtonContainer/MenuBtn" to="." method="_on_menu_pressed"]

@@ -1,0 +1,111 @@
+gd_scene load_steps=12 format=3
+
+[sub_resource type="BoxMesh" id="CemeteryFloor"]
+size = Vector3(40, 0.2, 40)
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(40, 0.2, 40)
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.18, 0.16, 0.14, 1.0)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="TombstoneMesh"]
+size = Vector3(0.6, 1.2, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="TombMaterial"]
+albedo_color = Color(0.25, 0.22, 0.2, 1.0)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="TombstoneMesh2"]
+size = Vector3(0.8, 1.5, 0.15)
+
+[sub_resource type="BoxMesh" id="CrossMesh"]
+size = Vector3(0.08, 0.9, 0.08)
+
+[sub_resource type="StandardMaterial3D" id="CrossMaterial"]
+albedo_color = Color(0.15, 0.12, 0.1, 1.0)
+roughness = 0.8
+
+[sub_resource type="SphereMesh" id="FogSphere"]
+radius = 20
+
+[sub_resource type="StandardMaterial3D" id="FogMaterial"]
+albedo_color = Color(0.3, 0.28, 0.25, 0.12)
+cull_mode = 2
+no_depth_test = true
+
+[sub_resource type="DirectionalLight3D" id="MoonLight"]
+
+[node name="TitleBackground" type="Node3D"]
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.866, 0.5, 0, -0.5, 0.866, 0, 3, 8)
+current = true
+fov = 60
+
+[node name="Floor" type="StaticBody3D" parent="."]
+
+[node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("CemeteryFloor")
+material_override = SubResource("FloorMaterial")
+
+[node name="Tombstones" type="Node3D" parent="."]
+
+[node name="Tomb1" type="StaticBody3D" parent="Tombstones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.6, -4)
+
+[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb1"]
+mesh = SubResource("TombstoneMesh")
+material_override = SubResource("TombMaterial")
+
+[node name="Tomb2" type="StaticBody3D" parent="Tombstones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.75, -6)
+
+[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb2"]
+mesh = SubResource("TombstoneMesh2")
+material_override = SubResource("TombMaterial")
+
+[node name="Cross1" type="MeshInstance3D" parent="Tombstones/Tomb2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.1)
+mesh = SubResource("CrossMesh")
+material_override = SubResource("CrossMaterial")
+
+[node name="Tomb3" type="StaticBody3D" parent="Tombstones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.6, -5)
+
+[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb3"]
+mesh = SubResource("TombstoneMesh")
+material_override = SubResource("TombMaterial")
+
+[node name="Tomb4" type="StaticBody3D" parent="Tombstones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.7, -3)
+
+[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb4"]
+mesh = SubResource("TombstoneMesh2")
+material_override = SubResource("TombMaterial")
+
+[node name="Tomb5" type="StaticBody3D" parent="Tombstones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.5, -2)
+
+[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb5"]
+mesh = SubResource("TombstoneMesh")
+material_override = SubResource("TombMaterial")
+
+[node name="FogSphere" type="MeshInstance3D" parent="."]
+mesh = SubResource("FogSphere")
+material_override = SubResource("FogMaterial")
+
+[node name="Moon" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 10, 15, 8)
+light_color = Color(0.7, 0.75, 0.85, 1.0)
+light_energy_multiplier = 0.8
+shadow_enabled = true
+
+[node name="Ambient" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+light_color = Color(0.4, 0.35, 0.3, 1.0)
+light_energy_multiplier = 0.3
+omni_range = 30.0
+
+[node name="EnemyPositions" type="Node3D" parent="."]

@@ -1,0 +1,15 @@
+[sub_resource type="StandardMaterial3D" id="zombie_zombie_cat"]
+albedo_color = Color(0.3529, 0.2902, 0.4196, 1.0)
+albedo_texture = null
+roughness = 0.75
+metallic = 0.0
+specular = Color(0.05, 0.05, 0.05, 1.0)
+emission_enabled = true
+emission = Color(0.2275, 0.1647, 0.2902, 1.0)
+emission_energy_multiplier = 2.5
+emission_texture = null
+normal_map_enabled = false
+ambient_light_usage = 2
+
+[vertex shaders]
+fragment shaders

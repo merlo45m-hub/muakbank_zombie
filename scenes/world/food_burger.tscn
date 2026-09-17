@@ -1,0 +1,104 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/FoodItem3D.gd" id="1"]
+
+[sub_resource type="CapsuleShape3D" id="CollisionCapsule"]
+radius = 0.15
+height = 0.2
+
+[sub_resource type="SphereMesh" id="SphereMesh_bunTop"]
+radius = 0.13
+height = 0.26
+
+[sub_resource type="StandardMaterial3D" id="BunMaterial"]
+albedo_color = Color(0.92, 0.75, 0.55, 1.0)
+roughness = 0.65
+metallic = 0.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_patty"]
+radius = 0.12
+height = 0.04
+
+[sub_resource type="StandardMaterial3D" id="PattyMaterial"]
+albedo_color = Color(0.35, 0.25, 0.15, 1.0)
+roughness = 0.75
+metallic = 0.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cheese"]
+radius = 0.11
+height = 0.015
+
+[sub_resource type="StandardMaterial3D" id="CheeseMaterial"]
+albedo_color = Color(0.85, 0.7, 0.2, 1.0)
+roughness = 0.4
+metallic = 0.1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lettuce"]
+radius = 0.12
+height = 0.01
+
+[sub_resource type="StandardMaterial3D" id="LettuceMaterial"]
+albedo_color = Color(0.25, 0.55, 0.2, 1.0)
+roughness = 0.8
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_tomato"]
+size = Vector3(0.1, 0.02, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="TomatoMaterial"]
+albedo_color = Color(0.8, 0.2, 0.15, 1.0)
+roughness = 0.65
+metallic = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_bunBottom"]
+radius = 0.13
+height = 0.26
+
+[node name="FoodBurger" type="Area3D"]
+script = ExtResource("1")
+food_type = "burger"
+health_amount = 35
+collision_layer = 4
+collision_mask = 0
+
+[node name="Mesh" type="Node3D" parent="."]
+
+[node name="BunBottom" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+mesh = SubResource("SphereMesh_bunBottom")
+material_override = SubResource("BunMaterial")
+
+[node name="Lettuce" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, 0)
+mesh = SubResource("CylinderMesh_lettuce")
+material_override = SubResource("LettuceMaterial")
+
+[node name="Tomato1" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.04, -0.02, -0.03)
+mesh = SubResource("BoxMesh_tomato")
+material_override = SubResource("TomatoMaterial")
+
+[node name="Tomato2" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, -0.02, 0.03)
+mesh = SubResource("BoxMesh_tomato")
+material_override = SubResource("TomatoMaterial")
+
+[node name="Patty" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+mesh = SubResource("CylinderMesh_patty")
+material_override = SubResource("PattyMaterial")
+
+[node name="Cheese" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+mesh = SubResource("CylinderMesh_cheese")
+material_override = SubResource("CheeseMaterial")
+
+[node name="BunTop" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+mesh = SubResource("SphereMesh_bunTop")
+material_override = SubResource("BunMaterial")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CollisionCapsule")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

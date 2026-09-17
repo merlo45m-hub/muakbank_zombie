@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ZombieDog.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/models/zombie_dog.glb" id="model"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_enemy"]
+radius = 0.35
+height = 1.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_detect"]
+radius = 12.0
+
+[node name="ZombieDog" type="CharacterBody3D"]
+script = ExtResource("1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("CapsuleShape3D_enemy")
+
+[node name="Mesh" type="Node3D" parent="."]
+
+[node name="Model" type="" parent="Mesh"]
+scene = ExtResource("model")
+
+[node name="DetectionArea" type="Area3D" parent="."]
+collision_layer = 8
+collision_mask = 2
+
+[node name="DetectionShape" type="CollisionShape3D" parent="DetectionArea"]
+shape = SubResource("SphereShape3D_detect")
+
+[node name="AttackTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[connection signal="body_entered" from="DetectionArea" to="." method="_on_DetectionArea_body_entered"]

@@ -1,0 +1,152 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/Player.gd" id="1"]
+
+[sub_resource type="CapsuleShape3D" id="PlayerCollision"]
+radius = 0.3
+height = 1.6
+
+[sub_resource type="CapsuleMesh" id="PlayerMesh"]
+radius = 0.3
+height = 1.6
+
+[sub_resource type="StandardMaterial3D" id="PlayerMaterial"]
+albedo_color = Color(0.4, 0.85, 0.75, 1.0)
+roughness = 0.6
+metallic = 0.05
+
+[sub_resource type="SphereMesh" id="HeadMesh"]
+radius = 0.25
+
+[sub_resource type="StandardMaterial3D" id="HeadMaterial"]
+albedo_color = Color(0.9, 0.75, 0.65, 1.0)
+roughness = 0.7
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="ScrubsMesh"]
+size = Vector3(0.6, 0.85, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="ScrubsMaterial"]
+albedo_color = Color(0.2, 0.5, 0.9, 1.0)
+roughness = 0.8
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="CapMesh"]
+size = Vector3(0.4, 0.12, 0.35)
+
+[sub_resource type="StandardMaterial3D" id="CapMaterial"]
+albedo_color = Color(0.9, 0.9, 0.95, 1.0)
+roughness = 0.7
+metallic = 0.05
+
+[sub_resource type="BoxMesh" id="MaskMesh"]
+size = Vector3(0.18, 0.15, 0.02)
+
+[sub_resource type="StandardMaterial3D" id="MaskMaterial"]
+albedo_color = Color(0.4, 0.7, 0.95, 1.0)
+roughness = 0.5
+metallic = 0.1
+
+[sub_resource type="CylinderMesh" id="SyringeMesh"]
+radius = 0.03
+height = 0.2
+
+[sub_resource type="StandardMaterial3D" id="SyringeMaterial"]
+albedo_color = Color(0.9, 0.2, 0.3, 1.0)
+roughness = 0.4
+metallic = 0.3
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1")
+
+[node name="PlayerVisuals" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="PlayerVisuals"]
+mesh = SubResource("PlayerMesh")
+material_override = SubResource("PlayerMaterial")
+
+[node name="Head" type="MeshInstance3D" parent="PlayerVisuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("HeadMesh")
+material_override = SubResource("HeadMaterial")
+
+[node name="Scrubs" type="MeshInstance3D" parent="PlayerVisuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+mesh = SubResource("ScrubsMesh")
+material_override = SubResource("ScrubsMaterial")
+
+[node name="Cap" type="MeshInstance3D" parent="PlayerVisuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0.05)
+mesh = SubResource("CapMesh")
+material_override = SubResource("CapMaterial")
+
+[node name="Mask" type="MeshInstance3D" parent="PlayerVisuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0.22)
+mesh = SubResource("MaskMesh")
+material_override = SubResource("MaskMaterial")
+
+[node name="Syringe" type="MeshInstance3D" parent="PlayerVisuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, -0.05, 0.2)
+mesh = SubResource("SyringeMesh")
+material_override = SubResource("SyringeMaterial")
+
+[node name="PlayerCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("PlayerCollision")
+
+[node name="Camera" type="SpringArm3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+spring_length = 4.0
+
+[node name="Camera3D" type="Camera3D" parent="Camera"]
+transform = Transform3D(-1, 0, 0, 0, 0.985, 0.174, 0, 0.174, -0.985, 0, 0.5, -4)
+keep_aspect = 0
+
+[node name="FoodDetection" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="FoodCollision" type="CollisionShape3D" parent="FoodDetection"]
+shape = SubResource("PlayerCollision")
+
+[ext_resource type="Script" path="res://scripts/WeaponSystem.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/MobileControls.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/HitFeedback.gd" id="4"]
+
+[node name="WeaponSystem" type="Node" parent="."]
+script = ExtResource("2")
+
+[node name="MobileControls" type="CanvasLayer" parent="."]
+layer = 10
+script = ExtResource("3")
+
+[node name="JoystickArea" type="Control" parent="MobileControls"]
+anchors_preset = 10
+offset_left = 20.0
+offset_top = -140.0
+offset_right = 120.0
+offset_bottom = -40.0
+
+[node name="JoystickBg" type="Panel" parent="MobileControls/JoystickArea"]
+layout_mode = 1
+anchors_preset = 15
+
+[node name="JoystickKnob" type="Panel" parent="MobileControls/JoystickArea"]
+layout_mode = 1
+anchors_preset = 8
+offset_left = 25.0
+offset_top = 25.0
+offset_right = 75.0
+offset_bottom = 75.0
+
+[node name="AttackBtn" type="Button" parent="MobileControls"]
+layout_mode = 1
+anchors_preset = 6
+offset_left = -120.0
+offset_top = -120.0
+offset_right = -20.0
+offset_bottom = -20.0
+text = "ATTACK"
+
+[node name="HitFeedback" type="Node3D" parent="."]
+script = ExtResource("4")

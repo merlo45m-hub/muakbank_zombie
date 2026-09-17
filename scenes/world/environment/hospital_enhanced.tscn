@@ -1,0 +1,243 @@
+[gd_scene load_steps=24 format=3]
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(50, 0.3, 50)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(50, 0.3, 50)
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.85, 0.87, 0.88, 1.0)
+roughness = 0.5
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall"]
+size = Vector3(22, 4.5, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="WallMaterial"]
+albedo_color = Color(0.92, 0.93, 0.94, 1.0)
+roughness = 0.4
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_accent"]
+size = Vector3(22, 0.5, 0.25)
+
+[sub_resource type="StandardMaterial3D" id="AccentMaterial"]
+albedo_color = Color(0.2, 0.6, 0.8, 1.0)
+roughness = 0.3
+metallic = 0.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_desk"]
+size = Vector3(3, 0.8, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="DeskMaterial"]
+albedo_color = Color(0.3, 0.35, 0.4, 1.0)
+roughness = 0.5
+metallic = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_desk"]
+size = Vector3(3, 0.8, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_monitor"]
+size = Vector3(1.2, 0.8, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="MonitorMaterial"]
+albedo_color = Color(0.15, 0.15, 0.18, 1.0)
+roughness = 0.2
+metallic = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pole"]
+radius = 0.08
+height = 2.5
+
+[sub_resource type="StandardMaterial3D" id="PoleMaterial"]
+albedo_color = Color(0.7, 0.7, 0.72, 1.0)
+roughness = 0.4
+metallic = 0.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_light"]
+radius = 0.3
+
+[sub_resource type="StandardMaterial3D" id="LightFixtureMaterial"]
+albedo_color = Color(0.95, 0.95, 0.96, 1.0)
+roughness = 0.3
+metallic = 0.5
+emission_enabled = true
+emission = Color(0.9, 0.92, 0.95, 1.0)
+emission_energy_multiplier = 0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_door"]
+size = Vector3(1.2, 2.2, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="DoorMaterial"]
+albedo_color = Color(0.25, 0.25, 0.25, 1.0)
+roughness = 0.3
+metallic = 0.4
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_plant"]
+radius = 0.25
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="PlantMaterial"]
+albedo_color = Color(0.25, 0.45, 0.3, 1.0)
+roughness = 0.6
+metallic = 0.0
+
+[sub_resource type="DirectionalLight3D" id="DirectionalLight"]
+
+[node name="Hospital" type="Node3D"]
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 1
+
+[node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_floor")
+material_override = SubResource("FloorMaterial")
+
+[node name="FloorCol" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Walls" type="Node3D" parent="."]
+
+[node name="WallN" type="StaticBody3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, -11)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="WallN"]
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("WallMaterial")
+
+[node name="Accent" type="MeshInstance3D" parent="WallN"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.8, -0.15)
+mesh = SubResource("BoxMesh_wall_accent")
+material_override = SubResource("AccentMaterial")
+
+[node name="WallS" type="StaticBody3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 11)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="WallS"]
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("WallMaterial")
+
+[node name="WallE" type="StaticBody3D" parent="Walls"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 11, 2.25, 0)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="WallE"]
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("WallMaterial")
+
+[node name="Accent" type="MeshInstance3D" parent="WallE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.8, -0.15)
+mesh = SubResource("BoxMesh_wall_accent")
+material_override = SubResource("AccentMaterial")
+
+[node name="WallW" type="StaticBody3D" parent="Walls"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -11, 2.25, 0)
+collision_layer = 1
+
+[node name="WallMesh" type="MeshInstance3D" parent="WallW"]
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("WallMaterial")
+
+[node name="Furniture" type="Node3D" parent="."]
+
+[node name="Desk1" type="StaticBody3D" parent="Furniture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.4, -5)
+collision_layer = 1
+
+[node name="DeskMesh" type="MeshInstance3D" parent="Desk1"]
+mesh = SubResource("BoxMesh_desk")
+material_override = SubResource("DeskMaterial")
+
+[node name="DeskCol" type="CollisionShape3D" parent="Desk1"]
+shape = SubResource("BoxShape3D_desk")
+
+[node name="Monitor1" type="MeshInstance3D" parent="Desk1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.5, 0.3)
+mesh = SubResource("BoxMesh_monitor")
+material_override = SubResource("MonitorMaterial")
+
+[node name="Desk2" type="StaticBody3D" parent="Furniture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.4, -6)
+collision_layer = 1
+
+[node name="DeskMesh" type="MeshInstance3D" parent="Desk2"]
+mesh = SubResource("BoxMesh_desk")
+material_override = SubResource("DeskMaterial")
+
+[node name="DeskCol" type="CollisionShape3D" parent="Desk2"]
+shape = SubResource("BoxShape3D_desk")
+
+[node name="Monitor2" type="MeshInstance3D" parent="Desk2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.5, 0.3)
+mesh = SubResource("BoxMesh_monitor")
+material_override = SubResource("MonitorMaterial")
+
+[node name="MedicalPoles" type="Node3D" parent="Furniture"]
+
+[node name="Pole1" type="MeshInstance3D" parent="Furniture/MedicalPoles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.25, 3)
+mesh = SubResource("CylinderMesh_pole")
+material_override = SubResource("PoleMaterial")
+
+[node name="Pole2" type="MeshInstance3D" parent="Furniture/MedicalPoles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.25, 4)
+mesh = SubResource("CylinderMesh_pole")
+material_override = SubResource("PoleMaterial")
+
+[node name="CeilingLights" type="Node3D" parent="Furniture"]
+
+[node name="Light1" type="MeshInstance3D" parent="Furniture/CeilingLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 4.3, -3)
+mesh = SubResource("SphereMesh_light")
+material_override = SubResource("LightFixtureMaterial")
+
+[node name="Light2" type="MeshInstance3D" parent="Furniture/CeilingLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 4.3, -3)
+mesh = SubResource("SphereMesh_light")
+material_override = SubResource("LightFixtureMaterial")
+
+[node name="Light3" type="MeshInstance3D" parent="Furniture/CeilingLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.3, 4)
+mesh = SubResource("SphereMesh_light")
+material_override = SubResource("LightFixtureMaterial")
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="Door1" type="MeshInstance3D" parent="Doors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.85, 1.1, -8)
+mesh = SubResource("BoxMesh_door")
+material_override = SubResource("DoorMaterial")
+
+[node name="Door2" type="MeshInstance3D" parent="Doors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.85, 1.1, 5)
+mesh = SubResource("BoxMesh_door")
+material_override = SubResource("DoorMaterial")
+
+[node name="Plants" type="Node3D" parent="."]
+
+[node name="Plant1" type="MeshInstance3D" parent="Plants"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.5, 9)
+mesh = SubResource("CapsuleMesh_plant")
+material_override = SubResource("PlantMaterial")
+
+[node name="Plant2" type="MeshInstance3D" parent="Plants"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.5, 9)
+mesh = SubResource("CapsuleMesh_plant")
+material_override = SubResource("PlantMaterial")
+
+[node name="AmbientLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+light_color = Color(0.9, 0.92, 0.95, 1.0)
+light_energy_multiplier = 0.8
+omni_range = 50.0
+omni_attenuation = 2.0
+
+[node name="DirectionalLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.7, -0.4, 0.59, 0.05, 0.82, 0.57, -0.71, -0.41, 0.57, 8, 12, 6)
+light_color = Color(0.9, 0.92, 0.95, 1.0)
+light_energy_multiplier = 1.0
+shadow_enabled = true
+directional_shadow_mode = 0
