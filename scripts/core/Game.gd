@@ -25,6 +25,7 @@ const GAME_DURATION: float = 600.0  # 10 minutes
 const MAX_ZOMBIES: int = 12
 const ZOMBIE_SPAWN_INTERVAL: float = 3.0
 const FOOD_SPAWN_INTERVAL: float = 8.0
+const SCORE_PER_KILL: int = 100
 
 # === GAME STATE ===
 var score: int = 0
@@ -33,8 +34,23 @@ var game_active: bool = false
 var time_remaining: float = GAME_DURATION
 var zombies_to_kill: int = 5  # Kill quota to clear level
 
+# === OPTIONAL SYSTEMS (auto-detected) ===
+var wave_manager: Node = null
+var combo_system: Node = null
+var difficulty_manager: Node = null
+
 func _ready() -> void:
 	print("[Game] Initializing Muak Bank Zombie...")
+	# Auto-detect optional systems if present in scene
+	wave_manager = get_node_or_null("WaveManager")
+	combo_system = get_node_or_null("ComboSystem")
+	difficulty_manager = get_node_or_null("DifficultyManager")
+	
+	# Connect player signals for reactive HUD updates
+	if player:
+		player.health_changed.connect(_on_player_health_changed)
+		player.stamina_changed.connect(_on_player_stamina_changed)
+	
 	# Set environment based on current level
 	_load_environment()
 	start_game()
@@ -59,6 +75,7 @@ func start_game() -> void:
 	if player:
 		player.position = Vector3(0, 0, 0)
 		player.health = player.max_health
+		player.stamina = player.max_stamina
 	
 	# Start spawners
 	if zombie_spawner:
@@ -66,10 +83,18 @@ func start_game() -> void:
 	if food_spawner:
 		food_spawner.start_spawning()
 	
+	# Start optional systems
+	if wave_manager and wave_manager.has_method("start_waves"):
+		wave_manager.start_waves()
+	if combo_system and combo_system.has_method("reset_combo"):
+		combo_system.reset_combo()
+	
 	# Start timer
 	if game_timer:
 		game_timer.start(1.0)  # Tick every second
 	
+	# Initial HUD update
+	_update_hud()
 	print("[Game] Started! Survive the zombie animal apocalypse!")
 
 func _process(delta: float) -> void:
@@ -83,22 +108,35 @@ func _process(delta: float) -> void:
 		end_game(true)  # Survived!
 		return
 	
-	# Update HUD every frame
+	# Update HUD timer (cheap, only when second changes)
 	if hud:
 		hud.update_timer(int(time_remaining))
-		hud.update_score(score)
-		hud.update_kills(zombies_killed)
-		if player:
-			hud.update_health(player.health, player.max_health)
-			hud.update_stamina(player.stamina, player.max_stamina)
 
 func _on_game_timer_timeout() -> void:
 	"""Called every second — handle periodic game logic."""
 	if not game_active:
 		return
-	
-	# Could add wave logic here
-	pass
+	# Periodic HUD refresh as fallback
+	_update_hud()
+
+func _update_hud() -> void:
+	if not hud:
+		return
+	hud.update_score(score)
+	hud.update_kills(zombies_killed)
+	if player:
+		hud.update_health(player.health, player.max_health)
+		hud.update_stamina(player.stamina, player.max_stamina)
+
+# === SIGNAL HANDLERS (reactive HUD) ===
+
+func _on_player_health_changed(new_health: int, max_health: int) -> void:
+	if hud:
+		hud.update_health(new_health, max_health)
+
+func _on_player_stamina_changed(new_stamina: int, max_stamina: int) -> void:
+	if hud:
+		hud.update_stamina(new_stamina, max_stamina)
 
 func end_game(survived: bool) -> void:
 	if not game_active:
@@ -148,7 +186,17 @@ func on_zombie_killed(zombie_type: String) -> void:
 		return
 	
 	zombies_killed += 1
-	score += 100
+	score += SCORE_PER_KILL
+	
+	# Apply combo multiplier if combo system present
+	if combo_system and combo_system.has_method("register_kill"):
+		combo_system.register_kill()
+		score += int(SCORE_PER_KILL * (combo_system.get_score_multiplier() - 1.0))
+	
+	# Apply difficulty scaling
+	if difficulty_manager and difficulty_manager.has_method("register_kill"):
+		difficulty_manager.register_kill()
+	
 	emit_signal("kills_changed", zombies_killed)
 	emit_signal("score_changed", score)
 	
@@ -166,6 +214,9 @@ func on_player_damaged(damage: int) -> void:
 	
 	player.take_damage(damage)
 	emit_signal("health_changed", player.health, player.max_health)
+	
+	if difficulty_manager and difficulty_manager.has_method("register_damage_taken"):
+		difficulty_manager.register_damage_taken()
 	
 	if player.health <= 0:
 		end_game(false)
@@ -192,4 +243,3 @@ func on_player_died() -> void:
 	if not game_active:
 		return
 	end_game(false)
-

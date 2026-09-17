@@ -17,54 +17,60 @@ func _ready() -> void:
 
 func _create_all_materials() -> void:
 	# Dissolve material (zombie death)
-	var dissolve_mat = ShaderMaterial.new()
-	dissolve_mat.shader = load(SHADER_DIR + "dissolve.gdshader")
-	dissolve_mat.set_shader_parameter("u_dissolve_progress", 0.0)
-	dissolve_mat.set_shader_parameter("u_edge_width", 0.1)
-	dissolve_mat.set_shader_parameter("u_edge_color", Color(1.0, 0.3, 0.05, 1.0))
-	dissolve_mat.set_shader_parameter("u_base_color", Color(0.6, 0.55, 0.5, 1.0))
-	materials["dissolve"] = dissolve_mat
+	_create_material("dissolve", "dissolve.gdshader", {
+		"u_dissolve_progress": 0.0,
+		"u_edge_width": 0.1,
+		"u_edge_color": Color(1.0, 0.3, 0.05, 1.0),
+		"u_base_color": Color(0.6, 0.55, 0.5, 1.0)
+	})
 	
 	# Damage flash material
-	var flash_mat = ShaderMaterial.new()
-	flash_mat.shader = load(SHADER_DIR + "damage_flash.gdshader")
-	flash_mat.set_shader_parameter("u_flash_intensity", 0.0)
-	materials["damage_flash"] = flash_mat
+	_create_material("damage_flash", "damage_flash.gdshader", {
+		"u_flash_intensity": 0.0
+	})
 	
 	# Zombie glow material
-	var glow_mat = ShaderMaterial.new()
-	glow_mat.shader = load(SHADER_DIR + "zombie_glow.gdshader")
-	glow_mat.set_shader_parameter("u_threat_level", 0.5)
-	glow_mat.set_shader_parameter("u_glow_color", Color(0.8, 0.2, 0.1, 1.0))
-	materials["zombie_glow"] = glow_mat
+	_create_material("zombie_glow", "zombie_glow.gdshader", {
+		"u_threat_level": 0.5,
+		"u_glow_color": Color(0.8, 0.2, 0.1, 1.0)
+	})
 	
 	# Blood splatter material
-	var blood_mat = ShaderMaterial.new()
-	blood_mat.shader = load(SHADER_DIR + "blood_splatter.gdshader")
-	blood_mat.set_shader_parameter("u_blood_color", Color(0.6, 0.05, 0.05, 0.8))
-	blood_mat.set_shader_parameter("u_splatter_intensity", 0.8)
-	materials["blood_splatter"] = blood_mat
+	_create_material("blood_splatter", "blood_splatter.gdshader", {
+		"u_blood_color": Color(0.6, 0.05, 0.05, 0.8),
+		"u_splatter_intensity": 0.8
+	})
 	
 	# Water puddle material
-	var water_mat = ShaderMaterial.new()
-	water_mat.shader = load(SHADER_DIR + "water_puddle.gdshader")
-	water_mat.set_shader_parameter("u_water_color", Color(0.1, 0.3, 0.5, 0.6))
-	water_mat.set_shader_parameter("u_fresnel_power", 2.5)
-	materials["water_puddle"] = water_mat
+	_create_material("water_puddle", "water_puddle.gdshader", {
+		"u_water_color": Color(0.1, 0.3, 0.5, 0.6),
+		"u_fresnel_power": 2.5
+	})
 	
 	# Volumetric fog material
-	var fog_mat = ShaderMaterial.new()
-	fog_mat.shader = load(SHADER_DIR + "volumetric_fog.gdshader")
-	fog_mat.set_shader_parameter("u_fog_color", Color(0.4, 0.38, 0.35, 0.15))
-	fog_mat.set_shader_parameter("u_fog_density", 0.4)
-	materials["volumetric_fog"] = fog_mat
+	_create_material("volumetric_fog", "volumetric_fog.gdshader", {
+		"u_fog_color": Color(0.4, 0.38, 0.35, 0.15),
+		"u_fog_density": 0.4
+	})
 	
 	# Toxic zone material
-	var toxic_mat = ShaderMaterial.new()
-	toxic_mat.shader = load(SHADER_DIR + "toxic_zone.gdshader")
-	toxic_mat.set_shader_parameter("u_zone_color", Color(0.2, 0.8, 0.3, 0.4))
-	toxic_mat.set_shader_parameter("u_zone_density", 0.5)
-	materials["toxic_zone"] = toxic_mat
+	_create_material("toxic_zone", "toxic_zone.gdshader", {
+		"u_zone_color": Color(0.2, 0.8, 0.3, 0.4),
+		"u_zone_density": 0.5
+	})
+
+
+func _create_material(name: String, shader_file: String, params: Dictionary) -> void:
+	"""Create a shader material with null-safe shader loading."""
+	var shader = load(SHADER_DIR + shader_file)
+	if not shader:
+		push_warning("[ShaderManager] Failed to load shader: ", shader_file)
+		return
+	var mat = ShaderMaterial.new()
+	mat.shader = shader
+	for key in params:
+		mat.set_shader_parameter(key, params[key])
+	materials[name] = mat
 
 
 func get_material(name: String) -> ShaderMaterial:
