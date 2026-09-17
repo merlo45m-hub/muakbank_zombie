@@ -38,10 +38,10 @@ var sfx_players: Array = []
 const MAX_SFX_PLAYERS = 12
 
 # === AUDIO STREAMS ===
-var menu_music_stream: AudioStreamWAV
-var game_music_stream: AudioStreamWAV
-var boss_music_stream: AudioStreamWAV
-var menu_alt_music_stream: AudioStreamWAV
+var menu_music_stream: AudioStream
+var game_music_stream: AudioStream
+var boss_music_stream: AudioStream
+var menu_alt_music_stream: AudioStream
 var click_stream: AudioStreamWAV
 var zombie_reach_stream: AudioStreamWAV
 var eat_stream: AudioStreamWAV
@@ -123,10 +123,10 @@ func _setup_players() -> void:
 func _load_audio_streams() -> void:
 	# Load from disk (fallback to procedural if missing)
 	var dir = "res://audio/music/"
-	menu_music_stream = _load_stream(dir + "menu_music.wav")
-	game_music_stream = _load_stream(dir + "game_music.wav")
-	boss_music_stream = _load_stream(dir + "music_boss.wav")
-	menu_alt_music_stream = _load_stream(dir + "music_menu_alt.wav")
+	menu_music_stream = _load_stream(dir + "menu_music.mp3")
+	game_music_stream = _load_stream(dir + "game_music.mp3")
+	boss_music_stream = _load_stream(dir + "music_boss.ogg")
+	menu_alt_music_stream = _load_stream(dir + "music_menu_alt.ogg")
 	
 	dir = "res://audio/sfx/"
 	click_stream = _load_stream(dir + "click.wav")
@@ -158,7 +158,7 @@ func _load_audio_streams() -> void:
 	ambient_scenes["rooftop"] = _load_stream("res://audio/ambient/amb_rooftop.wav")
 
 
-func _load_stream(path: String) -> AudioStreamWAV:
+func _load_stream(path: String) -> AudioStream:
 	if ResourceLoader.exists(path):
 		return load(path)
 	# Try procedural fallback
