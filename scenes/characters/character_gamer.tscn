@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3]
 
-[ext_resource type="Script" path="res://scripts/Player.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/core/Player.gd" id="1"]
 
 [sub_resource type="CapsuleShape3D" id="PlayerCollision"]
 radius = 0.3

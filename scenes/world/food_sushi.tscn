@@ -1,6 +1,6 @@
 [gd_scene load_steps=18 format=3]
 
-[ext_resource type="Script" path="res://scripts/FoodItem3D.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/gameplay/FoodItem3D.gd" id="1"]
 
 [sub_resource type="BoxShape3D" id="CollisionBox"]
 size = Vector3(0.2, 0.1, 0.15)

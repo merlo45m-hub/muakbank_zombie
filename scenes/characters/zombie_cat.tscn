@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="Script" path="res://scripts/ZombieCat.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/characters/ZombieCat.gd" id="1"]
 [ext_resource type="PackedScene" path="res://assets/models/zombie_cat.glb" id="model"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_cat"]

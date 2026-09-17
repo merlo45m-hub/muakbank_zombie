@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="Script" path="res://scripts/ZombieDog.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/characters/ZombieDog.gd" id="1"]
 [ext_resource type="PackedScene" path="res://assets/models/zombie_dog.glb" id="model"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_enemy"]

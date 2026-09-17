@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3]
 
-[ext_resource type="Script" path="res://scripts/Player.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/core/Player.gd" id="1"]
 
 [sub_resource type="CapsuleShape3D" id="PlayerCollision"]
 radius = 0.3
@@ -109,9 +109,9 @@ collision_mask = 4
 [node name="FoodCollision" type="CollisionShape3D" parent="FoodDetection"]
 shape = SubResource("PlayerCollision")
 
-[ext_resource type="Script" path="res://scripts/WeaponSystem.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/MobileControls.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/HitFeedback.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/gameplay/WeaponSystem.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/gameplay/MobileControls.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/gameplay/HitFeedback.gd" id="4"]
 
 [node name="WeaponSystem" type="Node" parent="."]
 script = ExtResource("2")
