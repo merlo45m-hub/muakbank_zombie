@@ -88,6 +88,9 @@ func start_game() -> void:
 		wave_manager.start_waves()
 	if combo_system and combo_system.has_method("reset_combo"):
 		combo_system.reset_combo()
+	var powerup_manager = get_node_or_null("PowerUpManager")
+	if powerup_manager and powerup_manager.has_method("start_spawning"):
+		powerup_manager.start_spawning()
 	
 	# Start timer
 	if game_timer:
@@ -243,3 +246,38 @@ func on_player_died() -> void:
 	if not game_active:
 		return
 	end_game(false)
+
+func on_powerup_collected(powerup_type: String) -> void:
+	if not game_active or not player:
+		return
+	match powerup_type:
+		"health":
+			player.heal(50)
+			Audio.play_pickup()
+		"speed":
+			player.move_speed *= 1.5
+			player.sprint_speed *= 1.5
+			Audio.play_powerup()
+			await get_tree().create_timer(10.0).timeout
+			if is_instance_valid(player):
+				player.move_speed /= 1.5
+				player.sprint_speed /= 1.5
+		"damage":
+			player.attack_damage *= 2
+			Audio.play_powerup()
+			await get_tree().create_timer(10.0).timeout
+			if is_instance_valid(player):
+				player.attack_damage /= 2
+		"shield":
+			player.is_shield_active = true
+			Audio.play_powerup()
+			await get_tree().create_timer(8.0).timeout
+			if is_instance_valid(player):
+				player.is_shield_active = false
+		"frenzy":
+			player.is_rage_active = true
+			Audio.play_frenzy()
+			await get_tree().create_timer(8.0).timeout
+			if is_instance_valid(player):
+				player.is_rage_active = false
+	print("[Game] Power-up collected: ", powerup_type)

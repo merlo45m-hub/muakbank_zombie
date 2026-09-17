@@ -6,7 +6,7 @@ class_name PowerUpManager
 
 signal powerup_collected(powerup_type)
 
-@export var powerup_scenes: Array[PackedScene] = []
+@export var powerup_scenes: Array[PackedScene] = [preload("res://scenes/world/powerup.tscn")]
 @export var spawn_interval: float = 15.0
 @export var max_powerups: int = 3
 @export var spawn_radius: float = 10.0

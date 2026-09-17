@@ -362,3 +362,4 @@ script = ExtResource("21")
 [connection signal="area_entered" from="Player/PickupArea" to="Player" method="_on_PickupArea_area_entered"]
 [connection signal="zombie_killed" from="ZombieSpawner" to="." method="on_zombie_killed"]
 [connection signal="timeout" from="GameTimer" to="." method="_on_game_timer_timeout"]
+[connection signal="powerup_collected" from="PowerUpManager" to="." method="on_powerup_collected"]
