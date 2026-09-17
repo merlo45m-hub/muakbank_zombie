@@ -253,4 +253,4 @@ func _on_start_chase() -> void:
 
 func attack(target: Node3D) -> void:
 	if target.has_method("take_damage"):
-		target.take_damage(attack_damage)
+		target.take_damage(damage)
