@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=22 format=3]
 
 [ext_resource type="Script" path="res://scripts/core/Game.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/core/Player.gd" id="2"]
@@ -11,6 +11,17 @@
 [ext_resource type="Script" path="res://scripts/ui/PauseMenu.gd" id="9")]
 [ext_resource type="Script" path="res://scripts/gameplay/SoundTrigger.gd" id="10")]
 [ext_resource type="Script" path="res://scripts/ShaderManager.gd" id="11")]
+[ext_resource type="Script" path="res://scripts/gameplay/WaveManager.gd" id="12"]
+[ext_resource type="Script" path="res://scripts/gameplay/ComboSystem.gd" id="13"]
+[ext_resource type="Script" path="res://scripts/core/DifficultyManager.gd" id="14"]
+[ext_resource type="Script" path="res://scripts/gameplay/PowerUpManager.gd" id="15"]
+[ext_resource type="Script" path="res://scripts/gameplay/ObjectiveManager.gd" id="16"]
+[ext_resource type="Script" path="res://scripts/gameplay/DayNightCycle.gd" id="17"]
+[ext_resource type="Script" path="res://scripts/gameplay/WeatherSystem.gd" id="18"]
+[ext_resource type="Script" path="res://scripts/gameplay/LootTable.gd" id="19"]
+[ext_resource type="Script" path="res://scripts/gameplay/DamagePopup.gd" id="20"]
+[ext_resource type="Script" path="res://scripts/gameplay/CameraShake.gd" id="21"]
+
 
 [sub_resource type="StyleBoxFlat" id="JoystickBg"]
 bg_color = Color(0.1, 0.1, 0.1, 0.5)
@@ -310,6 +321,36 @@ script = ExtResource("10")
 
 [node name="ShaderManager" type="Node" parent="."]
 script = ExtResource("11")
+
+[node name="WaveManager" type="Node" parent="."]
+script = ExtResource("12")
+
+[node name="ComboSystem" type="Node" parent="."]
+script = ExtResource("13")
+
+[node name="DifficultyManager" type="Node" parent="."]
+script = ExtResource("14")
+
+[node name="PowerUpManager" type="Node" parent="."]
+script = ExtResource("15")
+
+[node name="ObjectiveManager" type="Node" parent="."]
+script = ExtResource("16")
+
+[node name="DayNightCycle" type="Node3D" parent="."]
+script = ExtResource("17")
+
+[node name="WeatherSystem" type="Node3D" parent="."]
+script = ExtResource("18")
+
+[node name="LootTable" type="Node" parent="."]
+script = ExtResource("19")
+
+[node name="DamagePopup" type="Node3D" parent="."]
+script = ExtResource("20")
+
+[node name="CameraShake" type="Node3D" parent="."]
+script = ExtResource("21")
 
 [connection signal="health_changed" from="Player" to="HUD" method="update_health"]
 [connection signal="stamina_changed" from="Player" to="HUD" method="update_stamina"]
