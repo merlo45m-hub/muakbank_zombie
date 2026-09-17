@@ -56,7 +56,7 @@ func _animate_title():
 func _animate_food_decor():
 	"""Make food icons float around the background."""
 	for i in range(food_icons.size()):
-		var icon = load("res://assets/%s.png" % food_icons[i])
+		var icon = load("res://assets/textures/%s.png" % food_icons[i])
 		if not icon:
 			continue
 		var sprite = Sprite2D.new()

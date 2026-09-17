@@ -89,7 +89,7 @@ func _select_character(index: int) -> void:
 	Save.selected_character = character_names[index]
 	
 	# Load character stats
-	var stats_path = "res://materials/stats_%s.tres" % character_names[index].to_lower()
+	var stats_path = "res://assets/materials/stats_%s.tres" % character_names[index].to_lower()
 	var stats = load(stats_path)
 	
 	# Transition to game
