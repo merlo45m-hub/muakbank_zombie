@@ -185,14 +185,12 @@ text = "❤ HP 100/100"
 theme_override_font_sizes/font_size = 16
 custom_minimum_size = Vector2(0, 24)
 
-[node name="HypeBar" type="ProgressBar" parent="HUD/VBoxLeft/HypeContainer"]
+[node name="HypeBar" type="GodotxHealthBarControl" parent="HUD/VBoxLeft/HypeContainer"]
 layout_mode = 2
-max_value = 100.0
 value = 100.0
-show_percentage = false
+max_value = 100.0
+min_value = 0.0
 custom_minimum_size = Vector2(200, 20)
-theme_overrides/styles/background = SubResource("ProgressBarBg")
-theme_overrides/styles/fill = SubResource("ProgressBarFill")
 
 [node name="OverwhelmContainer" type="VBoxContainer" parent="HUD/VBoxLeft"]
 layout_mode = 2
@@ -204,14 +202,12 @@ text = "⚡ STAM 100/100"
 theme_override_font_sizes/font_size = 16
 custom_minimum_size = Vector2(0, 24)
 
-[node name="OverwhelmBar" type="ProgressBar" parent="HUD/VBoxLeft/OverwhelmContainer"]
+[node name="OverwhelmBar" type="GodotxHealthBarControl" parent="HUD/VBoxLeft/OverwhelmContainer"]
 layout_mode = 2
-max_value = 100.0
 value = 100.0
-show_percentage = false
+max_value = 100.0
+min_value = 0.0
 custom_minimum_size = Vector2(200, 20)
-theme_overrides/styles/background = SubResource("ProgressBarBg")
-theme_overrides/styles/fill = SubResource("ProgressBarFill")
 
 [node name="VBoxRight" type="VBoxContainer" parent="HUD"]
 anchor_left = 1.0

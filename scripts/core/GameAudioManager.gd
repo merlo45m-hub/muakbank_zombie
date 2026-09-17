@@ -1,41 +1,49 @@
 extends Node
 class_name GameAudioManager
 
-## Game Audio Manager — Procedural + Dynamic Music System
-## Autoload as "Audio" — handles adaptive music layers, SFX prioritization, and mixing
+## Game Audio Manager — Integrates SoundManager addon with adaptive music layers, SFX prioritization, and mixing
+## Autoload as "Audio" — delegates to SoundManager addon when available, falls back to manual players
+
+# === SoundManager addon reference (null-checked) ===
+var sound_manager = null
+
 
 # === VOLUME (0.0 - 1.0) ===
 var master_volume = 1.0:
-	set(val): 
+	set(val):
 		master_volume = val
 		AudioServer.set_bus_volume_db(0, _to_db(val))
 		_save_settings()
 
 var music_volume = 0.7:
-	set(val): 
+	set(val):
 		music_volume = val
-		AudioServer.set_bus_volume_db(1, _to_db(val))
+		if sound_manager:
+			sound_manager.set_music_volume(val)
+		else:
+			AudioServer.set_bus_volume_db(1, _to_db(val))
 		_save_settings()
 
 var sfx_volume = 0.8:
-	set(val): 
+	set(val):
 		sfx_volume = val
-		AudioServer.set_bus_volume_db(2, _to_db(val))
+		if sound_manager:
+			sound_manager.set_sound_volume(val)
+		else:
+			AudioServer.set_bus_volume_db(2, _to_db(val))
 		_save_settings()
 
 var ambient_volume = 0.5:
-	set(val): 
+	set(val):
 		ambient_volume = val
-		if AudioServer.get_bus_index("Ambient") >= 0:
+		if sound_manager:
+			sound_manager.set_ambient_sound_volume(val)
+		elif AudioServer.get_bus_index("Ambient") >= 0:
 			AudioServer.set_bus_volume_db(4, _to_db(val))
 		_save_settings()
 
 var current_ambient_scene: String = ""  # Tracks active ambient layer
-var ambient_wind_stream: AudioStreamWAV
-var music_player: AudioStreamPlayer
-var ambient_player: AudioStreamPlayer
-var sfx_players: Array = []
-const MAX_SFX_PLAYERS = 12
+
 
 # === AUDIO STREAMS ===
 var menu_music_stream: AudioStream
@@ -59,24 +67,37 @@ var explosion_stream: AudioStreamWAV
 var victory_stream: AudioStreamWAV
 var defeat_stream: AudioStreamWAV
 
+
 # === AMBIENT LAYER ===
 var ambient_scenes: Dictionary = {}  # scene_name -> AudioStreamWAV
-var ambient_player2: AudioStreamPlayer  # Second ambient for crossfade
+var ambient_wind_stream: AudioStreamWAV
+
 
 # === DYNAMIC MUSIC ===
 var current_intensity: float = 0.0
 var target_intensity: float = 0.0
 var intensity_decay: float = 0.3  # How fast intensity drops
 
+
+# === FALLBACK PLAYERS (when SoundManager addon is not available) ===
+var _music_player: AudioStreamPlayer
+var _ambient_player: AudioStreamPlayer
+var _sfx_players: Array = []
+const MAX_SFX_PLAYERS = 12
+
+
+# === LIFECYCLE ===
+
 func _ready() -> void:
 	_setup_buses()
-	_setup_players()
 	_load_audio_streams()
 	_load_settings()
+	_setup_sound_manager()
 	print("[GameAudioManager] Ready")
 
 
 func _setup_buses() -> void:
+	# Ensure buses exist for SoundManager auto-detection and fallback
 	if AudioServer.get_bus_index("Master") == -1:
 		AudioServer.add_bus(0)
 		AudioServer.set_bus_name(0, "Master")
@@ -92,44 +113,40 @@ func _setup_buses() -> void:
 	if AudioServer.get_bus_index("Ambient") == -1:
 		AudioServer.add_bus(4)
 		AudioServer.set_bus_name(4, "Ambient")
-	
+
 	AudioServer.set_bus_volume_db(0, _to_db(master_volume))
 	AudioServer.set_bus_volume_db(1, _to_db(music_volume))
 	AudioServer.set_bus_volume_db(2, _to_db(sfx_volume))
 	AudioServer.set_bus_volume_db(4, _to_db(ambient_volume))
 
 
-func _setup_players() -> void:
-	music_player = AudioStreamPlayer.new()
-	music_player.bus = "Music"
-	add_child(music_player)
-	
-	ambient_player = AudioStreamPlayer.new()
-	ambient_player.bus = "Ambient"
-	add_child(ambient_player)
-	
-	# Second ambient player for crossfading between environments
-	ambient_player2 = AudioStreamPlayer.new()
-	ambient_player2.bus = "Ambient"
-	add_child(ambient_player2)
-	
-	for i in range(MAX_SFX_PLAYERS):
-		var player = AudioStreamPlayer.new()
-		player.bus = "SFX"
-		add_child(player)
-		sfx_players.append(player)
+func _setup_sound_manager() -> void:
+	# Try to get SoundManager singleton (registered by addon plugin)
+	if Engine.has_singleton("SoundManager"):
+		sound_manager = Engine.get_singleton("SoundManager")
+		# Configure ambient sounds bus to use our "Ambient" bus
+		# (SoundManager's ambient player looks for ["Sounds", "SFX"] by default)
+		sound_manager.set_default_ambient_sound_bus("Ambient")
+		# Sync volumes
+		sound_manager.set_music_volume(music_volume)
+		sound_manager.set_sound_volume(sfx_volume)
+		sound_manager.set_ambient_sound_volume(ambient_volume)
+		print("[GameAudioManager] SoundManager addon integrated")
+	else:
+		print("[GameAudioManager] SoundManager addon not found, using fallback players")
 
+
+# === STREAM LOADING ===
 
 func _load_audio_streams() -> void:
-	# Load from disk (fallback to procedural if missing)
 	var dir = "res://audio/music/"
 	menu_music_stream = _load_stream(dir + "menu_music.mp3")
 	game_music_stream = _load_stream(dir + "game_music.mp3")
 	boss_music_stream = _load_stream(dir + "music_boss.ogg")
 	menu_alt_music_stream = _load_stream(dir + "music_menu_alt.ogg")
-	
+
 	dir = "res://audio/sfx/"
-	click_stream = _load_stream(dir + "click.wav")
+click_stream = _load_stream(dir + "click.wav")
 	zombie_reach_stream = _load_stream(dir + "zombie_reach.wav")
 	eat_stream = _load_stream(dir + "eat.wav")
 	frenzy_stream = _load_stream(dir + "frenzy.wav")
@@ -139,7 +156,7 @@ func _load_audio_streams() -> void:
 	hurt_stream = _load_stream(dir + "hurt.wav")
 	step_stream = _load_stream(dir + "step.wav")
 	wave_hit_stream = _load_stream(dir + "wave_hit.wav")
-	
+
 	# New SFX
 	zombie_growl_stream = _load_stream(dir + "sfx_zombie_growl.wav")
 	zombie_hit_stream = _load_stream(dir + "sfx_zombie_hit.wav")
@@ -147,7 +164,7 @@ func _load_audio_streams() -> void:
 	explosion_stream = _load_stream(dir + "sfx_explosion.wav")
 	victory_stream = _load_stream(dir + "sfx_victory.wav")
 	defeat_stream = _load_stream(dir + "sfx_defeat.wav")
-	
+
 	# Load ambient layer (8 env tracks)
 	ambient_wind_stream = _load_stream("res://audio/ambient/wind.wav")
 	ambient_scenes["hospital"] = _load_stream("res://audio/ambient/amb_hospital.wav")
@@ -161,7 +178,6 @@ func _load_audio_streams() -> void:
 func _load_stream(path: String) -> AudioStream:
 	if ResourceLoader.exists(path):
 		return load(path)
-	# Try procedural fallback
 	return _generate_fallback(path)
 
 
@@ -171,11 +187,11 @@ func _generate_fallback(path: String) -> AudioStreamWAV:
 	stream.format = AudioStreamWAV.FORMAT_16_BITS
 	stream.mix_rate = 44100
 	stream.stereo = false
-	
+
 	var data = PackedByteArray()
 	var duration = 0.2
 	var freq = 440.0
-	
+
 	if "click" in path:
 		freq = 800.0
 		duration = 0.08
@@ -195,7 +211,7 @@ func _generate_fallback(path: String) -> AudioStreamWAV:
 	else:
 		freq = 440.0
 		duration = 0.2
-	
+
 	var sample_count = int(44100 * duration)
 	for i in range(sample_count):
 		var t = float(i) / 44100.0
@@ -204,54 +220,54 @@ func _generate_fallback(path: String) -> AudioStreamWAV:
 		sample *= decay
 		var int_sample = int(clamp(sample, -1.0, 1.0) * 32767)
 		data.append_array(_int16_to_bytes(int_sample))
-	
+
 	stream.data = data
 	return stream
 
 
-# ── PUBLIC API ─────────────────────────────────────────────────
+# === PUBLIC API ===
 
 func play_music(stream: AudioStreamWAV = null) -> void:
 	if not stream:
 		return
-	if music_player.stream == stream and music_player.playing:
-		return
-	music_player.stream = stream
-	music_player.play()
+	if sound_manager:
+		sound_manager.play_music(stream)
+	else:
+		_play_fallback_music(stream)
 
 
 func stop_music() -> void:
-	music_player.stop()
+	if sound_manager:
+		sound_manager.stop_music()
+	else:
+		_stop_fallback_music()
 
 
 func play_ambient(stream: AudioStreamWAV = null) -> void:
 	if not stream:
 		return
-	ambient_player.stream = stream
-	ambient_player.play()
+	if sound_manager:
+		sound_manager.play_ambient_sound(stream)
+	else:
+		_play_fallback_ambient(stream)
 
 
 func stop_ambient() -> void:
-	ambient_player.stop()
+	if sound_manager:
+		sound_manager.stop_all_ambient_sounds()
+	else:
+		_stop_fallback_ambient()
 
 
 func play_sfx(stream: AudioStreamWAV = null, volume_db: float = 0.0, pitch_scale: float = 1.0) -> void:
 	if not stream:
 		return
-	
-	for player in sfx_players:
-		if not player.playing:
-			player.stream = stream
+	if sound_manager:
+		var player = sound_manager.play_sound_with_pitch(stream, pitch_scale)
+		if player:
 			player.volume_db = volume_db
-			player.pitch_scale = pitch_scale
-			player.play()
-			return
-	
-	# All busy — steal oldest with lowest volume
-	sfx_players[0].stream = stream
-	sfx_players[0].volume_db = volume_db
-	sfx_players[0].pitch_scale = pitch_scale
-	sfx_players[0].play()
+	else:
+		_play_fallback_sfx(stream, volume_db, pitch_scale)
 
 
 func play_sfx_varied(stream: AudioStreamWAV = null, volume_range: float = 3.0, pitch_range: float = 0.1) -> void:
@@ -259,8 +275,6 @@ func play_sfx_varied(stream: AudioStreamWAV = null, volume_range: float = 3.0, p
 	var pitch = 1.0 + randf_range(-pitch_range, pitch_range)
 	play_sfx(stream, vol_db, pitch)
 
-
-# ── CONVENIENCE METHODS ───────────────────────────────────────
 
 func play_menu_music() -> void:
 	play_music(menu_music_stream)
@@ -310,28 +324,31 @@ func play_wave_hit() -> void:
 	play_sfx(wave_hit_stream)
 
 
-# ── NEW SFX ───────────────────────────────────────────────────
-
 func play_zombie_growl() -> void:
 	play_sfx(zombie_growl_stream, -4.0, 0.9 + randf_range(-0.1, 0.1))
+
 
 func play_zombie_hit() -> void:
 	play_sfx(zombie_hit_stream, -2.0, 0.85 + randf_range(-0.15, 0.15))
 
+
 func play_powerup() -> void:
 	play_sfx(powerup_stream, -1.0, 1.0 + randf_range(-0.05, 0.05))
+
 
 func play_explosion() -> void:
 	play_sfx(explosion_stream, 0.0, 0.95 + randf_range(-0.1, 0.1))
 
+
 func play_victory() -> void:
 	play_sfx(victory_stream, -2.0, 1.0)
+
 
 func play_defeat() -> void:
 	play_sfx(defeat_stream, -1.0, 0.95)
 
 
-# ── AMBIENT LAYER SYSTEM ──────────────────────────────────────
+# === AMBIENT LAYER SYSTEM ===
 
 func play_ambient_for(scene_name: String) -> void:
 	"""Play ambient track for a specific environment scene.
@@ -339,37 +356,30 @@ func play_ambient_for(scene_name: String) -> void:
 	if current_ambient_scene == scene_name:
 		return
 	current_ambient_scene = scene_name
-	
+
 	if ambient_scenes.has(scene_name):
-		# Crossfade: swap which player is active
 		var new_stream = ambient_scenes[scene_name]
-		if ambient_player.playing and ambient_player.stream == new_stream:
+		if new_stream == null:
 			return
-		if ambient_player2.playing and ambient_player2.stream == new_stream:
-			return
-		
-		# Play on the inactive player, then crossfade
-		var active_player = ambient_player
-		var inactive_player = ambient_player2
-		if ambient_player2.playing:
-			active_player = ambient_player2
-			inactive_player = ambient_player
-		
-		inactive_player.stream = new_stream
-		inactive_player.volume_db = -80.0
-		inactive_player.play()
-		
-		# Simple 1-second crossfade via tween would go here
-		# For now, just swap immediately
-		active_player.stop()
+		if sound_manager:
+			# Fade out current ambient, fade in new one (crossfade)
+			sound_manager.stop_all_ambient_sounds(0.5)
+			sound_manager.play_ambient_sound(new_stream, 0.5)
+		else:
+			_play_ambient_for_fallback(scene_name)
 	else:
 		# Fallback to generic wind ambient
-		if ambient_player.stream != ambient_wind_stream:
-			ambient_player.stream = ambient_wind_stream
-			ambient_player.play()
+		if sound_manager:
+			sound_manager.stop_all_ambient_sounds(0.3)
+			sound_manager.play_ambient_sound(ambient_wind_stream, 0.3)
+		else:
+			var player = _get_fallback_ambient_player()
+			if player.stream != ambient_wind_stream:
+				player.stream = ambient_wind_stream
+				player.play()
 
 
-# ── DYNAMIC MUSIC SYSTEM ──────────────────────────────────────
+# === DYNAMIC MUSIC SYSTEM ===
 
 func set_intensity(value: float) -> void:
 	target_intensity = clamp(value, 0.0, 1.0)
@@ -378,15 +388,15 @@ func set_intensity(value: float) -> void:
 func _process(delta: float) -> void:
 	# Smoothly interpolate music intensity
 	current_intensity = lerp(current_intensity, target_intensity, delta * 2.0)
-	
+
 	# Decay target intensity over time (game gets calmer)
 	target_intensity = max(0.0, target_intensity - intensity_decay * delta)
-	
+
 	# Could crossfade between calm/intense music layers here
-	# music_player.volume_db = lerp(-80, 0, current_intensity)
+	# This is handled by SoundManager's music player if available
 
 
-# ── HELPERS ───────────────────────────────────────────────────
+# === HELPERS ===
 
 func _to_db(linear: float) -> float:
 	if linear <= 0.0:
@@ -415,3 +425,87 @@ func _save_settings() -> void:
 	config.set_value("audio", "music", music_volume)
 	config.set_value("audio", "sfx", sfx_volume)
 	config.save("user://audio_settings.cfg")
+
+
+# === FALLBACK IMPLEMENTATIONS ===
+
+func _play_fallback_music(stream: AudioStreamWAV) -> void:
+	if not stream:
+		return
+	if _music_player == null:
+		_music_player = AudioStreamPlayer.new()
+		_music_player.bus = "Music"
+		add_child(_music_player)
+	if _music_player.stream == stream and _music_player.playing:
+		return
+	_music_player.stream = stream
+	_music_player.play()
+
+
+func _stop_fallback_music() -> void:
+	if _music_player:
+		_music_player.stop()
+
+
+func _play_fallback_ambient(stream: AudioStreamWAV) -> void:
+	if not stream:
+		return
+	if _ambient_player == null:
+		_ambient_player = AudioStreamPlayer.new()
+		_ambient_player.bus = "Ambient"
+		add_child(_ambient_player)
+	_ambient_player.stream = stream
+	_ambient_player.play()
+
+
+func _stop_fallback_ambient() -> void:
+	if _ambient_player:
+		_ambient_player.stop()
+
+
+func _play_fallback_sfx(stream: AudioStreamWAV, volume_db: float, pitch_scale: float) -> void:
+	if not stream:
+		return
+	if _sfx_players.size() == 0:
+		_setup_fallback_sfx_players()
+
+	for player in _sfx_players:
+		if not player.playing:
+			player.stream = stream
+			player.volume_db = volume_db
+			player.pitch_scale = pitch_scale
+			player.play()
+			return
+
+	# All busy — steal oldest
+	_sfx_players[0].stream = stream
+	_sfx_players[0].volume_db = volume_db
+	_sfx_players[0].pitch_scale = pitch_scale
+	_sfx_players[0].play()
+
+
+func _setup_fallback_sfx_players() -> void:
+	for i in range(MAX_SFX_PLAYERS):
+		var player = AudioStreamPlayer.new()
+		player.bus = "SFX"
+		add_child(player)
+		_sfx_players.append(player)
+
+
+func _get_fallback_ambient_player() -> AudioStreamPlayer:
+	if _ambient_player == null:
+		_ambient_player = AudioStreamPlayer.new()
+		_ambient_player.bus = "Ambient"
+		add_child(_ambient_player)
+	return _ambient_player
+
+
+func _play_ambient_for_fallback(scene_name: String) -> void:
+	var new_stream = ambient_scenes[scene_name]
+	if new_stream == null:
+		return
+	var player = _get_fallback_ambient_player()
+	if player.stream == new_stream and player.playing:
+		return
+	player.stream = new_stream
+	player.play()
