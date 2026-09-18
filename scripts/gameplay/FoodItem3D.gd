@@ -76,6 +76,14 @@ func _update_appearance() -> void:
 			mat.albedo_color = Color(0.95, 0.93, 0.88)
 		"takis":
 			mat.albedo_color = Color(0.9, 0.45, 0.15)
+		"medkit":
+			mat.albedo_color = Color(0.95, 0.95, 0.98)
+		"coffee":
+			mat.albedo_color = Color(0.2, 0.2, 0.25)
+		"battery":
+			mat.albedo_color = Color(0.3, 0.75, 0.4)
+		"ammo":
+			mat.albedo_color = Color(0.5, 0.6, 0.4)
 		_:
 			mat.albedo_color = Color(0.8, 0.8, 0.8)
 

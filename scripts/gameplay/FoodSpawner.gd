@@ -14,6 +14,10 @@ var food_pizza_scene = preload("res://scenes/world/food_pizza.tscn")
 var food_fries_scene = preload("res://scenes/world/food_fries.tscn")
 var food_sushi_scene = preload("res://scenes/world/food_sushi.tscn")
 var food_takis_scene = preload("res://scenes/world/food_takis.tscn")
+var food_medkit_scene = preload("res://scenes/world/food_medkit.tscn")
+var food_coffee_scene = preload("res://scenes/world/food_coffee.tscn")
+var food_battery_scene = preload("res://scenes/world/food_battery.tscn")
+var food_ammo_scene = preload("res://scenes/world/food_ammo.tscn")
 
 var player: Node3D = null
 var active_food: Array = []
@@ -55,7 +59,11 @@ func _spawn_random_food() -> void:
 		food_pizza_scene,
 		food_fries_scene,
 		food_sushi_scene,
-		food_takis_scene
+		food_takis_scene,
+		food_medkit_scene,
+		food_coffee_scene,
+		food_battery_scene,
+		food_ammo_scene
 	]
 	
 	var food = scenes[randi() % scenes.size()].instantiate()
