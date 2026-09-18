@@ -168,6 +168,9 @@ script = ExtResource("3")
 [node name="SpawnTimer" type="Timer" parent="ZombieSpawner"]
 one_shot = false
 
+[node name="LootTable" type="Node" parent="ZombieSpawner"]
+script = ExtResource("19")
+
 [node name="FoodSpawner" type="Node3D" parent="."]
 script = ExtResource("4")
 
@@ -343,9 +346,6 @@ script = ExtResource("17")
 
 [node name="WeatherSystem" type="Node3D" parent="."]
 script = ExtResource("18")
-
-[node name="LootTable" type="Node" parent="."]
-script = ExtResource("19")
 
 [node name="DamagePopup" type="Node3D" parent="."]
 script = ExtResource("20")

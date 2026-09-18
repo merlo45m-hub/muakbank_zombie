@@ -4,8 +4,20 @@ class_name LootTable
 ## LootTable — Weighted random loot drops
 ## Attach to enemies or spawners. Drops items based on weighted probabilities.
 
-@export var drop_chance: float = 0.3
-@export var loot_items: Array[Dictionary] = []  # [{item: PackedScene, weight: float, count: int}]
+@export var drop_chance: float = 0.35
+@export var loot_items: Array[Dictionary] = []
+
+func _ready() -> void:
+	# Default loot: the common food pickups, weighted
+	if loot_items.is_empty():
+		loot_items = [
+			{"item": preload("res://scenes/world/food_burger.tscn"), "weight": 3.0, "count": 1},
+			{"item": preload("res://scenes/world/food_pizza.tscn"), "weight": 2.5, "count": 1},
+			{"item": preload("res://scenes/world/food_soda.tscn"), "weight": 2.0, "count": 1},
+			{"item": preload("res://scenes/world/food_fries.tscn"), "weight": 2.0, "count": 1},
+			{"item": preload("res://scenes/world/food_coffee.tscn"), "weight": 1.5, "count": 1},
+			{"item": preload("res://scenes/world/food_medkit.tscn"), "weight": 0.5, "count": 1},
+		]
 
 func roll_drops() -> Array:
 	var drops: Array = []

@@ -241,9 +241,17 @@ func _on_zombie_died(zombie: Node3D, zombie_type: String = "zombie") -> void:
 	if not zombie:
 		return
 	active_zombies.erase(zombie)
+	# Drop loot at the zombie's position before returning it to the pool
+	_drop_loot(zombie.global_transform.origin, zombie_type)
 	_return_to_pool(zombie)
 	emit_signal("zombie_killed", zombie_type)
 	print("[ZombieSpawner] Zombie killed: ", zombie_type, ". Active: ", active_zombies.size())
+
+func _drop_loot(world_pos: Vector3, zombie_type: String) -> void:
+	"""Spawn a food pickup at the death position using the LootTable node if present."""
+	var loot_table = get_node_or_null("LootTable")
+	if loot_table and loot_table.has_method("spawn_drops"):
+		loot_table.spawn_drops(world_pos)
 
 
 # ──────────────────────────────────────────────
