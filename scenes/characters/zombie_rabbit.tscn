@@ -18,8 +18,7 @@ shape = SubResource("SphereShape3D_rabbit")
 
 [node name="Mesh" type="Node3D" parent="."]
 
-[node name="Model" parent="Mesh"]
-scene = ExtResource("model")
+[node name="Model" parent="Mesh" instance=ExtResource("model")]
 
 [node name="DetectionArea" type="Area3D" parent="."]
 collision_layer = 8

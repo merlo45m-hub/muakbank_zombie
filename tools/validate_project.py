@@ -51,6 +51,12 @@ for path in sorted(tscn_files):
     for bad in ("PointLight3D", "KinematicBody", 'type="Spatial"'):
         if bad in content:
             issues.append(f"GODOT3 TYPE ({bad}): {r}")
+    # Godot 3 scene instancing: `scene = ExtResource(...)` / `type=""` on a node.
+    # Godot 4 uses `instance=ExtResource("id")` inside the [node ...] header.
+    if "scene = ExtResource" in content:
+        issues.append(f"GODOT3 INSTANCING (scene = ExtResource): {r}")
+    if re.search(r'^\[node [^\]]*type=""', content, re.M):
+        issues.append(f'GODOT3 INSTANCING (type="" on node): {r}')
     for m in re.finditer(r'path="(res://[^"]+)"', content):
         p = m.group(1)
         if not os.path.exists(os.path.join(PROJ, p[6:])):
