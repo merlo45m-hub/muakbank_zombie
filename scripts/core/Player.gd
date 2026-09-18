@@ -345,6 +345,12 @@ func _perform_attack() -> void:
 		if dist < hit_range:
 			if enemy.has_method("take_damage"):
 				var damage: int = attack_damage
+				
+				# Use the equipped weapon's damage if a WeaponSystem is present
+				if weapon_system and weapon_system.has_method("get_current_weapon_data"):
+					var wdata = weapon_system.get_current_weapon_data()
+					if wdata and wdata.has("damage") and int(wdata["damage"]) > 0:
+						damage = int(wdata["damage"])
 
 				# Apply weapon multiplier from character stats
 				if character_stats:
@@ -477,6 +483,11 @@ func eat(food_type: String, amount: int) -> void:
 
 func equip_weapon(weapon_name: String) -> void:
 	current_weapon = weapon_name
+	# Forward to the WeaponSystem so the actual weapon stats change
+	if weapon_system and weapon_system.has_method("equip_weapon"):
+		weapon_system.equip_weapon(weapon_name)
+		if weapon_system.has_method("add_weapon_to_inventory"):
+			weapon_system.add_weapon_to_inventory(weapon_name)
 	emit_signal("picked_up_weapon", weapon_name)
 	print("[Player] Equipped: ", weapon_name)
 

@@ -17,6 +17,12 @@ func _ready() -> void:
 			{"item": preload("res://scenes/world/food_fries.tscn"), "weight": 2.0, "count": 1},
 			{"item": preload("res://scenes/world/food_coffee.tscn"), "weight": 1.5, "count": 1},
 			{"item": preload("res://scenes/world/food_medkit.tscn"), "weight": 0.5, "count": 1},
+			# Rare weapon drops
+			{"item": preload("res://scenes/world/weapon_pickup_bat.tscn"), "weight": 0.6, "count": 1},
+			{"item": preload("res://scenes/world/weapon_pickup_knife.tscn"), "weight": 0.5, "count": 1},
+			{"item": preload("res://scenes/world/weapon_pickup_axe.tscn"), "weight": 0.3, "count": 1},
+			{"item": preload("res://scenes/world/weapon_pickup_lightsaber.tscn"), "weight": 0.15, "count": 1},
+			{"item": preload("res://scenes/world/weapon_pickup_firegun.tscn"), "weight": 0.1, "count": 1},
 		]
 
 func roll_drops() -> Array:
