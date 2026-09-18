@@ -1,4 +1,4 @@
-gd_scene load_steps=12 format=3
+[gd_scene load_steps=12 format=3]
 
 [sub_resource type="BoxMesh" id="CemeteryFloor"]
 size = Vector3(40, 0.2, 40)
