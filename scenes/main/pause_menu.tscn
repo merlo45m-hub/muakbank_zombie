@@ -27,8 +27,8 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="LabelSettings" id="TitleSettings"]
-font_sizes/font_size = 48
-font_colors/font_color = Color(0.8, 0.15, 0.1, 1.0)
+font_size = 48
+font_color = Color(0.8, 0.15, 0.1, 1.0)
 outline_size = 3
 outline_color = Color(0.1, 0.02, 0.05, 1.0)
 
@@ -75,28 +75,28 @@ layout_mode = 2
 text = "▶ RESUME"
 custom_minimum_size = Vector2(200, 50)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_sizes/font_size = 24
+theme_overrides/font_size = 24
 
 [node name="RestartBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
 text = "🔄 RESTART"
 custom_minimum_size = Vector2(200, 50)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_sizes/font_size = 24
+theme_overrides/font_size = 24
 
 [node name="SettingsBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
 text = "⚙ SETTINGS"
 custom_minimum_size = Vector2(200, 50)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_sizes/font_size = 24
+theme_overrides/font_size = 24
 
 [node name="MenuBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
 text = "🏠 MAIN MENU"
 custom_minimum_size = Vector2(200, 50)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_sizes/font_size = 24
+theme_overrides/font_size = 24
 
 [node name="Spacer3" type="Control" parent="Panel/VBox"]
 layout_mode = 2

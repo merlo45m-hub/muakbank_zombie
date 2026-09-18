@@ -377,7 +377,7 @@ metallic = 0.6
 size = Vector3(5, 5, 0.25)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
-size = Vector3(120, 120)
+size = Vector2(120, 120)
 
 [sub_resource type="StandardMaterial3D" id="FloorPlanarMaterial"]
 albedo_color = Color(0.32, 0.3, 0.28, 1.0)

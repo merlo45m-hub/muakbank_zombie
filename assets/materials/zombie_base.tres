@@ -12,5 +12,3 @@ emission_energy_multiplier = 2.0
 emission_texture = null
 normal_map_enabled = false
 ambient_light_usage = 2
-[vertex shaders]
-fragment shaders

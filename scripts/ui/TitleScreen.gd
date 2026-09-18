@@ -45,7 +45,7 @@ func _ready() -> void:
 func _update_stats():
 	"""Show player's saved stats."""
 	high_score_label.text = "🏆 High Score: %d" % Save.get_high_score()
-	total_fed_label.text = "🧟 Total Zombies Fed: %d" % Save.get_total_zombies_fed()
+	total_fed_label.text = "🧟 Total Fed: %d" % Save.get_total_zombies_fed()
 
 
 func _animate_title():

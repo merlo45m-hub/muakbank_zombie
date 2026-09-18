@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [sub_resource type="BoxMesh" id="CemeteryFloor"]
 size = Vector3(40, 0.2, 40)
@@ -35,7 +35,20 @@ albedo_color = Color(0.3, 0.28, 0.25, 0.12)
 cull_mode = 2
 no_depth_test = true
 
+[sub_resource type="Environment" id="TitleEnv"]
+background_mode = 1
+background_color = Color(0.05, 0.06, 0.09, 1.0)
+ambient_light_source = 2
+ambient_light_color = Color(0.38, 0.4, 0.48, 1.0)
+ambient_light_energy = 0.7
+fog_enabled = true
+fog_light_color = Color(0.16, 0.17, 0.22, 1.0)
+fog_density = 0.015
+
 [node name="TitleBackground" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("TitleEnv")
 
 [node name="Camera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.866, 0.5, 0, -0.5, 0.866, 0, 3, 8)
@@ -97,13 +110,13 @@ material_override = SubResource("FogMaterial")
 [node name="Moon" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 10, 15, 8)
 light_color = Color(0.7, 0.75, 0.85, 1.0)
-light_energy_multiplier = 0.8
+light_energy_multiplier = 1.4
 shadow_enabled = true
 
 [node name="Ambient" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 light_color = Color(0.4, 0.35, 0.3, 1.0)
-light_energy_multiplier = 0.3
-omni_range = 30.0
+light_energy_multiplier = 0.8
+omni_range = 40.0
 
 [node name="EnemyPositions" type="Node3D" parent="."]

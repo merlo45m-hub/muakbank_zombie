@@ -36,7 +36,7 @@ theme_override_constants/separation = 20
 [node name="TitleLabel" type="Label" parent="PanelContainer/VBoxMain"]
 layout_mode = 2
 text = "SETTINGS"
-theme_override_font_sizes/font_size = 48
+theme_override_font_size = 48
 horizontal_alignment = 1
 
 [node name="Separator1" type="HSeparator" parent="PanelContainer/VBoxMain"]
@@ -49,7 +49,7 @@ theme_override_constants/separation = 12
 [node name="AudioLabel" type="Label" parent="PanelContainer/VBoxMain/AudioSection"]
 layout_mode = 2
 text = "AUDIO"
-theme_override_font_sizes/font_size = 20
+theme_override_font_size = 20
 theme_override_colors/font_color = Color(1.0, 0.2, 0.5, 1.0)
 
 [node name="MasterContainer" type="HBoxContainer" parent="PanelContainer/VBoxMain/AudioSection"]
@@ -137,7 +137,7 @@ theme_override_constants/separation = 12
 [node name="GameplayLabel" type="Label" parent="PanelContainer/VBoxMain/GameplaySection"]
 layout_mode = 2
 text = "GAMEPLAY"
-theme_override_font_sizes/font_size = 20
+theme_override_font_size = 20
 theme_override_colors/font_color = Color(1.0, 0.2, 0.5, 1.0)
 
 [node name="DifficultyContainer" type="HBoxContainer" parent="PanelContainer/VBoxMain/GameplaySection"]
@@ -169,14 +169,14 @@ theme_override_constants/separation = 12
 [node name="DataLabel" type="Label" parent="PanelContainer/VBoxMain/DataSection"]
 layout_mode = 2
 text = "DATA"
-theme_override_font_sizes/font_size = 20
+theme_override_font_size = 20
 theme_override_colors/font_color = Color(1.0, 0.2, 0.5, 1.0)
 
 [node name="ResetBtn" type="Button" parent="PanelContainer/VBoxMain/DataSection"]
 layout_mode = 2
 text = "🔄 RESET PROGRESS"
 custom_minimum_size = Vector2(0, 40)
-theme_override_font_sizes/font_size = 16
+theme_override_font_size = 16
 
 [node name="Spacer" type="Control" parent="PanelContainer/VBoxMain"]
 layout_mode = 2
@@ -186,7 +186,7 @@ size_flags_vertical = 3
 layout_mode = 2
 text = "⬅ BACK"
 custom_minimum_size = Vector2(0, 50)
-theme_override_font_sizes/font_size = 20
+theme_override_font_size = 20
 
 [connection signal="value_changed" from="PanelContainer/VBoxMain/AudioSection/MasterContainer/MasterSlider" to="." method="_on_master_changed"]
 [connection signal="value_changed" from="PanelContainer/VBoxMain/AudioSection/MusicContainer/MusicSlider" to="." method="_on_music_changed"]

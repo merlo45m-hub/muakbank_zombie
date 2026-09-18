@@ -114,7 +114,7 @@ func _get_pool_for_type(zombie_type: String) -> Dictionary:
 	for key in pools.keys():
 		var entry = pools[key]
 		if zombie_type in entry["types"]:
-		return entry
+			return entry
 	return {}
 
 

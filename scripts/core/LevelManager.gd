@@ -2,7 +2,6 @@
 ## Maps level numbers to environment scenes, names, and difficulty
 ## Registered as "Level" in autoload
 
-class_name LevelManager
 extends Node
 
 # Level → environment scene mapping

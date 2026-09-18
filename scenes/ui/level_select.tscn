@@ -20,7 +20,7 @@ theme_override_constants/separation = 16
 [node name="TitleLabel" type="Label" parent="VBoxMain"]
 layout_mode = 2
 text = "SELECT LEVEL"
-theme_override_font_sizes/font_size = 48
+theme_override_font_size = 48
 theme_override_colors/font_color = Color(1.0, 0.2, 0.5, 1.0)
 horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 60)
@@ -45,12 +45,12 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 text = "◀ PREV"
 custom_minimum_size = Vector2(100, 40)
-theme_overrides/font_sizes/font_size = 16
+theme_overrides/font_size = 16
 
 [node name="PageLabel" type="Label" parent="VBoxMain/PaginationContainer"]
 layout_mode = 2
 text = "Page 1"
-theme_override_font_sizes/font_size = 18
+theme_override_font_size = 18
 custom_minimum_size = Vector2(80, 0)
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -59,7 +59,7 @@ vertical_alignment = 1
 layout_mode = 2
 text = "NEXT ▶"
 custom_minimum_size = Vector2(100, 40)
-theme_overrides/font_sizes/font_size = 16
+theme_overrides/font_size = 16
 
 [node name="ButtonContainer" type="HBoxContainer" parent="VBoxMain"]
 layout_mode = 2
@@ -70,7 +70,7 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "⬅ BACK"
 custom_minimum_size = Vector2(150, 50)
-theme_overrides/font_sizes/font_size = 20
+theme_overrides/font_size = 20
 
 [connection signal="pressed" from="VBoxMain/PaginationContainer/PrevBtn" to="." method="_on_prev"]
 [connection signal="pressed" from="VBoxMain/PaginationContainer/NextBtn" to="." method="_on_next"]

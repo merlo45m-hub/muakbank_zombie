@@ -57,6 +57,15 @@ for path in sorted(tscn_files):
         issues.append(f"GODOT3 INSTANCING (scene = ExtResource): {r}")
     if re.search(r'^\[node [^\]]*type=""', content, re.M):
         issues.append(f'GODOT3 INSTANCING (type="" on node): {r}')
+    # Malformed vector constructors (e.g. PlaneMesh size = Vector3(a, b) needs Vector2)
+    for ln, line in enumerate(content.split("\n"), 1):
+        for ctor, want in (("Vector3", 3), ("Vector2", 2)):
+            for m in re.finditer(rf'{ctor}\(([^)]*)\)', line):
+                args = [a for a in m.group(1).split(",") if a.strip()]
+                if args and len(args) != want and not any(
+                        x in args[0] for x in ("UP", "ZERO", "ONE", "INF", "DOWN", "LEFT", "RIGHT",
+                                               "FORWARD", "BACK", "AXIS")):
+                    issues.append(f"MALFORMED {ctor} ({len(args)} args) at {r}:{ln}")
     for m in re.finditer(r'path="(res://[^"]+)"', content):
         p = m.group(1)
         if not os.path.exists(os.path.join(PROJ, p[6:])):
@@ -64,6 +73,19 @@ for path in sorted(tscn_files):
     nodes = [l for l in lines if l.startswith("[node")]
     if nodes and "parent=" in nodes[0]:
         issues.append(f"NO ROOT NODE (first node has parent=): {r}")
+    # Declarations must precede the first [node], and ext_resource before sub_resource
+    first_node = content.find("\n[node")
+    if first_node != -1:
+        tail = content[first_node:]
+        if "\n[ext_resource" in tail or "\n[sub_resource" in tail:
+            issues.append(f"DECLARATION AFTER FIRST NODE: {r}")
+    tags = [l.strip() for l in content.split("\n") if l.startswith("[")]
+    first_sub = next((i for i, t in enumerate(tags) if t.startswith("[sub_resource")), None)
+    if first_sub is not None:
+        late_ext = [t for i, t in enumerate(tags)
+                    if t.startswith("[ext_resource") and i > first_sub]
+        if late_ext:
+            issues.append(f"ext_resource AFTER sub_resource: {r}")
 
 # ── Scripts ───────────────────────────────────────────────────
 gd_files = walk_suffix('.gd')
@@ -85,9 +107,46 @@ for path in sorted(gd_files):
                 "KinematicBody", "type=\"Spatial\""):
         if bad in content:
             issues.append(f"GODOT3 API ({bad}): {r}")
+    # Block openers must have an indented body
+    glines = content.split("\n")
+    for i, line in enumerate(glines):
+        st = line.strip()
+        if not st or st.startswith("#"):
+            continue
+        if st.endswith(":"):
+            indent = len(line) - len(line.lstrip("\t"))
+            j = i + 1
+            while j < len(glines) and (not glines[j].strip() or glines[j].strip().startswith("#")):
+                j += 1
+            if j < len(glines):
+                nxt = glines[j]
+                if len(nxt) - len(nxt.lstrip("\t")) <= indent:
+                    issues.append(f"EMPTY BLOCK at {r}:{i+1} ({st[:40]})")
+
+# ── Resources (.tres) ─────────────────────────────────────────
+tres_files = walk_suffix('.tres')
+for path in sorted(tres_files):
+    with open(path, errors='replace') as fh:
+        content = fh.read()
+    r = rel(path)
+    if not content.startswith("[gd_resource"):
+        issues.append(f"TRES NO HEADER: {r}")
+        continue
+    # Every ExtResource("N") must have a matching [ext_resource ... id="N"]
+    declared = set(re.findall(r'^\[ext_resource[^\]]*id="([^"]+)"', content, re.M))
+    used = set(re.findall(r'ExtResource\("([^"]+)"\)', content))
+    missing = used - declared
+    if missing:
+        issues.append(f"TRES UNDECLARED ext_resource {sorted(missing)}: {r}")
+    # No stray bracket-only lines other than known tags
+    for ln, line in enumerate(content.split("\n"), 1):
+        s = line.strip()
+        if s.startswith("[") and not re.match(
+                r'^\[(gd_resource|resource|ext_resource|sub_resource)', s):
+            issues.append(f"TRES JUNK TAG at {r}:{ln}: {s[:40]}")
 
 # ── Report ────────────────────────────────────────────────────
-print(f"Checked {len(tscn_files)} scenes, {len(gd_files)} scripts")
+print(f"Checked {len(tscn_files)} scenes, {len(gd_files)} scripts, {len(tres_files)} resources")
 print(f"ISSUES: {len(issues)}")
 for i in issues:
     print(" -", i)

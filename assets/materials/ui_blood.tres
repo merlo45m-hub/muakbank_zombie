@@ -15,5 +15,3 @@ ambient_light_usage = 0
 depth_draw_mode = 5
 transparent = true
 use_alpha_scissor = false
-[vertex shaders]
-fragment shaders

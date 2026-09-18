@@ -19,7 +19,6 @@ func _post_ready() -> void:
 	fade_duration = 0.8
 
 func _process(delta: float) -> void:
-	super._process(delta)
 	# Check enrage
 	if not is_enraged and health > 0 and float(health) <= float(max_health) * enrage_threshold:
 		_enrage()

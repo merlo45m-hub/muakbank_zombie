@@ -24,7 +24,7 @@ size_flags_vertical = 2
 [node name="TitleLabel" type="Label" parent="VBoxMain"]
 layout_mode = 2
 text = "GAME OVER"
-theme_override_font_sizes/font_size = 64
+theme_override_font_size = 64
 theme_override_colors/font_color = Color(1.0, 0.2, 0.2, 1.0)
 horizontal_alignment = 1
 
@@ -41,26 +41,26 @@ size_flags_horizontal = 4
 [node name="LikesLabel" type="Label" parent="VBoxMain/StatsContainer"]
 layout_mode = 2
 text = "❤ Likes: 0"
-theme_override_font_sizes/font_size = 24
+theme_override_font_size = 24
 horizontal_alignment = 1
 
 [node name="ZombiesLabel" type="Label" parent="VBoxMain/StatsContainer"]
 layout_mode = 2
 text = "🧟 Zombies Fed: 0"
-theme_override_font_sizes/font_size = 24
+theme_override_font_size = 24
 horizontal_alignment = 1
 
 [node name="HighScoreLabel" type="Label" parent="VBoxMain/StatsContainer"]
 layout_mode = 2
 text = "🏆 High Score: 0"
-theme_override_font_sizes/font_size = 24
+theme_override_font_size = 24
 horizontal_alignment = 1
 
 [node name="NewRecordLabel" type="Label" parent="VBoxMain/StatsContainer"]
 visible = false
 layout_mode = 2
 text = "🏆 NEW HIGH SCORE! 🏆"
-theme_override_font_sizes/font_size = 28
+theme_override_font_size = 28
 theme_override_colors/font_color = Color(1.0, 0.84, 0.0, 1.0)
 horizontal_alignment = 1
 
@@ -78,13 +78,13 @@ size_flags_horizontal = 4
 layout_mode = 2
 text = "🔄 PLAY AGAIN"
 custom_minimum_size = Vector2(200, 50)
-theme_overrides/font_sizes/font_size = 24
+theme_overrides/font_size = 24
 
 [node name="MenuBtn" type="Button" parent="VBoxMain/ButtonContainer"]
 layout_mode = 2
 text = "🏠 MAIN MENU"
 custom_minimum_size = Vector2(200, 50)
-theme_overrides/font_sizes/font_size = 24
+theme_overrides/font_size = 24
 
 [node name="Spacer4" type="Control" parent="VBoxMain"]
 layout_mode = 2

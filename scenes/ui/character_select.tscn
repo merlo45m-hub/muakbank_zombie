@@ -21,14 +21,14 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [sub_resource type="LabelSettings" id="TitleSettings"]
-font_sizes/font_size = 48
-font_colors/font_color = Color(0.8, 0.15, 0.1, 1.0)
+font_size = 48
+font_color = Color(0.8, 0.15, 0.1, 1.0)
 outline_size = 4
 outline_color = Color(0.1, 0.02, 0.05, 1.0)
 
 [sub_resource type="LabelSettings" id="NameSettings"]
-font_sizes/font_size = 20
-font_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
+font_size = 20
+font_color = Color(0.9, 0.9, 0.9, 1.0)
 outline_size = 2
 outline_color = Color(0.1, 0.1, 0.1, 1.0)
 
@@ -90,7 +90,7 @@ layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(120, 40)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_sizes/font_size = 18
+theme_overrides/font_size = 18
 
 [node name="DoctorCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
@@ -112,7 +112,7 @@ layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(120, 40)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_sizes/font_size = 18
+theme_overrides/font_size = 18
 
 [node name="NurseCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
@@ -134,7 +134,7 @@ layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(120, 40)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_sizes/font_size = 18
+theme_overrides/font_size = 18
 
 [node name="StreamerCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
@@ -156,7 +156,7 @@ layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(120, 40)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_sizes/font_size = 18
+theme_overrides/font_size = 18
 
 [node name="HunterCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
@@ -178,7 +178,7 @@ layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(120, 40)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_sizes/font_size = 18
+theme_overrides/font_size = 18
 
 [node name="Spacer3" type="Control" parent="VBoxMain"]
 layout_mode = 2
@@ -189,7 +189,7 @@ layout_mode = 2
 text = "⬅ BACK"
 custom_minimum_size = Vector2(150, 50)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_sizes/font_size = 20
+theme_overrides/font_size = 20
 
 [connection signal="pressed" from="VBoxMain/CharactersContainer/GamerCard/GamerBtn" to="." method="_on_gamer_selected"]
 [connection signal="pressed" from="VBoxMain/CharactersContainer/DoctorCard/DoctorBtn" to="." method="_on_doctor_selected"]

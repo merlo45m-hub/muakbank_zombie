@@ -31,7 +31,7 @@ var dead: bool = false          # Object-pool compatibility: must be false when 
 var pooled: bool = false       # True when managed by ZombieSpawner3D's pool — suppresses queue_free()
 
 # === VFN NAVIGATION ===
-var vfn_field: VFNField = null  # Reference to the active VFNField for vector-based movement
+var vfn_field = null  # Reference to the active VFNField (untyped: addon class may be absent)
 
 # === NODE REFS ===
 @onready var mesh: Node3D = $Mesh
@@ -236,7 +236,7 @@ func set_target(new_target: Node3D) -> void:
 		current_state = AIState.CHASE
 
 
-func set_vfn_field(field: VFNField) -> void:
+func set_vfn_field(field) -> void:
 	"""Inject a VectorFieldNavigation field for horde-style movement."""
 	vfn_field = field
 

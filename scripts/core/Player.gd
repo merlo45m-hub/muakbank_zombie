@@ -101,7 +101,7 @@ func _ready() -> void:
 
 	# When copying this character to a new project, the project may lack required
 	# input actions. Register them at runtime if missing (adapted from gdquest).
-	if not InputMap.has_action("move_left"):
+	if not InputMap.has_action("forward"):
 		_register_input_actions()
 
 	# Remember start position for respawn/reset
@@ -544,16 +544,17 @@ func _on_EnemyHitbox_body_entered(body: Node3D) -> void:
 
 func _register_input_actions() -> void:
 	const INPUT_ACTIONS: Dictionary = {
-		"move_left": KEY_A,
-		"move_right": KEY_D,
-		"move_up": KEY_W,
-		"move_down": KEY_S,
+		"left": KEY_A,
+		"right": KEY_D,
+		"forward": KEY_W,
+		"backward": KEY_S,
 		"jump": KEY_SPACE,
+		"sprint": KEY_SHIFT,
 		"attack": MOUSE_BUTTON_LEFT,
+		"special": KEY_G,
 		"aim": MOUSE_BUTTON_RIGHT,
 		"swap_weapons": KEY_TAB,
 		"pause": KEY_ESCAPE,
-		"special": KEY_G,
 		"camera_left": KEY_Q,
 		"camera_right": KEY_E,
 		"camera_up": KEY_R,

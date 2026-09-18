@@ -4,9 +4,9 @@
 
 [resource]
 script = ExtResource("1")
-character_id = "CHAR_ID"
-display_name = "CHAR_NAME"
-description = "CHAR_DESC"
+character_id = "gamer"
+display_name = "Gamer"
+description = "Balanced fighter with quick reflexes"
 max_health = 100
 max_stamina = 100
 move_speed = 5.0
@@ -20,10 +20,10 @@ critical_multiplier = 1.5
 damage_reduction = 0.0
 dodge_chance = 0.05
 knockback_resistance = 0.0
-special_ability = "heal"
-special_cooldown = 10.0
-special_duration = 3.0
+special_ability = "rage"
+special_cooldown = 12.0
+special_duration = 5.0
 food_healing_multiplier = 1.0
 weapon_damage_multiplier = 1.0
 ammo_efficiency = 1.0
-character_color = Color(1, 1, 1, 1)
+character_color = Color(0.3, 0.5, 0.9, 1)

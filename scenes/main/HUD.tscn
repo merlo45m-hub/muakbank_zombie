@@ -30,7 +30,7 @@ custom_minimum_size = Vector2(200, 0)
 [node name="HypeLabel" type="Label" parent="VBoxLeft/HypeContainer"]
 layout_mode = 2
 text = "🔥 HYPE"
-theme_override_font_sizes/font_size = 16
+theme_override_font_size = 16
 custom_minimum_size = Vector2(0, 24)
 
 [node name="HypeBar" type="GodotxHealthBarControl" parent="VBoxLeft/HypeContainer"]
@@ -47,7 +47,7 @@ custom_minimum_size = Vector2(200, 0)
 [node name="OverwhelmLabel" type="Label" parent="VBoxLeft/OverwhelmContainer"]
 layout_mode = 2
 text = "⚠ OVERWHELM"
-theme_override_font_sizes/font_size = 16
+theme_override_font_size = 16
 custom_minimum_size = Vector2(0, 24)
 
 [node name="OverwhelmBar" type="GodotxHealthBarControl" parent="VBoxLeft/OverwhelmContainer"]
@@ -70,14 +70,14 @@ theme_override_constants/separation = 8
 [node name="TimerLabel" type="Label" parent="VBoxRight"]
 layout_mode = 2
 text = "⏱ 3:00"
-theme_override_font_sizes/font_size = 20
+theme_override_font_size = 20
 horizontal_alignment = 2
 custom_minimum_size = Vector2(200, 32)
 
 [node name="LikesLabel" type="Label" parent="VBoxRight"]
 layout_mode = 2
 text = "❤ Likes: 0"
-theme_override_font_sizes/font_size = 18
+theme_override_font_size = 18
 horizontal_alignment = 2
 custom_minimum_size = Vector2(200, 28)
 
@@ -91,7 +91,7 @@ offset_top = -50.0
 offset_right = 200.0
 offset_bottom = 50.0
 text = ""
-theme_override_font_sizes/font_size = 32
+theme_override_font_size = 32
 theme_override_colors/font_color = Color(1.0, 0.84, 0.0, 1.0)
 horizontal_alignment = 1
 vertical_alignment = 1

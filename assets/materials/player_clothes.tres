@@ -9,5 +9,3 @@ specular = Color(0.1, 0.1, 0.1, 1.0)
 emission_enabled = false
 normal_map_enabled = false
 ambient_light_usage = 2
-[vertex shaders]
-fragment shaders

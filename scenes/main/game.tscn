@@ -76,15 +76,15 @@ roughness = 0.6
 metallic = 0.0
 
 [sub_resource type="StyleBoxFlat" id="ProgressBarBg"]
-bg_color = Color(0.1, 0.1, 0.1, 0.8)
-border_color = Color(0.3, 0.3, 0.3, 1.0)
+bg_color = Color(0.141, 0.118, 0.22, 0.9)
+border_color = Color(1.0, 0.176, 0.482, 0.7)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 
 [sub_resource type="StyleBoxFlat" id="ProgressBarFill"]
-bg_color = Color(1.0, 0.2, 0.5, 1.0)
+bg_color = Color(1.0, 0.176, 0.482, 1.0)
 
 [node name="Game" type="Node3D"]
 script = ExtResource("1")
@@ -196,8 +196,8 @@ custom_minimum_size = Vector2(200, 0)
 
 [node name="HypeLabel" type="Label" parent="HUD/VBoxLeft/HypeContainer"]
 layout_mode = 2
-text = "❤ HP 100/100"
-theme_override_font_sizes/font_size = 16
+text = "🔥 HYPE"
+theme_override_font_size = 16
 custom_minimum_size = Vector2(0, 24)
 
 [node name="HypeBar" type="GodotxHealthBarControl" parent="HUD/VBoxLeft/HypeContainer"]
@@ -213,8 +213,8 @@ custom_minimum_size = Vector2(200, 0)
 
 [node name="OverwhelmLabel" type="Label" parent="HUD/VBoxLeft/OverwhelmContainer"]
 layout_mode = 2
-text = "⚡ STAM 100/100"
-theme_override_font_sizes/font_size = 16
+text = "⚠ OVERWHELM"
+theme_override_font_size = 16
 custom_minimum_size = Vector2(0, 24)
 
 [node name="OverwhelmBar" type="GodotxHealthBarControl" parent="HUD/VBoxLeft/OverwhelmContainer"]
@@ -237,21 +237,21 @@ theme_override_constants/separation = 8
 [node name="TimerLabel" type="Label" parent="HUD/VBoxRight"]
 layout_mode = 2
 text = "⏱ 10:00"
-theme_override_font_sizes/font_size = 20
+theme_override_font_size = 20
 horizontal_alignment = 2
 custom_minimum_size = Vector2(200, 32)
 
 [node name="LikesLabel" type="Label" parent="HUD/VBoxRight"]
 layout_mode = 2
-text = "🪙 0"
-theme_override_font_sizes/font_size = 18
+text = "❤ 0"
+theme_override_font_size = 18
 horizontal_alignment = 2
 custom_minimum_size = Vector2(0, 28)
 
 [node name="KillsLabel" type="Label" parent="HUD/VBoxRight"]
 layout_mode = 2
 text = "☠ 0"
-theme_override_font_sizes/font_size = 18
+theme_override_font_size = 18
 horizontal_alignment = 2
 custom_minimum_size = Vector2(0, 28)
 
@@ -265,8 +265,8 @@ offset_top = -50.0
 offset_right = 200.0
 offset_bottom = 50.0
 text = ""
-theme_override_font_sizes/font_size = 32
-theme_override_colors/font_color = Color(1.0, 0.84, 0.0, 1.0)
+theme_override_font_size = 32
+theme_override_colors/font_color = Color(1.0, 0.839, 0.039, 1.0)
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -307,7 +307,7 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 1
 grow_vertical = 0
-theme_overrides/font_sizes/font_size = 24
+theme_overrides/font_size = 24
 text = "⚔"
 
 [node name="WeaponSystem" type="Node" parent="Player"]
