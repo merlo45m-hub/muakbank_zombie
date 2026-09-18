@@ -30,7 +30,9 @@ func _setup_loading_screen() -> void:
 	"""Create the loading screen overlay (added to the root, drawn on top)."""
 	var layer = CanvasLayer.new()
 	layer.layer = 100
-	get_tree().root.add_child(layer)
+	layer.name = "SceneManagerOverlay"
+	# Deferred: the root is still busy setting up children during _ready.
+	get_tree().root.add_child.call_deferred(layer)
 	
 	_loading_screen = ColorRect.new()
 	_loading_screen.color = loading_screen_color

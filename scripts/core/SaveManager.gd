@@ -3,7 +3,6 @@
 ## Handles progress, high scores, settings, unlocks
 ## Integrates SaveMadeEasy addon (SaveSystem autoload) for nested-key saves
 
-class_name SaveManager
 extends Node
 
 # === SAVE VERSION (for future migrations) ===
@@ -31,7 +30,7 @@ var selected_character: String = "gamer"
 var pending_results: Dictionary = {}
 
 # SaveMadeEasy key prefix — all save_data fields stored under "save:" namespace
-const SAVE_KEY_PREFIX: String = "save:"
+const SAVE_KEY_PREFIX: String = "game_"
 
 func _ready() -> void:
 	_load_game()

@@ -1,4 +1,6 @@
-[sub_resource type="StandardMaterial3D" id="ui_blood"]
+[gd_resource type="StandardMaterial3D" load_steps=1 format=3]
+
+[resource]
 albedo_color = Color(0.8, 0.05, 0.05, 1.0)
 albedo_texture = null
 roughness = 0.3
@@ -13,6 +15,5 @@ ambient_light_usage = 0
 depth_draw_mode = 5
 transparent = true
 use_alpha_scissor = false
-
 [vertex shaders]
 fragment shaders

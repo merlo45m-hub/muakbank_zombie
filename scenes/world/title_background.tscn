@@ -35,8 +35,6 @@ albedo_color = Color(0.3, 0.28, 0.25, 0.12)
 cull_mode = 2
 no_depth_test = true
 
-[sub_resource type="DirectionalLight3D" id="MoonLight"]
-
 [node name="TitleBackground" type="Node3D"]
 
 [node name="Camera" type="Camera3D" parent="."]

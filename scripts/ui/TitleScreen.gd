@@ -14,15 +14,20 @@ extends Control
 @onready var total_fed_label = $VBoxMain/StatsContainer/TotalFedLabel
 
 # === FOOD ICONS FOR DECORATION ===
-var food_icons = ["burger", "noodles", "soda", "donut", "pizza", "taco"]
+var food_icons = ["burger", "noodles", "soda", "donut", "pizza", "takis"]
 
-func _ready():
-	# Connect buttons
-	play_btn.pressed.connect(_on_play_pressed)
-	level_btn.pressed.connect(_on_level_pressed)
-	settings_btn.pressed.connect(_on_settings_pressed)
-	credits_btn.pressed.connect(_on_credits_pressed)
-	quit_btn.pressed.connect(_on_quit_pressed)
+func _ready() -> void:
+	# Connect buttons only if the scene did not already wire them.
+	if play_btn and not play_btn.pressed.is_connected(_on_play_pressed):
+		play_btn.pressed.connect(_on_play_pressed)
+	if level_btn and not level_btn.pressed.is_connected(_on_levels_pressed):
+		level_btn.pressed.connect(_on_levels_pressed)
+	if settings_btn and not settings_btn.pressed.is_connected(_on_settings_pressed):
+		settings_btn.pressed.connect(_on_settings_pressed)
+	if credits_btn and not credits_btn.pressed.is_connected(_on_credits_pressed):
+		credits_btn.pressed.connect(_on_credits_pressed)
+	if quit_btn and not quit_btn.pressed.is_connected(_on_quit_pressed):
+		quit_btn.pressed.connect(_on_quit_pressed)
 
 	# Update stats display
 	_update_stats()

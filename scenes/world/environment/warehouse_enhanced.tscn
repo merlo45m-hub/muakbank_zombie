@@ -273,8 +273,6 @@ albedo_color = Color(1.0, 0.95, 0.8, 1.0)
 roughness = 0.2
 metallic = 0.0
 
-[sub_resource type="OmniLight3D" id="PointLight_bulb"]
-
 [sub_resource type="BoxMesh" id="BoxMesh_loading_dock_ramp"]
 size = Vector3(6, 0.8, 3)
 

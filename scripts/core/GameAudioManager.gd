@@ -1,5 +1,4 @@
 extends Node
-class_name GameAudioManager
 
 ## Game Audio Manager — Integrates SoundManager addon with adaptive music layers, SFX prioritization, and mixing
 ## Autoload as "Audio" — delegates to SoundManager addon when available, falls back to manual players
@@ -124,8 +123,11 @@ func _setup_sound_manager() -> void:
 	# Try to get SoundManager singleton (registered by addon plugin)
 	if Engine.has_singleton("SoundManager"):
 		sound_manager = Engine.get_singleton("SoundManager")
-		# Configure ambient sounds bus to use our "Ambient" bus
-		# (SoundManager's ambient player looks for ["Sounds", "SFX"] by default)
+		# Point the addon's players at the buses created in _setup_buses.
+		# Without this they default to Master and the addon warns.
+		sound_manager.set_default_music_bus("Music")
+		sound_manager.set_default_sound_bus("SFX")
+		sound_manager.set_default_ui_sound_bus("SFX")
 		sound_manager.set_default_ambient_sound_bus("Ambient")
 		# Sync volumes
 		sound_manager.set_music_volume(music_volume)
@@ -146,7 +148,7 @@ func _load_audio_streams() -> void:
 	menu_alt_music_stream = _load_stream(dir + "music_menu_alt.ogg")
 
 	dir = "res://audio/sfx/"
-click_stream = _load_stream(dir + "click.wav")
+	click_stream = _load_stream(dir + "click.wav")
 	zombie_reach_stream = _load_stream(dir + "zombie_reach.wav")
 	eat_stream = _load_stream(dir + "eat.wav")
 	frenzy_stream = _load_stream(dir + "frenzy.wav")
@@ -227,7 +229,7 @@ func _generate_fallback(path: String) -> AudioStreamWAV:
 
 # === PUBLIC API ===
 
-func play_music(stream: AudioStreamWAV = null) -> void:
+func play_music(stream: AudioStream = null) -> void:
 	if not stream:
 		return
 	if sound_manager:
@@ -243,7 +245,7 @@ func stop_music() -> void:
 		_stop_fallback_music()
 
 
-func play_ambient(stream: AudioStreamWAV = null) -> void:
+func play_ambient(stream: AudioStream = null) -> void:
 	if not stream:
 		return
 	if sound_manager:
@@ -259,7 +261,7 @@ func stop_ambient() -> void:
 		_stop_fallback_ambient()
 
 
-func play_sfx(stream: AudioStreamWAV = null, volume_db: float = 0.0, pitch_scale: float = 1.0) -> void:
+func play_sfx(stream: AudioStream = null, volume_db: float = 0.0, pitch_scale: float = 1.0) -> void:
 	if not stream:
 		return
 	if sound_manager:
@@ -270,7 +272,7 @@ func play_sfx(stream: AudioStreamWAV = null, volume_db: float = 0.0, pitch_scale
 		_play_fallback_sfx(stream, volume_db, pitch_scale)
 
 
-func play_sfx_varied(stream: AudioStreamWAV = null, volume_range: float = 3.0, pitch_range: float = 0.1) -> void:
+func play_sfx_varied(stream: AudioStream = null, volume_range: float = 3.0, pitch_range: float = 0.1) -> void:
 	var vol_db = randf_range(-volume_range, volume_range)
 	var pitch = 1.0 + randf_range(-pitch_range, pitch_range)
 	play_sfx(stream, vol_db, pitch)
