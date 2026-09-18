@@ -39,6 +39,7 @@ var wave_manager: Node = null
 var combo_system: Node = null
 var difficulty_manager: Node = null
 var objective_manager: Node = null
+var achievement_manager: Node = null
 
 func _ready() -> void:
 	print("[Game] Initializing Muak Bank Zombie...")
@@ -47,9 +48,13 @@ func _ready() -> void:
 	combo_system = get_node_or_null("ComboSystem")
 	difficulty_manager = get_node_or_null("DifficultyManager")
 	objective_manager = get_node_or_null("ObjectiveManager")
+	achievement_manager = get_node_or_null("AchievementManager")
 	
 	# Set up level objectives
 	_setup_objectives()
+	
+	# Register achievements
+	_setup_achievements()
 	
 	# Connect player signals for reactive HUD updates
 	if player:
@@ -89,6 +94,17 @@ func _setup_objectives() -> void:
 	objective_manager.add_objective("kill_zombies", "Kill zombies", zombies_to_kill)
 	objective_manager.add_objective("eat_food", "Eat to stay alive", 3)
 	objective_manager.add_objective("survive", "Survive the shift", 1)
+
+func _setup_achievements() -> void:
+	var am = get_node_or_null("AchievementManager")
+	if not am or not am.has_method("register_achievement"):
+		return
+	am.register_achievement("first_kill", "First Blood", "Kill your first zombie")
+	am.register_achievement("combo_5", "Combo Master", "Reach a 5x kill combo")
+	am.register_achievement("boss_slayer", "Boss Slayer", "Defeat a boss zombie")
+	am.register_achievement("survivor", "Survivor", "Complete a level")
+	am.register_achievement("well_fed", "Well Fed", "Eat 10 food items")
+	am.register_achievement("untouchable", "Untouchable", "Complete a level without taking damage")
 
 func start_game() -> void:
 	game_active = true
@@ -217,6 +233,9 @@ func end_game(survived: bool) -> void:
 		if next_level <= Level.get_level_count():
 			Save.unlock_level(next_level)
 			print("[Game] Level ", next_level, " unlocked!")
+		# Achievement: survivor
+		if achievement_manager and achievement_manager.has_method("unlock"):
+			achievement_manager.unlock("survivor")
 	
 	# Store results in Save singleton for the game over screen to retrieve
 	# This avoids race condition with scene change + await
@@ -254,6 +273,13 @@ func on_zombie_killed(zombie_type: String) -> void:
 	if objective_manager and objective_manager.has_method("update_progress"):
 		objective_manager.update_progress("kill_zombies", 1)
 	
+	# Achievements
+	if achievement_manager:
+		if zombies_killed == 1 and achievement_manager.has_method("unlock"):
+			achievement_manager.unlock("first_kill")
+		if combo_system and combo_system.combo_count >= 5:
+			achievement_manager.unlock("combo_5")
+	
 	# Check for level completion
 	if zombies_killed >= zombies_to_kill:
 		# Level complete — survive the wave
@@ -286,6 +312,11 @@ func on_food_eaten(food_type: String, health_amount: int) -> void:
 	# Update objectives
 	if objective_manager and objective_manager.has_method("update_progress"):
 		objective_manager.update_progress("eat_food", 1)
+	
+	# Achievement: well fed
+	if achievement_manager and achievement_manager.has_method("unlock"):
+		if Save.get_total_zombies_fed() >= 10:
+			achievement_manager.unlock("well_fed")
 	
 	print("[Game] Ate: ", food_type, " +", health_amount, " HP")
 

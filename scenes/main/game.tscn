@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://scripts/core/Game.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/core/Player.gd" id="2"]
@@ -21,6 +21,7 @@
 [ext_resource type="Script" path="res://scripts/gameplay/LootTable.gd" id="19"]
 [ext_resource type="Script" path="res://scripts/gameplay/DamagePopup.gd" id="20"]
 [ext_resource type="Script" path="res://scripts/gameplay/CameraShake.gd" id="21"]
+[ext_resource type="Script" path="res://scripts/core/AchievementManager.gd" id="22"]
 
 
 [sub_resource type="StyleBoxFlat" id="JoystickBg"]
@@ -351,6 +352,9 @@ script = ExtResource("20")
 
 [node name="CameraShake" type="Node3D" parent="."]
 script = ExtResource("21")
+
+[node name="AchievementManager" type="Node" parent="."]
+script = ExtResource("22")
 
 [connection signal="health_changed" from="Player" to="HUD" method="update_health"]
 [connection signal="stamina_changed" from="Player" to="HUD" method="update_stamina"]
