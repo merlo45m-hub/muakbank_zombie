@@ -40,6 +40,7 @@ var combo_system: Node = null
 var difficulty_manager: Node = null
 var objective_manager: Node = null
 var achievement_manager: Node = null
+var camera_shake: Node = null
 
 func _ready() -> void:
 	print("[Game] Initializing Muak Bank Zombie...")
@@ -49,6 +50,7 @@ func _ready() -> void:
 	difficulty_manager = get_node_or_null("DifficultyManager")
 	objective_manager = get_node_or_null("ObjectiveManager")
 	achievement_manager = get_node_or_null("AchievementManager")
+	camera_shake = get_node_or_null("CameraShake")
 	
 	# Set up level objectives
 	_setup_objectives()
@@ -295,11 +297,18 @@ func on_player_damaged(damage: int) -> void:
 	player.take_damage(damage)
 	emit_signal("health_changed", player.health, player.max_health)
 	
+	# Screen shake proportional to damage
+	_shake(clampf(damage / 40.0, 0.1, 0.5))
+	
 	if difficulty_manager and difficulty_manager.has_method("register_damage_taken"):
 		difficulty_manager.register_damage_taken()
 	
 	if player.health <= 0:
 		end_game(false)
+
+func _shake(strength: float) -> void:
+	if camera_shake and camera_shake.has_method("shake"):
+		camera_shake.shake(strength)
 
 func on_food_eaten(food_type: String, health_amount: int) -> void:
 	if not game_active or not player:
