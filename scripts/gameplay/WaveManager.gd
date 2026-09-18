@@ -13,6 +13,7 @@ signal all_waves_cleared
 @export var zombies_per_wave_increment: int = 2
 @export var wave_break_time: float = 10.0
 @export var boss_scene: PackedScene = preload("res://scenes/characters/zombie_boss.tscn")
+@export var boss_scene_alt: PackedScene = preload("res://scenes/characters/zombie_butcher.tscn")
 
 var current_wave: int = 0
 var zombies_alive: int = 0
@@ -54,7 +55,13 @@ func _spawn_boss() -> void:
 	var player = get_tree().get_first_node_in_group("player")
 	if not player:
 		return
-	var boss = boss_scene.instantiate()
+	# Alternate boss types for variety
+	var chosen: PackedScene = boss_scene
+	if boss_scene_alt and current_wave % 2 == 0:
+		chosen = boss_scene_alt
+	if not chosen:
+		return
+	var boss = chosen.instantiate()
 	var angle = randf() * TAU
 	var dist = 12.0
 	boss.global_position = player.global_position + Vector3(cos(angle) * dist, 0, sin(angle) * dist)

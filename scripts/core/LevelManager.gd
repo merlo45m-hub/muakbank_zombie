@@ -48,11 +48,11 @@ var difficulty_map = {
 # Level → enemy type pool (which zombies spawn)
 var enemy_pool_map = {
 	1: ["chicken", "rabbit"],
-	2: ["dog", "cat", "chicken"],
-	3: ["dog", "cat", "rabbit"],
-	4: ["bear", "dog", "cat"],
-	5: ["bear", "dog", "rabbit"],
-	6: ["bear", "cat", "chicken"],
+	2: ["dog", "cat", "chicken", "runner"],
+	3: ["dog", "cat", "rabbit", "spitter"],
+	4: ["bear", "dog", "cat", "runner"],
+	5: ["bear", "dog", "rabbit", "spitter"],
+	6: ["bear", "cat", "chicken", "runner", "spitter"],
 }
 
 var current_level: int = 1

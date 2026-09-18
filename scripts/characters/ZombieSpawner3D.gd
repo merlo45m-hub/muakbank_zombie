@@ -10,12 +10,14 @@ signal zombie_killed(zombie_type)
 @export var spawn_radius: float = 15.0
 @export var min_spawn_distance: float = 8.0
 
-# --- Scene preloads (5 zombie types) ---
+# --- Scene preloads ---
 var zombie_dog_scene = preload("res://scenes/characters/zombie_dog.tscn")
 var zombie_cat_scene = preload("res://scenes/characters/zombie_cat.tscn")
 var zombie_bear_scene = preload("res://scenes/characters/zombie_bear.tscn")
 var zombie_rabbit_scene = preload("res://scenes/characters/zombie_rabbit.tscn")
 var zombie_chicken_scene = preload("res://scenes/characters/zombie_chicken.tscn")
+var zombie_runner_scene = preload("res://scenes/characters/zombie_runner.tscn")
+var zombie_spitter_scene = preload("res://scenes/characters/zombie_spitter.tscn")
 
 var player: Node3D = null
 var active_zombies: Array = []
@@ -73,11 +75,13 @@ func _ready() -> void:
 func _init_pools() -> void:
 	# Build a pool config: [scene, prefix, types_list]
 	var configs = [
-		[zombie_dog_scene,    "zombie_dog",    ["dog"]],
-		[zombie_cat_scene,    "zombie_cat",    ["cat"]],
-		[zombie_bear_scene,   "zombie_bear",   ["bear"]],
-		[zombie_rabbit_scene, "zombie_rabbit", ["rabbit"]],
-		[zombie_chicken_scene,"zombie_chicken","chicken"]
+		[zombie_dog_scene,     "zombie_dog",     ["dog"]],
+		[zombie_cat_scene,     "zombie_cat",     ["cat"]],
+		[zombie_bear_scene,    "zombie_bear",    ["bear"]],
+		[zombie_rabbit_scene,  "zombie_rabbit",  ["rabbit"]],
+		[zombie_chicken_scene, "zombie_chicken", ["chicken"]],
+		[zombie_runner_scene,  "zombie_runner",  ["runner"]],
+		[zombie_spitter_scene, "zombie_spitter", ["spitter"]]
 	]
 
 	for cfg in configs:
@@ -148,9 +152,11 @@ func _spawn_random_zombie() -> void:
 		zombie_cat_scene,
 		zombie_bear_scene,
 		zombie_rabbit_scene,
-		zombie_chicken_scene
+		zombie_chicken_scene,
+		zombie_runner_scene,
+		zombie_spitter_scene
 	]
-	var zombie_types = ["dog", "cat", "bear", "rabbit", "chicken"]
+	var zombie_types = ["dog", "cat", "bear", "rabbit", "chicken", "runner", "spitter"]
 	var type_index = randi() % scenes.size()
 	var zombie_type = zombie_types[type_index]
 
