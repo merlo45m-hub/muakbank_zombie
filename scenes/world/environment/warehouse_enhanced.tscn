@@ -402,6 +402,10 @@ size = Vector3(13, 0.12, 1.1)
 
 <node name="Warehouse" type="Node3D">
 
+[node name="Warehouse" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
 [node name="Floor" type="StaticBody3D" parent=".">
 collision_layer = 1
 
@@ -1855,20 +1859,13 @@ material_override = SubResource("LightbulbMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
 light_energy_multiplier = 0.8
-omni_range = 12.0
+omni_range = 18.0
 omni_attenuation = 1.5
 
 [node name="Gondola1Bulb2" type="MeshInstance3D" parent="Lighting/Gondola1">
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
 mesh = SubResource("CylinderMesh_lightbulb")
 material_override = SubResource("LightbulbMaterial")
-
-[node name="Gondola1Light2" type="OmniLight3D" parent="Lighting/Gondola1">
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
-light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
-omni_range = 12.0
-omni_attenuation = 1.5
 
 [node name="Gondola2" type="Node3D" parent="Lighting">
 
@@ -1896,20 +1893,13 @@ material_override = SubResource("LightbulbMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
 light_energy_multiplier = 0.8
-omni_range = 12.0
+omni_range = 18.0
 omni_attenuation = 1.5
 
 [node name="Gondola2Bulb2" type="MeshInstance3D" parent="Lighting/Gondola2">
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
 mesh = SubResource("CylinderMesh_lightbulb")
 material_override = SubResource("LightbulbMaterial")
-
-[node name="Gondola2Light2" type="OmniLight3D" parent="Lighting/Gondola2">
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
-light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
-omni_range = 12.0
-omni_attenuation = 1.5
 
 [node name="Gondola3" type="Node3D" parent="Lighting">
 
@@ -1937,20 +1927,13 @@ material_override = SubResource("LightbulbMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
 light_energy_multiplier = 0.8
-omni_range = 12.0
+omni_range = 18.0
 omni_attenuation = 1.5
 
 [node name="Gondola3Bulb2" type="MeshInstance3D" parent="Lighting/Gondola3">
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
 mesh = SubResource("CylinderMesh_lightbulb")
 material_override = SubResource("LightbulbMaterial")
-
-[node name="Gondola3Light2" type="OmniLight3D" parent="Lighting/Gondola3">
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
-light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
-omni_range = 12.0
-omni_attenuation = 1.5
 
 [node name="Gondola4" type="Node3D" parent="Lighting">
 
@@ -1978,20 +1961,13 @@ material_override = SubResource("LightbulbMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
 light_energy_multiplier = 0.8
-omni_range = 12.0
+omni_range = 18.0
 omni_attenuation = 1.5
 
 [node name="Gondola4Bulb2" type="MeshInstance3D" parent="Lighting/Gondola4">
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
 mesh = SubResource("CylinderMesh_lightbulb")
 material_override = SubResource("LightbulbMaterial")
-
-[node name="Gondola4Light2" type="OmniLight3D" parent="Lighting/Gondola4">
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
-light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
-omni_range = 12.0
-omni_attenuation = 1.5
 
 [node name="Gondola5" type="Node3D" parent="Lighting">
 
@@ -2019,20 +1995,13 @@ material_override = SubResource("LightbulbMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
 light_energy_multiplier = 0.8
-omni_range = 12.0
+omni_range = 18.0
 omni_attenuation = 1.5
 
 [node name="Gondola5Bulb2" type="MeshInstance3D" parent="Lighting/Gondola5">
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
 mesh = SubResource("CylinderMesh_lightbulb")
 material_override = SubResource("LightbulbMaterial")
-
-[node name="Gondola5Light2" type="OmniLight3D" parent="Lighting/Gondola5">
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
-light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
-omni_range = 12.0
-omni_attenuation = 1.5
 
 [node name="Gondola6" type="Node3D" parent="Lighting">
 
@@ -2060,20 +2029,13 @@ material_override = SubResource("LightbulbMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
 light_energy_multiplier = 0.8
-omni_range = 12.0
+omni_range = 18.0
 omni_attenuation = 1.5
 
 [node name="Gondola6Bulb2" type="MeshInstance3D" parent="Lighting/Gondola6">
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
 mesh = SubResource("CylinderMesh_lightbulb")
 material_override = SubResource("LightbulbMaterial")
-
-[node name="Gondola6Light2" type="OmniLight3D" parent="Lighting/Gondola6">
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 7, 0)
-light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
-omni_range = 12.0
-omni_attenuation = 1.5
 
 [node name="DebrisPiles" type="Node3D" parent=".">
 
@@ -2165,11 +2127,3 @@ material_override = SubResource("DebrisMaterial")
 [node name="DebrisCol" type="CollisionShape3D" parent="DebrisPiles/Debris8">
 shape = SubResource("BoxShape3D_debris")
 
-[node name="Fog" type="MeshInstance3D" parent=".">
-mesh = SubResource("SphereMesh_fog")
-material_override = SubResource("FogMaterial")
-
-[node name="Dust" type="MeshInstance3D" parent=".">
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-mesh = SubResource("CylinderMesh_dust")
-material_override = SubResource("DustMaterial")

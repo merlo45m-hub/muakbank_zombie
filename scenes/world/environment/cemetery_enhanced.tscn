@@ -1003,7 +1003,7 @@ shape = SubResource("BoxShape3D_floor")
 [node name="LanternLight1" type="OmniLight3D" parent="Lantern1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 0.0)
 light_energy_multiplier = 0.8
-omni_range = 8.0
+omni_range = 14.0
 omni_attenuation = 2.0
 light_color = Color(1.0, 0.7, 0.3, 1.0)
 
@@ -1021,7 +1021,7 @@ shape = SubResource("BoxShape3D_floor")
 [node name="LanternLight2" type="OmniLight3D" parent="Lantern2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 0.0)
 light_energy_multiplier = 0.8
-omni_range = 8.0
+omni_range = 14.0
 omni_attenuation = 2.0
 light_color = Color(1.0, 0.7, 0.3, 1.0)
 
@@ -1036,13 +1036,6 @@ material_override = SubResource("StoneMaterial")
 [node name="LanternCol" type="CollisionShape3D" parent="Lantern3"]
 shape = SubResource("BoxShape3D_floor")
 
-[node name="LanternLight3" type="OmniLight3D" parent="Lantern3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 0.0)
-light_energy_multiplier = 0.8
-omni_range = 8.0
-omni_attenuation = 2.0
-light_color = Color(1.0, 0.7, 0.3, 1.0)
-
 [node name="Lantern4" type="StaticBody3D" parent="Lanterns"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.2, 42)
 collision_layer = 1
@@ -1053,13 +1046,6 @@ material_override = SubResource("StoneMaterial")
 
 [node name="LanternCol" type="CollisionShape3D" parent="Lantern4"]
 shape = SubResource("BoxShape3D_floor")
-
-[node name="LanternLight4" type="OmniLight3D" parent="Lantern4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 0.0)
-light_energy_multiplier = 0.8
-omni_range = 8.0
-omni_attenuation = 2.0
-light_color = Color(1.0, 0.7, 0.3, 1.0)
 
 [node name="Brazier1" type="StaticBody3D" parent="Bones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.6, -48)
@@ -1075,7 +1061,7 @@ shape = SubResource("BoxShape3D_floor")
 [node name="BrazierLight" type="OmniLight3D" parent="Brazier1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, 0.0)
 light_energy_multiplier = 0.6
-omni_range = 6.0
+omni_range = 11.0
 omni_attenuation = 2.0
 light_color = Color(1.0, 0.5, 0.1, 1.0)
 
@@ -1093,7 +1079,7 @@ shape = SubResource("BoxShape3D_floor")
 [node name="BrazierLight" type="OmniLight3D" parent="Brazier2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, 0.0)
 light_energy_multiplier = 0.6
-omni_range = 6.0
+omni_range = 11.0
 omni_attenuation = 2.0
 light_color = Color(1.0, 0.5, 0.1, 1.0)
 
@@ -1108,13 +1094,6 @@ material_override = SubResource("StoneMaterial")
 [node name="BrazierCol" type="CollisionShape3D" parent="Brazier3"]
 shape = SubResource("BoxShape3D_floor")
 
-[node name="BrazierLight" type="OmniLight3D" parent="Brazier3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, 0.0)
-light_energy_multiplier = 0.6
-omni_range = 6.0
-omni_attenuation = 2.0
-light_color = Color(1.0, 0.5, 0.1, 1.0)
-
 [node name="Brazier4" type="StaticBody3D" parent="Bones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.6, 48)
 collision_layer = 1
@@ -1125,13 +1104,6 @@ material_override = SubResource("StoneMaterial")
 
 [node name="BrazierCol" type="CollisionShape3D" parent="Brazier4"]
 shape = SubResource("BoxShape3D_floor")
-
-[node name="BrazierLight" type="OmniLight3D" parent="Brazier4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 1.5, 0.0)
-light_energy_multiplier = 0.6
-omni_range = 6.0
-omni_attenuation = 2.0
-light_color = Color(1.0, 0.5, 0.1, 1.0)
 
 [node name="BellTower" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0.0, 0)

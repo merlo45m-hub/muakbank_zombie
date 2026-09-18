@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3]
+
+[sub_resource type="BoxMesh" id="BoxMesh_debris"]
+size = Vector3(2.0, 0.4, 2.0)
+
+[sub_resource type="StandardMaterial3D" id="DebrisMaterial"]
+albedo_color = Color(0.35, 0.33, 0.3, 1.0)
+roughness = 0.95
+metallic = 0.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_debris"]
+size = Vector3(2.0, 0.4, 2.0)
+
+[node name="DebrisPile" type="StaticBody3D"]
+collision_layer = 1
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_debris")
+material_override = SubResource("DebrisMaterial")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_debris")
