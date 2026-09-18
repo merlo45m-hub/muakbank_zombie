@@ -13,6 +13,8 @@ var environments = {
 	4: "res://scenes/world/environment/warehouse_enhanced.tscn",
 	5: "res://scenes/world/environment/subway_enhanced.tscn",
 	6: "res://scenes/world/environment/rooftop_enhanced.tscn",
+	7: "res://scenes/world/environment/sewer_enhanced.tscn",
+	8: "res://scenes/world/environment/mall_enhanced.tscn",
 }
 
 # Level → display name
@@ -23,6 +25,8 @@ var level_names = {
 	4: "Warehouse",
 	5: "Subway",
 	6: "Rooftop",
+	7: "Sewers",
+	8: "Abandoned Mall",
 }
 
 # Level → ambient sound name
@@ -32,7 +36,9 @@ var ambient_map = {
 	3: "hospital",
 	4: "warehouse",
 	5: "subway",
-	6: "rooftop"
+	6: "rooftop",
+	7: "warehouse",
+	8: "hospital",
 }
 
 # Level → difficulty multiplier (enemy health/damage/speed)
@@ -43,6 +49,8 @@ var difficulty_map = {
 	4: 1.6,
 	5: 1.8,
 	6: 2.0,
+	7: 2.2,
+	8: 2.5,
 }
 
 # Level → enemy type pool (which zombies spawn)
@@ -53,6 +61,8 @@ var enemy_pool_map = {
 	4: ["bear", "dog", "cat", "runner"],
 	5: ["bear", "dog", "rabbit", "spitter"],
 	6: ["bear", "cat", "chicken", "runner", "spitter"],
+	7: ["spitter", "runner", "cat", "bear"],
+	8: ["bear", "runner", "spitter", "dog", "cat"],
 }
 
 var current_level: int = 1
