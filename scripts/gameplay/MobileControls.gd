@@ -1,16 +1,20 @@
 extends Control
 class_name MobileControls
 
-## Mobile Touch Controls — On-screen joystick + attack button
+## Mobile Touch Controls — On-screen joystick + attack button + special ability
 ## Place as child of game.tscn root (Node3D) or as UI overlay
 
 signal move_vector_changed(vector: Vector2)
 signal attack_pressed
+signal special_pressed
 
 # === NODE REFS ===
 @onready var joystick_area = $JoystickArea
 @onready var joystick_knob = $JoystickArea/JoystickKnob
 @onready var attack_btn = $AttackBtn
+
+# Dynamically created special-ability button
+var special_btn: Button = null
 
 # === STATE ===
 var joystick_touch_index: int = -1
@@ -19,13 +23,33 @@ var joystick_radius: float = 60.0
 var move_input: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
-	attack_btn.pressed.connect(func(): emit_signal("attack_pressed"))
+	if attack_btn:
+		attack_btn.pressed.connect(func(): emit_signal("attack_pressed"))
+	
+	_build_special_button()
 	
 	# Hide on non-mobile platforms (optional)
 	if not OS.has_feature("android") and not OS.has_feature("ios"):
 		hide()
 	
-	joystick_area.gui_input.connect(_on_joystick_input)
+	if joystick_area:
+		joystick_area.gui_input.connect(_on_joystick_input)
+
+func _build_special_button() -> void:
+	"""Special ability button, above the attack button."""
+	special_btn = Button.new()
+	special_btn.text = "✨"
+	special_btn.add_theme_font_size_override("font_size", 22)
+	special_btn.anchor_left = 1.0
+	special_btn.anchor_right = 1.0
+	special_btn.anchor_top = 1.0
+	special_btn.anchor_bottom = 1.0
+	special_btn.offset_left = -120.0
+	special_btn.offset_top = -230.0
+	special_btn.offset_right = -20.0
+	special_btn.offset_bottom = -140.0
+	special_btn.pressed.connect(func(): emit_signal("special_pressed"))
+	add_child(special_btn)
 
 func _on_joystick_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:

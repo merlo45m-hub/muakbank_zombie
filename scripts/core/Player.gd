@@ -90,6 +90,8 @@ func _ready() -> void:
 	if mobile_controls:
 		mobile_controls.move_vector_changed.connect(_on_mobile_move)
 		mobile_controls.attack_pressed.connect(_on_mobile_attack)
+		if mobile_controls.has_signal("special_pressed"):
+			mobile_controls.special_pressed.connect(_on_mobile_special)
 
 	# Mouse capture on desktop; mobile keeps touch-visible mode
 	if OS.has_feature("android") or OS.has_feature("ios"):
@@ -269,6 +271,14 @@ func _handle_attack(delta: float) -> void:
 
 	if Input.is_action_just_pressed("attack") and not is_attacking and attack_timer <= 0 and not is_dead:
 		_perform_attack()
+	
+	# Special ability (keyboard "Q" on desktop; the mobile button signals directly)
+	if Input.is_action_just_pressed("special") and not is_dead:
+		use_special_ability()
+	
+	# Tick the special cooldown
+	if special_timer > 0:
+		special_timer -= delta
 
 
 # ──────────────────────────────────────────────
@@ -296,6 +306,9 @@ func _on_mobile_move(vector: Vector2) -> void:
 func _on_mobile_attack() -> void:
 	if not is_dead:
 		_perform_attack()
+
+func _on_mobile_special() -> void:
+	use_special_ability()
 
 
 # ──────────────────────────────────────────────
@@ -529,6 +542,7 @@ func _register_input_actions() -> void:
 		"aim": MOUSE_BUTTON_RIGHT,
 		"swap_weapons": KEY_TAB,
 		"pause": KEY_ESCAPE,
+		"special": KEY_G,
 		"camera_left": KEY_Q,
 		"camera_right": KEY_E,
 		"camera_up": KEY_R,
