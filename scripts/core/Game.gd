@@ -56,6 +56,17 @@ func _ready() -> void:
 		player.health_changed.connect(_on_player_health_changed)
 		player.stamina_changed.connect(_on_player_stamina_changed)
 	
+	# Connect wave/combo signals for reactive HUD updates
+	if wave_manager:
+		if wave_manager.has_signal("wave_started"):
+			wave_manager.wave_started.connect(_on_wave_started)
+	if combo_system:
+		if combo_system.has_signal("combo_changed"):
+			combo_system.combo_changed.connect(_on_combo_changed)
+	if objective_manager:
+		if objective_manager.has_signal("objective_updated"):
+			objective_manager.objective_updated.connect(_on_objective_updated)
+	
 	# Set environment based on current level
 	_load_environment()
 	start_game()
@@ -144,6 +155,15 @@ func _update_hud() -> void:
 	if player:
 		hud.update_health(player.health, player.max_health)
 		hud.update_stamina(player.stamina, player.max_stamina)
+	# Objectives
+	if objective_manager and objective_manager.has_method("get_all_objective_texts"):
+		hud.update_objectives(objective_manager.get_all_objective_texts())
+	# Combo
+	if combo_system and combo_system.has_method("get_score_multiplier"):
+		hud.update_combo(combo_system.combo_count, combo_system.get_score_multiplier())
+	# Wave
+	if wave_manager and hud.has_method("update_wave"):
+		hud.update_wave(wave_manager.current_wave, wave_manager.waves_per_level)
 
 # === SIGNAL HANDLERS (reactive HUD) ===
 
@@ -154,6 +174,19 @@ func _on_player_health_changed(new_health: int, max_health: int) -> void:
 func _on_player_stamina_changed(new_stamina: int, max_stamina: int) -> void:
 	if hud:
 		hud.update_stamina(new_stamina, max_stamina)
+
+func _on_wave_started(wave_number: int, _count: int) -> void:
+	if hud and hud.has_method("update_wave"):
+		hud.update_wave(wave_number, wave_manager.waves_per_level if wave_manager else 5)
+
+func _on_combo_changed(combo_count: int) -> void:
+	if hud and hud.has_method("update_combo"):
+		var mult = combo_system.get_score_multiplier() if combo_system else 1.0
+		hud.update_combo(combo_count, mult)
+
+func _on_objective_updated(_id: String, _progress: int, _target: int) -> void:
+	if hud and objective_manager and objective_manager.has_method("get_all_objective_texts"):
+		hud.update_objectives(objective_manager.get_all_objective_texts())
 
 func end_game(survived: bool) -> void:
 	if not game_active:
