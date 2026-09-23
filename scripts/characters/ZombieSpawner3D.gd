@@ -42,6 +42,12 @@ func _ready() -> void:
 	# --- Initialise object pools ---
 	_init_pools()
 
+	# SpawnTimer.timeout was never wired (not in game.tscn, not in code), so the
+	# timer ticked into the void and NO zombie ever spawned. Connect it here;
+	# idempotent so a future scene-level connection can't double-fire it.
+	if not spawn_timer.timeout.is_connected(_spawn_random_zombie):
+		spawn_timer.timeout.connect(_spawn_random_zombie)
+
 	# --- Try to find a VFN map in the scene ---
 	vfn_map = get_node_or_null("VFNMap")
 	if not vfn_map:
@@ -107,6 +113,22 @@ func _create_pool(size: int, prefix: String, scene) -> Object:
 	var pool_script = preload("res://addons/godot-object-pool/pool.gd")
 	var pool = pool_script.new(size, prefix, scene)
 	pool.add_to_node(self)
+
+	# The addon's add_to_node() parents the DEAD (parked) instances too, which
+	# drops every pooled zombie at the spawner's origin — on top of the player
+	# spawn — fully collidable and attack-ready. Parked instances must not exist
+	# in the world at all: take them back out of the tree and make them inert.
+	# get_first_dead() + the spawner's add_child() re-enters them on checkout.
+	for i in pool.dead:
+		var p := i.get_parent()
+		if p:
+			p.remove_child(i)
+		if i is CollisionObject3D:
+			i.collision_layer = 0
+			i.collision_mask = 0
+		i.process_mode = Node.PROCESS_MODE_DISABLED
+		if i is Node3D:
+			i.visible = false
 	return pool
 
 
@@ -198,6 +220,9 @@ func _spawn_random_zombie() -> void:
 
 	add_child(zombie)
 	zombie.global_transform.origin = spawn_pos
+	print("[SPAWN] %s at %s  player=%s  dist=%.2f  (min=%.1f radius=%.1f)" % [
+		zombie_type, str(spawn_pos), str(player.global_transform.origin),
+		spawn_pos.distance_to(player.global_transform.origin), min_spawn_distance, spawn_radius])
 	active_zombies.append(zombie)
 	zombie.set("zombie_type", zombie_type)
 

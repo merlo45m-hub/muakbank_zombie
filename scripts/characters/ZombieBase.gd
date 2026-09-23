@@ -240,6 +240,10 @@ func reset_for_pool() -> void:
 	hit_flash_tween = null
 	show()
 	process_mode = Node.PROCESS_MODE_INHERIT
+	# Parked instances are taken out of the tree with collisions zeroed (see
+	# ZombieSpawner3D._create_pool) — restore world interaction on checkout.
+	collision_layer = 8
+	collision_mask = 1
 	if mesh:
 		mesh.transform = _mesh_rest_xform
 	for mi in _mesh_instances():
@@ -325,5 +329,8 @@ func attack(target: Node3D) -> void:
 		return
 	if target == null or not target.has_method("take_damage"):
 		return
+	print("[ATTACK] %s (dmg=%d) at %s  dist_to_%s=%.2f  dead=%s pooled=%s" % [
+		name, damage, str(global_position), target.name,
+		global_position.distance_to(target.global_position), str(is_dead), str(pooled)])
 	attack_timer = attack_cooldown_time
 	target.take_damage(damage)
