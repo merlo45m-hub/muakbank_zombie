@@ -245,6 +245,13 @@ func _spawn_random_zombie() -> void:
 	# Store a reference to the pool entry on the zombie so _on_zombie_died can return it
 	zombie.set("pool_entry", pool_entry)
 
+	# Hand the zombie its target immediately. Detection ranges are 10-12 while
+	# spawn distance is 8-15, so roughly half of all spawns landed outside the
+	# zombie's own detection sphere and idled in place forever (the world looked
+	# empty because nothing ever walked toward the player).
+	if zombie.has_method("set_target"):
+		zombie.set_target(player)
+
 	# Apply vector-field navigation if available
 	if vfn_field_ready and vfn_field:
 		if zombie.has_method("set_vfn_field"):
