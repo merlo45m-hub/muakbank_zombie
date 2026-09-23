@@ -48,8 +48,10 @@ func _on_spawn_timer_timeout() -> void:
 	var powerup = scene.instantiate()
 	var angle = randf() * TAU
 	var dist = randf_range(3.0, spawn_radius)
-	powerup.global_position = (player as Node3D).global_position + Vector3(cos(angle) * dist, 0.5, sin(angle) * dist)
+	# add_child BEFORE touching global_position — a node outside the tree has no
+	# valid global transform (reads log "!is_inside_tree()" and return zero)
 	add_child(powerup)
+	powerup.global_position = (player as Node3D).global_position + Vector3(cos(angle) * dist, 0.5, sin(angle) * dist)
 	active_powerups.append(powerup)
 	
 	if powerup.has_signal("collected"):
