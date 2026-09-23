@@ -43,7 +43,8 @@ outline_color = Color(0.05, 0.01, 0.02, 1.0)
 [sub_resource type="ShaderMaterial" id="TitleBloodDripMat"]
 shader = ExtResource("2")
 
-[node name="TitleScreen" type="Node3D" script="res://scripts/ui/TitleScreen.gd"]
+[node name="TitleScreen" type="Node3D"]
+script = ExtResource("1")
 
 [node name="Background" parent="." instance=ExtResource("bg")]
 
