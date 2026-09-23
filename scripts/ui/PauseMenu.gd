@@ -16,11 +16,9 @@ signal menu_pressed
 var is_visible: bool = false
 
 func _ready() -> void:
-	resume_btn.pressed.connect(_on_resume_pressed)
-	restart_btn.pressed.connect(_on_restart_pressed)
-	settings_btn.pressed.connect(_on_settings_pressed)
-	menu_btn.pressed.connect(_on_menu_pressed)
-	
+	# Button signals are wired in pause_menu.tscn ([connection] entries) —
+	# do not re-connect here or Godot logs "already connected" errors.
+
 	# Start hidden
 	hide()
 

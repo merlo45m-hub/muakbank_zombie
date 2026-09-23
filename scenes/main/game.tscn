@@ -22,6 +22,9 @@
 [ext_resource type="Script" path="res://scripts/gameplay/DamagePopup.gd" id="20"]
 [ext_resource type="Script" path="res://scripts/gameplay/CameraShake.gd" id="21"]
 [ext_resource type="Script" path="res://scripts/core/AchievementManager.gd" id="22"]
+[ext_resource type="Script" path="res://addons/godotx_health_bar/runtime/godotx_health_bar_control.gd" id="godotx_control"]
+[ext_resource type="PackedScene" path="res://scenes/main/HUD.tscn" id="hud_scene"]
+[ext_resource type="PackedScene" path="res://scenes/main/pause_menu.tscn" id="pause_menu_scene"]
 
 
 [sub_resource type="StyleBoxFlat" id="JoystickBg"]
@@ -180,97 +183,8 @@ one_shot = false
 [node name="GameTimer" type="Timer" parent="."]
 one_shot = false
 
-[node name="HUD" type="CanvasLayer" parent="."]
-script = ExtResource("5")
-
-[node name="VBoxLeft" type="VBoxContainer" parent="HUD"]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 216.0
-offset_bottom = 100.0
-theme_override_constants/separation = 8
-
-[node name="HypeContainer" type="VBoxContainer" parent="HUD/VBoxLeft"]
-layout_mode = 2
-custom_minimum_size = Vector2(200, 0)
-
-[node name="HypeLabel" type="Label" parent="HUD/VBoxLeft/HypeContainer"]
-layout_mode = 2
-text = "🔥 HYPE"
-theme_override_font_size = 16
-custom_minimum_size = Vector2(0, 24)
-
-[node name="HypeBar" type="GodotxHealthBarControl" parent="HUD/VBoxLeft/HypeContainer"]
-layout_mode = 2
-value = 100.0
-max_value = 100.0
-min_value = 0.0
-custom_minimum_size = Vector2(200, 20)
-
-[node name="OverwhelmContainer" type="VBoxContainer" parent="HUD/VBoxLeft"]
-layout_mode = 2
-custom_minimum_size = Vector2(200, 0)
-
-[node name="OverwhelmLabel" type="Label" parent="HUD/VBoxLeft/OverwhelmContainer"]
-layout_mode = 2
-text = "⚠ OVERWHELM"
-theme_override_font_size = 16
-custom_minimum_size = Vector2(0, 24)
-
-[node name="OverwhelmBar" type="GodotxHealthBarControl" parent="HUD/VBoxLeft/OverwhelmContainer"]
-layout_mode = 2
-value = 100.0
-max_value = 100.0
-min_value = 0.0
-custom_minimum_size = Vector2(200, 20)
-
-[node name="VBoxRight" type="VBoxContainer" parent="HUD"]
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -216.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 100.0
-alignment = 2
-theme_override_constants/separation = 8
-
-[node name="TimerLabel" type="Label" parent="HUD/VBoxRight"]
-layout_mode = 2
-text = "⏱ 10:00"
-theme_override_font_size = 20
-horizontal_alignment = 2
-custom_minimum_size = Vector2(200, 32)
-
-[node name="LikesLabel" type="Label" parent="HUD/VBoxRight"]
-layout_mode = 2
-text = "❤ 0"
-theme_override_font_size = 18
-horizontal_alignment = 2
-custom_minimum_size = Vector2(0, 28)
-
-[node name="KillsLabel" type="Label" parent="HUD/VBoxRight"]
-layout_mode = 2
-text = "☠ 0"
-theme_override_font_size = 18
-horizontal_alignment = 2
-custom_minimum_size = Vector2(0, 28)
-
-[node name="CenterLabel" type="Label" parent="HUD"]
-anchor_left = 0.5
-anchor_right = 0.5
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -50.0
-offset_right = 200.0
-offset_bottom = 50.0
-text = ""
-theme_override_font_size = 32
-theme_override_colors/font_color = Color(1.0, 0.839, 0.039, 1.0)
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="MobileControls" type="CanvasLayer" parent="Player"]
+[node name="HUD" parent="." instance=ExtResource("hud_scene")]
+[node name="MobileControls" type="Control" parent="Player"]
 layer = 10
 script = ExtResource("6")
 
@@ -310,15 +224,13 @@ grow_vertical = 0
 theme_overrides/font_size = 24
 text = "⚔"
 
-[node name="WeaponSystem" type="Node" parent="Player"]
+[node name="WeaponSystem" type="Node3D" parent="Player"]
 script = ExtResource("7")
 
 [node name="HitFeedback" type="Node3D" parent="Player"]
 script = ExtResource("8")
 
-[node name="PauseMenu" type="CanvasLayer" parent="."]
-layer = 20
-script = ExtResource("9")
+[node name="PauseMenu" parent="." instance=ExtResource("pause_menu_scene")]
 
 [node name="AudioTest" type="Node3D" parent="."]
 script = ExtResource("10")

@@ -15,13 +15,12 @@ void fragment() {
 
 	if (u_vignette_intensity <= 0.0) {
 		COLOR = vec4(color, 1.0);
-		return;
+	} else {
+		vec2 centered = uv - 0.5;
+		float dist = length(centered) * 2.0;
+		float vignette = smoothstep(1.0, 1.0 - u_vignette_smoothness, dist);
+		vignette = mix(1.0, vignette, u_vignette_intensity);
+
+		COLOR = vec4(color * vignette, 1.0);
 	}
-
-	vec2 centered = uv - 0.5;
-	float dist = length(centered) * 2.0;
-	float vignette = smoothstep(1.0, 1.0 - u_vignette_smoothness, dist);
-	vignette = mix(1.0, vignette, u_vignette_intensity);
-
-	COLOR = vec4(color * vignette, 1.0);
 }

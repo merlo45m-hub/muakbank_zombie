@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode unshader, cull_disabled, blend_mix, depth_test_less;
+render_mode unshaded, cull_disabled, blend_mix;
 
 // Optimized volumetric fog with texture-based sampling
 // Features: Faster noise via texture, light interaction, wind animation
@@ -9,7 +9,7 @@ uniform vec4 u_fog_color : source_color = vec4(0.4, 0.38, 0.35, 0.15);
 uniform float u_fog_density : hint_range(0.0, 1.0) = 0.4;
 uniform float u_noise_scale : hint_range(0.5, 5.0) = 1.5;
 uniform float u_noise_speed : hint_range(0.0, 1.0) = 0.15;
-uniform vec2 u_wind_direction : hint_range(-1.0, 1.0) = vec2(1.0, 0.5);
+uniform vec2 u_wind_direction = vec2(1.0, 0.5);
 uniform float u_light_absorption : hint_range(0.0, 2.0) = 1.0;
 uniform vec3 u_light_direction = vec3(0.577, 0.577, 0.577); // Normalized
 

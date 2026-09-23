@@ -17,13 +17,11 @@ void fragment() {
 	vec2 uv = SCREEN_UV;
 	vec3 color = texture(screen_texture, uv).rgb;
 
-	if (u_grain_intensity <= 0.0) {
-		COLOR = vec4(color, 1.0);
-		return;
+	if (u_grain_intensity > 0.0) {
+		float noise = _vhs_hash(uv * 1000.0 + TIME);
+		noise = (noise - 0.5) * u_grain_intensity;
+		color = color + noise;
 	}
 
-	float noise = _vhs_hash(uv * 1000.0 + TIME);
-	noise = (noise - 0.5) * u_grain_intensity;
-
-	COLOR = vec4(color + noise, 1.0);
+	COLOR = vec4(color, 1.0);
 }

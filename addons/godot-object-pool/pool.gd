@@ -43,7 +43,10 @@ func init() -> void:
 	for i in range(size):
 		var s = scene.instantiate()
 		s.set_name(prefix + "_" + str(i))
-		s.connect("killed", _on_killed)
+		# Pooled objects may or may not expose a "killed" signal; the spawner
+		# manages alive->dead transitions via _on_killed() directly.
+		if s.has_signal("killed"):
+			s.connect("killed", _on_killed)
 		dead.push_back(s)
 
 func get_prefix() -> String:

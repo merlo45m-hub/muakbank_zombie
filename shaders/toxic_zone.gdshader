@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode unshader, cull_disabled, blend_mix, depth_test_less;
+render_mode unshaded, cull_disabled, blend_mix;
 
 // Toxic radiation zone shader for hazard visualization
 // Features: Animated warning glow, ripple distortion, geiger-like pulsing

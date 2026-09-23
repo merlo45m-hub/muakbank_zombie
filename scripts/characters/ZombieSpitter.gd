@@ -98,8 +98,8 @@ func _spawn_projectile(from: Vector3, dir: Vector3) -> void:
 	shape.shape = sphere_shape
 	proj.add_child(shape)
 
-	proj.global_position = from
 	get_tree().current_scene.add_child(proj)
+	proj.global_position = from
 
 	# Simple straight-line flight with a lifetime
 	var lifetime = 2.5
