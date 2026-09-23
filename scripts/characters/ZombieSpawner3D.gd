@@ -205,13 +205,19 @@ func _spawn_random_zombie() -> void:
 	var dist = min_spawn_distance + randf() * (spawn_radius - min_spawn_distance)
 	var spawn_pos = player.global_transform.origin + Vector3(cos(angle) * dist, 0, sin(angle) * dist)
 
-	# Ground detection via raycast
+	# Ground detection via raycast. Start the ray LOW (just above head height):
+	# casting from +50 hits rooftops/awnings and strands zombies on top of
+	# buildings where they idle forever, invisible and unreachable.
 	var space_state = get_world_3d().direct_space_state
 	if space_state:
-		var query = PhysicsRayQueryParameters3D.create(spawn_pos + Vector3(0, 50, 0), spawn_pos + Vector3(0, -50, 0))
+		var query = PhysicsRayQueryParameters3D.create(spawn_pos + Vector3(0, 3, 0), spawn_pos + Vector3(0, -60, 0))
 		var result = space_state.intersect_ray(query)
 		if result:
 			spawn_pos.y = result.position.y
+	# Any spawn still high above the player's level is a bogus surface — put it at
+	# the player's ground level instead of leaving a zombie stranded in the sky.
+	if spawn_pos.y > player.global_transform.origin.y + 3.0:
+		spawn_pos.y = player.global_transform.origin.y
 
 	# Mark as pool-managed and restore pristine state before it re-enters the world
 	zombie.set("pooled", true)
