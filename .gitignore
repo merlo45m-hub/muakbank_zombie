@@ -25,6 +25,10 @@ dist/
 render_*.png
 title_final*.png
 title_screen_final*.png
+title_screen_*.png
+title_test*.png
+*_render.png
+diag_*.png
 title_*.png.import
 render_*.png.import
 *.idsig

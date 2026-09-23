@@ -55,6 +55,10 @@ roughness = 0.75
 metallic = 0.1
 
 [sub_resource type="SphereMesh" id="SphereMesh_mist"]
+radius = 0.25
+height = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_fog_big"]
 radius = 30.0
 
 [sub_resource type="StandardMaterial3D" id="MistMaterial"]
@@ -88,7 +92,7 @@ material_override = SubResource("GroundMaterial")
 shape = SubResource("BoxShape3D_floor")
 
 [node name="FogVolume" type="MeshInstance3D" parent="."]
-mesh = SubResource("SphereMesh_mist")
+mesh = SubResource("SphereMesh_fog_big")
 material_override = SubResource("MistMaterial")
 
 [node name="AmbientLight" type="OmniLight3D" parent="."]
@@ -1139,7 +1143,7 @@ material_override = SubResource("StoneMaterial")
 shape = SubResource("BoxShape3D_floor")
 
 [node name="Mist" type="MeshInstance3D" parent="."]
-mesh = SubResource("SphereMesh_mist")
+mesh = SubResource("SphereMesh_fog_big")
 material_override = SubResource("MistMaterial")
 
 [node name="NearBandStructures" type="Node3D" parent="."]

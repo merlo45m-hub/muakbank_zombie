@@ -6,10 +6,14 @@
 extends Node3D
 
 ## Zombie spawn points: (x, z, scale, model_path)
+# Spawn points must sit INSIDE the camera's cone. Godot's fov is vertical, so this portrait
+# viewport has only ~30 degrees of HORIZONTAL field: at 5 m the visible band is about 2.5 m
+# wide. The previous points (x -7 .. +4.5) were all outside it, which is why no animal ever
+# appeared in the backdrop. These keep the bear centre-frame as the hero silhouette.
 var _zombie_spawns = [
-	{"x": -3.0, "z": -4.0, "scale": 1.0, "path": "res://assets/models/zombie_dog.glb", "y_offset": 0.5},
-	{"x": 4.5,  "z": -5.5, "scale": 0.9, "path": "res://assets/models/zombie_cat.glb", "y_offset": 0.4},
-	{"x": -7.0, "z": -3.0, "scale": 1.3, "path": "res://assets/models/zombie_bear.glb", "y_offset": 0.7},
+	{"x": -1.2, "z": -2.0, "scale": 1.0, "path": "res://assets/models/zombie_dog.glb", "y_offset": 0.5},
+	{"x": 1.4,  "z": -3.2, "scale": 0.9, "path": "res://assets/models/zombie_cat.glb", "y_offset": 0.4},
+	{"x": -0.2, "z": -4.6, "scale": 1.3, "path": "res://assets/models/zombie_bear.glb", "y_offset": 0.7},
 ]
 
 
@@ -32,8 +36,11 @@ func _setup_camera() -> void:
 	cam.fov = 62.0
 	cam.near = 0.1
 	cam.far = 120.0
-	cam.global_position = Vector3(0.0, 1.55, 8.0)
-	cam.look_at(Vector3(0.0, 1.35, -6.0), Vector3.UP)
+	# Aim at the tombstone cluster's centroid rather than straight down the empty middle of the
+	# field: from (0,1.55,8) the look axis passed between every prop, which is what produced
+	# two flat featureless bands. Closer eye, graves and animals inside the narrow portrait cone.
+	cam.global_position = Vector3(-0.3, 1.5, 2.6)
+	cam.look_at(Vector3(-0.7, 0.95, -5.3), Vector3.UP)
 	print("[TitleBackground] _setup_camera after: ", cam.global_position, " fov=", cam.fov)
 	await get_tree().process_frame
 	print("[TitleBackground] _setup_camera next_frame: ", cam.global_position, " fov=", cam.fov)
