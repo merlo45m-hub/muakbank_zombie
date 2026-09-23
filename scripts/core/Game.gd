@@ -79,14 +79,14 @@ func _ready() -> void:
 	start_game()
 
 func _load_environment() -> void:
-	var level = Save.get_current_level()
-	var env_scene = Level.get_environment_scene(level)
+	# Use the Pet Cemetery environment for the graveyard theme
+	var env_scene = "res://scenes/world/environment/cemetery_enhanced.tscn"
 	var env = load(env_scene).instantiate()
 	add_child(env)
 	print("[Game] Loaded environment: ", env_scene)
 	
 	# Play ambient layer for this environment
-	Audio.play_ambient_for(Level.get_ambient_name(level))
+	Audio.play_ambient_for("cemetery")
 
 func _setup_objectives() -> void:
 	if not objective_manager or not objective_manager.has_method("add_objective"):
@@ -114,14 +114,9 @@ func start_game() -> void:
 	zombies_killed = 0
 	time_remaining = GAME_DURATION
 	
-	# Reset player. Deliberately NOT the world origin: in old_town_enhanced the origin
-	# sits inside Building6's footprint, so spawning there buries the player inside a
-	# wall - and the third-person camera 2 m behind him inside that same wall, which is
-	# what every "looking at a blank wall" frame in this project's history actually was.
-	# (-2, 0.15, -6) comes from tools/find_spawn.gd, which probed the real level
-	# collision: 6 m of clear space in all 24 directions at knee and chest height.
+	# Reset player - spawn at cemetery center for graveyard view
 	if player:
-		player.position = Vector3(-2, 0.15, -6)
+		player.position = Vector3(0, 0.15, 0)
 		player.health = player.max_health
 		player.stamina = player.max_stamina
 	
