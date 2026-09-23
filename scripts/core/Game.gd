@@ -483,26 +483,40 @@ func on_powerup_collected(powerup_type: String) -> void:
 			player.move_speed *= 1.5
 			player.sprint_speed *= 1.5
 			Audio.play_powerup()
-			await get_tree().create_timer(10.0).timeout
+			await _wait(10.0)
 			if is_instance_valid(player):
 				player.move_speed /= 1.5
 				player.sprint_speed /= 1.5
 		"damage":
 			player.attack_damage *= 2
 			Audio.play_powerup()
-			await get_tree().create_timer(10.0).timeout
+			await _wait(10.0)
 			if is_instance_valid(player):
 				player.attack_damage /= 2
 		"shield":
 			player.is_shield_active = true
 			Audio.play_powerup()
-			await get_tree().create_timer(8.0).timeout
+			await _wait(8.0)
 			if is_instance_valid(player):
 				player.is_shield_active = false
 		"frenzy":
 			player.is_rage_active = true
 			Audio.play_frenzy()
-			await get_tree().create_timer(8.0).timeout
+			await _wait(8.0)
 			if is_instance_valid(player):
 				player.is_rage_active = false
 	print("[Game] Power-up collected: ", powerup_type)
+
+
+func _wait(sec: float) -> bool:
+	# get_tree() is null once this node is out of the tree, and awaiting it blindly throws
+	# "Cannot call method 'create_timer' on a null value", abandoning the rest of the
+	# coroutine - so a speed boost would never wear off, a shield would never drop. The
+	# frame log showed exactly that error coming from these four power-up timers. Player.gd
+	# and ZombieBase.gd already had this helper and this file was missed when they were
+	# fixed; same contract, same return value.
+	var t := get_tree()
+	if not t or not is_inside_tree():
+		return false
+	await t.create_timer(sec).timeout
+	return is_instance_valid(self) and is_inside_tree()

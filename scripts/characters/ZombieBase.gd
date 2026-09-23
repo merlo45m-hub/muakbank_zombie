@@ -96,7 +96,12 @@ func _physics_process(delta: float) -> void:
 				var rot = atan2(vfn_vec.x, vfn_vec.z)
 				mesh.rotation.y = lerp_angle(mesh.rotation.y, rot, 8 * delta)
 
-	move_and_slide()
+	# Guarded: the frame log showed three 'Condition "!is_inside_tree()" is true' errors with
+	# a backtrace ending here. A zombie can be freed (killed, despawned, level change) between
+	# the top-of-function guard and this call, and move_and_slide() then errors on a body with
+	# no space. Re-checking costs nothing.
+	if is_inside_tree():
+		move_and_slide()
 
 
 func _attack_timer_tick(delta: float) -> void:
