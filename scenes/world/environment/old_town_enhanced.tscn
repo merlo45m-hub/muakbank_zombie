@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=3]
+[gd_scene load_steps=52 format=3]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(60, 0.3, 60)
@@ -124,8 +124,9 @@ size = Vector3(14, 8, 12)
 [sub_resource type="BoxMesh" id="BoxMesh_building_tall"]
 size = Vector3(6, 12, 6)
 
-[sub_resource type="ConeMesh" id="ConeMesh_conical_roof"]
-radius = 3.5
+[sub_resource type="CylinderMesh" id="ConeMesh_conical_roof"]
+top_radius = 0.0
+bottom_radius = 3.5
 height = 5.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_building5"]
@@ -141,8 +142,9 @@ size = Vector3(1.0, 12, 18)
 radius = 1.5
 height = 14.0
 
-[sub_resource type="ConeMesh" id="ConeMesh_steeple_roof"]
-radius = 2.0
+[sub_resource type="CylinderMesh" id="ConeMesh_steeple_roof"]
+top_radius = 0.0
+bottom_radius = 2.0
 height = 4.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_bench"]
@@ -355,6 +357,24 @@ size = Vector3(0.8, 1.2, 0.8)
 [sub_resource type="BoxMesh" id="BoxMesh_timber"]
 size = Vector3(2.0, 0.2, 0.15)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_building2"]
+size = Vector3(12, 10, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_building3"]
+size = Vector3(7, 6, 7)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_building4"]
+size = Vector3(14, 8, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_building_tall"]
+size = Vector3(6, 12, 6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_building5"]
+size = Vector3(16, 14, 16)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_church_building"]
+size = Vector3(22, 12, 18)
+
 [node name="OldTown" type="Node3D"]
 
 [node name="Floor" type="StaticBody3D" parent="."]
@@ -373,49 +393,49 @@ shape = SubResource("BoxShape3D_floor_big")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 5, -15)
 collision_layer = 1
 
-[node name="BuildingMesh" type="MeshInstance3D" parent="Building1"]
+[node name="BuildingMesh" type="MeshInstance3D" parent="Buildings/Building1"]
 mesh = SubResource("BoxMesh_building2")
 material_override = SubResource("BrickMaterial")
 
-[node name="BuildingCol" type="CollisionShape3D" parent="Building1"]
+[node name="BuildingCol" type="CollisionShape3D" parent="Buildings/Building1"]
 shape = SubResource("BoxShape3D_building2")
 
-[node name="Window1" type="MeshInstance3D" parent="Building1"]
+[node name="Window1" type="MeshInstance3D" parent="Buildings/Building1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window2" type="MeshInstance3D" parent="Building1"]
+[node name="Window2" type="MeshInstance3D" parent="Buildings/Building1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window3" type="MeshInstance3D" parent="Building1"]
+[node name="Window3" type="MeshInstance3D" parent="Buildings/Building1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window4" type="MeshInstance3D" parent="Building1"]
+[node name="Window4" type="MeshInstance3D" parent="Buildings/Building1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 7, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window5" type="MeshInstance3D" parent="Building1"]
+[node name="Window5" type="MeshInstance3D" parent="Buildings/Building1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window6" type="MeshInstance3D" parent="Building1"]
+[node name="Window6" type="MeshInstance3D" parent="Buildings/Building1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 7, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Door1" type="MeshInstance3D" parent="Building1"]
+[node name="Door1" type="MeshInstance3D" parent="Buildings/Building1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -5.1)
 mesh = SubResource("BoxMesh_door")
 material_override = SubResource("DoorMaterial")
 
-[node name="Roof" type="MeshInstance3D" parent="Building1"]
+[node name="Roof" type="MeshInstance3D" parent="Buildings/Building1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
 mesh = SubResource("BoxMesh_building_roof")
 material_override = SubResource("RoofMaterial")
@@ -424,49 +444,49 @@ material_override = SubResource("RoofMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 5, -18)
 collision_layer = 1
 
-[node name="BuildingMesh" type="MeshInstance3D" parent="Building2"]
+[node name="BuildingMesh" type="MeshInstance3D" parent="Buildings/Building2"]
 mesh = SubResource("BoxMesh_building2")
 material_override = SubResource("BrickMaterial")
 
-[node name="BuildingCol" type="CollisionShape3D" parent="Building2"]
+[node name="BuildingCol" type="CollisionShape3D" parent="Buildings/Building2"]
 shape = SubResource("BoxShape3D_building2")
 
-[node name="Window1" type="MeshInstance3D" parent="Building2"]
+[node name="Window1" type="MeshInstance3D" parent="Buildings/Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window2" type="MeshInstance3D" parent="Building2"]
+[node name="Window2" type="MeshInstance3D" parent="Buildings/Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window3" type="MeshInstance3D" parent="Building2"]
+[node name="Window3" type="MeshInstance3D" parent="Buildings/Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window4" type="MeshInstance3D" parent="Building2"]
+[node name="Window4" type="MeshInstance3D" parent="Buildings/Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 7, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window5" type="MeshInstance3D" parent="Building2"]
+[node name="Window5" type="MeshInstance3D" parent="Buildings/Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window6" type="MeshInstance3D" parent="Building2"]
+[node name="Window6" type="MeshInstance3D" parent="Buildings/Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 7, -5.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Door1" type="MeshInstance3D" parent="Building2"]
+[node name="Door1" type="MeshInstance3D" parent="Buildings/Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -5.1)
 mesh = SubResource("BoxMesh_door")
 material_override = SubResource("DoorMaterial")
 
-[node name="Roof" type="MeshInstance3D" parent="Building2"]
+[node name="Roof" type="MeshInstance3D" parent="Buildings/Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
 mesh = SubResource("BoxMesh_building_roof")
 material_override = SubResource("RoofMaterial")
@@ -475,29 +495,29 @@ material_override = SubResource("RoofMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 3, 18)
 collision_layer = 1
 
-[node name="BuildingMesh" type="MeshInstance3D" parent="Building3"]
+[node name="BuildingMesh" type="MeshInstance3D" parent="Buildings/Building3"]
 mesh = SubResource("BoxMesh_building3")
 material_override = SubResource("BrickMaterial")
 
-[node name="BuildingCol" type="CollisionShape3D" parent="Building3"]
+[node name="BuildingCol" type="CollisionShape3D" parent="Buildings/Building3"]
 shape = SubResource("BoxShape3D_building3")
 
-[node name="Window1" type="MeshInstance3D" parent="Building3"]
+[node name="Window1" type="MeshInstance3D" parent="Buildings/Building3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 2, -3.6)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window2" type="MeshInstance3D" parent="Building3"]
+[node name="Window2" type="MeshInstance3D" parent="Buildings/Building3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 2, -3.6)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Door1" type="MeshInstance3D" parent="Building3"]
+[node name="Door1" type="MeshInstance3D" parent="Buildings/Building3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, -3.6)
 mesh = SubResource("BoxMesh_door")
 material_override = SubResource("DoorMaterial")
 
-[node name="Roof" type="MeshInstance3D" parent="Building3"]
+[node name="Roof" type="MeshInstance3D" parent="Buildings/Building3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.6, 0)
 mesh = SubResource("BoxMesh_building_roof")
 material_override = SubResource("RoofMaterial")
@@ -506,49 +526,49 @@ material_override = SubResource("RoofMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 4, 20)
 collision_layer = 1
 
-[node name="BuildingMesh" type="MeshInstance3D" parent="Building4"]
+[node name="BuildingMesh" type="MeshInstance3D" parent="Buildings/Building4"]
 mesh = SubResource("BoxMesh_building4")
 material_override = SubResource("BrickMaterial")
 
-[node name="BuildingCol" type="CollisionShape3D" parent="Building4"]
+[node name="BuildingCol" type="CollisionShape3D" parent="Buildings/Building4"]
 shape = SubResource("BoxShape3D_building4")
 
-[node name="Window1" type="MeshInstance3D" parent="Building4"]
+[node name="Window1" type="MeshInstance3D" parent="Buildings/Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2.5, -6.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window2" type="MeshInstance3D" parent="Building4"]
+[node name="Window2" type="MeshInstance3D" parent="Buildings/Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -6.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window3" type="MeshInstance3D" parent="Building4"]
+[node name="Window3" type="MeshInstance3D" parent="Buildings/Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.5, -6.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window4" type="MeshInstance3D" parent="Building4"]
+[node name="Window4" type="MeshInstance3D" parent="Buildings/Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 5.5, -6.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window5" type="MeshInstance3D" parent="Building4"]
+[node name="Window5" type="MeshInstance3D" parent="Buildings/Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.5, -6.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window6" type="MeshInstance3D" parent="Building4"]
+[node name="Window6" type="MeshInstance3D" parent="Buildings/Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5.5, -6.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Door1" type="MeshInstance3D" parent="Building4"]
+[node name="Door1" type="MeshInstance3D" parent="Buildings/Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -6.1)
 mesh = SubResource("BoxMesh_door")
 material_override = SubResource("DoorMaterial")
 
-[node name="Roof" type="MeshInstance3D" parent="Building4"]
+[node name="Roof" type="MeshInstance3D" parent="Buildings/Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.6, 0)
 mesh = SubResource("BoxMesh_building_roof")
 material_override = SubResource("RoofMaterial")
@@ -557,29 +577,29 @@ material_override = SubResource("RoofMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 6, 8)
 collision_layer = 1
 
-[node name="BuildingMesh" type="MeshInstance3D" parent="Building5"]
+[node name="BuildingMesh" type="MeshInstance3D" parent="Buildings/Building5"]
 mesh = SubResource("BoxMesh_building_tall")
 material_override = SubResource("BrickMaterial")
 
-[node name="BuildingCol" type="CollisionShape3D" parent="Building5"]
+[node name="BuildingCol" type="CollisionShape3D" parent="Buildings/Building5"]
 shape = SubResource("BoxShape3D_building_tall")
 
-[node name="Window1" type="MeshInstance3D" parent="Building5"]
+[node name="Window1" type="MeshInstance3D" parent="Buildings/Building5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -3.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window2" type="MeshInstance3D" parent="Building5"]
+[node name="Window2" type="MeshInstance3D" parent="Buildings/Building5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, -3.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window3" type="MeshInstance3D" parent="Building5"]
+[node name="Window3" type="MeshInstance3D" parent="Buildings/Building5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, -3.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Roof" type="MeshInstance3D" parent="Building5"]
+[node name="Roof" type="MeshInstance3D" parent="Buildings/Building5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.5, 0)
 mesh = SubResource("BoxMesh_building_roof")
 material_override = SubResource("RoofMaterial")
@@ -588,64 +608,64 @@ material_override = SubResource("RoofMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 7, 10)
 collision_layer = 1
 
-[node name="BuildingMesh" type="MeshInstance3D" parent="Building6"]
+[node name="BuildingMesh" type="MeshInstance3D" parent="Buildings/Building6"]
 mesh = SubResource("BoxMesh_building5")
 material_override = SubResource("BrickMaterial")
 
-[node name="BuildingCol" type="CollisionShape3D" parent="Building6"]
+[node name="BuildingCol" type="CollisionShape3D" parent="Buildings/Building6"]
 shape = SubResource("BoxShape3D_building5")
 
-[node name="Window1" type="MeshInstance3D" parent="Building6"]
+[node name="Window1" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 4, -8.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window2" type="MeshInstance3D" parent="Building6"]
+[node name="Window2" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -8.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window3" type="MeshInstance3D" parent="Building6"]
+[node name="Window3" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4, -8.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window4" type="MeshInstance3D" parent="Building6"]
+[node name="Window4" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 8, -8.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window5" type="MeshInstance3D" parent="Building6"]
+[node name="Window5" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -8.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window6" type="MeshInstance3D" parent="Building6"]
+[node name="Window6" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 8, -8.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window7" type="MeshInstance3D" parent="Building6"]
+[node name="Window7" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 12, -8.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window8" type="MeshInstance3D" parent="Building6"]
+[node name="Window8" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12, -8.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Window9" type="MeshInstance3D" parent="Building6"]
+[node name="Window9" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 12, -8.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="Door1" type="MeshInstance3D" parent="Building6"]
+[node name="Door1" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -8.1)
 mesh = SubResource("BoxMesh_door")
 material_override = SubResource("DoorMaterial")
 
-[node name="Roof" type="MeshInstance3D" parent="Building6"]
+[node name="Roof" type="MeshInstance3D" parent="Buildings/Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.5, 0)
 mesh = SubResource("BoxMesh_building_roof")
 material_override = SubResource("RoofMaterial")
@@ -654,39 +674,39 @@ material_override = SubResource("RoofMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 6, 25)
 collision_layer = 1
 
-[node name="ChurchMesh" type="MeshInstance3D" parent="Church"]
+[node name="ChurchMesh" type="MeshInstance3D" parent="Buildings/Church"]
 mesh = SubResource("BoxMesh_church_building")
 material_override = SubResource("StoneMaterial")
 
-[node name="ChurchCol" type="CollisionShape3D" parent="Church"]
+[node name="ChurchCol" type="CollisionShape3D" parent="Buildings/Church"]
 shape = SubResource("BoxShape3D_church_building")
 
-[node name="ChurchFront" type="MeshInstance3D" parent="Church"]
+[node name="ChurchFront" type="MeshInstance3D" parent="Buildings/Church"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 6, 0)
 mesh = SubResource("BoxMesh_church_front")
 material_override = SubResource("StoneMaterial_dark")
 
-[node name="ChurchWindow1" type="MeshInstance3D" parent="Church"]
+[node name="ChurchWindow1" type="MeshInstance3D" parent="Buildings/Church"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 5, -0.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="ChurchWindow2" type="MeshInstance3D" parent="Church"]
+[node name="ChurchWindow2" type="MeshInstance3D" parent="Buildings/Church"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 9, -0.1)
 mesh = SubResource("BoxMesh_window")
 material_override = SubResource("WindowMaterial")
 
-[node name="ChurchDoor" type="MeshInstance3D" parent="Church"]
+[node name="ChurchDoor" type="MeshInstance3D" parent="Buildings/Church"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.25, -0.1)
 mesh = SubResource("BoxMesh_door")
 material_override = SubResource("DoorMaterial")
 
-[node name="Steeple" type="MeshInstance3D" parent="Church"]
+[node name="Steeple" type="MeshInstance3D" parent="Buildings/Church"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 18, 0)
 mesh = SubResource("CylinderMesh_steeple")
 material_override = SubResource("StoneMaterial")
 
-[node name="SteepleRoof" type="MeshInstance3D" parent="Church"]
+[node name="SteepleRoof" type="MeshInstance3D" parent="Buildings/Church"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 25, 0)
 mesh = SubResource("ConeMesh_steeple_roof")
 material_override = SubResource("RoofMaterial")

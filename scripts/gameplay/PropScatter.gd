@@ -25,7 +25,7 @@ func _build_scatter() -> void:
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.mesh = prop_mesh
 	mm.instance_count = prop_count
-	multi_mesh = mm
+	multimesh = mm
 	
 	var rng = RandomNumberGenerator.new()
 	if seed_value != 0:

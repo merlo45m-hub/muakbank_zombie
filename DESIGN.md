@@ -92,12 +92,12 @@ render instead of a tofu box.
 | Surface | Mockup | Built | Gap |
 |---|---|---|---|
 | Wordmark / splash | blood-drip display | flat red label | display face + drip |
-| Menu buttons | wooden planks | themed Button | plank texture |
-| Character select | neon pedestals | SubViewport cards, no pedestal | pedestal discs + lane glow |
-| HUD bars | HYPE (pink→orange), OVERWHELM (green→yellow) | pink fill, single color | gradient + second bar hue |
+| Menu buttons | wooden planks | ✅ WoodPlank StyleBox applied | — |
+| Character select | neon pedestals | ✅ PedestalGamer/Doctor/Nurse/Streamer/Hunter sub-resources | — |
+| HUD bars | HYPE (pink→orange), OVERWHELM (green→yellow) | ✅ Gradient-enabled GodotxHealthBarStyle | — |
 | HUD labels | `🔥 HYPE` / `⚠ OVERWHELM` | matched | — |
-| HUD food bar | 6 round food buttons | not present | build it |
-| Center message banner | bordered banner | absent | build it |
+| HUD food bar | 6 round food buttons | ✅ 6 TextureButton slots with generated icons | — |
+| Center message banner | bordered banner | ✅ Panel + Label with fade tween | — |
 | Fonts | n/a | NotoSans + NotoColorEmoji | — |
 
 Owner for the remaining gaps: frontend/godot UI lane. Rendered verification

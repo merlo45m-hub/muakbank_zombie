@@ -1,4 +1,4 @@
-[gd_scene load_steps=72 format=3]
+[gd_scene load_steps=73 format=3]
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(100, 0.3, 100)
 
@@ -271,6 +271,9 @@ size = Vector3(1, 0.3, 1)
 albedo_color = Color(0.28, 0.26, 0.24, 1.0)
 roughness = 0.95
 metallic = 0.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall"]
+size = Vector3(100, 4, 0.3)
 
 [node name="Subway" type="Node3D"]
 

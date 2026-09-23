@@ -1,6 +1,14 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/HUD.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/textures/food_burger_icon.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/food_pizza_icon.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/textures/food_soda_icon.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/textures/food_fries_icon.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/textures/food_sushi_icon.png" id="6"]
+[ext_resource type="Texture2D" path="res://assets/textures/food_takis_icon.png" id="7"]
+[ext_resource type="GodotxHealthBarStyle" path="res://theme/hype_bar_style.tres" id="8"]
+[ext_resource type="GodotxHealthBarStyle" path="res://theme/overwhelm_bar_style.tres" id="9"]
 
 [sub_resource type="StyleBoxFlat" id="ProgressBarBg"]
 bg_color = Color(0.1, 0.1, 0.1, 0.8)
@@ -12,6 +20,30 @@ border_width_bottom = 2
 
 [sub_resource type="StyleBoxFlat" id="ProgressBarFill"]
 bg_color = Color(1.0, 0.2, 0.5, 1.0)
+
+[sub_resource type="StyleBoxFlat" id="BannerStyle"]
+bg_color = Color(0.1, 0.06, 0.18, 0.95)
+border_color = Color(0.8, 0.15, 0.1, 0.8)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="FoodSlotBg"]
+bg_color = Color(0.141, 0.118, 0.22, 0.9)
+border_color = Color(0.2, 0.18, 0.3, 0.5)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1")
@@ -39,6 +71,7 @@ value = 0.0
 max_value = 100.0
 min_value = 0.0
 custom_minimum_size = Vector2(200, 20)
+style = ExtResource("8")
 
 [node name="OverwhelmContainer" type="VBoxContainer" parent="VBoxLeft"]
 layout_mode = 2
@@ -56,6 +89,7 @@ value = 0.0
 max_value = 100.0
 min_value = 0.0
 custom_minimum_size = Vector2(200, 20)
+style = ExtResource("9")
 
 [node name="VBoxRight" type="VBoxContainer" parent="."]
 anchor_left = 1.0
@@ -69,17 +103,24 @@ theme_override_constants/separation = 8
 
 [node name="TimerLabel" type="Label" parent="VBoxRight"]
 layout_mode = 2
-text = "⏱ 3:00"
+text = "⏱ 10:00"
 theme_override_font_size = 20
 horizontal_alignment = 2
 custom_minimum_size = Vector2(200, 32)
 
 [node name="LikesLabel" type="Label" parent="VBoxRight"]
 layout_mode = 2
-text = "❤ Likes: 0"
+text = "❤ 0"
 theme_override_font_size = 18
 horizontal_alignment = 2
 custom_minimum_size = Vector2(200, 28)
+
+[node name="KillsLabel" type="Label" parent="VBoxRight"]
+layout_mode = 2
+text = "☠ 0"
+theme_override_font_size = 18
+horizontal_alignment = 2
+custom_minimum_size = Vector2(0, 28)
 
 [node name="CenterLabel" type="Label" parent="."]
 anchor_left = 0.5
@@ -92,6 +133,91 @@ offset_right = 200.0
 offset_bottom = 50.0
 text = ""
 theme_override_font_size = 32
-theme_override_colors/font_color = Color(1.0, 0.84, 0.0, 1.0)
+theme_override_colors/font_color = Color(1.0, 0.839, 0.039, 1.0)
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="CenterBanner" type="Panel" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.4
+anchor_bottom = 0.4
+offset_left = -250.0
+offset_top = -40.0
+offset_right = 250.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("BannerStyle")
+
+[node name="BannerLabel" type="Label" parent="CenterBanner"]
+layout_mode = 1
+anchors_preset = 15
+offset_left = 16.0
+offset_top = 8.0
+offset_right = -16.0
+offset_bottom = -8.0
+text = ""
+theme_override_font_size = 28
+theme_override_colors/font_color = Color(0.9, 0.15, 0.1, 1.0)
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FoodBar" type="HBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -228.0
+offset_top = -100.0
+offset_right = 228.0
+offset_bottom = -20.0
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="FoodSlot1" type="TextureButton" parent="FoodBar"]
+custom_minimum_size = Vector2(72, 72)
+texture_normal = ExtResource("2")
+theme_overrides/styles/normal = SubResource("FoodSlotBg")
+theme_overrides/styles/hover = SubResource("FoodSlotBg")
+theme_overrides/styles/pressed = SubResource("FoodSlotBg")
+theme_overrides/font_size = 12
+
+[node name="FoodSlot2" type="TextureButton" parent="FoodBar"]
+custom_minimum_size = Vector2(72, 72)
+texture_normal = ExtResource("3")
+theme_overrides/styles/normal = SubResource("FoodSlotBg")
+theme_overrides/styles/hover = SubResource("FoodSlotBg")
+theme_overrides/styles/pressed = SubResource("FoodSlotBg")
+theme_overrides/font_size = 12
+
+[node name="FoodSlot3" type="TextureButton" parent="FoodBar"]
+custom_minimum_size = Vector2(72, 72)
+texture_normal = ExtResource("4")
+theme_overrides/styles/normal = SubResource("FoodSlotBg")
+theme_overrides/styles/hover = SubResource("FoodSlotBg")
+theme_overrides/styles/pressed = SubResource("FoodSlotBg")
+theme_overrides/font_size = 12
+
+[node name="FoodSlot4" type="TextureButton" parent="FoodBar"]
+custom_minimum_size = Vector2(72, 72)
+texture_normal = ExtResource("5")
+theme_overrides/styles/normal = SubResource("FoodSlotBg")
+theme_overrides/styles/hover = SubResource("FoodSlotBg")
+theme_overrides/styles/pressed = SubResource("FoodSlotBg")
+theme_overrides/font_size = 12
+
+[node name="FoodSlot5" type="TextureButton" parent="FoodBar"]
+custom_minimum_size = Vector2(72, 72)
+texture_normal = ExtResource("6")
+theme_overrides/styles/normal = SubResource("FoodSlotBg")
+theme_overrides/styles/hover = SubResource("FoodSlotBg")
+theme_overrides/styles/pressed = SubResource("FoodSlotBg")
+theme_overrides/font_size = 12
+
+[node name="FoodSlot6" type="TextureButton" parent="FoodBar"]
+custom_minimum_size = Vector2(72, 72)
+texture_normal = ExtResource("7")
+theme_overrides/styles/normal = SubResource("FoodSlotBg")
+theme_overrides/styles/hover = SubResource("FoodSlotBg")
+theme_overrides/styles/pressed = SubResource("FoodSlotBg")
+theme_overrides/font_size = 12

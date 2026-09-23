@@ -2,6 +2,34 @@
 
 [ext_resource type="Script" path="res://scripts/ui/GameOver.gd" id="1"]
 
+[sub_resource type="StyleBoxFlat" id="WoodPlank"]
+bg_color = Color(0.36, 0.23, 0.14, 1.0)
+border_color = Color(0.52, 0.34, 0.2, 1.0)
+border_width_left = 2
+border_width_top = 4
+border_width_right = 2
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = true
+anti_aliasing_size = 1.0
+
+[sub_resource type="StyleBoxFlat" id="WoodPlankHover"]
+bg_color = Color(0.24, 0.15, 0.09, 1.0)
+border_color = Color(0.42, 0.27, 0.15, 1.0)
+border_width_left = 2
+border_width_top = 4
+border_width_right = 2
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = true
+anti_aliasing_size = 1.0
+
 [node name="GameOver" type="Control"]
 layout_mode = 1
 anchors_preset = 15
@@ -78,12 +106,16 @@ size_flags_horizontal = 4
 layout_mode = 2
 text = "🔄 PLAY AGAIN"
 custom_minimum_size = Vector2(200, 50)
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 24
 
 [node name="MenuBtn" type="Button" parent="VBoxMain/ButtonContainer"]
 layout_mode = 2
 text = "🏠 MAIN MENU"
 custom_minimum_size = Vector2(200, 50)
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 24
 
 [node name="Spacer4" type="Control" parent="VBoxMain"]

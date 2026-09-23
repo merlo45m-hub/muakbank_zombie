@@ -398,8 +398,6 @@ metallic = 0.0
 [sub_resource type="BoxShape3D" id="BoxShape3D_conveyor_belt_surface"]
 size = Vector3(13, 0.12, 1.1)
 
-<node name="Warehouse" type="Node3D">
-
 [node name="Warehouse" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
