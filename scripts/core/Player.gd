@@ -187,6 +187,14 @@ func _physics_process(delta: float) -> void:
 #  INPUT — improved to mirror gdquest controller patterns
 # ──────────────────────────────────────────────
 
+func mark_safe_spawn(pos: Vector3) -> void:
+	# Called by Game once it has probed a legal spawn point. The safety net below must
+	# recover to THAT spot: the scene file's transform is only correct for one of the
+	# eight levels, and recovering into a wall is the bug this project spent a night
+	# chasing.
+	_start_position = pos
+
+
 func _handle_movement_input(delta: float) -> void:
 	# 1. Collect raw 2D input (keyboard or mobile joystick)
 	_raw_input_dir = _get_raw_input_dir()

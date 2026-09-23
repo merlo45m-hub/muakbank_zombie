@@ -79,14 +79,112 @@ func _ready() -> void:
 	start_game()
 
 func _load_environment() -> void:
-	# Use the Pet Cemetery environment for the graveyard theme
-	var env_scene = "res://scenes/world/environment/cemetery_enhanced.tscn"
+	var level = Save.get_current_level()
+	var env_scene = Level.get_environment_scene(level)
 	var env = load(env_scene).instantiate()
 	add_child(env)
 	print("[Game] Loaded environment: ", env_scene)
 	
 	# Play ambient layer for this environment
-	Audio.play_ambient_for("cemetery")
+	Audio.play_ambient_for(Level.get_ambient_name(level))
+
+## Per-level spawn preference, in level-local coordinates. A HINT only: _place_player()
+## probes the level's real collision and walks outward until it finds ground with room
+## for the player, so a stale hint degrades to "somewhere close", never to "inside a
+## wall". Both of this project's spawn catastrophes came from trusting a fixed
+## coordinate: the world origin sits inside Building6 in old_town, and the cemetery's
+## centre now has broken headstones on it.
+const SPAWN_HINTS := {
+	1: Vector3(-2.0, 0.15, -6.0),
+}
+
+func _place_player(p: CharacterBody3D) -> void:
+	# The level was added to the tree moments ago; its colliders only exist in the
+	# physics space after a step, so probe on the next physics frame or every cast
+	# comes back empty and the player is placed in mid-air.
+	await get_tree().physics_frame
+	var hint: Vector3 = SPAWN_HINTS.get(Save.get_current_level(), Vector3.ZERO)
+	var space := p.get_world_3d().direct_space_state
+	var spot := Vector3.INF
+	var ground_y := 0.0
+	for cand in _spawn_candidates(hint):
+		var gy := _ground_height(space, cand)
+		if is_inf(gy):
+			continue
+		var at := Vector3(cand.x, gy, cand.z)
+		if not _spot_is_clear(space, at, p):
+			continue
+		spot = at + Vector3(0, 0.05, 0)
+		ground_y = gy
+		break
+	if is_inf(spot.x):
+		push_warning("[Game] no clear spawn near %s - using the hint" % str(hint))
+		spot = hint
+	p.global_position = spot
+	p.velocity = Vector3.ZERO
+	p.rotation.y = _richest_direction_yaw(space, spot)
+	if p.has_method("mark_safe_spawn"):
+		p.mark_safe_spawn(spot)
+	print("[Game] Spawned at %s ground=%.2f yaw=%.0f deg" % [str(spot), ground_y, rad_to_deg(p.rotation.y)])
+
+func _spawn_candidates(hint: Vector3) -> Array[Vector3]:
+	var out: Array[Vector3] = [hint]
+	for r in [2.0, 4.0, 6.0, 8.0, 11.0, 14.0]:
+		for a in range(0, 360, 30):
+			var rad := deg_to_rad(float(a))
+			out.append(hint + Vector3(cos(rad) * r, 0.0, sin(rad) * r))
+	return out
+
+func _ground_height(space: PhysicsDirectSpaceState3D, at: Vector3) -> float:
+	# INF means the column is hollow - a hole in the level is not a spawn point.
+	var q := PhysicsRayQueryParameters3D.create(at + Vector3(0, 14, 0), at - Vector3(0, 14, 0))
+	q.collide_with_areas = false
+	var hit := space.intersect_ray(q)
+	if hit.is_empty():
+		return INF
+	return (hit.position as Vector3).y
+
+func _spot_is_clear(space: PhysicsDirectSpaceState3D, at: Vector3, p: CharacterBody3D) -> bool:
+	# The player is a waist-high capsule: test knees and chest so neither a low
+	# headstone base nor an overhanging branch starts inside the body. Depenetration
+	# from a bad spawn is not a nudge - it launches the body at ~100 m/s and the
+	# player wakes up skating along the top of whatever he was spawned inside.
+	var shape := SphereShape3D.new()
+	shape.radius = 0.45
+	for h in [0.5, 1.1]:
+		var params := PhysicsShapeQueryParameters3D.new()
+		params.shape = shape
+		params.transform = Transform3D(Basis(), at + Vector3(0, h, 0))
+		params.collide_with_areas = false
+		params.exclude = [p.get_rid()]
+		if not space.intersect_shape(params, 1).is_empty():
+			return false
+	# Reject ledges: the ground has to be level within a step of the spot.
+	for d in [0.6, -0.6, 0.0]:
+		var gy := _ground_height(space, at + Vector3(d, 0, 0))
+		if is_inf(gy) or absf(gy - at.y) > 0.6:
+			return false
+	return true
+
+func _richest_direction_yaw(space: PhysicsDirectSpaceState3D, spot: Vector3) -> float:
+	# Aim the player - and with him the spring-arm camera - at the direction holding
+	# the most structure within 4-24 m. Spawning on clear ground but staring across an
+	# empty field is the other half of "this does not look like a game".
+	var best_yaw := 0.0
+	var best_score := -1
+	for a in range(0, 360, 15):
+		var rad := deg_to_rad(float(a))
+		var dir := Vector3(cos(rad), 0.0, sin(rad))
+		var score := 0
+		for d in [4.0, 7.0, 10.0, 14.0, 18.0, 24.0]:
+			var q := PhysicsRayQueryParameters3D.create(spot + Vector3(0, 1.0, 0), spot + Vector3(0, 1.0, 0) + dir * d)
+			q.collide_with_areas = false
+			if not space.intersect_ray(q).is_empty():
+				score += 1
+		if score > best_score:
+			best_score = score
+			best_yaw = atan2(-dir.x, -dir.z)
+	return best_yaw
 
 func _setup_objectives() -> void:
 	if not objective_manager or not objective_manager.has_method("add_objective"):
@@ -114,9 +212,15 @@ func start_game() -> void:
 	zombies_killed = 0
 	time_remaining = GAME_DURATION
 	
-	# Reset player - spawn at cemetery center for graveyard view
+	# Reset player. The spot is PROBED against the level's real collision and then
+	# aimed at whatever is worth looking at - see _place_player(). A fixed coordinate
+	# has now twice buried the player inside level geometry: the world origin sits
+	# inside Building6 in old_town (every early frame in this project's history was a
+	# blank wall), and the cemetery centre gained broken headstones, where
+	# depenetration launched the body at 107 m/s and the camera rode the headstone
+	# tops over an empty plane.
 	if player:
-		player.position = Vector3(0, 0.15, 0)
+		await _place_player(player)
 		player.health = player.max_health
 		player.stamina = player.max_stamina
 	
