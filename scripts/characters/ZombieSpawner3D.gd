@@ -120,7 +120,7 @@ func _create_pool(size: int, prefix: String, scene) -> Object:
 	# in the world at all: take them back out of the tree and make them inert.
 	# get_first_dead() + the spawner's add_child() re-enters them on checkout.
 	for i in pool.dead:
-		var p := i.get_parent()
+		var p: Node = i.get_parent()
 		if p:
 			p.remove_child(i)
 		if i is CollisionObject3D:
