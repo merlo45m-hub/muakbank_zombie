@@ -16,7 +16,11 @@ OUT=/game/build/muakbank_zombie.apk
 APKSIGNER=/opt/android-sdk/build-tools/34.0.0/apksigner
 KS=/root/.local/share/godot/keystores/debug.keystore
 
+echo "=== 0/3 import (refresh class cache) ==="
+"$G" --headless --import --path /game 2>&1 | tail -1
+
 echo "=== 1/3 export ==="
+"$G" --headless --import --path /game 2>&1 | tail -1
 "$G" --headless --export-debug "Android" "$OUT" 2>&1 | grep -viE "^$|Texture|libpng" | tail -6
 ls -l "$OUT"
 
