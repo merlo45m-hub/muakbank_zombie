@@ -62,7 +62,7 @@ background_mode = 1
 background_color = Color(0.12, 0.13, 0.18, 1.0)
 ambient_light_source = 2
 ambient_light_color = Color(0.5, 0.52, 0.6, 1.0)
-ambient_light_energy = 0.45
+ambient_light_energy = 0.7
 fog_enabled = true
 fog_light_color = Color(0.12, 0.13, 0.18, 1.0)
 fog_density = 0.012
@@ -188,9 +188,9 @@ mesh = SubResource("FogSphere")
 material_override = SubResource("FogMaterial")
 
 [node name="Moon" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.6, -0.7, 0.4, 0.1, 0.6, 0.8, -0.8, -0.4, 0.3, 12, 18, 10)
+rotation_degrees = Vector3(-55, -35, 0)
 light_color = Color(0.75, 0.8, 0.9, 1.0)
-light_energy_multiplier = 3.5
+light_energy = 2.4
 shadow_enabled = true
 shadow_fade_range = 8.0
 shadow_fog_enable = true
@@ -198,7 +198,7 @@ shadow_fog_enable = true
 [node name="Ambient" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 light_color = Color(0.35, 0.3, 0.25, 1.0)
-light_energy_multiplier = 0.7
+light_energy = 0.9
 omni_range = 50.0
 
 [node name="FogLayer2" type="MeshInstance3D" parent="."]
