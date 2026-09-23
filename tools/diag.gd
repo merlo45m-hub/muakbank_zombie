@@ -36,6 +36,11 @@ func _ready() -> void:
 	var inst: Node = packed.instantiate()
 	add_child(inst)
 
+	# ---- optional time scale: advance several sim seconds per rendered frame so a
+	#      slow (llvmpipe) capture can show mid-game action instead of frame #1 ----
+	if OS.get_environment("DIAG_TIMESCALE") != "":
+		Engine.time_scale = float(OS.get_environment("DIAG_TIMESCALE"))
+
 	# ---- per-frame physics probe: runs from the FIRST frame (DIAG_PHYS=1) ----
 	if OS.get_environment("DIAG_PHYS") == "1":
 		var ph_player: CharacterBody3D = null
@@ -61,6 +66,15 @@ func _ready() -> void:
 					i, str(ph_player.global_position), ph_player.velocity.y, str(ph_player.get_real_velocity()),
 					str(ph_player.get_last_motion()), str(ph_player.is_on_floor()),
 					ph_player.get_slide_collision_count(), cinfo])
+				if i % 90 == 0:
+					var zs := get_tree().get_nodes_in_group("enemies")
+					if zs.size() > 0:
+						var z = zs[0]
+						var zdist: float = z.global_position.distance_to(ph_player.global_position)
+						print("DIAG-ZOMBIE: f=%d count=%d %s pos=%s dist=%.2f state=%s" % [
+							i, zs.size(), z.name, str(z.global_position), zdist, str(z.get("current_state"))])
+					else:
+						print("DIAG-ZOMBIE: f=%d count=0 (none spawned)" % i)
 	else:
 		# let _ready chains / runtime scene loading settle
 		for i in range(12):

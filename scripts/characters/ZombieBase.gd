@@ -101,8 +101,18 @@ func _attack_timer_tick(delta: float) -> void:
 # ── AI BEHAVIORS ───────────────────────────────────────────────
 
 func _idle(delta: float) -> void:
+	# body_entered on DetectionArea only fires when the player ENTERS the sphere,
+	# so a zombie spawned outside it (the spawner places them 8-15 units out, and
+	# the sphere is r=12) never acquires a target and idles forever — no chase,
+	# no attacks, an empty-feeling game. Acquire by RANGE instead.
 	if not target:
-		return
+		var p = get_tree().get_first_node_in_group("player")
+		if p is Node3D:
+			var pd: float = global_transform.origin.distance_to(p.global_transform.origin)
+			if pd < detection_range:
+				set_target(p)
+		if not target:
+			return
 	var dist = global_transform.origin.distance_to(target.global_transform.origin)
 	if dist < detection_range:
 		current_state = AIState.CHASE
