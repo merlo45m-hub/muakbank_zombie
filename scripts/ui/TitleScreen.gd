@@ -1,8 +1,8 @@
 ## TitleScreen.gd — Main Menu (Muakbank Zombie)
-## Attach to root Control node of title screen scene
-## Features: 3D cemetery background, animated buttons, save stats display, floating food
+## Attach to root Node3D of title screen scene
+## Features: 3D cemetery background, animated buttons, save stats display
 
-extends Control
+extends Node3D
 
 # === NODE REFS ===
 @onready var play_btn = $VBoxMain/ButtonContainer/PlayBtn
@@ -32,9 +32,6 @@ func _ready() -> void:
 	# Update stats display
 	_update_stats()
 
-	# Animate food icons floating
-	_animate_food_decor()
-
 	# Play menu music
 	Audio.play_menu_music()
 	
@@ -44,8 +41,8 @@ func _ready() -> void:
 
 func _update_stats():
 	"""Show player's saved stats."""
-	high_score_label.text = "🏆 High Score: %d" % Save.get_high_score()
-	total_fed_label.text = "🧟 Total Fed: %d" % Save.get_total_zombies_fed()
+	high_score_label.text = "HIGH SCORE: %d" % Save.get_high_score()
+	total_fed_label.text = "FED: %d" % Save.get_total_zombies_fed()
 
 
 func _animate_title():
