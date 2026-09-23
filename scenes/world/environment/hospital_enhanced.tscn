@@ -914,6 +914,14 @@ mesh = SubResource("BoxMesh_monitor")
 material_override = SubResource("MonitorMaterial")
 
 [node name="NurseStation" type="Node3D" parent="Furniture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.5)
+; Shifted 3.5 m in -Z. The player spawns at (0, 0.2, 0) and the third-person camera sits
+; about 4.2 m behind them on the -X axis, so this station's children (an IV stand pole at
+; x=-2.5 and a 3 m counter at x=-1.5) stood directly between the camera and the player: the
+; frame census measured the IV stand at 66.63% of the viewport and the counter at 48.08%,
+; and the render showed a pole filling the middle of the screen. The meshes are correctly
+; sized (IV stand radius 0.04, height 1.8) - they were simply in the camera's face. Moving
+; the parent clears both at once and puts the station where it can be seen, not through.
 
 [node name="NurseStationBase" type="StaticBody3D" parent="Furniture/NurseStation"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0.75, -20)

@@ -171,7 +171,7 @@ func _ready() -> void:
 	# Which environment is ACTUALLY rendering? A WorldEnvironment pushes its environment to
 	# the viewport when it enters the tree, so with several in one scene the LAST to enter
 	# wins. Print the root window's environment - that is the one the renderer uses.
-	var ve := get_root().environment
+	var ve: Environment = get_tree().root.environment
 	if ve:
 		print("DIAG: RENDERING ENV bg=%d fog=%s dens=%.3f ambient=%.2f bright=%.2f" % [ve.background_mode, str(ve.fog_enabled), ve.fog_density, ve.ambient_light_energy, ve.adjustment_brightness])
 	else:
