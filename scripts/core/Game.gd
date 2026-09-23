@@ -96,6 +96,11 @@ func _load_environment() -> void:
 ## centre now has broken headstones on it.
 const SPAWN_HINTS := {
 	1: Vector3(-2.0, 0.15, -6.0),
+	# Cemetery: the centre IS the mausoleum. Census showed its arch filling 7.26% of
+	# the frame from 6.6 m with the pillars adding another 5%, because the probe used
+	# to settle ~2 m from it. Start on the western edge of the grave ring instead and
+	# let the auto-yaw face the field - the mausoleum reads as a landmark, not a wall.
+	2: Vector3(-24.0, 0.12, 0.0),
 }
 
 func _place_player(p: CharacterBody3D) -> void:
