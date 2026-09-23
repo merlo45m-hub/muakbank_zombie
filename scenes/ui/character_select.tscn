@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/CharacterSelect.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/title_background.tscn" id="bg"]
@@ -7,28 +7,70 @@
 [ext_resource type="PackedScene" path="res://scenes/characters/character_nurse.tscn" id="nurse"]
 [ext_resource type="PackedScene" path="res://scenes/characters/character_streamer.tscn" id="streamer"]
 [ext_resource type="PackedScene" path="res://scenes/characters/character_hunter.tscn" id="hunter"]
+[ext_resource type="FontFile" path="res://assets/fonts/Nosifer-Regular.ttf" id="font_nosifer"]
 
 [sub_resource type="StyleBoxFlat" id="ButtonStyle"]
-bg_color = Color(0.12, 0.06, 0.18, 1.0)
+bg_color = Color(0.08, 0.04, 0.1, 1.0)
+border_color = Color(0.4, 0.1, 0.2, 1.0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="ButtonHover"]
+bg_color = Color(0.15, 0.08, 0.18, 1.0)
 border_color = Color(0.6, 0.2, 0.3, 1.0)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="LabelSettings" id="TitleSettings"]
-font_size = 48
-font_color = Color(0.8, 0.15, 0.1, 1.0)
-outline_size = 4
-outline_color = Color(0.1, 0.02, 0.05, 1.0)
+font_size = 52
+font = ExtResource("font_nosifer")
+font_color = Color(0.75, 0.12, 0.08, 1.0)
+outline_size = 5
+outline_color = Color(0.05, 0.01, 0.02, 1.0)
 
-[sub_resource type="StyleBoxFlat" id="PedestalGamer"]
-bg_color = Color(1.0, 0.176, 0.482, 1.0)
-border_color = Color(1.0, 0.176, 0.482, 1.0)
+[sub_resource type="StyleBoxFlat" id="CardBackground"]
+bg_color = Color(0.06, 0.03, 0.08, 1.0)
+border_color = Color(0.2, 0.1, 0.15, 1.0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+anti_aliasing = true
+anti_aliasing_size = 1.0
+
+[sub_resource type="StyleBoxFlat" id="CardBackgroundSelected"]
+bg_color = Color(0.14, 0.04, 0.1, 1.0)
+border_color = Color(0.6, 0.1, 0.15, 1.0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+anti_aliasing = true
+anti_aliasing_size = 1.0
+
+[sub_resource type="StyleBoxFlat" id="PedestalDark"]
+bg_color = Color(0.1, 0.08, 0.12, 1.0)
+border_color = Color(0.2, 0.15, 0.25, 1.0)
 border_width_left = 0
 border_width_top = 0
 border_width_right = 0
@@ -40,51 +82,9 @@ corner_radius_bottom_left = 999
 anti_aliasing = true
 anti_aliasing_size = 2.0
 
-[sub_resource type="StyleBoxFlat" id="PedestalDoctor"]
-bg_color = Color(0.176, 0.878, 1.0, 1.0)
-border_color = Color(0.176, 0.878, 1.0, 1.0)
-border_width_left = 0
-border_width_top = 0
-border_width_right = 0
-border_width_bottom = 0
-corner_radius_top_left = 999
-corner_radius_top_right = 999
-corner_radius_bottom_right = 999
-corner_radius_bottom_left = 999
-anti_aliasing = true
-anti_aliasing_size = 2.0
-
-[sub_resource type="StyleBoxFlat" id="PedestalNurse"]
-bg_color = Color(0.176, 0.878, 1.0, 1.0)
-border_color = Color(0.176, 0.878, 1.0, 1.0)
-border_width_left = 0
-border_width_top = 0
-border_width_right = 0
-border_width_bottom = 0
-corner_radius_top_left = 999
-corner_radius_top_right = 999
-corner_radius_bottom_right = 999
-corner_radius_bottom_left = 999
-anti_aliasing = true
-anti_aliasing_size = 2.0
-
-[sub_resource type="StyleBoxFlat" id="PedestalStreamer"]
-bg_color = Color(0.627, 0.361, 1.0, 1.0)
-border_color = Color(0.627, 0.361, 1.0, 1.0)
-border_width_left = 0
-border_width_top = 0
-border_width_right = 0
-border_width_bottom = 0
-corner_radius_top_left = 999
-corner_radius_top_right = 999
-corner_radius_bottom_right = 999
-corner_radius_bottom_left = 999
-anti_aliasing = true
-anti_aliasing_size = 2.0
-
-[sub_resource type="StyleBoxFlat" id="PedestalHunter"]
-bg_color = Color(1.0, 0.839, 0.039, 1.0)
-border_color = Color(1.0, 0.839, 0.039, 1.0)
+[sub_resource type="StyleBoxFlat" id="PedestalSelected"]
+bg_color = Color(0.2, 0.04, 0.08, 1.0)
+border_color = Color(0.6, 0.1, 0.15, 1.0)
 border_width_left = 0
 border_width_top = 0
 border_width_right = 0
@@ -97,38 +97,44 @@ anti_aliasing = true
 anti_aliasing_size = 2.0
 
 [sub_resource type="StyleBoxFlat" id="WoodPlank"]
-bg_color = Color(0.36, 0.23, 0.14, 1.0)
-border_color = Color(0.52, 0.34, 0.2, 1.0)
-border_width_left = 2
-border_width_top = 4
-border_width_right = 2
-border_width_bottom = 4
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0.35, 0.2, 0.12, 1.0)
+border_color = Color(0.5, 0.25, 0.1, 1.0)
+border_width_left = 4
+border_width_top = 8
+border_width_right = 4
+border_width_bottom = 8
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
 anti_aliasing = true
 anti_aliasing_size = 1.0
 
 [sub_resource type="StyleBoxFlat" id="WoodPlankHover"]
-bg_color = Color(0.24, 0.15, 0.09, 1.0)
-border_color = Color(0.42, 0.27, 0.15, 1.0)
-border_width_left = 2
-border_width_top = 4
-border_width_right = 2
-border_width_bottom = 4
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0.45, 0.28, 0.16, 1.0)
+border_color = Color(0.6, 0.3, 0.12, 1.0)
+border_width_left = 4
+border_width_top = 8
+border_width_right = 4
+border_width_bottom = 8
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
 anti_aliasing = true
 anti_aliasing_size = 1.0
 
 [sub_resource type="LabelSettings" id="NameSettings"]
-font_size = 20
-font_color = Color(0.9, 0.9, 0.9, 1.0)
+font_size = 22
+font_color = Color(0.85, 0.85, 0.85, 1.0)
 outline_size = 2
-outline_color = Color(0.1, 0.1, 0.1, 1.0)
+outline_color = Color(0.05, 0.05, 0.05, 1.0)
+
+[sub_resource type="LabelSettings" id="DescSettings"]
+font_size = 14
+font_color = Color(0.5, 0.5, 0.5, 1.0)
+outline_size = 1
+outline_color = Color(0.05, 0.05, 0.05, 1.0)
 
 [node name="CharacterSelect" type="Control"]
 layout_mode = 1
@@ -148,176 +154,270 @@ offset_right = 0.0
 offset_bottom = 0.0
 alignment = 1
 
-[node name="Spacer1" type="Control" parent="VBoxMain"]
+[node name="SpacerTop" type="Control" parent="VBoxMain"]
 layout_mode = 2
 size_flags_vertical = 3
 
 [node name="TitleLabel" type="Label" parent="VBoxMain"]
 layout_mode = 2
-text = "SELECT YOUR SURVIVOR"
+text = "CHOOSE YOUR SURVIVOR"
 label_settings = SubResource("TitleSettings")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Spacer2" type="Control" parent="VBoxMain"]
+[node name="SubtitleLabel" type="Label" parent="VBoxMain"]
+layout_mode = 2
+text = "Who will face the cemetery?"
+label_settings = SubResource("DescSettings")
+horizontal_alignment = 1
+custom_minimum_size = Vector2(500, 24)
+
+[node name="SpacerMid" type="Control" parent="VBoxMain"]
 layout_mode = 2
 size_flags_vertical = 2
 
 [node name="CharactersContainer" type="HBoxContainer" parent="VBoxMain"]
 layout_mode = 2
 alignment = 1
-theme_override_constants/separation = 20
+theme_override_constants/separation = 12
 
-[node name="GamerCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
+[node name="GamerCard" type="Panel" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
+theme_overrides/styles/panel = SubResource("CardBackground")
+custom_minimum_size = Vector2(158, 280)
 
 [node name="GamerPedestal" type="Panel" parent="VBoxMain/CharactersContainer/GamerCard"]
-custom_minimum_size = Vector2(120, 8)
 layout_mode = 2
-theme_overrides/styles/panel = SubResource("PedestalGamer")
+theme_overrides/styles/panel = SubResource("PedestalDark")
+custom_minimum_size = Vector2(150, 6)
 
 [node name="GamerViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/GamerCard"]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 200)
+custom_minimum_size = Vector2(140, 170)
 size_flags_horizontal = 4
+
+[node name="GamerCamera" type="Camera3D" parent="VBoxMain/CharactersContainer/GamerCard/GamerViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.95, -0.31, 0, 0.31, 0.95, 0, 0.6, -3.0)
+fov = 45.0
+keep_aspect = 1
+current = true
 
 [node name="GamerName" type="Label" parent="VBoxMain/CharactersContainer/GamerCard"]
 layout_mode = 2
 text = "GAMER"
 label_settings = SubResource("NameSettings")
 horizontal_alignment = 1
+custom_minimum_size = Vector2(140, 26)
+
+[node name="GamerDesc" type="Label" parent="VBoxMain/CharactersContainer/GamerCard"]
+layout_mode = 2
+text = "Headset ready"
+label_settings = SubResource("DescSettings")
+horizontal_alignment = 1
+custom_minimum_size = Vector2(140, 18)
 
 [node name="GamerBtn" type="Button" parent="VBoxMain/CharactersContainer/GamerCard"]
 layout_mode = 2
 text = "SELECT"
-custom_minimum_size = Vector2(120, 40)
+custom_minimum_size = Vector2(130, 36)
 theme_overrides/styles/normal = SubResource("WoodPlank")
 theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 18
+theme_overrides/font_size = 16
+theme_overrides_font_color = Color(0.9, 0.9, 0.9, 1.0)
 
-[node name="DoctorCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
+[node name="DoctorCard" type="Panel" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
+theme_overrides/styles/panel = SubResource("CardBackground")
+custom_minimum_size = Vector2(158, 280)
 
 [node name="DoctorPedestal" type="Panel" parent="VBoxMain/CharactersContainer/DoctorCard"]
-custom_minimum_size = Vector2(120, 8)
 layout_mode = 2
-theme_overrides/styles/panel = SubResource("PedestalDoctor")
+theme_overrides/styles/panel = SubResource("PedestalDark")
+custom_minimum_size = Vector2(150, 6)
 
 [node name="DoctorViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/DoctorCard"]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 200)
+custom_minimum_size = Vector2(140, 170)
 size_flags_horizontal = 4
+
+[node name="DoctorCamera" type="Camera3D" parent="VBoxMain/CharactersContainer/DoctorCard/DoctorViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.95, -0.31, 0, 0.31, 0.95, 0, 0.6, -3.0)
+fov = 45.0
+keep_aspect = 1
+current = true
 
 [node name="DoctorName" type="Label" parent="VBoxMain/CharactersContainer/DoctorCard"]
 layout_mode = 2
 text = "DOCTOR"
 label_settings = SubResource("NameSettings")
 horizontal_alignment = 1
+custom_minimum_size = Vector2(140, 26)
+
+[node name="DoctorDesc" type="Label" parent="VBoxMain/CharactersContainer/DoctorCard"]
+layout_mode = 2
+text = "Stethoscope ready"
+label_settings = SubResource("DescSettings")
+horizontal_alignment = 1
+custom_minimum_size = Vector2(140, 18)
 
 [node name="DoctorBtn" type="Button" parent="VBoxMain/CharactersContainer/DoctorCard"]
 layout_mode = 2
 text = "SELECT"
-custom_minimum_size = Vector2(120, 40)
+custom_minimum_size = Vector2(130, 36)
 theme_overrides/styles/normal = SubResource("WoodPlank")
 theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 18
+theme_overrides/font_size = 16
+theme_overrides_font_color = Color(0.9, 0.9, 0.9, 1.0)
 
-[node name="NurseCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
+[node name="NurseCard" type="Panel" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
+theme_overrides/styles/panel = SubResource("CardBackground")
+custom_minimum_size = Vector2(158, 280)
 
 [node name="NursePedestal" type="Panel" parent="VBoxMain/CharactersContainer/NurseCard"]
-custom_minimum_size = Vector2(120, 8)
 layout_mode = 2
-theme_overrides/styles/panel = SubResource("PedestalNurse")
+theme_overrides/styles/panel = SubResource("PedestalDark")
+custom_minimum_size = Vector2(150, 6)
 
 [node name="NurseViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/NurseCard"]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 200)
+custom_minimum_size = Vector2(140, 170)
 size_flags_horizontal = 4
+
+[node name="NurseCamera" type="Camera3D" parent="VBoxMain/CharactersContainer/NurseCard/NurseViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.95, -0.31, 0, 0.31, 0.95, 0, 0.6, -3.0)
+fov = 45.0
+keep_aspect = 1
+current = true
 
 [node name="NurseName" type="Label" parent="VBoxMain/CharactersContainer/NurseCard"]
 layout_mode = 2
 text = "NURSE"
 label_settings = SubResource("NameSettings")
 horizontal_alignment = 1
+custom_minimum_size = Vector2(140, 26)
+
+[node name="NurseDesc" type="Label" parent="VBoxMain/CharactersContainer/NurseCard"]
+layout_mode = 2
+text = "Syringe ready"
+label_settings = SubResource("DescSettings")
+horizontal_alignment = 1
+custom_minimum_size = Vector2(140, 18)
 
 [node name="NurseBtn" type="Button" parent="VBoxMain/CharactersContainer/NurseCard"]
 layout_mode = 2
 text = "SELECT"
-custom_minimum_size = Vector2(120, 40)
+custom_minimum_size = Vector2(130, 36)
 theme_overrides/styles/normal = SubResource("WoodPlank")
 theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 18
+theme_overrides/font_size = 16
+theme_overrides_font_color = Color(0.9, 0.9, 0.9, 1.0)
 
-[node name="StreamerCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
+[node name="StreamerCard" type="Panel" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
+theme_overrides/styles/panel = SubResource("CardBackground")
+custom_minimum_size = Vector2(158, 280)
 
 [node name="StreamerPedestal" type="Panel" parent="VBoxMain/CharactersContainer/StreamerCard"]
-custom_minimum_size = Vector2(120, 8)
 layout_mode = 2
-theme_overrides/styles/panel = SubResource("PedestalStreamer")
+theme_overrides/styles/panel = SubResource("PedestalDark")
+custom_minimum_size = Vector2(150, 6)
 
 [node name="StreamerViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/StreamerCard"]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 200)
+custom_minimum_size = Vector2(140, 170)
 size_flags_horizontal = 4
+
+[node name="StreamerCamera" type="Camera3D" parent="VBoxMain/CharactersContainer/StreamerCard/StreamerViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.95, -0.31, 0, 0.31, 0.95, 0, 0.6, -3.0)
+fov = 45.0
+keep_aspect = 1
+current = true
 
 [node name="StreamerName" type="Label" parent="VBoxMain/CharactersContainer/StreamerCard"]
 layout_mode = 2
 text = "STREAMER"
 label_settings = SubResource("NameSettings")
 horizontal_alignment = 1
+custom_minimum_size = Vector2(140, 26)
+
+[node name="StreamerDesc" type="Label" parent="VBoxMain/CharactersContainer/StreamerCard"]
+layout_mode = 2
+text = "Ring light ready"
+label_settings = SubResource("DescSettings")
+horizontal_alignment = 1
+custom_minimum_size = Vector2(140, 18)
 
 [node name="StreamerBtn" type="Button" parent="VBoxMain/CharactersContainer/StreamerCard"]
 layout_mode = 2
 text = "SELECT"
-custom_minimum_size = Vector2(120, 40)
+custom_minimum_size = Vector2(130, 36)
 theme_overrides/styles/normal = SubResource("WoodPlank")
 theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 18
+theme_overrides/font_size = 16
+theme_overrides_font_color = Color(0.9, 0.9, 0.9, 1.0)
 
-[node name="HunterCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
+[node name="HunterCard" type="Panel" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
+theme_overrides/styles/panel = SubResource("CardBackground")
+custom_minimum_size = Vector2(158, 280)
 
 [node name="HunterPedestal" type="Panel" parent="VBoxMain/CharactersContainer/HunterCard"]
-custom_minimum_size = Vector2(120, 8)
 layout_mode = 2
-theme_overrides/styles/panel = SubResource("PedestalHunter")
+theme_overrides/styles/panel = SubResource("PedestalDark")
+custom_minimum_size = Vector2(150, 6)
 
 [node name="HunterViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/HunterCard"]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 200)
+custom_minimum_size = Vector2(140, 170)
 size_flags_horizontal = 4
+
+[node name="HunterCamera" type="Camera3D" parent="VBoxMain/CharactersContainer/HunterCard/HunterViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.95, -0.31, 0, 0.31, 0.95, 0, 0.6, -3.0)
+fov = 45.0
+keep_aspect = 1
+current = true
 
 [node name="HunterName" type="Label" parent="VBoxMain/CharactersContainer/HunterCard"]
 layout_mode = 2
 text = "HUNTER"
 label_settings = SubResource("NameSettings")
 horizontal_alignment = 1
+custom_minimum_size = Vector2(140, 26)
+
+[node name="HunterDesc" type="Label" parent="VBoxMain/CharactersContainer/HunterCard"]
+layout_mode = 2
+text = "Bat ready"
+label_settings = SubResource("DescSettings")
+horizontal_alignment = 1
+custom_minimum_size = Vector2(140, 18)
 
 [node name="HunterBtn" type="Button" parent="VBoxMain/CharactersContainer/HunterCard"]
 layout_mode = 2
 text = "SELECT"
-custom_minimum_size = Vector2(120, 40)
+custom_minimum_size = Vector2(130, 36)
 theme_overrides/styles/normal = SubResource("WoodPlank")
 theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 18
+theme_overrides/font_size = 16
+theme_overrides_font_color = Color(0.9, 0.9, 0.9, 1.0)
 
-[node name="Spacer3" type="Control" parent="VBoxMain"]
+[node name="SpacerBottom" type="Control" parent="VBoxMain"]
 layout_mode = 2
 size_flags_vertical = 3
 
 [node name="BackBtn" type="Button" parent="VBoxMain"]
 layout_mode = 2
-text = "⬅ BACK"
-custom_minimum_size = Vector2(150, 50)
+text = "BACK"
+custom_minimum_size = Vector2(140, 44)
 theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/font_size = 20
+theme_overrides/styles/hover = SubResource("ButtonHover")
+theme_overrides/font_size = 18
+theme_overrides_font_color = Color(0.7, 0.7, 0.7, 1.0)
 
 [connection signal="pressed" from="VBoxMain/CharactersContainer/GamerCard/GamerBtn" to="." method="_on_gamer_selected"]
 [connection signal="pressed" from="VBoxMain/CharactersContainer/DoctorCard/DoctorBtn" to="." method="_on_doctor_selected"]
