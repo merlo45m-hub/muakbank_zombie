@@ -17,6 +17,21 @@ func _all_nodes(root: Node) -> Array[Node]:
 	return out
 
 
+## DIAG_GOD: hold the player alive from the very FIRST frame. If the player dies,
+## Game.gd swaps scenes, which frees this harness - every later get_tree() then fails
+## on a null tree and the PNG is never written. That is exactly how a 200-frame
+## capture produced "Game over! Survived: false" in the log and no image on disk.
+func _god_hold(inst: Node) -> bool:
+	if OS.get_environment("DIAG_GOD") != "1":
+		return false
+	var found := false
+	for n in _all_nodes(inst):
+		if String(n.name) == "Player":
+			n.set("health", 9999)
+			found = true
+	return found
+
+
 func _ready() -> void:
 	var scene_path := OS.get_environment("DIAG_SCENE")
 	if scene_path.is_empty():
@@ -35,6 +50,7 @@ func _ready() -> void:
 		return
 	var inst: Node = packed.instantiate()
 	add_child(inst)
+	_god_hold(inst)  # before frame 1: a load-time game over was killing the capture
 
 	# ---- optional time scale: advance several sim seconds per rendered frame so a
 	#      slow (llvmpipe) capture can show mid-game action instead of frame #1 ----
@@ -90,6 +106,7 @@ func _ready() -> void:
 	else:
 		# let _ready chains / runtime scene loading settle
 		for i in range(12):
+			_god_hold(inst)
 			await get_tree().process_frame
 
 
@@ -258,10 +275,10 @@ func _ready() -> void:
 		# player dies ~9s in (the harness sends no input), Game.gd swaps to the
 		# game-over scene, this harness node is destroyed mid-loop and the PNG is
 		# silently never written — which is how two renders produced nothing.
-		if OS.get_environment("DIAG_GOD") == "1":
-			var gp = get_tree().get_first_node_in_group("player")
-			if gp:
-				gp.set("health", 9999)
+		if not is_inside_tree():
+			print("DIAG: harness left the tree at frame %d (scene swap) - aborted, no PNG" % i)
+			return
+		_god_hold(inst)
 		# Where is the player WHEN THE PICTURE IS TAKEN? The intro readout is frame 0 but
 		# the PNG is written `frames` later; a player who drifted or got knocked away in
 		# between turns "framing is correct" into "tiny figure at the horizon".
@@ -278,6 +295,23 @@ func _ready() -> void:
 					hpx = absf(ff.y - hh.y)
 				print("DIAG-POS: f=%d player=%s cam=%s dist=%.2f screen_height_px=%.0f" % [
 					i, str((pp as Node3D).global_position), str(cam_now.global_position), d, hpx])
+		# Zombie census during the capture: are enemies spawned, and is any of them in
+		# FRONT of the camera? "No zombies in frame" needs a number, not a guess.
+		if i % 30 == 0 or i == frames - 1:
+			var zs := get_tree().get_nodes_in_group("enemies")
+			var camz := get_viewport().get_camera_3d()
+			var in_front := 0
+			var nd := 1e9
+			if camz:
+				var fwd := -camz.global_transform.basis.z
+				for z in zs:
+					if not (z is Node3D):
+						continue
+					var toz: Vector3 = (z as Node3D).global_position - camz.global_position
+					nd = min(nd, toz.length())
+					if fwd.dot(toz.normalized()) > 0.0:
+						in_front += 1
+			print("DIAG-SHOOT: f=%d zombies=%d in_front=%d nearest=%.1f" % [i, zs.size(), in_front, nd])
 	await RenderingServer.frame_post_draw
 	var img: Image = get_viewport().get_texture().get_image()
 	var err := img.save_png(out)
