@@ -236,10 +236,19 @@ func take_damage(amount: int) -> void:
 	health -= amount
 	_flash_red()
 
-	# Notify animator for hit-reaction squash envelope (spec §4).
+	# Notify animator for hit-reaction squash envelope (V5 §3: directional roll).
 	var _a := _get_animator()
 	if _a:
-		_a.trigger_hit_reaction()
+		# Compute horizontal direction of the blow relative to this zombie's facing.
+		# _kb points FROM the attacker TO this zombie; _side > 0 = blow came from the right.
+		if target:
+			var _kb := global_transform.origin - target.global_transform.origin
+			var _side := clampf(
+				(global_transform.origin.x - target.global_transform.origin.x) / (abs(_kb.x) + 0.001),
+				-1.0, 1.0)
+			_a.trigger_hit_reaction(_side)
+		else:
+			_a.trigger_hit_reaction()
 
 	if target:
 		var kb = (global_transform.origin - target.global_transform.origin).normalized()
@@ -275,15 +284,23 @@ func _die() -> void:
 	var t = create_tween()
 	if mesh:
 		# t1: fall — pitch over, spin yaw, small upward bounce (ground-contact feel).
+		# V5 §2: overshoot the rest pitch by 12% during the fall for a physical flop feel.
+		# Bear/boss are heavier — smaller overshoot (+8%) and slower rebound.
+		var is_heavy: bool = (zombie_type == "bear" or zombie_type == "boss")
+		var overshoot_factor: float = 1.08 if is_heavy else 1.12
 		var target_pitch: float = deg_to_rad(pitch_deg)
+		var fall_pitch: float   = target_pitch * overshoot_factor  # overshoot target for fall
 		var target_yaw: float = mesh.rotation.y + deg_to_rad(spin_deg) * spin_dir
 		var bounce_y: float = mesh.position.y + bounce_amt * 0.9
-		t.tween_property(mesh, "rotation:x", target_pitch, fall_t).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		t.tween_property(mesh, "rotation:x", fall_pitch, fall_t).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 		t.parallel().tween_property(mesh, "rotation:y", target_yaw, fall_t).set_ease(Tween.EASE_OUT)
 		t.parallel().tween_property(mesh, "position:y", bounce_y, fall_t)
-		# t2: impact settle — slight rotation settle + position dip, then fade (chained).
+		# t2: impact settle — slight rotation settle + position dip.
 		t.tween_property(mesh, "rotation:x", target_pitch * 0.97, 0.12).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		t.parallel().tween_property(mesh, "position:y", bounce_y - 0.05, 0.12)
+		# t3: V5 §2 — spring rebound: rotation.x bounces back to the true rest pitch.
+		var rebound_t: float = 0.28 if is_heavy else 0.18
+		t.tween_property(mesh, "rotation:x", target_pitch, rebound_t).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 		for mi in _mesh_instances():
 			# Node3D has no `modulate` — fade 3D meshes via
 			# GeometryInstance3D.transparency (0 = opaque, 1 = invisible).
