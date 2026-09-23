@@ -167,20 +167,27 @@ func _spot_is_clear(space: PhysicsDirectSpaceState3D, at: Vector3, p: CharacterB
 	return true
 
 func _richest_direction_yaw(space: PhysicsDirectSpaceState3D, spot: Vector3) -> float:
-	# Aim the player - and with him the spring-arm camera - at the direction holding
-	# the most structure within 4-24 m. Spawning on clear ground but staring across an
-	# empty field is the other half of "this does not look like a game".
+	# Aim the player - and with him the spring-arm camera - at the direction holding the
+	# most structure in the 6-24 m band. Anything closer is skipped on purpose: aiming at
+	# a tombstone two metres away plants it in the camera's face and hides the player
+	# behind it, which is a worse frame than an empty field. A direction with something
+	# right on top of the player is penalised, not rewarded.
 	var best_yaw := 0.0
 	var best_score := -1
 	for a in range(0, 360, 15):
 		var rad := deg_to_rad(float(a))
 		var dir := Vector3(cos(rad), 0.0, sin(rad))
 		var score := 0
-		for d in [4.0, 7.0, 10.0, 14.0, 18.0, 24.0]:
+		var nearest := 1e9
+		for d in [3.0, 5.0, 6.0, 9.0, 12.0, 16.0, 20.0, 24.0]:
 			var q := PhysicsRayQueryParameters3D.create(spot + Vector3(0, 1.0, 0), spot + Vector3(0, 1.0, 0) + dir * d)
 			q.collide_with_areas = false
 			if not space.intersect_ray(q).is_empty():
-				score += 1
+				nearest = minf(nearest, d)
+				if d >= 6.0:
+					score += 1
+		if nearest < 5.0:
+			score -= 3
 		if score > best_score:
 			best_score = score
 			best_yaw = atan2(-dir.x, -dir.z)
