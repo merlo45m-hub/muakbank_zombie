@@ -155,7 +155,7 @@ omni_range = 5.0
 [node name="PlayerRim" type="OmniLight3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 1.5, 1.7)
 light_color = Color(0.62, 0.72, 1, 1)
-light_energy_multiplier = 0.7
+light_energy_multiplier = 0.95
 omni_range = 5.0
 
 [node name="PlayerVisuals" type="Node3D" parent="Player"]
@@ -201,6 +201,8 @@ collision_layer = 0
 collision_mask = 256
 
 [node name="ZombieSpawner" type="Node3D" parent="."]
+# Centred on the player spawn so spawn rings land around the player.
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.15, -6)
 script = ExtResource("3")
 
 [node name="SpawnTimer" type="Timer" parent="ZombieSpawner"]
@@ -210,6 +212,8 @@ one_shot = false
 script = ExtResource("19")
 
 [node name="FoodSpawner" type="Node3D" parent="."]
+# Centred on the player spawn so spawn rings land around the player.
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.15, -6)
 script = ExtResource("4")
 
 [node name="SpawnTimer" type="Timer" parent="FoodSpawner"]

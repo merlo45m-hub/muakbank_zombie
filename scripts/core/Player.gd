@@ -645,7 +645,7 @@ func _apply_character_model() -> void:
 	# white — backlit at night that reads as a flat dark blob with no silhouette
 	# detail. Give them a consistent readable surface.
 	var skin := StandardMaterial3D.new()
-	skin.albedo_color = Color(0.66, 0.62, 0.58)
+	skin.albedo_color = Color(0.34, 0.07, 0.09)  # dark blood-red: pale cream vanished against the pale plaza floor
 	skin.roughness = 0.85
 	skin.metallic = 0.0
 	for mi4 in mdl.find_children("*", "MeshInstance3D", true, false):
