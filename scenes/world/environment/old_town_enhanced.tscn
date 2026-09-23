@@ -6,8 +6,8 @@ background_color = Color(0.05, 0.06, 0.09, 1.0)
 ambient_light_source = 0
 ambient_light_energy = 0.3
 fog_enabled = true
-fog_light_color = Color(0.3, 0.35, 0.4, 1.0)
-fog_density = 0.03
+fog_light_color = Color(0.08, 0.09, 0.12, 1.0)
+fog_density = 0.018
 tonemap_mode = 2
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
