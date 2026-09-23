@@ -389,34 +389,34 @@ shape = SubResource("BoxShape3D_crate")
 [node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 light_color = Color(0.3, 0.35, 0.32, 1.0)
-light_energy_multiplier = 0.35
+light_energy = 0.35
 omni_range = 90
 
 
 [node name="TunnelLight0" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 6, -25)
 light_color = Color(0.6, 0.75, 0.7, 1.0)
-light_energy_multiplier = 0.7
+light_energy = 0.7
 omni_range = 22
 
 
 [node name="TunnelLight1" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 6, 25)
 light_color = Color(0.6, 0.75, 0.7, 1.0)
-light_energy_multiplier = 0.7
+light_energy = 0.7
 omni_range = 22
 
 
 [node name="TunnelLight2" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 6, 25)
 light_color = Color(0.6, 0.75, 0.7, 1.0)
-light_energy_multiplier = 0.7
+light_energy = 0.7
 omni_range = 22
 
 
 [node name="TunnelLight3" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 6, -25)
 light_color = Color(0.6, 0.75, 0.7, 1.0)
-light_energy_multiplier = 0.7
+light_energy = 0.7
 omni_range = 22
 

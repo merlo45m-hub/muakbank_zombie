@@ -1512,14 +1512,14 @@ material_override = SubResource("AsphaltMaterial")
 [node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 light_color = Color(0.65, 0.6, 0.55, 1.0)
-light_energy_multiplier = 0.35
+light_energy = 0.35
 omni_range = 80.0
 omni_attenuation = 2.0
 
 [node name="DirectionalLight" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(0.5, -0.7, 0.5, 0.2, 0.65, 0.73, -0.84, -0.36, 0.4, 15, 20, 10)
 light_color = Color(0.85, 0.75, 0.62, 1.0)
-light_energy_multiplier = 0.75
+light_energy = 0.75
 shadow_enabled = true
 directional_shadow_mode = 0
 

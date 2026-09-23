@@ -1113,33 +1113,33 @@ material_override = SubResource("DoorMaterial")
 [node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 light_color = Color(0.15, 0.16, 0.2, 1.0)
-light_energy_multiplier = 0.3
+light_energy = 0.3
 omni_range = 60.0
 omni_attenuation = 2.5
 
 [node name="DimLight1" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 3.8, -25)
 light_color = Color(0.15, 0.17, 0.25, 1.0)
-light_energy_multiplier = 0.6
+light_energy = 0.6
 omni_range = 20.0
 omni_attenuation = 1.5
 
 [node name="DimLight2" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 3.8, 25)
 light_color = Color(0.2, 0.18, 0.22, 1.0)
-light_energy_multiplier = 0.5
+light_energy = 0.5
 omni_range = 18.0
 omni_attenuation = 1.5
 
 [node name="EmergencyLight1" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, -49)
 light_color = Color(0.1, 0.5, 0.1, 1.0)
-light_energy_multiplier = 0.7
+light_energy = 0.7
 omni_range = 12.0
 omni_attenuation = 1.2
 
 [node name="DirectionalLight" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(0.7, -0.4, 0.59, 0.05, 0.82, 0.57, -0.71, -0.41, 0.57, 8, 12, 6)
 light_color = Color(0.3, 0.32, 0.4, 1.0)
-light_energy_multiplier = 0.3
+light_energy = 0.3
 shadow_enabled = true
