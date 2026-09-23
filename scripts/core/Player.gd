@@ -508,11 +508,14 @@ func equip_weapon(weapon_name: String) -> void:
 func _flash_red() -> void:
 	if not mesh:
 		return
-	# Use material_override (not surface override) — fix for Godot 6.4+
-	var mat = mesh.material_override
+	var mat = mesh.material_override if mesh is MeshInstance3D else null
 	if not mat:
-		# Try surface override as fallback
-		mat = mesh.get_surface_override_material(0)
+		# `mesh` is a Node3D container in some scenes (character select) and 3D
+		# nodes have no per-surface API — find an owned material on a child mesh.
+		for c in mesh.get_children():
+			if c is MeshInstance3D and c.material_override:
+				mat = c.material_override
+				break
 	if not mat:
 		return
 	mat.emissive_color = Color(1, 0.2, 0.2)
