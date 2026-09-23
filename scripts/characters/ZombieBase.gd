@@ -208,7 +208,7 @@ func _die() -> void:
 	if pooled:
 		# Hide and pause so the pool can recycle us
 		hide()
-		set_pause_mode(true)
+		process_mode = Node.PROCESS_MODE_PAUSABLE
 		# The spawner's _return_to_pool will call pool._on_killed() to
 		# move us from alive→dead in the pool dictionary.
 	else:

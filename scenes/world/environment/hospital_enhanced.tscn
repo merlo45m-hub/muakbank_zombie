@@ -309,11 +309,11 @@ shape = SubResource("BoxShape3D_floor")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, -50)
 collision_layer = 1
 
-[node name="WallMesh" type="MeshInstance3D" parent="WallN"]
+[node name="WallMesh" type="MeshInstance3D" parent="Walls/WallN"]
 mesh = SubResource("BoxMesh_wall")
 material_override = SubResource("WallMaterial")
 
-[node name="Accent" type="MeshInstance3D" parent="WallN"]
+[node name="Accent" type="MeshInstance3D" parent="Walls/WallN"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.8, -0.15)
 mesh = SubResource("BoxMesh_wall_accent")
 material_override = SubResource("AccentMaterial")
@@ -322,7 +322,7 @@ material_override = SubResource("AccentMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 50)
 collision_layer = 1
 
-[node name="WallMesh" type="MeshInstance3D" parent="WallS"]
+[node name="WallMesh" type="MeshInstance3D" parent="Walls/WallS"]
 mesh = SubResource("BoxMesh_wall")
 material_override = SubResource("WallMaterial")
 
@@ -330,11 +330,11 @@ material_override = SubResource("WallMaterial")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 50, 2.25, 0)
 collision_layer = 1
 
-[node name="WallMesh" type="MeshInstance3D" parent="WallE"]
+[node name="WallMesh" type="MeshInstance3D" parent="Walls/WallE"]
 mesh = SubResource("BoxMesh_wall")
 material_override = SubResource("WallMaterial")
 
-[node name="Accent" type="MeshInstance3D" parent="WallE"]
+[node name="Accent" type="MeshInstance3D" parent="Walls/WallE"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.8, -0.15)
 mesh = SubResource("BoxMesh_wall_accent")
 material_override = SubResource("AccentMaterial")
@@ -343,7 +343,7 @@ material_override = SubResource("AccentMaterial")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -50, 2.25, 0)
 collision_layer = 1
 
-[node name="WallMesh" type="MeshInstance3D" parent="WallW"]
+[node name="WallMesh" type="MeshInstance3D" parent="Walls/WallW"]
 mesh = SubResource("BoxMesh_wall")
 material_override = SubResource("WallMaterial")
 
@@ -351,249 +351,249 @@ material_override = SubResource("WallMaterial")
 
 [node name="ReceptionArea" type="Node3D" parent="Rooms"]
 
-[node name="ReceptionDesk" type="StaticBody3D" parent="ReceptionArea"]
+[node name="ReceptionDesk" type="StaticBody3D" parent="Rooms/ReceptionArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0.45, -35)
 collision_layer = 1
 
-[node name="ReceptionDeskMesh" type="MeshInstance3D" parent="ReceptionDesk"]
+[node name="ReceptionDeskMesh" type="MeshInstance3D" parent="Rooms/ReceptionArea/ReceptionDesk"]
 mesh = SubResource("BoxMesh_reception_desk")
 material_override = SubResource("ReceptionDeskMaterial")
 
-[node name="ReceptionDeskCol" type="CollisionShape3D" parent="ReceptionDesk"]
+[node name="ReceptionDeskCol" type="CollisionShape3D" parent="Rooms/ReceptionArea/ReceptionDesk"]
 shape = SubResource("BoxShape3D_reception_desk")
 
-[node name="ReceptionMonitor" type="MeshInstance3D" parent="ReceptionDesk"]
+[node name="ReceptionMonitor" type="MeshInstance3D" parent="Rooms/ReceptionArea/ReceptionDesk"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0, 0.55, 0.4)
 mesh = SubResource("BoxMesh_monitor")
 material_override = SubResource("MonitorMaterial")
 
-[node name="ReceptionMonitor2" type="MeshInstance3D" parent="ReceptionDesk"]
+[node name="ReceptionMonitor2" type="MeshInstance3D" parent="Rooms/ReceptionArea/ReceptionDesk"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0, 0.55, -0.4)
 mesh = SubResource("BoxMesh_monitor")
 material_override = SubResource("MonitorMaterial")
 
-[node name="ReceptionWaitingChairs" type="Node3D" parent="ReceptionArea"]
+[node name="ReceptionWaitingChairs" type="Node3D" parent="Rooms/ReceptionArea"]
 
-[node name="WaitingChair1" type="StaticBody3D" parent="ReceptionWaitingChairs"]
+[node name="WaitingChair1" type="StaticBody3D" parent="Rooms/ReceptionArea/ReceptionWaitingChairs"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0.2, -30)
 collision_layer = 1
 
-[node name="WaitingChair1Mesh" type="MeshInstance3D" parent="WaitingChair1"]
+[node name="WaitingChair1Mesh" type="MeshInstance3D" parent="Rooms/ReceptionArea/ReceptionWaitingChairs/WaitingChair1"]
 mesh = SubResource("BoxMesh_waiting_chair")
 material_override = SubResource("WaitingChairMaterial")
 
-[node name="WaitingChair1Col" type="CollisionShape3D" parent="WaitingChair1"]
+[node name="WaitingChair1Col" type="CollisionShape3D" parent="Rooms/ReceptionArea/ReceptionWaitingChairs/WaitingChair1"]
 shape = SubResource("BoxShape3D_waiting_chair")
 
-[node name="WaitingChair2" type="StaticBody3D" parent="ReceptionWaitingChairs"]
+[node name="WaitingChair2" type="StaticBody3D" parent="Rooms/ReceptionArea/ReceptionWaitingChairs"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0.2, -38)
 collision_layer = 1
 
-[node name="WaitingChair2Mesh" type="MeshInstance3D" parent="WaitingChair2"]
+[node name="WaitingChair2Mesh" type="MeshInstance3D" parent="Rooms/ReceptionArea/ReceptionWaitingChairs/WaitingChair2"]
 mesh = SubResource("BoxMesh_waiting_chair")
 material_override = SubResource("WaitingChairMaterial")
 
-[node name="WaitingChair2Col" type="CollisionShape3D" parent="WaitingChair2"]
+[node name="WaitingChair2Col" type="CollisionShape3D" parent="Rooms/ReceptionArea/ReceptionWaitingChairs/WaitingChair2"]
 shape = SubResource("BoxShape3D_waiting_chair")
 
-[node name="ReceptionPoles" type="Node3D" parent="ReceptionArea"]
+[node name="ReceptionPoles" type="Node3D" parent="Rooms/ReceptionArea"]
 
-[node name="ReceptionPole1" type="MeshInstance3D" parent="ReceptionPoles"]
+[node name="ReceptionPole1" type="MeshInstance3D" parent="Rooms/ReceptionArea/ReceptionPoles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 1.25, -32)
 mesh = SubResource("CylinderMesh_pole")
 material_override = SubResource("PoleMaterial")
 
-[node name="ReceptionPole2" type="MeshInstance3D" parent="ReceptionPoles"]
+[node name="ReceptionPole2" type="MeshInstance3D" parent="Rooms/ReceptionArea/ReceptionPoles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 1.25, -38)
 mesh = SubResource("CylinderMesh_pole")
 material_override = SubResource("PoleMaterial")
 
-[node name="ReceptionIVStands" type="Node3D" parent="ReceptionArea"]
+[node name="ReceptionIVStands" type="Node3D" parent="Rooms/ReceptionArea"]
 
-[node name="IVStand1" type="MeshInstance3D" parent="ReceptionIVStands"]
+[node name="IVStand1" type="MeshInstance3D" parent="Rooms/ReceptionArea/ReceptionIVStands"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.9, -33)
 mesh = SubResource("CylinderMesh_IV_stand")
 material_override = SubResource("IVStandMaterial")
 
-[node name="IVStand2" type="MeshInstance3D" parent="ReceptionIVStands"]
+[node name="IVStand2" type="MeshInstance3D" parent="Rooms/ReceptionArea/ReceptionIVStands"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.9, -37)
 mesh = SubResource("CylinderMesh_IV_stand")
 material_override = SubResource("IVStandMaterial")
 
-[node name="ReceptionLight" type="MeshInstance3D" parent="ReceptionArea"]
+[node name="ReceptionLight" type="MeshInstance3D" parent="Rooms/ReceptionArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 4.3, -35)
 mesh = SubResource("SphereMesh_light")
 material_override = SubResource("LightFlickerMaterial")
 
 [node name="PatientRooms" type="Node3D" parent="Rooms"]
 
-[node name="PatientRoom1" type="Node3D" parent="PatientRooms"]
+[node name="PatientRoom1" type="Node3D" parent="Rooms/PatientRooms"]
 
-[node name="Bed1" type="StaticBody3D" parent="PatientRoom1"]
+[node name="Bed1" type="StaticBody3D" parent="Rooms/PatientRooms/PatientRoom1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.25, -15)
 collision_layer = 1
 
-[node name="Bed1Mesh" type="MeshInstance3D" parent="Bed1"]
+[node name="Bed1Mesh" type="MeshInstance3D" parent="Rooms/PatientRooms/PatientRoom1/Bed1"]
 mesh = SubResource("BoxMesh_bed")
 material_override = SubResource("BedMaterial")
 
-[node name="Bed1Col" type="CollisionShape3D" parent="Bed1"]
+[node name="Bed1Col" type="CollisionShape3D" parent="Rooms/PatientRooms/PatientRoom1/Bed1"]
 shape = SubResource("BoxShape3D_bed")
 
-[node name="Bed1Mattress" type="MeshInstance3D" parent="Bed1"]
+[node name="Bed1Mattress" type="MeshInstance3D" parent="Rooms/PatientRooms/PatientRoom1/Bed1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 mesh = SubResource("BoxMesh_mattress")
 material_override = SubResource("MattressMaterial")
 
-[node name="IVStand3" type="MeshInstance3D" parent="PatientRoom1"]
+[node name="IVStand3" type="MeshInstance3D" parent="Rooms/PatientRooms/PatientRoom1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.9, -13)
 mesh = SubResource("CylinderMesh_IV_stand")
 material_override = SubResource("IVStandMaterial")
 
-[node name="Bed2" type="StaticBody3D" parent="PatientRooms"]
+[node name="Bed2" type="StaticBody3D" parent="Rooms/PatientRooms"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.25, -10)
 collision_layer = 1
 
-[node name="Bed2Mesh" type="MeshInstance3D" parent="Bed2"]
+[node name="Bed2Mesh" type="MeshInstance3D" parent="Rooms/PatientRooms/Bed2"]
 mesh = SubResource("BoxMesh_bed")
 material_override = SubResource("BedMaterial")
 
-[node name="Bed2Col" type="CollisionShape3D" parent="Bed2"]
+[node name="Bed2Col" type="CollisionShape3D" parent="Rooms/PatientRooms/Bed2"]
 shape = SubResource("BoxShape3D_bed")
 
-[node name="Bed2Mattress" type="MeshInstance3D" parent="Bed2"]
+[node name="Bed2Mattress" type="MeshInstance3D" parent="Rooms/PatientRooms/Bed2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 mesh = SubResource("BoxMesh_mattress")
 material_override = SubResource("MattressMaterial")
 
-[node name="IVStand4" type="MeshInstance3D" parent="PatientRooms"]
+[node name="IVStand4" type="MeshInstance3D" parent="Rooms/PatientRooms"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0.9, -8)
 mesh = SubResource("CylinderMesh_IV_stand")
 material_override = SubResource("IVStandMaterial")
 
-[node name="OverturnedBed1" type="StaticBody3D" parent="PatientRooms"]
+[node name="OverturnedBed1" type="StaticBody3D" parent="Rooms/PatientRooms"]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8, 0.05, -12)
 collision_layer = 1
 
-[node name="OverturnedBed1Mesh" type="MeshInstance3D" parent="OverturnedBed1"]
+[node name="OverturnedBed1Mesh" type="MeshInstance3D" parent="Rooms/PatientRooms/OverturnedBed1"]
 mesh = SubResource("BoxMesh_bed")
 material_override = SubResource("BedMaterial")
 
-[node name="OverturnedBed1Col" type="CollisionShape3D" parent="OverturnedBed1"]
+[node name="OverturnedBed1Col" type="CollisionShape3D" parent="Rooms/PatientRooms/OverturnedBed1"]
 shape = SubResource("BoxShape3D_bed")
 
-[node name="PatientRoom2" type="Node3D" parent="PatientRooms"]
+[node name="PatientRoom2" type="Node3D" parent="Rooms/PatientRooms"]
 
-[node name="Bed3" type="StaticBody3D" parent="PatientRoom2"]
+[node name="Bed3" type="StaticBody3D" parent="Rooms/PatientRooms/PatientRoom2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.25, 15)
 collision_layer = 1
 
-[node name="Bed3Mesh" type="MeshInstance3D" parent="Bed3"]
+[node name="Bed3Mesh" type="MeshInstance3D" parent="Rooms/PatientRooms/PatientRoom2/Bed3"]
 mesh = SubResource("BoxMesh_bed")
 material_override = SubResource("BedMaterial")
 
-[node name="Bed3Col" type="CollisionShape3D" parent="Bed3"]
+[node name="Bed3Col" type="CollisionShape3D" parent="Rooms/PatientRooms/PatientRoom2/Bed3"]
 shape = SubResource("BoxShape3D_bed")
 
-[node name="Bed3Mattress" type="MeshInstance3D" parent="Bed3"]
+[node name="Bed3Mattress" type="MeshInstance3D" parent="Rooms/PatientRooms/PatientRoom2/Bed3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 mesh = SubResource("BoxMesh_mattress")
 material_override = SubResource("MattressMaterial")
 
-[node name="Bed4" type="StaticBody3D" parent="PatientRooms"]
+[node name="Bed4" type="StaticBody3D" parent="Rooms/PatientRooms"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0.25, 10)
 collision_layer = 1
 
-[node name="Bed4Mesh" type="MeshInstance3D" parent="Bed4"]
+[node name="Bed4Mesh" type="MeshInstance3D" parent="Rooms/PatientRooms/Bed4"]
 mesh = SubResource("BoxMesh_bed")
 material_override = SubResource("BedMaterial")
 
-[node name="Bed4Col" type="CollisionShape3D" parent="Bed4"]
+[node name="Bed4Col" type="CollisionShape3D" parent="Rooms/PatientRooms/Bed4"]
 shape = SubResource("BoxShape3D_bed")
 
-[node name="Bed4Mattress" type="MeshInstance3D" parent="Bed4"]
+[node name="Bed4Mattress" type="MeshInstance3D" parent="Rooms/PatientRooms/Bed4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 mesh = SubResource("BoxMesh_mattress")
 material_override = SubResource("MattressMaterial")
 
-[node name="Bed5" type="StaticBody3D" parent="PatientRooms"]
+[node name="Bed5" type="StaticBody3D" parent="Rooms/PatientRooms"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0.25, 20)
 collision_layer = 1
 
-[node name="Bed5Mesh" type="MeshInstance3D" parent="Bed5"]
+[node name="Bed5Mesh" type="MeshInstance3D" parent="Rooms/PatientRooms/Bed5"]
 mesh = SubResource("BoxMesh_bed")
 material_override = SubResource("BedMaterial")
 
-[node name="Bed5Col" type="CollisionShape3D" parent="Bed5"]
+[node name="Bed5Col" type="CollisionShape3D" parent="Rooms/PatientRooms/Bed5"]
 shape = SubResource("BoxShape3D_bed")
 
-[node name="Bed5Mattress" type="MeshInstance3D" parent="Bed5"]
+[node name="Bed5Mattress" type="MeshInstance3D" parent="Rooms/PatientRooms/Bed5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 mesh = SubResource("BoxMesh_mattress")
 material_override = SubResource("MattressMaterial")
 
-[node name="IVStand5" type="MeshInstance3D" parent="PatientRoom2"]
+[node name="IVStand5" type="MeshInstance3D" parent="Rooms/PatientRooms/PatientRoom2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 0.9, 17)
 mesh = SubResource("CylinderMesh_IV_stand")
 material_override = SubResource("IVStandMaterial")
 
-[node name="IVStand6" type="MeshInstance3D" parent="PatientRoom2"]
+[node name="IVStand6" type="MeshInstance3D" parent="Rooms/PatientRooms/PatientRoom2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 0.9, 12)
 mesh = SubResource("CylinderMesh_IV_stand")
 material_override = SubResource("IVStandMaterial")
 
 [node name="Corridor" type="Node3D" parent="Rooms"]
 
-[node name="CorridorPoles" type="Node3D" parent="Corridor"]
+[node name="CorridorPoles" type="Node3D" parent="Rooms/Corridor"]
 
-[node name="CorridorPole1" type="MeshInstance3D" parent="CorridorPoles"]
+[node name="CorridorPole1" type="MeshInstance3D" parent="Rooms/Corridor/CorridorPoles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -40)
 mesh = SubResource("CylinderMesh_pole")
 material_override = SubResource("PoleMaterial")
 
-[node name="CorridorPole2" type="MeshInstance3D" parent="CorridorPoles"]
+[node name="CorridorPole2" type="MeshInstance3D" parent="Rooms/Corridor/CorridorPoles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -25)
 mesh = SubResource("CylinderMesh_pole")
 material_override = SubResource("PoleMaterial")
 
-[node name="CorridorPole3" type="MeshInstance3D" parent="CorridorPoles"]
+[node name="CorridorPole3" type="MeshInstance3D" parent="Rooms/Corridor/CorridorPoles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -10)
 mesh = SubResource("CylinderMesh_pole")
 material_override = SubResource("PoleMaterial")
 
-[node name="CorridorPole4" type="MeshInstance3D" parent="CorridorPoles"]
+[node name="CorridorPole4" type="MeshInstance3D" parent="Rooms/Corridor/CorridorPoles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 10)
 mesh = SubResource("CylinderMesh_pole")
 material_override = SubResource("PoleMaterial")
 
-[node name="CorridorPole5" type="MeshInstance3D" parent="CorridorPoles"]
+[node name="CorridorPole5" type="MeshInstance3D" parent="Rooms/Corridor/CorridorPoles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 25)
 mesh = SubResource("CylinderMesh_pole")
 material_override = SubResource("PoleMaterial")
 
-[node name="CorridorStrips" type="Node3D" parent="Corridor"]
+[node name="CorridorStrips" type="Node3D" parent="Rooms/Corridor"]
 
-[node name="CorridorStrip1" type="MeshInstance3D" parent="CorridorStrips"]
+[node name="CorridorStrip1" type="MeshInstance3D" parent="Rooms/Corridor/CorridorStrips"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, -35)
 mesh = SubResource("BoxMesh_floor_groed")
 material_override = SubResource("FloorGroedMaterial")
 
-[node name="CorridorStrip2" type="MeshInstance3D" parent="CorridorStrips"]
+[node name="CorridorStrip2" type="MeshInstance3D" parent="Rooms/Corridor/CorridorStrips"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, -20)
 mesh = SubResource("BoxMesh_floor_groed")
 material_override = SubResource("FloorGroedMaterial")
 
-[node name="CorridorStrip3" type="MeshInstance3D" parent="CorridorStrips"]
+[node name="CorridorStrip3" type="MeshInstance3D" parent="Rooms/Corridor/CorridorStrips"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
 mesh = SubResource("BoxMesh_floor_groed")
 material_override = SubResource("FloorGroedMaterial")
 
-[node name="CorridorStrip4" type="MeshInstance3D" parent="CorridorStrips"]
+[node name="CorridorStrip4" type="MeshInstance3D" parent="Rooms/Corridor/CorridorStrips"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 20)
 mesh = SubResource("BoxMesh_floor_groed")
 material_override = SubResource("FloorGroedMaterial")
 
-[node name="CorridorStrip5" type="MeshInstance3D" parent="CorridorStrips"]
+[node name="CorridorStrip5" type="MeshInstance3D" parent="Rooms/Corridor/CorridorStrips"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 35)
 mesh = SubResource("BoxMesh_floor_groed")
 material_override = SubResource("FloorGroedMaterial")
@@ -604,19 +604,19 @@ material_override = SubResource("FloorGroedMaterial")
 transform = Transform3D(0, 0, 1, -0.3, 0.95, 0.3, -0.95, -0.3, 0, 5, 0.15, 45)
 collision_layer = 1
 
-[node name="CrashedGurney1Mesh" type="MeshInstance3D" parent="CrashedGurney1"]
+[node name="CrashedGurney1Mesh" type="MeshInstance3D" parent="Obstacles/CrashedGurney1"]
 mesh = SubResource("BoxMesh_crashed_gurney")
 material_override = SubResource("CrashedGurneyMaterial")
 
-[node name="CrashedGurney1Col" type="CollisionShape3D" parent="CrashedGurney1"]
+[node name="CrashedGurney1Col" type="CollisionShape3D" parent="Obstacles/CrashedGurney1"]
 shape = SubResource("BoxShape3D_crashed_gurney")
 
-[node name="CrashedGurney1Wheel1" type="MeshInstance3D" parent="CrashedGurney1"]
+[node name="CrashedGurney1Wheel1" type="MeshInstance3D" parent="Obstacles/CrashedGurney1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0.05, 0.3)
 mesh = SubResource("CylinderMesh_wheel")
 material_override = SubResource("WheelMaterial")
 
-[node name="CrashedGurney1Wheel2" type="MeshInstance3D" parent="CrashedGurney1"]
+[node name="CrashedGurney1Wheel2" type="MeshInstance3D" parent="Obstacles/CrashedGurney1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0.05, -0.3)
 mesh = SubResource("CylinderMesh_wheel")
 material_override = SubResource("WheelMaterial")
@@ -625,85 +625,85 @@ material_override = SubResource("WheelMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.15, 35)
 collision_layer = 1
 
-[node name="CrashedGurney2Mesh" type="MeshInstance3D" parent="CrashedGurney2"]
+[node name="CrashedGurney2Mesh" type="MeshInstance3D" parent="Obstacles/CrashedGurney2"]
 mesh = SubResource("BoxMesh_gurney")
 material_override = SubResource("CrashedGurneyMaterial")
 
-[node name="CrashedGurney2Col" type="CollisionShape3D" parent="CrashedGurney2"]
+[node name="CrashedGurney2Col" type="CollisionShape3D" parent="Obstacles/CrashedGurney2"]
 shape = SubResource("BoxShape3D_gurney")
 
 [node name="DebrisPile1" type="StaticBody3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.1, 25)
 collision_layer = 1
 
-[node name="DebrisPile1Mesh" type="MeshInstance3D" parent="DebrisPile1"]
+[node name="DebrisPile1Mesh" type="MeshInstance3D" parent="Obstacles/DebrisPile1"]
 mesh = SubResource("BoxMesh_debris")
 material_override = SubResource("DebrisMaterial")
 
-[node name="DebrisPile1Col" type="CollisionShape3D" parent="DebrisPile1"]
+[node name="DebrisPile1Col" type="CollisionShape3D" parent="Obstacles/DebrisPile1"]
 shape = SubResource("BoxShape3D_debris")
 
 [node name="DebrisPile2" type="StaticBody3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.1, 30)
 collision_layer = 1
 
-[node name="DebrisPile2Mesh" type="MeshInstance3D" parent="DebrisPile2"]
+[node name="DebrisPile2Mesh" type="MeshInstance3D" parent="Obstacles/DebrisPile2"]
 mesh = SubResource("BoxMesh_debris")
 material_override = SubResource("DebrisMaterial")
 
-[node name="DebrisPile2Col" type="CollisionShape3D" parent="DebrisPile2"]
+[node name="DebrisPile2Col" type="CollisionShape3D" parent="Obstacles/DebrisPile2"]
 shape = SubResource("BoxShape3D_debris")
 
 [node name="DebrisPile3" type="StaticBody3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, -15)
 collision_layer = 1
 
-[node name="DebrisPile3Mesh" type="MeshInstance3D" parent="DebrisPile3"]
+[node name="DebrisPile3Mesh" type="MeshInstance3D" parent="Obstacles/DebrisPile3"]
 mesh = SubResource("BoxMesh_debris")
 material_override = SubResource("DebrisMaterial")
 
-[node name="DebrisPile3Col" type="CollisionShape3D" parent="DebrisPile3"]
+[node name="DebrisPile3Col" type="CollisionShape3D" parent="Obstacles/DebrisPile3"]
 shape = SubResource("BoxShape3D_debris")
 
 [node name="BrokenEquipment1" type="StaticBody3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 40)
 collision_layer = 1
 
-[node name="BrokenEquipment1Mesh" type="MeshInstance3D" parent="BrokenEquipment1"]
+[node name="BrokenEquipment1Mesh" type="MeshInstance3D" parent="Obstacles/BrokenEquipment1"]
 mesh = SubResource("BoxMesh_broken_equipment")
 material_override = SubResource("BrokenEquipMaterial")
 
-[node name="BrokenEquipment1Col" type="CollisionShape3D" parent="BrokenEquipment1"]
+[node name="BrokenEquipment1Col" type="CollisionShape3D" parent="Obstacles/BrokenEquipment1"]
 shape = SubResource("BoxShape3D_broken_equipment")
 
 [node name="BrokenEquipment2" type="StaticBody3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.15, -20)
 collision_layer = 1
 
-[node name="BrokenEquipment2Mesh" type="MeshInstance3D" parent="BrokenEquipment2"]
+[node name="BrokenEquipment2Mesh" type="MeshInstance3D" parent="Obstacles/BrokenEquipment2"]
 mesh = SubResource("BoxMesh_broken_equipment")
 material_override = SubResource("BrokenEquipMaterial")
 
-[node name="BrokenEquipment2Col" type="CollisionShape3D" parent="BrokenEquipment2"]
+[node name="BrokenEquipment2Col" type="CollisionShape3D" parent="Obstacles/BrokenEquipment2"]
 shape = SubResource("BoxShape3D_broken_equipment")
 
 [node name="BlockedGurney1" type="StaticBody3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.2, -5)
 collision_layer = 1
 
-[node name="BlockedGurney1Mesh" type="MeshInstance3D" parent="BlockedGurney1"]
+[node name="BlockedGurney1Mesh" type="MeshInstance3D" parent="Obstacles/BlockedGurney1"]
 mesh = SubResource("BoxMesh_gurney")
 material_override = SubResource("GurneyMaterial")
 
-[node name="BlockedGurney1Col" type="CollisionShape3D" parent="BlockedGurney1"]
+[node name="BlockedGurney1Col" type="CollisionShape3D" parent="Obstacles/BlockedGurney1"]
 shape = SubResource("BoxShape3D_gurney")
 
-[node name="BlockedGurney1Wheel1" type="MeshInstance3D" parent="BlockedGurney1"]
+[node name="BlockedGurney1Wheel1" type="MeshInstance3D" parent="Obstacles/BlockedGurney1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.2, 0.3)
 mesh = SubResource("CylinderMesh_wheel")
 material_override = SubResource("WheelMaterial")
 
-[node name="BlockedGurney1Wheel2" type="MeshInstance3D" parent="BlockedGurney1"]
+[node name="BlockedGurney1Wheel2" type="MeshInstance3D" parent="Obstacles/BlockedGurney1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.2, -0.3)
 mesh = SubResource("CylinderMesh_wheel")
 material_override = SubResource("WheelMaterial")
@@ -712,19 +712,19 @@ material_override = SubResource("WheelMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.2, -25)
 collision_layer = 1
 
-[node name="BlockedGurney2Mesh" type="MeshInstance3D" parent="BlockedGurney2"]
+[node name="BlockedGurney2Mesh" type="MeshInstance3D" parent="Obstacles/BlockedGurney2"]
 mesh = SubResource("BoxMesh_gurney")
 material_override = SubResource("GurneyMaterial")
 
-[node name="BlockedGurney2Col" type="CollisionShape3D" parent="BlockedGurney2"]
+[node name="BlockedGurney2Col" type="CollisionShape3D" parent="Obstacles/BlockedGurney2"]
 shape = SubResource("BoxShape3D_gurney")
 
-[node name="BlockedGurney2Wheel1" type="MeshInstance3D" parent="BlockedGurney2"]
+[node name="BlockedGurney2Wheel1" type="MeshInstance3D" parent="Obstacles/BlockedGurney2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.2, 0.3)
 mesh = SubResource("CylinderMesh_wheel")
 material_override = SubResource("WheelMaterial")
 
-[node name="BlockedGurney2Wheel2" type="MeshInstance3D" parent="BlockedGurney2"]
+[node name="BlockedGurney2Wheel2" type="MeshInstance3D" parent="Obstacles/BlockedGurney2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.2, -0.3)
 mesh = SubResource("CylinderMesh_wheel")
 material_override = SubResource("WheelMaterial")
@@ -733,19 +733,19 @@ material_override = SubResource("WheelMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.45, 15)
 collision_layer = 1
 
-[node name="Wheelchair1Mesh" type="MeshInstance3D" parent="Wheelchair1"]
+[node name="Wheelchair1Mesh" type="MeshInstance3D" parent="Obstacles/Wheelchair1"]
 mesh = SubResource("BoxMesh_wheelchair")
 material_override = SubResource("WheelchairMaterial")
 
-[node name="Wheelchair1Col" type="CollisionShape3D" parent="Wheelchair1"]
+[node name="Wheelchair1Col" type="CollisionShape3D" parent="Obstacles/Wheelchair1"]
 shape = SubResource("BoxShape3D_wheelchair")
 
-[node name="Wheelchair1Wheel1" type="MeshInstance3D" parent="Wheelchair1"]
+[node name="Wheelchair1Wheel1" type="MeshInstance3D" parent="Obstacles/Wheelchair1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.05, 0.25)
 mesh = SubResource("CylinderMesh_wheel")
 material_override = SubResource("WheelMaterial")
 
-[node name="Wheelchair1Wheel2" type="MeshInstance3D" parent="Wheelchair1"]
+[node name="Wheelchair1Wheel2" type="MeshInstance3D" parent="Obstacles/Wheelchair1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.05, -0.25)
 mesh = SubResource("CylinderMesh_wheel")
 material_override = SubResource("WheelMaterial")
@@ -754,19 +754,19 @@ material_override = SubResource("WheelMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0.45, -40)
 collision_layer = 1
 
-[node name="Wheelchair2Mesh" type="MeshInstance3D" parent="Wheelchair2"]
+[node name="Wheelchair2Mesh" type="MeshInstance3D" parent="Obstacles/Wheelchair2"]
 mesh = SubResource("BoxMesh_wheelchair")
 material_override = SubResource("WheelchairMaterial")
 
-[node name="Wheelchair2Col" type="CollisionShape3D" parent="Wheelchair2"]
+[node name="Wheelchair2Col" type="CollisionShape3D" parent="Obstacles/Wheelchair2"]
 shape = SubResource("BoxShape3D_wheelchair")
 
-[node name="Wheelchair2Wheel1" type="MeshInstance3D" parent="Wheelchair2"]
+[node name="Wheelchair2Wheel1" type="MeshInstance3D" parent="Obstacles/Wheelchair2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.05, 0.25)
 mesh = SubResource("CylinderMesh_wheel")
 material_override = SubResource("WheelMaterial")
 
-[node name="Wheelchair2Wheel2" type="MeshInstance3D" parent="Wheelchair2"]
+[node name="Wheelchair2Wheel2" type="MeshInstance3D" parent="Obstacles/Wheelchair2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.05, -0.25)
 mesh = SubResource("CylinderMesh_wheel")
 material_override = SubResource("WheelMaterial")
@@ -775,176 +775,176 @@ material_override = SubResource("WheelMaterial")
 transform = Transform3D(0, 0, 1, 0.5, 0.9, -0.5, 0.9, -0.5, 0.5, 35, 0.05, -20)
 collision_layer = 1
 
-[node name="OverturnedBed2Mesh" type="MeshInstance3D" parent="OverturnedBed2"]
+[node name="OverturnedBed2Mesh" type="MeshInstance3D" parent="Obstacles/OverturnedBed2"]
 mesh = SubResource("BoxMesh_bed")
 material_override = SubResource("BedMaterial")
 
-[node name="OverturnedBed2Col" type="CollisionShape3D" parent="OverturnedBed2"]
+[node name="OverturnedBed2Col" type="CollisionShape3D" parent="Obstacles/OverturnedBed2"]
 shape = SubResource("BoxShape3D_bed")
 
 [node name="ScatteredSupplies1" type="StaticBody3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.05, 10)
 collision_layer = 1
 
-[node name="ScatteredSupplies1Mesh" type="MeshInstance3D" parent="ScatteredSupplies1"]
+[node name="ScatteredSupplies1Mesh" type="MeshInstance3D" parent="Obstacles/ScatteredSupplies1"]
 mesh = SubResource("BoxMesh_scattered_supplies")
 material_override = SubResource("ScatteredSuppliesMaterial")
 
-[node name="ScatteredSupplies1Col" type="CollisionShape3D" parent="ScatteredSupplies1"]
+[node name="ScatteredSupplies1Col" type="CollisionShape3D" parent="Obstacles/ScatteredSupplies1"]
 shape = SubResource("BoxShape3D_scattered_supplies")
 
 [node name="ScatteredSupplies2" type="StaticBody3D" parent="Obstacles"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.05, -30)
 collision_layer = 1
 
-[node name="ScatteredSupplies2Mesh" type="MeshInstance3D" parent="ScatteredSupplies2"]
+[node name="ScatteredSupplies2Mesh" type="MeshInstance3D" parent="Obstacles/ScatteredSupplies2"]
 mesh = SubResource("BoxMesh_scattered_supplies")
 material_override = SubResource("ScatteredSuppliesMaterial")
 
-[node name="ScatteredSupplies2Col" type="CollisionShape3D" parent="ScatteredSupplies2"]
+[node name="ScatteredSupplies2Col" type="CollisionShape3D" parent="Obstacles/ScatteredSupplies2"]
 shape = SubResource("BoxShape3D_scattered_supplies")
 
 [node name="Furniture" type="Node3D" parent="."]
 
 [node name="Cabinets" type="Node3D" parent="Furniture"]
 
-[node name="Cabinet1" type="StaticBody3D" parent="Cabinets"]
+[node name="Cabinet1" type="StaticBody3D" parent="Furniture/Cabinets"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 0.75, -45)
 collision_layer = 1
 
-[node name="Cabinet1Mesh" type="MeshInstance3D" parent="Cabinet1"]
+[node name="Cabinet1Mesh" type="MeshInstance3D" parent="Furniture/Cabinets/Cabinet1"]
 mesh = SubResource("BoxMesh_cabinet")
 material_override = SubResource("CabinetMaterial")
 
-[node name="Cabinet1Col" type="CollisionShape3D" parent="Cabinet1"]
+[node name="Cabinet1Col" type="CollisionShape3D" parent="Furniture/Cabinets/Cabinet1"]
 shape = SubResource("BoxShape3D_cabinet")
 
-[node name="Cabinet2" type="StaticBody3D" parent="Cabinets"]
+[node name="Cabinet2" type="StaticBody3D" parent="Furniture/Cabinets"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 0.75, -40)
 collision_layer = 1
 
-[node name="Cabinet2Mesh" type="MeshInstance3D" parent="Cabinet2"]
+[node name="Cabinet2Mesh" type="MeshInstance3D" parent="Furniture/Cabinets/Cabinet2"]
 mesh = SubResource("BoxMesh_cabinet")
 material_override = SubResource("CabinetMaterial")
 
-[node name="Cabinet2Col" type="CollisionShape3D" parent="Cabinet2"]
+[node name="Cabinet2Col" type="CollisionShape3D" parent="Furniture/Cabinets/Cabinet2"]
 shape = SubResource("BoxShape3D_cabinet")
 
-[node name="Cabinet3" type="StaticBody3D" parent="Cabinets"]
+[node name="Cabinet3" type="StaticBody3D" parent="Furniture/Cabinets"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0.75, -45)
 collision_layer = 1
 
-[node name="Cabinet3Mesh" type="MeshInstance3D" parent="Cabinet3"]
+[node name="Cabinet3Mesh" type="MeshInstance3D" parent="Furniture/Cabinets/Cabinet3"]
 mesh = SubResource("BoxMesh_cabinet")
 material_override = SubResource("CabinetMaterial")
 
-[node name="Cabinet3Col" type="CollisionShape3D" parent="Cabinet3"]
+[node name="Cabinet3Col" type="CollisionShape3D" parent="Furniture/Cabinets/Cabinet3"]
 shape = SubResource("BoxShape3D_cabinet")
 
 [node name="ShelfUnit1" type="StaticBody3D" parent="Furniture"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.9, -40)
 collision_layer = 1
 
-[node name="ShelfUnit1Mesh" type="MeshInstance3D" parent="ShelfUnit1"]
+[node name="ShelfUnit1Mesh" type="MeshInstance3D" parent="Furniture/ShelfUnit1"]
 mesh = SubResource("BoxMesh_shelf")
 material_override = SubResource("ShelfMaterial")
 
-[node name="ShelfUnit1Col" type="CollisionShape3D" parent="ShelfUnit1"]
+[node name="ShelfUnit1Col" type="CollisionShape3D" parent="Furniture/ShelfUnit1"]
 shape = SubResource("BoxShape3D_shelf")
 
 [node name="ShelfUnit2" type="StaticBody3D" parent="Furniture"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.9, -35)
 collision_layer = 1
 
-[node name="ShelfUnit2Mesh" type="MeshInstance3D" parent="ShelfUnit2"]
+[node name="ShelfUnit2Mesh" type="MeshInstance3D" parent="Furniture/ShelfUnit2"]
 mesh = SubResource("BoxMesh_shelf")
 material_override = SubResource("ShelfMaterial")
 
-[node name="ShelfUnit2Col" type="CollisionShape3D" parent="ShelfUnit2"]
+[node name="ShelfUnit2Col" type="CollisionShape3D" parent="Furniture/ShelfUnit2"]
 shape = SubResource("BoxShape3D_shelf")
 
 [node name="Desks" type="Node3D" parent="Furniture"]
 
-[node name="Desk1" type="StaticBody3D" parent="Desks"]
+[node name="Desk1" type="StaticBody3D" parent="Furniture/Desks"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.4, -5)
 collision_layer = 1
 
-[node name="Desk1Mesh" type="MeshInstance3D" parent="Desk1"]
+[node name="Desk1Mesh" type="MeshInstance3D" parent="Furniture/Desks/Desk1"]
 mesh = SubResource("BoxMesh_desk")
 material_override = SubResource("DeskMaterial")
 
-[node name="Desk1Col" type="CollisionShape3D" parent="Desk1"]
+[node name="Desk1Col" type="CollisionShape3D" parent="Furniture/Desks/Desk1"]
 shape = SubResource("BoxShape3D_desk")
 
-[node name="Monitor1" type="MeshInstance3D" parent="Desk1"]
+[node name="Monitor1" type="MeshInstance3D" parent="Furniture/Desks/Desk1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.5, 0.3)
 mesh = SubResource("BoxMesh_monitor")
 material_override = SubResource("MonitorMaterial")
 
-[node name="Desk2" type="StaticBody3D" parent="Desks"]
+[node name="Desk2" type="StaticBody3D" parent="Furniture/Desks"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.4, -10)
 collision_layer = 1
 
-[node name="Desk2Mesh" type="MeshInstance3D" parent="Desk2"]
+[node name="Desk2Mesh" type="MeshInstance3D" parent="Furniture/Desks/Desk2"]
 mesh = SubResource("BoxMesh_desk")
 material_override = SubResource("DeskMaterial")
 
-[node name="Desk2Col" type="CollisionShape3D" parent="Desk2"]
+[node name="Desk2Col" type="CollisionShape3D" parent="Furniture/Desks/Desk2"]
 shape = SubResource("BoxShape3D_desk")
 
-[node name="Monitor2" type="MeshInstance3D" parent="Desk2"]
+[node name="Monitor2" type="MeshInstance3D" parent="Furniture/Desks/Desk2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.5, 0.3)
 mesh = SubResource("BoxMesh_monitor")
 material_override = SubResource("MonitorMaterial")
 
-[node name="Desk3" type="StaticBody3D" parent="Desks"]
+[node name="Desk3" type="StaticBody3D" parent="Furniture/Desks"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0.4, 35)
 collision_layer = 1
 
-[node name="Desk3Mesh" type="MeshInstance3D" parent="Desk3"]
+[node name="Desk3Mesh" type="MeshInstance3D" parent="Furniture/Desks/Desk3"]
 mesh = SubResource("BoxMesh_desk")
 material_override = SubResource("DeskMaterial")
 
-[node name="Desk3Col" type="CollisionShape3D" parent="Desk3"]
+[node name="Desk3Col" type="CollisionShape3D" parent="Furniture/Desks/Desk3"]
 shape = SubResource("BoxShape3D_desk")
 
-[node name="Monitor3" type="MeshInstance3D" parent="Desk3"]
+[node name="Monitor3" type="MeshInstance3D" parent="Furniture/Desks/Desk3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.5, 0.3)
 mesh = SubResource("BoxMesh_monitor")
 material_override = SubResource("MonitorMaterial")
 
 [node name="NurseStation" type="Node3D" parent="Furniture"]
 
-[node name="NurseStationBase" type="StaticBody3D" parent="NurseStation"]
+[node name="NurseStationBase" type="StaticBody3D" parent="Furniture/NurseStation"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0.75, -20)
 collision_layer = 1
 
-[node name="NurseStationBaseMesh" type="MeshInstance3D" parent="NurseStationBase"]
+[node name="NurseStationBaseMesh" type="MeshInstance3D" parent="Furniture/NurseStation/NurseStationBase"]
 mesh = SubResource("SphereMesh_nurse_station")
 material_override = SubResource("NurseStationMaterial")
 
-[node name="NurseStationBaseCol" type="CollisionShape3D" parent="NurseStationBase"]
+[node name="NurseStationBaseCol" type="CollisionShape3D" parent="Furniture/NurseStation/NurseStationBase"]
 shape = SubResource("BoxShape3D_desk")
 
-[node name="NurseStationCounter" type="MeshInstance3D" parent="NurseStation"]
+[node name="NurseStationCounter" type="MeshInstance3D" parent="Furniture/NurseStation"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.4, 0)
 mesh = SubResource("BoxMesh_desk")
 material_override = SubResource("DeskMaterial")
 
-[node name="NurseStationCounterCol" type="CollisionShape3D" parent="NurseStation"]
+[node name="NurseStationCounterCol" type="CollisionShape3D" parent="Furniture/NurseStation"]
 shape = SubResource("BoxShape3D_desk")
 
-[node name="NurseStationMonitor" type="MeshInstance3D" parent="NurseStation"]
+[node name="NurseStationMonitor" type="MeshInstance3D" parent="Furniture/NurseStation"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.55, 0.35)
 mesh = SubResource("BoxMesh_monitor")
 material_override = SubResource("MonitorMaterial")
 
-[node name="NurseStationMonitor2" type="MeshInstance3D" parent="NurseStation"]
+[node name="NurseStationMonitor2" type="MeshInstance3D" parent="Furniture/NurseStation"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.55, -0.35)
 mesh = SubResource("BoxMesh_monitor")
 material_override = SubResource("MonitorMaterial")
 
-[node name="NurseStationIVStand" type="MeshInstance3D" parent="NurseStation"]
+[node name="NurseStationIVStand" type="MeshInstance3D" parent="Furniture/NurseStation"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0.9, 0)
 mesh = SubResource("CylinderMesh_IV_stand")
 material_override = SubResource("IVStandMaterial")
@@ -953,14 +953,14 @@ material_override = SubResource("IVStandMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 1.0, 45)
 collision_layer = 1
 
-[node name="VendingMachine1Mesh" type="MeshInstance3D" parent="VendingMachine1"]
+[node name="VendingMachine1Mesh" type="MeshInstance3D" parent="Furniture/VendingMachine1"]
 mesh = SubResource("BoxMesh_vending_machine")
 material_override = SubResource("VendingMachineMaterial")
 
-[node name="VendingMachine1Col" type="CollisionShape3D" parent="VendingMachine1"]
+[node name="VendingMachine1Col" type="CollisionShape3D" parent="Furniture/VendingMachine1"]
 shape = SubResource("BoxShape3D_vending_machine")
 
-[node name="VendingMachine1Screen" type="MeshInstance3D" parent="VendingMachine1"]
+[node name="VendingMachine1Screen" type="MeshInstance3D" parent="Furniture/VendingMachine1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0.4)
 mesh = SubResource("BoxMesh_vending_screen")
 material_override = SubResource("VendingScreenMaterial")
@@ -969,14 +969,14 @@ material_override = SubResource("VendingScreenMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 1.0, 45)
 collision_layer = 1
 
-[node name="VendingMachine2Mesh" type="MeshInstance3D" parent="VendingMachine2"]
+[node name="VendingMachine2Mesh" type="MeshInstance3D" parent="Furniture/VendingMachine2"]
 mesh = SubResource("BoxMesh_vending_machine")
 material_override = SubResource("VendingMachineMaterial")
 
-[node name="VendingMachine2Col" type="CollisionShape3D" parent="VendingMachine2"]
+[node name="VendingMachine2Col" type="CollisionShape3D" parent="Furniture/VendingMachine2"]
 shape = SubResource("BoxShape3D_vending_machine")
 
-[node name="VendingMachine2Screen" type="MeshInstance3D" parent="VendingMachine2"]
+[node name="VendingMachine2Screen" type="MeshInstance3D" parent="Furniture/VendingMachine2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.5, 0.4)
 mesh = SubResource("BoxMesh_vending_screen")
 material_override = SubResource("VendingScreenMaterial")
@@ -1051,44 +1051,44 @@ material_override = SubResource("LightFlickerMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.3, -49.5)
 collision_layer = 1
 
-[node name="EmergencySignNMesh" type="MeshInstance3D" parent="EmergencySignN"]
+[node name="EmergencySignNMesh" type="MeshInstance3D" parent="EmergencyExits/EmergencySignN"]
 mesh = SubResource("CylinderMesh_emergency_sign")
 material_override = SubResource("EmergencySignMaterial")
 
-[node name="EmergencySignNCol" type="CollisionShape3D" parent="EmergencySignN"]
+[node name="EmergencySignNCol" type="CollisionShape3D" parent="EmergencyExits/EmergencySignN"]
 shape = SubResource("BoxShape3D_desk")
 
 [node name="EmergencySignS" type="StaticBody3D" parent="EmergencyExits"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.3, 49.5)
 collision_layer = 1
 
-[node name="EmergencySignSMesh" type="MeshInstance3D" parent="EmergencySignS"]
+[node name="EmergencySignSMesh" type="MeshInstance3D" parent="EmergencyExits/EmergencySignS"]
 mesh = SubResource("CylinderMesh_emergency_sign")
 material_override = SubResource("EmergencySignMaterial")
 
-[node name="EmergencySignSCol" type="CollisionShape3D" parent="EmergencySignS"]
+[node name="EmergencySignSCol" type="CollisionShape3D" parent="EmergencyExits/EmergencySignS"]
 shape = SubResource("BoxShape3D_desk")
 
 [node name="EmergencySignE" type="StaticBody3D" parent="EmergencyExits"]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 49.5, 4.3, 0)
 collision_layer = 1
 
-[node name="EmergencySignEMesh" type="MeshInstance3D" parent="EmergencySignE"]
+[node name="EmergencySignEMesh" type="MeshInstance3D" parent="EmergencyExits/EmergencySignE"]
 mesh = SubResource("CylinderMesh_emergency_sign")
 material_override = SubResource("EmergencySignMaterial")
 
-[node name="EmergencySignECol" type="CollisionShape3D" parent="EmergencySignE"]
+[node name="EmergencySignECol" type="CollisionShape3D" parent="EmergencyExits/EmergencySignE"]
 shape = SubResource("BoxShape3D_desk")
 
 [node name="EmergencySignW" type="StaticBody3D" parent="EmergencyExits"]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -49.5, 4.3, 0)
 collision_layer = 1
 
-[node name="EmergencySignWMesh" type="MeshInstance3D" parent="EmergencySignW"]
+[node name="EmergencySignWMesh" type="MeshInstance3D" parent="EmergencyExits/EmergencySignW"]
 mesh = SubResource("CylinderMesh_emergency_sign")
 material_override = SubResource("EmergencySignMaterial")
 
-[node name="EmergencySignWCol" type="CollisionShape3D" parent="EmergencySignW"]
+[node name="EmergencySignWCol" type="CollisionShape3D" parent="EmergencyExits/EmergencySignW"]
 shape = SubResource("BoxShape3D_desk")
 
 [node name="Doors" type="Node3D" parent="."]

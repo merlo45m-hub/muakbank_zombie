@@ -1,0 +1,30 @@
+[gd_resource type="GodotxHealthBarStyle" load_steps=1 format=3]
+
+[resource]
+roundness = 20.0
+fill_inset = Vector2(2, 2)
+background_color = Color(0.1, 0.1, 0.1, 0.8)
+fill_color = Color(0.216, 0.878, 0.353, 1.0)
+use_threshold_colors = false
+border_enabled = true
+border_thickness = 2
+border_color = Color(0.3, 0.3, 0.3, 1.0)
+border_join_round = true
+shadow_enabled = false
+gradient_enabled = true
+gradient_direction = 0
+gradient_start_color = Color(0.216, 0.878, 0.353, 0.4)
+gradient_end_color = Color(1, 0.839, 0.039, 0.4)
+gradient_intensity = 1.0
+gradient_apply_to = 2
+label_enabled = false
+icon_enabled = false
+animation_enabled = true
+animation_mode = 0
+animation_duration = 0.25
+animation_easing = 1
+animation_transition = 3
+animation_duration_decrease = 0.15
+animation_easing_decrease = 1
+animation_transition_decrease = 3
+animation_snap_threshold = 0.0

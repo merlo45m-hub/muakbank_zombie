@@ -1,25 +1,47 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/TitleScreen.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/title_background.tscn" id="bg"]
+[ext_resource type="Shader" path="res://shaders/title_blood_drip.gdshader" id="2"]
+[ext_resource type="FontFile" path="res://assets/fonts/Nosifer-Regular.ttf" id="3"]
 
-[sub_resource type="StyleBoxFlat" id="ButtonStyle"]
-bg_color = Color(0.12, 0.06, 0.18, 1.0)
-border_color = Color(0.6, 0.2, 0.3, 1.0)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+[sub_resource type="StyleBoxFlat" id="WoodPlank"]
+bg_color = Color(0.36, 0.23, 0.14, 1.0)
+border_color = Color(0.52, 0.34, 0.2, 1.0)
+border_width_left = 2
+border_width_top = 4
+border_width_right = 2
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = true
+anti_aliasing_size = 1.0
+
+[sub_resource type="StyleBoxFlat" id="WoodPlankHover"]
+bg_color = Color(0.24, 0.15, 0.09, 1.0)
+border_color = Color(0.42, 0.27, 0.15, 1.0)
+border_width_left = 2
+border_width_top = 4
+border_width_right = 2
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = true
+anti_aliasing_size = 1.0
 
 [sub_resource type="LabelSettings" id="TitleSettings"]
 font_size = 72
+font = ExtResource("3")
 font_color = Color(0.8, 0.15, 0.1, 1.0)
 outline_size = 4
 outline_color = Color(0.1, 0.02, 0.05, 1.0)
+
+[sub_resource type="ShaderMaterial" id="TitleBloodDripMat"]
+shader = ExtResource("2")
 
 [node name="TitleScreen" type="Control"]
 layout_mode = 1
@@ -47,6 +69,7 @@ size_flags_vertical = 3
 layout_mode = 2
 text = "MUAK BANK ZOMBIE"
 label_settings = SubResource("TitleSettings")
+material = SubResource("TitleBloodDripMat")
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -71,35 +94,40 @@ size_flags_horizontal = 4
 layout_mode = 2
 text = "▶ PLAY"
 custom_minimum_size = Vector2(200, 50)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 24
 
 [node name="LevelBtn" type="Button" parent="VBoxMain/ButtonContainer"]
 layout_mode = 2
 text = "📋 LEVELS"
 custom_minimum_size = Vector2(200, 50)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 24
 
 [node name="SettingsBtn" type="Button" parent="VBoxMain/ButtonContainer"]
 layout_mode = 2
 text = "⚙ SETTINGS"
 custom_minimum_size = Vector2(200, 50)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 24
 
 [node name="CreditsBtn" type="Button" parent="VBoxMain/ButtonContainer"]
 layout_mode = 2
 text = "👤 CREDITS"
 custom_minimum_size = Vector2(200, 50)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 24
 
 [node name="QuitBtn" type="Button" parent="VBoxMain/ButtonContainer"]
 layout_mode = 2
 text = "✕ QUIT"
 custom_minimum_size = Vector2(200, 50)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 24
 
 [node name="Spacer3" type="Control" parent="VBoxMain"]

@@ -329,6 +329,25 @@ func on_food_eaten(food_type: String, health_amount: int) -> void:
 	
 	print("[Game] Ate: ", food_type, " +", health_amount, " HP")
 
+func consume_food(food_type: String) -> void:
+	"""Consume a food item from player inventory (called by HUD food bar)."""
+	if not game_active or not player:
+		return
+	var health_amount = 20  # Default heal
+	match food_type:
+		"medkit": health_amount = 50
+		"coffee": health_amount = 10
+		"sushi": health_amount = 30
+		"burger": health_amount = 25
+		"pizza": health_amount = 20
+		"fries": health_amount = 15
+		"soda": health_amount = 10
+		"takis": health_amount = 15
+	player.heal(health_amount)
+	emit_signal("food_eaten", food_type, health_amount)
+	emit_signal("health_changed", player.health, player.max_health)
+	print("[Game] Consumed: ", food_type, " +", health_amount, " HP")
+
 func on_pickup_weapon(weapon_name: String) -> void:
 	if not game_active or not player:
 		return

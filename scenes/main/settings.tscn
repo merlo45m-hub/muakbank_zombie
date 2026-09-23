@@ -2,6 +2,34 @@
 
 [ext_resource type="Script" path="res://scripts/ui/Settings.gd" id="1"]
 
+[sub_resource type="StyleBoxFlat" id="WoodPlank"]
+bg_color = Color(0.36, 0.23, 0.14, 1.0)
+border_color = Color(0.52, 0.34, 0.2, 1.0)
+border_width_left = 2
+border_width_top = 4
+border_width_right = 2
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = true
+anti_aliasing_size = 1.0
+
+[sub_resource type="StyleBoxFlat" id="WoodPlankHover"]
+bg_color = Color(0.24, 0.15, 0.09, 1.0)
+border_color = Color(0.42, 0.27, 0.15, 1.0)
+border_width_left = 2
+border_width_top = 4
+border_width_right = 2
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = true
+anti_aliasing_size = 1.0
+
 [sub_resource type="StyleBoxFlat" id="PanelStyle"]
 bg_color = Color(0.12, 0.06, 0.18, 1.0)
 border_color = Color(0.3, 0.15, 0.4, 1.0)
@@ -186,7 +214,9 @@ size_flags_vertical = 3
 layout_mode = 2
 text = "⬅ BACK"
 custom_minimum_size = Vector2(0, 50)
-theme_override_font_size = 20
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
+theme_overrides/font_size = 20
 
 [connection signal="value_changed" from="PanelContainer/VBoxMain/AudioSection/MasterContainer/MasterSlider" to="." method="_on_master_changed"]
 [connection signal="value_changed" from="PanelContainer/VBoxMain/AudioSection/MusicContainer/MusicSlider" to="." method="_on_music_changed"]

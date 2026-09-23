@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/CharacterSelect.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/title_background.tscn" id="bg"]
@@ -25,6 +25,104 @@ font_size = 48
 font_color = Color(0.8, 0.15, 0.1, 1.0)
 outline_size = 4
 outline_color = Color(0.1, 0.02, 0.05, 1.0)
+
+[sub_resource type="StyleBoxFlat" id="PedestalGamer"]
+bg_color = Color(1.0, 0.176, 0.482, 1.0)
+border_color = Color(1.0, 0.176, 0.482, 1.0)
+border_width_left = 0
+border_width_top = 0
+border_width_right = 0
+border_width_bottom = 0
+corner_radius_top_left = 999
+corner_radius_top_right = 999
+corner_radius_bottom_right = 999
+corner_radius_bottom_left = 999
+anti_aliasing = true
+anti_aliasing_size = 2.0
+
+[sub_resource type="StyleBoxFlat" id="PedestalDoctor"]
+bg_color = Color(0.176, 0.878, 1.0, 1.0)
+border_color = Color(0.176, 0.878, 1.0, 1.0)
+border_width_left = 0
+border_width_top = 0
+border_width_right = 0
+border_width_bottom = 0
+corner_radius_top_left = 999
+corner_radius_top_right = 999
+corner_radius_bottom_right = 999
+corner_radius_bottom_left = 999
+anti_aliasing = true
+anti_aliasing_size = 2.0
+
+[sub_resource type="StyleBoxFlat" id="PedestalNurse"]
+bg_color = Color(0.176, 0.878, 1.0, 1.0)
+border_color = Color(0.176, 0.878, 1.0, 1.0)
+border_width_left = 0
+border_width_top = 0
+border_width_right = 0
+border_width_bottom = 0
+corner_radius_top_left = 999
+corner_radius_top_right = 999
+corner_radius_bottom_right = 999
+corner_radius_bottom_left = 999
+anti_aliasing = true
+anti_aliasing_size = 2.0
+
+[sub_resource type="StyleBoxFlat" id="PedestalStreamer"]
+bg_color = Color(0.627, 0.361, 1.0, 1.0)
+border_color = Color(0.627, 0.361, 1.0, 1.0)
+border_width_left = 0
+border_width_top = 0
+border_width_right = 0
+border_width_bottom = 0
+corner_radius_top_left = 999
+corner_radius_top_right = 999
+corner_radius_bottom_right = 999
+corner_radius_bottom_left = 999
+anti_aliasing = true
+anti_aliasing_size = 2.0
+
+[sub_resource type="StyleBoxFlat" id="PedestalHunter"]
+bg_color = Color(1.0, 0.839, 0.039, 1.0)
+border_color = Color(1.0, 0.839, 0.039, 1.0)
+border_width_left = 0
+border_width_top = 0
+border_width_right = 0
+border_width_bottom = 0
+corner_radius_top_left = 999
+corner_radius_top_right = 999
+corner_radius_bottom_right = 999
+corner_radius_bottom_left = 999
+anti_aliasing = true
+anti_aliasing_size = 2.0
+
+[sub_resource type="StyleBoxFlat" id="WoodPlank"]
+bg_color = Color(0.36, 0.23, 0.14, 1.0)
+border_color = Color(0.52, 0.34, 0.2, 1.0)
+border_width_left = 2
+border_width_top = 4
+border_width_right = 2
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = true
+anti_aliasing_size = 1.0
+
+[sub_resource type="StyleBoxFlat" id="WoodPlankHover"]
+bg_color = Color(0.24, 0.15, 0.09, 1.0)
+border_color = Color(0.42, 0.27, 0.15, 1.0)
+border_width_left = 2
+border_width_top = 4
+border_width_right = 2
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+anti_aliasing = true
+anti_aliasing_size = 1.0
 
 [sub_resource type="LabelSettings" id="NameSettings"]
 font_size = 20
@@ -74,6 +172,11 @@ theme_override_constants/separation = 20
 layout_mode = 2
 alignment = 1
 
+[node name="GamerPedestal" type="Panel" parent="VBoxMain/CharactersContainer/GamerCard"]
+custom_minimum_size = Vector2(120, 8)
+layout_mode = 2
+theme_overrides/styles/panel = SubResource("PedestalGamer")
+
 [node name="GamerViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/GamerCard"]
 layout_mode = 2
 custom_minimum_size = Vector2(150, 200)
@@ -89,12 +192,18 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(120, 40)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 18
 
 [node name="DoctorCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
+
+[node name="DoctorPedestal" type="Panel" parent="VBoxMain/CharactersContainer/DoctorCard"]
+custom_minimum_size = Vector2(120, 8)
+layout_mode = 2
+theme_overrides/styles/panel = SubResource("PedestalDoctor")
 
 [node name="DoctorViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/DoctorCard"]
 layout_mode = 2
@@ -111,12 +220,18 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(120, 40)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 18
 
 [node name="NurseCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
+
+[node name="NursePedestal" type="Panel" parent="VBoxMain/CharactersContainer/NurseCard"]
+custom_minimum_size = Vector2(120, 8)
+layout_mode = 2
+theme_overrides/styles/panel = SubResource("PedestalNurse")
 
 [node name="NurseViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/NurseCard"]
 layout_mode = 2
@@ -133,12 +248,18 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(120, 40)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 18
 
 [node name="StreamerCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
+
+[node name="StreamerPedestal" type="Panel" parent="VBoxMain/CharactersContainer/StreamerCard"]
+custom_minimum_size = Vector2(120, 8)
+layout_mode = 2
+theme_overrides/styles/panel = SubResource("PedestalStreamer")
 
 [node name="StreamerViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/StreamerCard"]
 layout_mode = 2
@@ -155,12 +276,18 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(120, 40)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 18
 
 [node name="HunterCard" type="VBoxContainer" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
+
+[node name="HunterPedestal" type="Panel" parent="VBoxMain/CharactersContainer/HunterCard"]
+custom_minimum_size = Vector2(120, 8)
+layout_mode = 2
+theme_overrides/styles/panel = SubResource("PedestalHunter")
 
 [node name="HunterViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/HunterCard"]
 layout_mode = 2
@@ -177,7 +304,8 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(120, 40)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
+theme_overrides/styles/normal = SubResource("WoodPlank")
+theme_overrides/styles/hover = SubResource("WoodPlankHover")
 theme_overrides/font_size = 18
 
 [node name="Spacer3" type="Control" parent="VBoxMain"]
