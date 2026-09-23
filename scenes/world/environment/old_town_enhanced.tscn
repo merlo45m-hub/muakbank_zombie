@@ -1,4 +1,14 @@
-[gd_scene load_steps=52 format=3]
+[gd_scene load_steps=53 format=3]
+
+[sub_resource type="Environment" id="OldTownEnv"]
+background_mode = 1
+background_color = Color(0.05, 0.06, 0.09, 1.0)
+ambient_light_source = 0
+ambient_light_energy = 0.3
+fog_enabled = true
+fog_light_color = Color(0.3, 0.35, 0.4, 1.0)
+fog_density = 0.03
+tonemap_mode = 2
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(60, 0.3, 60)
@@ -7,7 +17,7 @@ size = Vector3(60, 0.3, 60)
 size = Vector3(60, 0.3, 60)
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
-albedo_color = Color(0.45, 0.42, 0.38, 1.0)
+albedo_color = Color(0.16, 0.15, 0.13, 1.0)
 roughness = 0.95
 metallic = 0.0
 
@@ -376,6 +386,9 @@ size = Vector3(16, 14, 16)
 size = Vector3(22, 12, 18)
 
 [node name="OldTown" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("OldTownEnv")
 
 [node name="Floor" type="StaticBody3D" parent="."]
 collision_layer = 1
@@ -1526,3 +1539,179 @@ directional_shadow_mode = 0
 [node name="FogEffect" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_fog")
 material_override = SubResource("FogMaterial")
+
+[node name="NearBandStructures" type="Node3D" parent="."]
+
+[node name="NearCollapsedWall1" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.25, -6)
+collision_layer = 1
+
+[node name="NCW1Mesh" type="MeshInstance3D" parent="NearBandStructures/NearCollapsedWall1"]
+mesh = SubResource("BoxMesh_collapsed_wall")
+material_override = SubResource("BrickMaterial")
+
+[node name="NCW1Col" type="CollisionShape3D" parent="NearBandStructures/NearCollapsedWall1"]
+shape = SubResource("BoxShape3D_collapsed_wall")
+
+[node name="NearCollapsedWall2" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 1.25, -5)
+collision_layer = 1
+
+[node name="NCW2Mesh" type="MeshInstance3D" parent="NearBandStructures/NearCollapsedWall2"]
+mesh = SubResource("BoxMesh_collapsed_wall")
+material_override = SubResource("BrickMaterial")
+
+[node name="NCW2Col" type="CollisionShape3D" parent="NearBandStructures/NearCollapsedWall2"]
+shape = SubResource("BoxShape3D_collapsed_wall")
+
+[node name="NearCollapsedWall3" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.25, -8)
+collision_layer = 1
+
+[node name="NCW3Mesh" type="MeshInstance3D" parent="NearBandStructures/NearCollapsedWall3"]
+mesh = SubResource("BoxMesh_collapsed_wall")
+material_override = SubResource("BrickMaterial")
+
+[node name="NCW3Col" type="CollisionShape3D" parent="NearBandStructures/NearCollapsedWall3"]
+shape = SubResource("BoxShape3D_collapsed_wall")
+
+[node name="NearCollapsedWall4" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.25, -10)
+collision_layer = 1
+
+[node name="NCW4Mesh" type="MeshInstance3D" parent="NearBandStructures/NearCollapsedWall4"]
+mesh = SubResource("BoxMesh_collapsed_wall")
+material_override = SubResource("BrickMaterial")
+
+[node name="NCW4Col" type="CollisionShape3D" parent="NearBandStructures/NearCollapsedWall4"]
+shape = SubResource("BoxShape3D_collapsed_wall")
+
+[node name="NearStreetHydrant" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.45, -5)
+collision_layer = 1
+
+[node name="NSHBase" type="MeshInstance3D" parent="NearBandStructures/NearStreetHydrant"]
+mesh = SubResource("CylinderMesh_hydrant_base")
+material_override = SubResource("RustyIronMaterial")
+
+[node name="NSHBody" type="MeshInstance3D" parent="NearBandStructures/NearStreetHydrant"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+mesh = SubResource("CylinderMesh_hydrant_body")
+material_override = SubResource("RustyIronMaterial")
+
+[node name="NSHTop" type="MeshInstance3D" parent="NearBandStructures/NearStreetHydrant"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
+mesh = SubResource("SphereMesh_hydrant_top")
+material_override = SubResource("RustyIronMaterial")
+
+[node name="NSHCol" type="CollisionShape3D" parent="NearBandStructures/NearStreetHydrant"]
+shape = SubResource("CylinderShape3D_fire_hydrant")
+
+[node name="NearStreetMailbox" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.5, -6)
+collision_layer = 1
+
+[node name="NSMMesh" type="MeshInstance3D" parent="NearBandStructures/NearStreetMailbox"]
+mesh = SubResource("BoxMesh_mailbox")
+material_override = SubResource("DarkMetalMaterial")
+
+[node name="NSMPost" type="MeshInstance3D" parent="NearBandStructures/NearStreetMailbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+mesh = SubResource("CylinderMesh_mailbox_post")
+material_override = SubResource("MetalMaterial")
+
+[node name="NSMCol" type="CollisionShape3D" parent="NearBandStructures/NearStreetMailbox"]
+shape = SubResource("BoxShape3D_mailbox")
+
+[node name="NearStreetBarrel" type="MeshInstance3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.6, -7)
+mesh = SubResource("CapsuleMesh_barrel")
+material_override = SubResource("BarrelMaterial")
+
+[node name="NearRubblePile1" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.5, -4)
+collision_layer = 1
+
+[node name="NRP1Mesh" type="MeshInstance3D" parent="NearBandStructures/NearRubblePile1"]
+mesh = SubResource("BoxMesh_rubble_pile")
+material_override = SubResource("DebrisMaterial")
+
+[node name="NRP1Col" type="CollisionShape3D" parent="NearBandStructures/NearRubblePile1"]
+shape = SubResource("BoxShape3D_rubble_pile")
+
+[node name="NearRubblePile2" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.5, -5)
+collision_layer = 1
+
+[node name="NRP2Mesh" type="MeshInstance3D" parent="NearBandStructures/NearRubblePile2"]
+mesh = SubResource("BoxMesh_rubble_pile")
+material_override = SubResource("DebrisMaterial")
+
+[node name="NRP2Col" type="CollisionShape3D" parent="NearBandStructures/NearRubblePile2"]
+shape = SubResource("BoxShape3D_rubble_pile")
+
+[node name="NearRubblePile3" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.5, -7)
+collision_layer = 1
+
+[node name="NRP3Mesh" type="MeshInstance3D" parent="NearBandStructures/NearRubblePile3"]
+mesh = SubResource("BoxMesh_rubble_pile")
+material_override = SubResource("DebrisMaterial")
+
+[node name="NRP3Col" type="CollisionShape3D" parent="NearBandStructures/NearRubblePile3"]
+shape = SubResource("BoxShape3D_rubble_pile")
+
+[node name="NearDebris1" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.4, -2)
+collision_layer = 1
+
+[node name="ND1Mesh" type="MeshInstance3D" parent="NearBandStructures/NearDebris1"]
+mesh = SubResource("BoxMesh_debris")
+material_override = SubResource("DebrisMaterial")
+
+[node name="ND1Col" type="CollisionShape3D" parent="NearBandStructures/NearDebris1"]
+shape = SubResource("BoxShape3D_debris")
+
+[node name="NearDebris2" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.4, -3)
+collision_layer = 1
+
+[node name="ND2Mesh" type="MeshInstance3D" parent="NearBandStructures/NearDebris2"]
+mesh = SubResource("BoxMesh_debris")
+material_override = SubResource("DebrisMaterial")
+
+[node name="ND2Col" type="CollisionShape3D" parent="NearBandStructures/NearDebris2"]
+shape = SubResource("BoxShape3D_debris")
+
+[node name="NearDebris3" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.4, -4)
+collision_layer = 1
+
+[node name="ND3Mesh" type="MeshInstance3D" parent="NearBandStructures/NearDebris3"]
+mesh = SubResource("BoxMesh_debris")
+material_override = SubResource("DebrisMaterial")
+
+[node name="ND3Col" type="CollisionShape3D" parent="NearBandStructures/NearDebris3"]
+shape = SubResource("BoxShape3D_debris")
+
+[node name="NearDebris4" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.4, -5)
+collision_layer = 1
+
+[node name="ND4Mesh" type="MeshInstance3D" parent="NearBandStructures/NearDebris4"]
+mesh = SubResource("BoxMesh_debris")
+material_override = SubResource("DebrisMaterial")
+
+[node name="ND4Col" type="CollisionShape3D" parent="NearBandStructures/NearDebris4"]
+shape = SubResource("BoxShape3D_debris")
+
+[node name="NearDebris5" type="StaticBody3D" parent="NearBandStructures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.4, -6)
+collision_layer = 1
+
+[node name="ND5Mesh" type="MeshInstance3D" parent="NearBandStructures/NearDebris5"]
+mesh = SubResource("BoxMesh_debris")
+material_override = SubResource("DebrisMaterial")
+
+[node name="ND5Col" type="CollisionShape3D" parent="NearBandStructures/NearDebris5"]
+shape = SubResource("BoxShape3D_debris")
