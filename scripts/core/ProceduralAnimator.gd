@@ -1,7 +1,7 @@
 class_name ProceduralAnimator
 extends Node3D
 
-## ProceduralAnimator v3 — Code-driven transform animation for unrigged GLB models.
+## ProceduralAnimator v5 — Code-driven transform animation for unrigged GLB models.
 ## Added as a child of the entity's visual container ("Mesh" node) and only ever
 ## modifies ITS OWN transform (position / rotation / scale). Never touches the
 ## parent's transform, which belongs to the AI (yaw, death tween, pool reset).
@@ -13,6 +13,9 @@ extends Node3D
 ## V3 additions: horde phase seeds (fix sync), subtype alias normalization,
 ## hit reaction envelope, turn banking, landing squash, launch wind-up +
 ## runner lean ramp, boss charge wind-up.
+##
+## V5 additions: per-species attack curves (ATTACK_REGISTRY), directional hit
+## reaction roll, boss slam impact envelope.
 
 # ── EXPORTED DEFAULTS (fallback / generic zombie) ──────────────────────────────
 
@@ -142,6 +145,28 @@ const _SUBTYPE_ALIASES: Dictionary = {
 }
 
 
+# ── ATTACK CURVE REGISTRY (V5 §1) ─────────────────────────────────────────────
+# Per-species attack curve parameters. Missing keys fall back to "default".
+# attack_base     — total lunge duration (s)
+# attack_windup   — share of duration for pull-back phase (0..1)
+# attack_snap     — share of duration for forward snap phase (0..1)
+# attack_overshoot — extra rotation/offset factor at full extension
+# (recovery = 1 - attack_windup - attack_snap)
+
+const ATTACK_REGISTRY: Dictionary = {
+	"human":   {"attack_base": 0.30, "attack_windup": 0.28, "attack_snap": 0.38, "attack_overshoot": 0.14},
+	"dog":     {"attack_base": 0.26, "attack_windup": 0.18, "attack_snap": 0.30, "attack_overshoot": 0.10},
+	"cat":     {"attack_base": 0.24, "attack_windup": 0.20, "attack_snap": 0.28, "attack_overshoot": 0.08},
+	"rabbit":  {"attack_base": 0.18, "attack_windup": 0.15, "attack_snap": 0.25, "attack_overshoot": 0.06},
+	"chicken": {"attack_base": 0.16, "attack_windup": 0.12, "attack_snap": 0.22, "attack_overshoot": 0.05},
+	"bear":    {"attack_base": 0.55, "attack_windup": 0.45, "attack_snap": 0.30, "attack_overshoot": 0.30},
+	"runner":  {"attack_base": 0.22, "attack_windup": 0.20, "attack_snap": 0.26, "attack_overshoot": 0.12},
+	"spitter": {"attack_base": 0.30, "attack_windup": 0.30, "attack_snap": 0.20, "attack_overshoot": 0.20},
+	"boss":    {"attack_base": 0.50, "attack_windup": 0.40, "attack_snap": 0.25, "attack_overshoot": 0.22},
+	"default": {"attack_base": 0.35, "attack_windup": 0.25, "attack_snap": 0.35, "attack_overshoot": 0.18},
+}
+
+
 # ── INTERNAL STATE ─────────────────────────────────────────────────────────────
 
 var _body: Node3D = null       # CharacterBody3D driving movement (duck-typed)
@@ -211,6 +236,15 @@ var _prev_sin: float = 0.0
 var _spawn_t: float = 0.0
 const _SPAWN_DURATION: float = 0.16
 
+# ── V5 STATE ──────────────────────────────────────────────────────────────────
+
+# Directional hit reaction (spec §3): horizontal direction of blow [-1, 1]
+var _hit_dir: float = 0.0
+
+# Boss slam impact (spec §5)
+var _slam_t: float = 0.0
+const _SLAM_DURATION: float = 0.28
+
 
 # ── PUBLIC API ─────────────────────────────────────────────────────────────────
 
@@ -259,6 +293,9 @@ func reset_anim() -> void:
 	# V4 state reset
 	_prev_sin = 0.0
 	_spawn_t = 0.0
+	# V5 state reset
+	_hit_dir = 0.0
+	_slam_t = 0.0
 	# Re-resolve subtype in case the recycled body changed type.
 	if is_instance_valid(_body):
 		_resolve_subtype()
@@ -279,14 +316,17 @@ func on_start_chase() -> void:
 	_hop_t = _hop_duration
 
 
-func trigger_hit_reaction() -> void:
+func trigger_hit_reaction(hit_dir: float = 0.0) -> void:
 	## Squash+kick envelope 0.18s. Guard: never fires after death.
 	## Re-triggering mid-envelope restarts the envelope (max 0.18s).
+	## hit_dir: horizontal direction of incoming blow in [-1, 1]
+	##          (1 = from the right); adds a roll-away lean while active.
 	if not is_instance_valid(_body):
 		return
 	if _body.get("is_dead") == true:
 		return
 	_hit_t = _HIT_DURATION
+	_hit_dir = clampf(hit_dir, -1.0, 1.0)
 
 
 func trigger_spawn() -> void:
@@ -324,10 +364,12 @@ func _process(delta: float) -> void:
 	# Advance global clock.
 	_time += delta
 
-	# Tick lunge.
+	# Tick lunge — duration driven by per-species registry (V5 §1).
 	if _lunge_active:
+		var _atk_reg: Dictionary = ATTACK_REGISTRY.get(_subtype, ATTACK_REGISTRY["default"])
+		var _atk_base: float = float(_atk_reg.get("attack_base", 0.35))
 		_lunge_t += delta
-		if _lunge_t >= lunge_duration:
+		if _lunge_t >= _atk_base:
 			_lunge_active = false
 			_lunge_t = 0.0
 
@@ -370,6 +412,17 @@ func _process(delta: float) -> void:
 		_boss_launch_t = _BOSS_LAUNCH_DURATION
 	if _boss_launch_t > 0.0:
 		_boss_launch_t = max(0.0, _boss_launch_t - delta)
+
+	# ── BOSS SLAM IMPACT (V5 §5) — falling edge of is_charging at low speed ──
+	if not is_charging and _prev_charging and h_speed < 1.0:
+		if _body.get("is_dead") != true:
+			_slam_t = _SLAM_DURATION
+			var _cs := get_tree().current_scene if get_tree() else null
+			if _cs and _cs.has_method("_shake"):
+				_cs._shake(0.4)
+	if _slam_t > 0.0:
+		_slam_t = max(0.0, _slam_t - delta)
+
 	_prev_charging = is_charging
 
 	# Resolve per-type parameters from registry (reads const dict, no alloc).
@@ -547,44 +600,63 @@ func _process(delta: float) -> void:
 		scl.x *= 1.0 + p_csquash * 0.4 * land_w * land_w
 		scl.z = scl.x
 
-	# ── THREE-PHASE ATTACK LUNGE ──────────────────────────────────────────────
+	# ── PER-SPECIES ATTACK LUNGE (V5 §1) ─────────────────────────────────────
 	if _lunge_active:
-		var t_frac: float = _lunge_t / lunge_duration
+		# Fetch per-species attack parameters (no alloc: const dict lookup).
+		var _atk_reg: Dictionary = ATTACK_REGISTRY.get(_subtype, ATTACK_REGISTRY["default"])
+		var _atk_base: float     = float(_atk_reg.get("attack_base",     0.35))
+		var _a_windup: float     = float(_atk_reg.get("attack_windup",   0.25))
+		var _a_snap:   float     = float(_atk_reg.get("attack_snap",     0.35))
+		var _a_over:   float     = float(_atk_reg.get("attack_overshoot",0.18))
+		var _a_recov:  float     = 1.0 - _a_windup - _a_snap  # remaining share
 
-		# Compute piecewise envelope and lunge contribution.
-		var lunge_pos_z: float = 0.0
-		var lunge_rot_x: float = 0.0
-		var env_intensity: float = 0.0  # 0..1 used for gait suppression
+		# Normalize time to [0..1] within the total attack duration.
+		var t_frac: float = clampf(_lunge_t / _atk_base, 0.0, 1.0)
 
-		if t_frac < 0.25:
-			# Phase 1: anticipation — backward pull + wind-up pitch.
-			var p: float = t_frac / 0.25  # 0..1
-			var ea: float = p * p          # ease in
-			lunge_pos_z = -lunge_z * 0.25 * ea * char_scale
-			lunge_rot_x = lunge_pitch * 0.3 * ea
-			env_intensity = ea * 0.4
+		var lunge_pos_z: float   = 0.0
+		var lunge_rot_x: float   = 0.0
+		var env_intensity: float = 0.0
 
-		elif t_frac < 0.65:
-			# Phase 2: strike — fast forward snap.
-			var p: float = (t_frac - 0.25) / 0.40  # 0..1
-			# smoothstep amplified to 1.8x for quick snap feel.
+		if t_frac < _a_windup:
+			# Phase 1 — windup: pull BACK opposite the strike (ease-in).
+			# Range: 0 → _a_windup; normalized p = 0..1.
+			var p: float  = t_frac / _a_windup
+			var ea: float = p * p  # ease-in quad
+			# Pull back to –20% of forward depth; positive rot.x = lean back.
+			lunge_pos_z  = -lunge_z * 0.20 * ea * char_scale
+			lunge_rot_x  =  lunge_pitch * 0.25 * ea
+			env_intensity = ea * 0.35
+
+		elif t_frac < _a_windup + _a_snap:
+			# Phase 2 — snap: forward to depth * (1 + overshoot), ease-out.
+			# C0 continuity: starts at the windup endpoint values.
+			var p: float  = (t_frac - _a_windup) / _a_snap  # 0..1
+			# Smoothstep for ease-out feel; amplify for punch.
 			var ss: float = p * p * (3.0 - 2.0 * p)
-			var env_s: float = minf(1.0, ss * 1.8)
-			lunge_pos_z = lunge_z * env_s * char_scale
-			lunge_rot_x = -lunge_pitch * env_s
+			var env_s: float = minf(1.0, ss * 1.6)
+			# Windup endpoint (C0 join): pos_z starts at -lunge_z*0.20, rot_x at +lunge_pitch*0.25
+			lunge_pos_z  = lerpf(-lunge_z * 0.20, lunge_z * (1.0 + _a_over), env_s) * char_scale
+			lunge_rot_x  = lerpf(lunge_pitch * 0.25, -lunge_pitch * (1.0 + _a_over * 0.5), env_s)
 			env_intensity = env_s
 
 		else:
-			# Phase 3: overshoot + recover.
-			var p: float = (t_frac - 0.65) / 0.35  # 0..1
+			# Phase 3 — recovery: elastic undershoot back to rest (ease-out).
+			# Starts at the snap endpoint (full extension), decays with a light
+			# undershoot using a damped sine to add a springy feel.
+			var p: float    = (t_frac - _a_windup - _a_snap) / maxf(_a_recov, 0.001)
+			p = clampf(p, 0.0, 1.0)
+			# Primary decay from full extension to 0; small elastic dip below 0.
 			var decay: float = (1.0 - p) * (1.0 - p)
-			lunge_pos_z = lunge_z * 1.15 * decay * char_scale
-			lunge_rot_x = -lunge_pitch * decay
+			# Elastic undershoot: sin(p*PI) peaks at p=0.5, so it adds a slight
+			# reverse-direction blip in the middle of recovery.
+			var undershoot: float = sin(p * PI) * 0.08
+			lunge_pos_z  = (lunge_z * (1.0 + _a_over) * decay - lunge_z * undershoot) * char_scale
+			lunge_rot_x  = -lunge_pitch * (1.0 + _a_over * 0.5) * decay + lunge_pitch * undershoot * 0.3
 			env_intensity = decay
 
 		_lunge_intensity = lerpf(_lunge_intensity, env_intensity, 1.0 - exp(-20.0 * delta))
 
-		# Suppress gait amplitudes during strike (blend over; walk does not freeze).
+		# Suppress gait amplitudes during strike (walk does not freeze).
 		var gait_suppress: float = 1.0 - _lunge_intensity * 0.85
 		pos.z += lunge_pos_z
 		rot.x = rot.x * gait_suppress + lunge_rot_x
@@ -618,15 +690,36 @@ func _process(delta: float) -> void:
 	# ── TURN BANKING LAYER (spec §5) — added on top of walk roll ─────────────
 	rot.z += _bank
 
-	# ── HIT REACTION LAYER (spec §4) — multiplied over existing scale ────────
+	# ── HIT REACTION LAYER (V5 §3) — squash + backward kick + directional roll ─
 	if _hit_t > 0.0:
 		var hit_frac: float = _hit_t / _HIT_DURATION  # 1→0
 		var hit_prog: float = 1.0 - hit_frac           # 0→1 within envelope time
-		var sin_env: float = sin(PI * hit_prog)        # rises then falls
+		var sin_env: float  = sin(PI * hit_prog)        # rises then falls
 		scl.y *= 1.0 - p_hit_squash * sin_env
 		scl.x *= 1.0 + p_hit_squash * 0.5 * sin_env
 		scl.z = scl.x
-		rot.x += p_hit_lean * sin_env  # small backward kick
+		rot.x += p_hit_lean * sin_env                   # small backward kick
+		# Directional roll: roll away from the direction of the blow.
+		rot.z += _hit_dir * 0.10 * sin_env
+
+	# ── BOSS SLAM IMPACT (V5 §5) — scale dip + bounce stretch ───────────────
+	if _slam_t > 0.0:
+		var slam_frac: float = _slam_t / _SLAM_DURATION  # 1→0
+		var slam_prog: float = 1.0 - slam_frac            # 0→1
+		# First 60% of duration: deep squash dip with x/z spread.
+		# Last 40%: bounce-back stretch then settle.
+		if slam_prog < 0.6:
+			var p: float     = slam_prog / 0.6  # 0..1
+			var dip: float   = 1.0 - p * 0.4   # peak dip to 0.60 at p=1
+			scl.y *= lerpf(1.0, 0.88 * dip, sin(p * PI * 0.5))
+			var spread: float = 1.0 + 0.08 * sin(p * PI * 0.5)
+			scl.x *= spread
+			scl.z *= spread
+		else:
+			var p: float      = (slam_prog - 0.6) / 0.4  # 0..1
+			# Bounce-back: overshoot to 1.06 then settle to 1.0.
+			var stretch: float = 1.0 + 0.06 * sin(p * PI)
+			scl.y *= stretch
 
 	transform = _make_transform(pos, rot, scl)
 
