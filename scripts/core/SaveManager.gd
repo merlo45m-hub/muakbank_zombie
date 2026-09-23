@@ -20,6 +20,7 @@ var save_data: Dictionary = {
 	"unlocked_achievements": [],
 	"current_level": 1,
 	"difficulty": 0,  # 0=normal, 1=hard, 2=insane
+	"selected_character": "doctor",  # drives which GLB Player._apply_character_model loads
 	"tutorial_completed": false,
 	"sound_enabled": true,
 	"music_enabled": true
@@ -65,9 +66,14 @@ func _load_game() -> void:
 			value = bool(value) if value != null else defaults[key]
 		save_data[key] = value
 	save_data["version"] = SAVE_VERSION
+	# Player._apply_character_model() reads the member var; save_data is what reaches
+	# disk. Without this line they drift and a character choice survives exactly one run.
+	selected_character = String(save_data.get("selected_character", selected_character))
 
 func save_game() -> void:
 	"""Write save_data to disk via SaveMadeEasy's set_var + save."""
+	# Copy the member var into the dictionary first, so the fallback path persists it too.
+	save_data["selected_character"] = selected_character
 	var save_system := _get_save_system()
 	if save_system == null:
 		_save_game_fallback()
@@ -107,6 +113,7 @@ func _default_save_data() -> Dictionary:
 	"unlocked_achievements": [],
 		"current_level": 1,
 		"difficulty": 0,
+		"selected_character": "doctor",
 		"tutorial_completed": false,
 		"sound_enabled": true,
 		"music_enabled": true
@@ -123,6 +130,7 @@ func _get_defaults() -> Dictionary:
 	"unlocked_achievements": [],
 		"current_level": 1,
 		"difficulty": 0,
+		"selected_character": "doctor",
 		"tutorial_completed": false,
 		"sound_enabled": true,
 		"music_enabled": true
