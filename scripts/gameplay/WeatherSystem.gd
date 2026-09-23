@@ -77,15 +77,20 @@ func _apply_weather(weather: Weather) -> void:
 	var world = viewport.find_world_3d() if viewport else null
 	var env = world.environment if world else null
 	if env and fog_enabled:
+		# Densities were 0.02-0.05 (a near-opaque wall: everything past ~20 m went
+		# solid, so the world rendered as a black frame). Keep the weather
+		# identity but let the level be readable — and keep a thin haze in CLEAR
+		# so the night mood does not pop on/off.
 		match weather:
 			Weather.CLEAR:
-				env.fog_enabled = false
+				env.fog_enabled = true
+				env.fog_density = 0.0015
 			Weather.FOG:
 				env.fog_enabled = true
-				env.fog_density = 0.05
+				env.fog_density = 0.012
 			Weather.RAIN, Weather.STORM:
 				env.fog_enabled = true
-				env.fog_density = 0.02
+				env.fog_density = 0.004
 
 func get_weather_name() -> String:
 	return Weather.keys()[current_weather]

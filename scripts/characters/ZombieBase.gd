@@ -180,7 +180,7 @@ func _perform_attack() -> void:
 	if target.has_method("take_damage"):
 		target.take_damage(damage)
 
-	await get_tree().create_timer(0.3).timeout
+	await _wait(0.3)
 	is_attacking = false
 
 
@@ -344,3 +344,14 @@ func attack(target: Node3D) -> void:
 		global_position.distance_to(target.global_position), str(is_dead), str(pooled)])
 	attack_timer = attack_cooldown_time
 	target.take_damage(damage)
+
+func _wait(sec: float) -> bool:
+	# Both the player and zombies can be freed/pooled while a timer await is
+	# pending (death, pool return), and get_tree() is null once the node is out of
+	# the tree — awaiting it blindly throws "Cannot call method 'create_timer' on
+	# a null value" and abandons the rest of the coroutine. Skip instead.
+	var t := get_tree()
+	if not t or not is_inside_tree():
+		return false
+	await t.create_timer(sec).timeout
+	return is_instance_valid(self) and is_inside_tree()

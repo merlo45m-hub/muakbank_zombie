@@ -387,7 +387,7 @@ func _perform_attack() -> void:
 					damage_numbers.display_number(damage, enemy.global_transform.origin, dmg_type)
 
 	# Wait for swing animation to finish
-	await get_tree().create_timer(weapon_swing_duration).timeout
+	await _wait(weapon_swing_duration)
 	is_attacking = false
 
 
@@ -409,26 +409,26 @@ func use_special_ability() -> void:
 		"rage":
 			is_rage_active = true
 			special_timer = character_stats.special_cooldown
-			await get_tree().create_timer(character_stats.special_duration).timeout
+			await _wait(character_stats.special_duration)
 			is_rage_active = false
 			print("[SPECIAL] Rage ended.")
 		"iron_skin":
 			is_shield_active = true
 			special_timer = character_stats.special_cooldown
-			await get_tree().create_timer(character_stats.special_duration).timeout
+			await _wait(character_stats.special_duration)
 			is_shield_active = false
 			print("[SPECIAL] Iron Skin ended.")
 		"rush":
 			move_speed *= 2.0
 			special_timer = character_stats.special_cooldown
-			await get_tree().create_timer(character_stats.special_duration).timeout
+			await _wait(character_stats.special_duration)
 			move_speed /= 2.0
 			print("[SPECIAL] Rush ended.")
 		"heal_aura":
 			special_timer = character_stats.special_cooldown
 			for i in range(5):
 				health = min(max_health, health + 10)
-				await get_tree().create_timer(1.0).timeout
+				await _wait(1.0)
 			print("[SPECIAL] Heal Aura ended.")
 
 
@@ -486,7 +486,7 @@ func eat(food_type: String, amount: int) -> void:
 	heal(amount)
 	emit_signal("ate_food", food_type, amount)
 
-	await get_tree().create_timer(0.5).timeout
+	await _wait(0.5)
 	is_eating = false
 
 
@@ -519,7 +519,7 @@ func _flash_red() -> void:
 	if not mat:
 		return
 	mat.emissive_color = Color(1, 0.2, 0.2)
-	await get_tree().create_timer(0.15).timeout
+	await _wait(0.15)
 	mat.emissive_color = Color(0, 0, 0)
 
 
@@ -579,3 +579,14 @@ func _register_input_actions() -> void:
 		var input_key: InputEventKey = InputEventKey.new()
 		input_key.keycode = INPUT_ACTIONS[action]
 		InputMap.action_add_event(action, input_key)
+
+func _wait(sec: float) -> bool:
+	# Both the player and zombies can be freed/pooled while a timer await is
+	# pending (death, pool return), and get_tree() is null once the node is out of
+	# the tree — awaiting it blindly throws "Cannot call method 'create_timer' on
+	# a null value" and abandons the rest of the coroutine. Skip instead.
+	var t := get_tree()
+	if not t or not is_inside_tree():
+		return false
+	await t.create_timer(sec).timeout
+	return is_instance_valid(self) and is_inside_tree()

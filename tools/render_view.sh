@@ -19,8 +19,10 @@ export DISPLAY=:99
 
 DIAG_SCENE="$SCENE" DIAG_TIMESCALE="$TIMESCALE" DIAG_FRAMES="$FRAMES" DIAG_OUT="$OUT" \
 timeout 1700 "$G" --rendering-method gl_compatibility --rendering-driver opengl3 \
-  --resolution 720x1600 res://tools/diag.tscn 2>&1 \
-  | grep -E "DIAG: saved|DIAG: camera|DIAG: |ERROR|WARNING: Parent" | head -8
-
-ls -l "$OUT" 2>/dev/null
+  --resolution 720x1600 res://tools/diag.tscn > /tmp/render_view.log 2>&1
+# NOTE: never pipe this through `head -N` — when the pipe closes, Godot dies of
+# SIGPIPE mid-run and the PNG is never written (looks like a silent failure).
+grep -E "DIAG: saved|DIAG: camera|DIAG: env|^SCRIPT ERROR" /tmp/render_view.log | head -6
+echo "--- error count: $(grep -c 'ERROR' /tmp/render_view.log)"
+ls -l "$OUT" 2>/dev/null || echo "MISSING: $OUT"
 pkill -x Xvfb 2>/dev/null
