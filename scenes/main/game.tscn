@@ -255,7 +255,7 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 1
 grow_vertical = 0
-theme_overrides/font_size = 24
+theme_override_font_sizes/font_size = 24
 text = "⚔"
 
 [node name="WeaponSystem" type="Node3D" parent="Player"]

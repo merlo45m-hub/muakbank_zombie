@@ -71,7 +71,7 @@ size_flags_vertical = 2
 layout_mode = 2
 text = "⬅ BACK"
 custom_minimum_size = Vector2(200, 50)
-theme_overrides/font_size = 24
+theme_override_font_sizes/font_size = 24
 size_flags_horizontal = 4
 
 [connection signal="pressed" from="VBoxMain/BackBtn" to="." method="_on_back"]

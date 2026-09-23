@@ -184,12 +184,12 @@ theme_override_constants/separation = 12
 [node name="GamerCard" type="Panel" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
-theme_overrides/styles/panel = SubResource("CardBackground")
+theme_override_styles/panel = SubResource("CardBackground")
 custom_minimum_size = Vector2(158, 280)
 
 [node name="GamerPedestal" type="Panel" parent="VBoxMain/CharactersContainer/GamerCard"]
 layout_mode = 2
-theme_overrides/styles/panel = SubResource("PedestalDark")
+theme_override_styles/panel = SubResource("PedestalDark")
 custom_minimum_size = Vector2(150, 6)
 
 [node name="GamerViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/GamerCard"]
@@ -221,20 +221,20 @@ custom_minimum_size = Vector2(140, 18)
 layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(130, 36)
-theme_overrides/styles/normal = SubResource("WoodPlank")
-theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 16
-theme_overrides_font_color = Color(0.9, 0.9, 0.9, 1.0)
+theme_override_styles/normal = SubResource("WoodPlank")
+theme_override_styles/hover = SubResource("WoodPlankHover")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
 
 [node name="DoctorCard" type="Panel" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
-theme_overrides/styles/panel = SubResource("CardBackground")
+theme_override_styles/panel = SubResource("CardBackground")
 custom_minimum_size = Vector2(158, 280)
 
 [node name="DoctorPedestal" type="Panel" parent="VBoxMain/CharactersContainer/DoctorCard"]
 layout_mode = 2
-theme_overrides/styles/panel = SubResource("PedestalDark")
+theme_override_styles/panel = SubResource("PedestalDark")
 custom_minimum_size = Vector2(150, 6)
 
 [node name="DoctorViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/DoctorCard"]
@@ -266,20 +266,20 @@ custom_minimum_size = Vector2(140, 18)
 layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(130, 36)
-theme_overrides/styles/normal = SubResource("WoodPlank")
-theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 16
-theme_overrides_font_color = Color(0.9, 0.9, 0.9, 1.0)
+theme_override_styles/normal = SubResource("WoodPlank")
+theme_override_styles/hover = SubResource("WoodPlankHover")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
 
 [node name="NurseCard" type="Panel" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
-theme_overrides/styles/panel = SubResource("CardBackground")
+theme_override_styles/panel = SubResource("CardBackground")
 custom_minimum_size = Vector2(158, 280)
 
 [node name="NursePedestal" type="Panel" parent="VBoxMain/CharactersContainer/NurseCard"]
 layout_mode = 2
-theme_overrides/styles/panel = SubResource("PedestalDark")
+theme_override_styles/panel = SubResource("PedestalDark")
 custom_minimum_size = Vector2(150, 6)
 
 [node name="NurseViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/NurseCard"]
@@ -311,20 +311,20 @@ custom_minimum_size = Vector2(140, 18)
 layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(130, 36)
-theme_overrides/styles/normal = SubResource("WoodPlank")
-theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 16
-theme_overrides_font_color = Color(0.9, 0.9, 0.9, 1.0)
+theme_override_styles/normal = SubResource("WoodPlank")
+theme_override_styles/hover = SubResource("WoodPlankHover")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
 
 [node name="StreamerCard" type="Panel" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
-theme_overrides/styles/panel = SubResource("CardBackground")
+theme_override_styles/panel = SubResource("CardBackground")
 custom_minimum_size = Vector2(158, 280)
 
 [node name="StreamerPedestal" type="Panel" parent="VBoxMain/CharactersContainer/StreamerCard"]
 layout_mode = 2
-theme_overrides/styles/panel = SubResource("PedestalDark")
+theme_override_styles/panel = SubResource("PedestalDark")
 custom_minimum_size = Vector2(150, 6)
 
 [node name="StreamerViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/StreamerCard"]
@@ -356,20 +356,20 @@ custom_minimum_size = Vector2(140, 18)
 layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(130, 36)
-theme_overrides/styles/normal = SubResource("WoodPlank")
-theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 16
-theme_overrides_font_color = Color(0.9, 0.9, 0.9, 1.0)
+theme_override_styles/normal = SubResource("WoodPlank")
+theme_override_styles/hover = SubResource("WoodPlankHover")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
 
 [node name="HunterCard" type="Panel" parent="VBoxMain/CharactersContainer"]
 layout_mode = 2
 alignment = 1
-theme_overrides/styles/panel = SubResource("CardBackground")
+theme_override_styles/panel = SubResource("CardBackground")
 custom_minimum_size = Vector2(158, 280)
 
 [node name="HunterPedestal" type="Panel" parent="VBoxMain/CharactersContainer/HunterCard"]
 layout_mode = 2
-theme_overrides/styles/panel = SubResource("PedestalDark")
+theme_override_styles/panel = SubResource("PedestalDark")
 custom_minimum_size = Vector2(150, 6)
 
 [node name="HunterViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/HunterCard"]
@@ -401,10 +401,10 @@ custom_minimum_size = Vector2(140, 18)
 layout_mode = 2
 text = "SELECT"
 custom_minimum_size = Vector2(130, 36)
-theme_overrides/styles/normal = SubResource("WoodPlank")
-theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 16
-theme_overrides_font_color = Color(0.9, 0.9, 0.9, 1.0)
+theme_override_styles/normal = SubResource("WoodPlank")
+theme_override_styles/hover = SubResource("WoodPlankHover")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
 
 [node name="SpacerBottom" type="Control" parent="VBoxMain"]
 layout_mode = 2
@@ -414,10 +414,10 @@ size_flags_vertical = 3
 layout_mode = 2
 text = "BACK"
 custom_minimum_size = Vector2(140, 44)
-theme_overrides/styles/normal = SubResource("ButtonStyle")
-theme_overrides/styles/hover = SubResource("ButtonHover")
-theme_overrides/font_size = 18
-theme_overrides_font_color = Color(0.7, 0.7, 0.7, 1.0)
+theme_override_styles/normal = SubResource("ButtonStyle")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1.0)
 
 [connection signal="pressed" from="VBoxMain/CharactersContainer/GamerCard/GamerBtn" to="." method="_on_gamer_selected"]
 [connection signal="pressed" from="VBoxMain/CharactersContainer/DoctorCard/DoctorBtn" to="." method="_on_doctor_selected"]
