@@ -149,7 +149,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 spring_length = 4.0
 
 [node name="Camera3D" type="Camera3D" parent="Player/Camera"]
-transform = Transform3D(-1, 0, 0, 0, 0.99756, 0.06976, 0, 0.06976, -0.99756, 0, 0.5, -4)
+transform = Transform3D(1, 0, 0, 0, 0.985, -0.174, 0, 0.174, 0.985, 0, 0.5, 0)
 keep_aspect = 0
 fov = 78.0
 
