@@ -192,6 +192,15 @@ func _ready() -> void:
 			print("DIAG-LOOK: player global_pos=%s  player_visible=%s" % [
 				str((pl_node as Node3D).global_position),
 				"y" if (pl_node as Node3D).is_visible_in_tree() else "n"])
+			# How big is the player ON SCREEN, in pixels? "I can see something small and
+			# red" is not evidence; the projected head/feet tells you if framing is right.
+			var head := (pl_node as Node3D).global_position + Vector3(0, 1.75, 0)
+			var feet := (pl_node as Node3D).global_position + Vector3(0, 0.05, 0)
+			var hr := cam.unproject_position(head)
+			var fr := cam.unproject_position(feet)
+			print("DIAG-SCREEN: head_px=(%.0f,%.0f) feet_px=(%.0f,%.0f) height_px=%.0f behind=%s viewport=%s" % [
+				hr.x, hr.y, fr.x, fr.y, absf(fr.y - hr.y),
+				str(cam.is_position_behind(head)), str(cam.get_viewport().get_visible_rect().size)])
 	for e in envs:
 		print("DIAG: env %s" % e)
 
@@ -253,6 +262,22 @@ func _ready() -> void:
 			var gp = get_tree().get_first_node_in_group("player")
 			if gp:
 				gp.set("health", 9999)
+		# Where is the player WHEN THE PICTURE IS TAKEN? The intro readout is frame 0 but
+		# the PNG is written `frames` later; a player who drifted or got knocked away in
+		# between turns "framing is correct" into "tiny figure at the horizon".
+		if i % 10 == 0 or i == frames - 1:
+			var pp = get_tree().get_first_node_in_group("player")
+			var cam_now := get_viewport().get_camera_3d()
+			if pp and cam_now:
+				var d := (pp as Node3D).global_position.distance_to(cam_now.global_position)
+				var hpx := 0.0
+				var vsize := get_viewport().get_visible_rect().size
+				if vsize.y > 0.0:
+					var hh := cam_now.unproject_position((pp as Node3D).global_position + Vector3(0, 1.75, 0))
+					var ff := cam_now.unproject_position((pp as Node3D).global_position + Vector3(0, 0.05, 0))
+					hpx = absf(ff.y - hh.y)
+				print("DIAG-POS: f=%d player=%s cam=%s dist=%.2f screen_height_px=%.0f" % [
+					i, str((pp as Node3D).global_position), str(cam_now.global_position), d, hpx])
 	await RenderingServer.frame_post_draw
 	var img: Image = get_viewport().get_texture().get_image()
 	var err := img.save_png(out)
