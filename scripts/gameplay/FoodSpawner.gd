@@ -90,8 +90,11 @@ func _spawn_random_food() -> void:
 	if spawn_pos.y > player.global_transform.origin.y + 3.0:
 		spawn_pos.y = player.global_transform.origin.y + 0.5
 	
-	food.global_transform.origin = spawn_pos
+	# Add first, THEN place: a node outside the tree has no valid global_transform, so the
+	# old order both errored ("Condition !is_inside_tree() is true") and silently dropped
+	# the spawn position, leaving food wherever its local transform happened to be.
 	add_child(food)
+	food.global_position = spawn_pos
 	active_food.append(food)
 	
 	if not food.is_connected("collected", _on_food_collected):
