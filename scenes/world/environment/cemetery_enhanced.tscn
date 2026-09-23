@@ -84,8 +84,13 @@ background_color = Color(0.05, 0.06, 0.09, 1.0)
 ambient_light_source = 0
 ambient_light_energy = 0.3
 fog_enabled = true
-fog_light_color = Color(0.3, 0.35, 0.4, 1.0)
-fog_density = 0.03
+# The fog colour was (0.3, 0.35, 0.4) - pale blue-grey - at density 0.03. With the camera
+# looking nearly level, most of the frame IS ground 10-60 m away, and at 0.03 density the
+# ground 30 m out is about 60% fog colour: the "over-lit featureless pale ground" that made
+# this level look washed out was fog, not lights. Night fog should swallow detail into
+# darkness, not into pastel.
+fog_light_color = Color(0.08, 0.09, 0.12, 1.0)
+fog_density = 0.018
 tonemap_mode = 2
 
 [node name="Cemetery" type="Node3D"]
