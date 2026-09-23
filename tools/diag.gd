@@ -69,10 +69,20 @@ func _ready() -> void:
 				if i % 90 == 0:
 					var zs := get_tree().get_nodes_in_group("enemies")
 					if zs.size() > 0:
-						var z = zs[0]
-						var zdist: float = z.global_position.distance_to(ph_player.global_position)
-						print("DIAG-ZOMBIE: f=%d count=%d %s pos=%s dist=%.2f state=%s" % [
-							i, zs.size(), z.name, str(z.global_position), zdist, str(z.get("current_state"))])
+						# report the NEAREST zombie (first-in-group may be a
+						# stranded/inert one and hides what the others do)
+						var nz: Node3D = null
+						var nd: float = 1e9
+						var parts: Array[String] = []
+						for z in zs:
+							var dz: float = z.global_position.distance_to(ph_player.global_position)
+							if dz < nd:
+								nd = dz
+								nz = z
+							parts.append("%s:%.1f" % [z.name.replace("zombie_", ""), dz])
+						print("DIAG-ZOMBIE: f=%d count=%d nearest=%s dist=%.2f state=%s pos=%s | all=[%s]" % [
+							i, zs.size(), nz.name, nd, str(nz.get("current_state")),
+							str(nz.global_position), ", ".join(parts)])
 					else:
 						print("DIAG-ZOMBIE: f=%d count=0 (none spawned)" % i)
 	else:
