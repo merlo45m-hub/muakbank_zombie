@@ -4,7 +4,19 @@
 size = Vector3(100, 0.2, 100)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+# This was size (100, 0.2, 100) - a 100-metre plate - and SEVENTY-NINE nodes shared it:
+# the floor plus 78 structures and props (walls, fences, gates, graves, the bell tower).
+# A 100x100 slab of collision hanging at each of those is what makes a world feel broken
+# to walk in. The floor has its own ground shape now; this is sized for the smallest
+# common case (a grave or prop) rather than the largest, because a slightly short collider
+# on a long wall is far less maddening than an invisible wall around a headstone.
+size = Vector3(2.4, 1.5, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
 size = Vector3(100, 0.2, 100)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_prop"]
+size = Vector3(0.4, 0.4, 0.4)
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.16, 0.15, 0.13, 1.0)
@@ -89,7 +101,7 @@ mesh = SubResource("BoxMesh_floor")
 material_override = SubResource("GroundMaterial")
 
 [node name="FloorCol" type="CollisionShape3D" parent="Floor"]
-shape = SubResource("BoxShape3D_floor")
+shape = SubResource("BoxShape3D_ground")
 
 [node name="FogVolume" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_fog_big")
