@@ -496,6 +496,17 @@ func _die() -> void:
 	print("[Player] DIED!")
 	emit_signal("died")
 
+	# Fall + fade visual on player mesh (spec §3). Does not block gameplay state.
+	if mesh:
+		var dt = create_tween()
+		dt.tween_property(mesh, "rotation:x", deg_to_rad(100.0), 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		dt.parallel().tween_property(mesh, "position:y", mesh.position.y - 0.15, 0.5)
+		# Transparency requires MeshInstance3D children — iterate them.
+		for _mi in mesh.find_children("*", "MeshInstance3D", true, false):
+			var _mi3 := _mi as MeshInstance3D
+			if _mi3:
+				dt.parallel().tween_property(_mi3, "transparency", 1.0, 0.8).set_delay(0.3)
+
 	# Release mouse on desktop so the player can interact with UI
 	if OS.has_feature("android") or OS.has_feature("ios"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
