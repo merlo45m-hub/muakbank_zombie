@@ -645,7 +645,17 @@ func _apply_character_model() -> void:
 		anims = max(anims, list.size())
 		if list.size() > 0 and not ap.is_playing():
 			ap.play(list[0])
-	print("[Player] character model: %s  raw_h=%.3f  scale=%.3f  animations=%d" % [path, h, mdl.scale.y, anims])
+	var verts := 0
+	for mi2 in mdl.find_children("*", "MeshInstance3D", true, false):
+		var mm := (mi2 as MeshInstance3D).mesh
+		if mm:
+			for si in range(mm.get_surface_count()):
+				var arr := mm.surface_get_arrays(si)
+				if arr.size() > 0 and arr[0] != null:
+					verts += (arr[0] as PackedVector3Array).size()
+	print("[Player] character model: %s  raw_h=%.3f  scale=%.3f  verts=%d  animations=%d" % [path, h, mdl.scale.y, verts, anims])
+	if verts < 200:
+		push_warning("[Player] character model %s has only %d verts - it is a blockout placeholder" % [id, verts])
 
 
 func _model_aabb(root: Node3D) -> AABB:

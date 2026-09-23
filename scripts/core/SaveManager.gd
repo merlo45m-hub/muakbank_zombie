@@ -26,7 +26,7 @@ var save_data: Dictionary = {
 }
 
 var save_path: String = "user://savegame.save"
-var selected_character: String = "gamer"
+var selected_character: String = "doctor"   # real geometry (1146 verts); "gamer" is a 64-vert blockout
 var pending_results: Dictionary = {}
 
 # SaveMadeEasy key prefix — all save_data fields stored under "save:" namespace
