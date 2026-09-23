@@ -51,6 +51,9 @@ func collect(player: Node3D) -> void:
 	
 	queue_free()
 
+var _owned_material: StandardMaterial3D = null
+
+
 func _writable_material() -> StandardMaterial3D:
 	# `mesh` may be a Node3D container (no surface API at all) — resolve to an
 	# owned, mutable material on the first MeshInstance3D we can find.
@@ -71,9 +74,17 @@ func _writable_material() -> StandardMaterial3D:
 	if not mi:
 		return null
 	var m: StandardMaterial3D = mi.material_override
-	if not m:
+	if m and m != _owned_material:
+		# Take an instance-owned copy. A material_override can be a resource shared
+		# between instances, and _update_appearance() writes albedo_color into it —
+		# without the copy, recolouring one pickup recolours every one of its type.
+		m = m.duplicate()
+		mi.material_override = m
+		_owned_material = m
+	elif not m:
 		m = StandardMaterial3D.new()
 		mi.material_override = m
+		_owned_material = m
 	return m
 
 

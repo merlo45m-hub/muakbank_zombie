@@ -76,14 +76,19 @@ func _spawn_random_food() -> void:
 	var dist = min_spawn_distance + randf() * (spawn_radius - min_spawn_distance)
 	var spawn_pos = player.global_transform.origin + Vector3(cos(angle) * dist, 0, sin(angle) * dist)
 	
-	# Ground detection via raycast (fix for finding 9.3)
+	# Ground detection via raycast. Start LOW (head height): casting from +50
+	# hits rooftops and awnings, which strands food on top of buildings where the
+	# player can never reach it — the same mistake fixed in ZombieSpawner3D.
 	var space_state = get_world_3d().direct_space_state
-	var query = PhysicsRayQueryParameters3D.create(spawn_pos + Vector3(0, 50, 0), spawn_pos + Vector3(0, -50, 0))
+	var query = PhysicsRayQueryParameters3D.create(spawn_pos + Vector3(0, 3, 0), spawn_pos + Vector3(0, -60, 0))
 	var result = space_state.intersect_ray(query)
 	if result:
 		spawn_pos.y = result.position.y + 0.5  # Offset above ground
 	else:
 		spawn_pos.y = 0.5  # Fallback
+	# Anything still far above the player is a bogus surface (roof/ledge).
+	if spawn_pos.y > player.global_transform.origin.y + 3.0:
+		spawn_pos.y = player.global_transform.origin.y + 0.5
 	
 	food.global_transform.origin = spawn_pos
 	add_child(food)

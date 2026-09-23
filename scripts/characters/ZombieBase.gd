@@ -331,9 +331,17 @@ func attack(target: Node3D) -> void:
 	"""Contact-triggered attack (hurtbox overlap / AI call).
 
 	Shares the AI's cooldown so a body merely brushing the player cannot
-	machine-gun damage, and parked or dead pool instances never deal damage.
+	machine-gun damage. Dead instances never deal damage.
+
+	NOTE: do NOT guard on `pooled` here. `pooled` is set once on spawn
+	(ZombieSpawner3D) and must stay true for the zombie's whole life — it is what
+	tells _die() to return the instance to the pool instead of queue_free()ing it.
+	Using it as a "not currently in the world" test disabled this whole damage
+	path for every live zombie (a chasing zombie that bumped the player dealt
+	nothing). Parked instances are detached from the tree, so they cannot receive
+	body_entered signals anyway.
 	"""
-	if is_dead or pooled:
+	if is_dead:
 		return
 	if attack_timer > 0.0:
 		return
