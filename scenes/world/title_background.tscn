@@ -1,4 +1,6 @@
-[gd_scene load_steps=20 format=3 uid="uid://title_background_v2"]
+[gd_scene load_steps=21 format=3 uid="uid://title_background_v2"]
+
+[ext_resource type="Script" path="res://scripts/ui/TitleBackground.gd" id="1_tb"]
 
 [sub_resource type="BoxMesh" id="CemeteryFloor"]
 size = Vector3(50, 0.2, 50)
@@ -74,7 +76,8 @@ cull_mode = 2
 no_depth_test = true
 transparency = 1
 
-[node name="TitleBackground" type="Node3D" script="res://scripts/ui/TitleBackground.gd"]
+[node name="TitleBackground" type="Node3D"]
+script = ExtResource("1_tb")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("TitleEnv")

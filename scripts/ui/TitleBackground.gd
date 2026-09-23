@@ -26,12 +26,17 @@ func _setup_camera() -> void:
 	# the fog, sky and moon above them.
 	var cam := get_node_or_null("Camera") as Camera3D
 	if cam == null:
+		printerr("[TitleBackground] no Camera child found - framing unchanged")
 		return
+	print("[TitleBackground] _setup_camera before: ", cam.global_position, " fov=", cam.fov, " in_tree=", is_inside_tree(), " parent=", get_parent().name if get_parent() else "<none>")
 	cam.fov = 62.0
 	cam.near = 0.1
 	cam.far = 120.0
 	cam.global_position = Vector3(0.0, 1.55, 8.0)
 	cam.look_at(Vector3(0.0, 1.35, -6.0), Vector3.UP)
+	print("[TitleBackground] _setup_camera after: ", cam.global_position, " fov=", cam.fov)
+	await get_tree().process_frame
+	print("[TitleBackground] _setup_camera next_frame: ", cam.global_position, " fov=", cam.fov)
 
 
 func _load_zombies() -> void:
@@ -58,18 +63,25 @@ func _load_zombies() -> void:
 		if mesh_node == null:
 			continue
 
-		# Position the zombie
-		mesh_node.transform = Transform3D(
-			1, 0, 0,
-			0, 1, 0,
-			0, 0, 1,
-			spawn.x, spawn.y_offset, spawn.z
-		)
-		mesh_node.scale = Vector3(spawn.scale, spawn.scale, spawn.scale)
+		# Position the zombie. The spawn entries are Dictionary values (Variants) and the
+		# Transform3D/Vector3 constructors reject Variant arguments - that parse error is
+		# why this script never loaded at all. Convert explicitly.
+		var pos := Vector3(float(spawn.x), float(spawn.y_offset), float(spawn.z))
+		var scl := float(spawn.scale)
+		# The mesh is still parented to the instantiated glTF scene, and add_child()
+		# refuses a node that already has a parent - which is why the pet zombies never
+		# showed up in the backdrop. Detach it first, then re-parent.
+		if mesh_node.get_parent() != null:
+			mesh_node.get_parent().remove_child(mesh_node)
+		# owner is a packing concept; leaving it set makes Godot warn that the owner
+		# ('zombie_dog') is inconsistent when the node lands under Zombies.
+		mesh_node.owner = null
+		mesh_node.transform = Transform3D(Basis.IDENTITY, pos)
+		mesh_node.scale = Vector3(scl, scl, scl)
 
 		# Assign a dark material
 		var mat = StandardMaterial3D.new()
-		mat.albedo_color = _zombie_color(spawn.path)
+		mat.albedo_color = _zombie_color(str(spawn.path))
 		mat.roughness = 0.85
 		mat.metallic = 0.0
 		mesh_node.material_override = mat
@@ -79,8 +91,9 @@ func _load_zombies() -> void:
 		if zombies_node:
 			zombies_node.add_child(mesh_node)
 
-		# Attach shambling animation script
-		var anim = TitleZombieAnim.new()
+		# Attach shambling animation script. TitleZombieAnim.gd declares no class_name, so
+		# the bare identifier resolved to nothing; preload the script and instantiate it.
+		var anim = preload("res://scripts/ui/TitleZombieAnim.gd").new()
 		anim.shamble_speed = 0.3 + randf() * 0.2
 		anim.shamble_amount = 0.06 + randf() * 0.04
 		anim.bob_amount = 0.02 + randf() * 0.02
