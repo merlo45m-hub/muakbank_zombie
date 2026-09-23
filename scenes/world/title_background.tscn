@@ -36,8 +36,8 @@ radius = 25
 
 [sub_resource type="StandardMaterial3D" id="FogMaterial"]
 albedo_color = Color(0.3, 0.28, 0.24, 0.25)
-cull_mode = 2
-no_depth_test = true
+cull_mode = 1
+no_depth_test = false
 transparency = 1
 
 [sub_resource type="CylinderMesh" id="TreeTrunk"]
@@ -72,8 +72,8 @@ fog_attenuation = 0.001
 
 [sub_resource type="StandardMaterial3D" id="FogMaterial2"]
 albedo_color = Color(0.2, 0.18, 0.17, 0.08)
-cull_mode = 2
-no_depth_test = true
+cull_mode = 1
+no_depth_test = false
 transparency = 1
 
 [node name="TitleBackground" type="Node3D"]

@@ -122,8 +122,8 @@ radius = 80
 
 [sub_resource type="StandardMaterial3D" id="SkyMaterial"]
 albedo_color = Color(0.15, 0.12, 0.1, 0.3)
-cull_mode = 2
-no_depth_test = true
+cull_mode = 1
+no_depth_test = false
 
 [sub_resource type="BoxMesh" id="BoxMesh_parapet_short"]
 size = Vector3(0.4, 1, 50)

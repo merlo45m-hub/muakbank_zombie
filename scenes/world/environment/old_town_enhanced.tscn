@@ -109,9 +109,9 @@ metallic = 0.0
 radius = 40.0
 
 [sub_resource type="StandardMaterial3D" id="FogMaterial"]
-albedo_color = Color(0.5, 0.5, 0.52, 0.2)
-cull_mode = 2
-no_depth_test = true
+albedo_color = Color(0.10, 0.11, 0.14, 0.14)
+cull_mode = 1
+no_depth_test = false
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor_big"]
 size = Vector3(120, 0.3, 120)
