@@ -1,0 +1,41 @@
+{
+  "findings": [
+    {
+      "file_line": "scripts/characters/ZombieBase.gd:336",
+      "issue": "The contact-triggered attack method is permanently disabled for all pooled zombies. `attack()` checks `if is_dead or pooled: return`, but `pooled` is set to `true` on spawn (ZombieSpawner3D.gd:223) and is never reset to `false` in `reset_for_pool()` (ZombieBase.gd:240-261). This means pool-managed zombies can never deal contact damage via the EnemyHitbox body_entered path, even when they brush past the player. The AI's `_perform_attack()` still works, but the contact-triggered backup — which exists specifically to deal damage on body overlap — is dead code for every pooled zombie.",
+      "fix": "Remove the `pooled` check from `attack()` (line 336), keeping only `if is_dead: return`. The `is_dead` check already prevents dead zombies from attacking, and parked (in-pool) zombies are not in the tree so they cannot receive `body_entered` signals. If the concern is that a zombie being returned to the pool could briefly deal damage, the `is_dead` flag is set in `_die()` before the `died` signal fires, so the guard is already in place.",
+      "severity": "high"
+    },
+    {
+      "file_line": "scripts/gameplay/FoodSpawner.gd:81",
+      "issue": "The food spawner uses a ground-detection raycast from y+50 to y-50, exactly the pattern that was already fixed for zombies in commits 884f731 and 8646864 (which changed from y+50 to y+3 to avoid spawning on rooftops). Food items spawned on rooftops or awnings would be inaccessible but not game-breaking. The zombie spawner already learned this lesson; the food spawner should use the same fix.",
+      "fix": "Change the raycast start in FoodSpawner._spawn_random_food() from `spawn_pos + Vector3(0, 50, 0)` to `spawn_pos + Vector3(0, 3, 0)`, matching the zombie spawner fix. Optionally add the same safety check that clamps spawn_pos.y to player height if it's too high.",
+      "severity": "low"
+    },
+    {
+      "file_line": "scripts/gameplay/FoodItem3D.gd:73-76",
+      "issue": "_writable_material() returns an existing material_override without duplicating it. If a food scene's MeshInstance3D has a material_override set to a shared resource (e.g., a preloaded StandardMaterial3D), every instance of that food type shares the same material object. _update_appearance() then modifies albedo_color on that shared material, changing all instances of that food type simultaneously. This violates the design intent that instanced meshes must not share one material when per-instance colour is set.",
+      "fix": "Duplicate the material if it exists: `var m: StandardMaterial3D = mi.material_override.duplicate() if mi.material_override else StandardMaterial3D.new()`. This ensures each food instance gets its own material copy before _update_appearance() modifies it.",
+      "severity": "low"
+    },
+    {
+      "file_line": "addons/godot-object-pool/pool.gd:106-107",
+      "issue": "pool.gd's add_to_node() adds both alive AND dead (parked) instances to the given node. Dead instances are supposed to be inert and out of the world, but this method parents them to the scene. The ZombieSpawner3D._create_pool() works around this by immediately removing all dead instances and zeroing their collisions (ZombieSpawner3D.gd:122-131), but this is a workaround for the pool's surprising behavior. Any other caller that uses add_to_node() without the same cleanup would have dead instances appearing in their scene, fully parented and potentially collidable.",
+      "fix": "Remove the dead-instance loop from add_to_node() (lines 106-107) so the pool only parents alive instances. The spawner's _create_pool() can then call add_to_node() without needing the cleanup loop, and the parked instances remain orphaned (as intended) until get_first_dead() checks them out.",
+      "severity": "low"
+    },
+    {
+      "file_line": "scenes/main/game.tscn:170-172",
+      "issue": "The player's PickupArea has collision_mask = 256, meaning it detects Area3D nodes on layer 256 via area_entered. However, all weapon pickup scenes (weapon_pickup_*.tscn) have collision_layer = 0, not 256. The PickupArea's area_entered callback (_on_PickupArea_area_entered in Player.gd:539-544) never fires for any weapon pickup. Weapon collection works through each pickup's own body_entered callback (WeaponPickup.gd:28-35) instead, making the PickupArea and its callback dead code.",
+      "fix": "Either move weapon pickups to layer 256 (set collision_layer = 256 in all weapon_pickup_*.tscn files) so the PickupArea detects them, or remove the PickupArea and its callback entirely since they are never used. The second option is cleaner since weapon pickups already handle collection via their own body_entered signal.",
+      "severity": "low"
+    },
+    {
+      "file_line": "scripts/characters/ZombieBase.gd:330-346",
+      "issue": "Commit message 8646864 claims 'zombies now acquire the player and chase', and commit 2b00878 claims 'Phase 1: hand spawned zombies the player as target'. Both are partially true: target acquisition and chasing do work (the _idle() range-based acquisition in line 108-113 and set_target() in line 309-312 are correct). However, the contact-triggered attack path that complements this — where a zombie brushing the player deals damage — is broken by the pooled flag check (see finding 1). The commits deliver acquiring and chasing, but the implied 'zombies can hurt the player on contact' is not supported by the code.",
+      "fix": "Same as finding 1: remove the pooled check from attack() so contact-triggered damage works for pooled zombies. This makes the commits' claims fully accurate.",
+      "severity": "medium"
+    }
+  ],
+  "summary": "6 findings across the 7 commits. The critical defect is that ZombieBase.attack() — the contact-triggered damage path called from the player's EnemyHitbox — is permanently disabled for all pooled zombies because the `pooled` flag is set on spawn and never cleared, so the `if is_dead or pooled: return` guard always triggers. This means zombies must enter the AI's ATTACK state to deal damage; a zombie that bumps the player while chasing deals nothing. The remaining findings are lower-severity: the food spawner repeats the rooftop-raycast mistake already fixed for zombies, _writable_material() doesn't duplicate shared materials (risk of shared albedo across instances), pool.gd's add_to_node() parents dead instances (spawner works around it), the player's PickupArea mask=256 is dead code (no pickups are on layer 256), and commit message claims about zombie contact damage are not fully supported by the code."
+}
