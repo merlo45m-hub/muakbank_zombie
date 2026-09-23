@@ -14,7 +14,24 @@ var _zombie_spawns = [
 
 
 func _ready() -> void:
+	_setup_camera()
 	_load_zombies()
+
+
+func _setup_camera() -> void:
+	# The scene file's camera sat at knee height looking 30 degrees down, so the frame
+	# was mostly a flat grey slab of floor with the headstones cropped at the very top
+	# edge - it read as a UI panel, not a cemetery. Frame it the way the cover art does:
+	# eye level, horizon just above the middle, graves and trees as silhouettes against
+	# the fog, sky and moon above them.
+	var cam := get_node_or_null("Camera") as Camera3D
+	if cam == null:
+		return
+	cam.fov = 62.0
+	cam.near = 0.1
+	cam.far = 120.0
+	cam.global_position = Vector3(0.0, 1.55, 8.0)
+	cam.look_at(Vector3(0.0, 1.35, -6.0), Vector3.UP)
 
 
 func _load_zombies() -> void:
