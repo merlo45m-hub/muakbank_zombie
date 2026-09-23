@@ -191,13 +191,24 @@ func _spawn_random_zombie() -> void:
 		if result:
 			spawn_pos.y = result.position.y
 
+	# Mark as pool-managed and restore pristine state before it re-enters the world
+	zombie.set("pooled", true)
+	if zombie.has_method("reset_for_pool"):
+		zombie.reset_for_pool()
+
 	add_child(zombie)
 	zombie.global_transform.origin = spawn_pos
 	active_zombies.append(zombie)
 	zombie.set("zombie_type", zombie_type)
 
-	# Connect the died signal
-	if zombie.has_signal("died") and not zombie.is_connected("died", _on_zombie_died):
+	# Connect the died signal. The handler is bound with arguments, so
+	# is_connected() cannot recognise an earlier binding — on pooled reuse the
+	# zombie carries its previous connection, which would fire the handler
+	# twice (double loot + double pool return). Disconnect stale bindings first.
+	if zombie.has_signal("died"):
+		for c in zombie.died.get_connections():
+			if c.callable.get_method() == "_on_zombie_died":
+				zombie.died.disconnect(c.callable)
 		zombie.died.connect(_on_zombie_died.bind(zombie, zombie_type))
 
 	# Store a reference to the pool entry on the zombie so _on_zombie_died can return it

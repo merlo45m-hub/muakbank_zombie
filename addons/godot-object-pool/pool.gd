@@ -47,6 +47,11 @@ func init() -> void:
 		# manages alive->dead transitions via _on_killed() directly.
 		if s.has_signal("killed"):
 			s.connect("killed", _on_killed)
+		# Park new instances in the dead pool. get_first_dead() refuses any
+		# instance whose `dead` flag is false, so a brand-new object MUST be
+		# marked dead or it can never be checked out (soft set: pooled objects
+		# may be plain Nodes without the property).
+		s.set("dead", true)
 		dead.push_back(s)
 
 func get_prefix() -> String:
@@ -122,12 +127,20 @@ func _on_killed(target) -> void:
 	# Get the name of the target object that was killed
 	var name = target.get_name()
 
+	# Only recycle objects that are actually checked out. Without this guard a
+	# second call for the same target would push duplicates into the dead pool.
+	if not alive.has(name) or alive[name] != target:
+		return
+
 	# Remove the killed object from the alive pool
 	alive.erase(name)
 
 	# Add the killed object to the dead pool, now available for use
 	dead.push_back(target)
 
+	# dead-pool contract read by get_first_dead() (soft set: a pooled object may
+	# be a plain Node without a `dead` property)
+	target.set("dead", true)
 	target.process_mode = 1  # PROCESS_MODE_PAUSABLE
 
 	emit_signal("killed", target)

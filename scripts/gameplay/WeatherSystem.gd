@@ -74,7 +74,8 @@ func _apply_weather(weather: Weather) -> void:
 		rain_particles.amount = 250 if weather == Weather.STORM else 150
 	
 	var viewport = get_viewport()
-	var env = viewport.find_world_3d().environment if viewport else null
+	var world = viewport.find_world_3d() if viewport else null
+	var env = world.environment if world else null
 	if env and fog_enabled:
 		match weather:
 			Weather.CLEAR:

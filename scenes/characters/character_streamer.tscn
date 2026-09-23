@@ -176,13 +176,12 @@ shape = SubResource("PlayerCollision")
 
 
 
-[node name="WeaponSystem" type="Node" parent="."]
+[node name="WeaponSystem" type="Node3D" parent="."]
 script = ExtResource("2")
 
 
 
-[node name="MobileControls" type="CanvasLayer" parent="."]
-layer = 10
+[node name="MobileControls" type="Control" parent="."]
 script = ExtResource("3")
 
 
