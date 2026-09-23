@@ -1,0 +1,30 @@
+[gd_resource type="Environment" load_steps=3 format=3]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat_blood"]
+sky_top_color = Color(0.014, 0.014, 0.032, 1)
+sky_horizon_color = Color(0.17, 0.05, 0.055, 1)
+sky_curve = 0.12
+sky_energy_multiplier = 0.4
+ground_bottom_color = Color(0.008, 0.008, 0.011, 1)
+ground_horizon_color = Color(0.085, 0.024, 0.03, 1)
+
+[sub_resource type="Sky" id="Sky_blood"]
+sky_material = SubResource("SkyMat_blood")
+
+[resource]
+background_mode = 2
+sky = SubResource("Sky_blood")
+ambient_light_source = 3
+ambient_light_color = Color(0.34, 0.4, 0.62, 1)
+ambient_light_sky_contribution = 0.55
+ambient_light_energy = 0.4
+fog_enabled = true
+fog_light_color = Color(0.14, 0.095, 0.12, 1)
+fog_light_energy = 0.85
+fog_density = 0.0045
+tonemap_mode = 2
+tonemap_white = 6.0
+adjustment_enabled = true
+adjustment_brightness = 1.0
+adjustment_contrast = 1.1
+adjustment_saturation = 0.94
