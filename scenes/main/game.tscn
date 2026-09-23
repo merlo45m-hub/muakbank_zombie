@@ -112,7 +112,7 @@ shape = SubResource("GroundCollision")
 [node name="DirectionalLight" type="DirectionalLight3D" parent="Environment/Lighting"]
 transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 10, 15, 8)
 light_color = Color(0.62, 0.68, 0.92, 1)
-light_energy_multiplier = 0.55
+light_energy_multiplier = 1.5
 shadow_enabled = true
 
 [node name="AmbientLight" type="OmniLight3D" parent="Environment/Lighting"]
@@ -149,8 +149,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 spring_length = 4.0
 
 [node name="Camera3D" type="Camera3D" parent="Player/Camera"]
-transform = Transform3D(-1, 0, 0, 0, 0.985, 0.174, 0, 0.174, -0.985, 0, 0.5, -4)
+transform = Transform3D(-1, 0, 0, 0, 0.99756, 0.06976, 0, 0.06976, -0.99756, 0, 0.5, -4)
 keep_aspect = 0
+fov = 78.0
 
 [node name="FoodDetection" type="Area3D" parent="Player"]
 collision_layer = 0

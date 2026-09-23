@@ -51,11 +51,37 @@ func collect(player: Node3D) -> void:
 	
 	queue_free()
 
+func _writable_material() -> StandardMaterial3D:
+	# `mesh` may be a Node3D container (no surface API at all) — resolve to an
+	# owned, mutable material on the first MeshInstance3D we can find.
+	var mi: MeshInstance3D = mesh if mesh is MeshInstance3D else null
+	if not mi:
+		for c in mesh.get_children():
+			if c is MeshInstance3D:
+				mi = c
+				break
+	if not mi:
+		for c in mesh.get_children():
+			for g in c.get_children():
+				if g is MeshInstance3D:
+					mi = g
+					break
+			if mi:
+				break
+	if not mi:
+		return null
+	var m: StandardMaterial3D = mi.material_override
+	if not m:
+		m = StandardMaterial3D.new()
+		mi.material_override = m
+	return m
+
+
 func _update_appearance() -> void:
 	if not mesh:
 		return
 	
-	var mat = mesh.get_surface_override_material(0)
+	var mat := _writable_material()
 	if not mat:
 		return
 	
