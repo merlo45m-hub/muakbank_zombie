@@ -55,7 +55,7 @@ offset_left = 80.0
 offset_top = 60.0
 offset_right = -80.0
 offset_bottom = -60.0
-theme_overrides/styles/panel = SubResource("PanelStyle")
+theme_override_styles/panel = SubResource("PanelStyle")
 
 [node name="VBoxMain" type="VBoxContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -214,9 +214,9 @@ size_flags_vertical = 3
 layout_mode = 2
 text = "⬅ BACK"
 custom_minimum_size = Vector2(0, 50)
-theme_overrides/styles/normal = SubResource("WoodPlank")
-theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 20
+theme_override_styles/normal = SubResource("WoodPlank")
+theme_override_styles/hover = SubResource("WoodPlankHover")
+theme_override_font_sizes/font_size = 20
 
 [connection signal="value_changed" from="PanelContainer/VBoxMain/AudioSection/MasterContainer/MasterSlider" to="." method="_on_master_changed"]
 [connection signal="value_changed" from="PanelContainer/VBoxMain/AudioSection/MusicContainer/MusicSlider" to="." method="_on_music_changed"]

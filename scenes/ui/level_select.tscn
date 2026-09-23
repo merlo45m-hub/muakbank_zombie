@@ -45,7 +45,7 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 text = "◀ PREV"
 custom_minimum_size = Vector2(100, 40)
-theme_overrides/font_size = 16
+theme_override_font_sizes/font_size = 16
 
 [node name="PageLabel" type="Label" parent="VBoxMain/PaginationContainer"]
 layout_mode = 2
@@ -59,7 +59,7 @@ vertical_alignment = 1
 layout_mode = 2
 text = "NEXT ▶"
 custom_minimum_size = Vector2(100, 40)
-theme_overrides/font_size = 16
+theme_override_font_sizes/font_size = 16
 
 [node name="ButtonContainer" type="HBoxContainer" parent="VBoxMain"]
 layout_mode = 2
@@ -70,7 +70,7 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "⬅ BACK"
 custom_minimum_size = Vector2(150, 50)
-theme_overrides/font_size = 20
+theme_override_font_sizes/font_size = 20
 
 [connection signal="pressed" from="VBoxMain/PaginationContainer/PrevBtn" to="." method="_on_prev"]
 [connection signal="pressed" from="VBoxMain/PaginationContainer/NextBtn" to="." method="_on_next"]

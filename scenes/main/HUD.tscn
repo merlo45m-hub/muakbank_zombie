@@ -180,47 +180,47 @@ theme_override_constants/separation = 12
 [node name="FoodSlot1" type="TextureButton" parent="FoodBar"]
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("2")
-theme_overrides/styles/normal = SubResource("FoodSlotBg")
-theme_overrides/styles/hover = SubResource("FoodSlotBg")
-theme_overrides/styles/pressed = SubResource("FoodSlotBg")
-theme_overrides/font_size = 12
+theme_override_styles/normal = SubResource("FoodSlotBg")
+theme_override_styles/hover = SubResource("FoodSlotBg")
+theme_override_styles/pressed = SubResource("FoodSlotBg")
+theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot2" type="TextureButton" parent="FoodBar"]
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("3")
-theme_overrides/styles/normal = SubResource("FoodSlotBg")
-theme_overrides/styles/hover = SubResource("FoodSlotBg")
-theme_overrides/styles/pressed = SubResource("FoodSlotBg")
-theme_overrides/font_size = 12
+theme_override_styles/normal = SubResource("FoodSlotBg")
+theme_override_styles/hover = SubResource("FoodSlotBg")
+theme_override_styles/pressed = SubResource("FoodSlotBg")
+theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot3" type="TextureButton" parent="FoodBar"]
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("4")
-theme_overrides/styles/normal = SubResource("FoodSlotBg")
-theme_overrides/styles/hover = SubResource("FoodSlotBg")
-theme_overrides/styles/pressed = SubResource("FoodSlotBg")
-theme_overrides/font_size = 12
+theme_override_styles/normal = SubResource("FoodSlotBg")
+theme_override_styles/hover = SubResource("FoodSlotBg")
+theme_override_styles/pressed = SubResource("FoodSlotBg")
+theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot4" type="TextureButton" parent="FoodBar"]
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("5")
-theme_overrides/styles/normal = SubResource("FoodSlotBg")
-theme_overrides/styles/hover = SubResource("FoodSlotBg")
-theme_overrides/styles/pressed = SubResource("FoodSlotBg")
-theme_overrides/font_size = 12
+theme_override_styles/normal = SubResource("FoodSlotBg")
+theme_override_styles/hover = SubResource("FoodSlotBg")
+theme_override_styles/pressed = SubResource("FoodSlotBg")
+theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot5" type="TextureButton" parent="FoodBar"]
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("6")
-theme_overrides/styles/normal = SubResource("FoodSlotBg")
-theme_overrides/styles/hover = SubResource("FoodSlotBg")
-theme_overrides/styles/pressed = SubResource("FoodSlotBg")
-theme_overrides/font_size = 12
+theme_override_styles/normal = SubResource("FoodSlotBg")
+theme_override_styles/hover = SubResource("FoodSlotBg")
+theme_override_styles/pressed = SubResource("FoodSlotBg")
+theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot6" type="TextureButton" parent="FoodBar"]
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("7")
-theme_overrides/styles/normal = SubResource("FoodSlotBg")
-theme_overrides/styles/hover = SubResource("FoodSlotBg")
-theme_overrides/styles/pressed = SubResource("FoodSlotBg")
-theme_overrides/font_size = 12
+theme_override_styles/normal = SubResource("FoodSlotBg")
+theme_override_styles/hover = SubResource("FoodSlotBg")
+theme_override_styles/pressed = SubResource("FoodSlotBg")
+theme_override_font_sizes/font_size = 12

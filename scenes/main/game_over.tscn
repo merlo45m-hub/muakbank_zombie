@@ -106,17 +106,17 @@ size_flags_horizontal = 4
 layout_mode = 2
 text = "🔄 PLAY AGAIN"
 custom_minimum_size = Vector2(200, 50)
-theme_overrides/styles/normal = SubResource("WoodPlank")
-theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 24
+theme_override_styles/normal = SubResource("WoodPlank")
+theme_override_styles/hover = SubResource("WoodPlankHover")
+theme_override_font_sizes/font_size = 24
 
 [node name="MenuBtn" type="Button" parent="VBoxMain/ButtonContainer"]
 layout_mode = 2
 text = "🏠 MAIN MENU"
 custom_minimum_size = Vector2(200, 50)
-theme_overrides/styles/normal = SubResource("WoodPlank")
-theme_overrides/styles/hover = SubResource("WoodPlankHover")
-theme_overrides/font_size = 24
+theme_override_styles/normal = SubResource("WoodPlank")
+theme_override_styles/hover = SubResource("WoodPlankHover")
+theme_override_font_sizes/font_size = 24
 
 [node name="Spacer4" type="Control" parent="VBoxMain"]
 layout_mode = 2
