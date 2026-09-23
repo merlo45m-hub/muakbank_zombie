@@ -69,7 +69,15 @@ func _ready() -> void:
 		if mesh.is_inside_tree():
 			var _anim := ProceduralAnimator.new()
 			_anim.name = "ProceduralAnimator"
-			mesh.add_child(_anim)
+			# Reparent: body > ProceduralAnimator > mesh > GLB geometry.
+			# The animator must be an ANCESTOR of the geometry so its own-transform
+			# writes affect the subtree. Previously it was a sibling of the GLB root
+			# (child of mesh) — transforms on a node only propagate to its children,
+			# so nothing was ever visible.
+			var holder := mesh.get_parent()
+			holder.remove_child(mesh)
+			_anim.add_child(mesh)
+			holder.add_child(_anim)
 			_anim.attach(self, mesh)
 	_post_ready()
 
@@ -77,6 +85,10 @@ func _ready() -> void:
 func _post_ready() -> void:
 	"""Override for subclass-specific setup"""
 	pass
+
+
+func _get_animator() -> ProceduralAnimator:
+	return get_node_or_null("ProceduralAnimator") as ProceduralAnimator
 
 
 func _physics_process(delta: float) -> void:
@@ -225,8 +237,9 @@ func take_damage(amount: int) -> void:
 	_flash_red()
 
 	# Notify animator for hit-reaction squash envelope (spec §4).
-	if mesh and mesh.has_node("ProceduralAnimator"):
-		(mesh.get_node("ProceduralAnimator") as ProceduralAnimator).trigger_hit_reaction()
+	var _a := _get_animator()
+	if _a:
+		_a.trigger_hit_reaction()
 
 	if target:
 		var kb = (global_transform.origin - target.global_transform.origin).normalized()
@@ -242,7 +255,10 @@ func take_damage(amount: int) -> void:
 func _die() -> void:
 	is_dead = true
 	current_state = AIState.DEAD
-	emit_signal("died")
+	# Zero collision immediately — corpse is a ghost while the anim plays.
+	# reset_for_pool() restores layer 8 / mask 1 on the next checkout.
+	collision_layer = 0
+	collision_mask = 0
 
 	Audio.play_zombie_die()
 
@@ -276,11 +292,20 @@ func _die() -> void:
 		# no Mesh child — nothing visual to fade, just wait out the duration
 		t.tween_interval(fall_t + fade_t)
 
-	# The spawner's died-handler runs synchronously on the signal above, so a
-	# pooled zombie is already detached from the tree by now — a tween bound to
-	# a node outside the tree never finishes, so only await while still inside.
+	# The zombie IS still in the tree (signal fires after this await).
+	# A tween on a node out-of-tree never finishes, so guard anyway.
 	if is_inside_tree():
 		await t.finished
+
+	# ── BIG DEATH IMPACT SHAKE (bear / boss only) ──────────────────────────
+	if zombie_type == "bear" or zombie_type == "boss":
+		var _cs := get_tree().current_scene if get_tree() else null
+		if _cs and _cs.has_method("_shake"):
+			_cs._shake(0.3 if zombie_type == "boss" else 0.18)
+
+	# Emit AFTER the animation so the spawner's detach/score/loot logic runs
+	# once the corpse is already invisible — no corpse-pop.
+	emit_signal("died")
 
 	# ── POOLING: if pooled, do NOT queue_free — return to pool instead ──
 	if pooled:
@@ -311,8 +336,9 @@ func reset_for_pool() -> void:
 	collision_mask = 1
 	if mesh:
 		mesh.transform = _mesh_rest_xform
-		if mesh.has_node("ProceduralAnimator"):
-			(mesh.get_node("ProceduralAnimator") as ProceduralAnimator).reset_anim()
+		var _a := _get_animator()
+		if _a:
+			_a.reset_anim()
 	for mi in _mesh_instances():
 		mi.transparency = 0.0
 		mi.material_overlay = null
@@ -381,8 +407,9 @@ func _on_DetectionArea_body_entered(body: Node3D) -> void:
 
 func _on_start_chase() -> void:
 	"""Called when starting to chase (override for sounds/animation)"""
-	if mesh and mesh.has_node("ProceduralAnimator"):
-		(mesh.get_node("ProceduralAnimator") as ProceduralAnimator).on_start_chase()
+	var _a := _get_animator()
+	if _a:
+		_a.on_start_chase()
 
 
 func attack(target: Node3D) -> void:

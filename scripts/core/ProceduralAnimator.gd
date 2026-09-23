@@ -202,14 +202,26 @@ const _HIT_DURATION: float = 0.18
 const _LAUNCH_DURATION: float = 0.14
 const _BOSS_LAUNCH_DURATION: float = 0.14
 
+# ── V4 STATE ──────────────────────────────────────────────────────────────────
+
+# Footstep zero-crossing (spec §5)
+var _prev_sin: float = 0.0
+
+# Spawn scale-in (spec §6)
+var _spawn_t: float = 0.0
+const _SPAWN_DURATION: float = 0.16
+
 
 # ── PUBLIC API ─────────────────────────────────────────────────────────────────
 
-func attach(body: Node3D, _visual: Node3D) -> void:
-	## body = CharacterBody3D driving movement.
-	## _visual = the node we are a child of — stored for potential future use
-	## but never modified (its transform belongs to the AI layer).
+var _visual: Node3D = null  # mesh child — holds the AI-written yaw after reparent
+
+func attach(body: Node3D, visual: Node3D) -> void:
+	## body   = CharacterBody3D driving movement.
+	## visual = the mesh node (child of this animator after reparent) — stored so
+	##          turn-banking can read visual.rotation.y (the AI-owned yaw channel).
 	_body = body
+	_visual = visual
 	# Assign unique phase seeds once per instance lifetime.
 	_phase_seed = randf() * TAU
 	_time_seed = randf() * TAU
@@ -244,6 +256,9 @@ func reset_anim() -> void:
 	_lean_ramp = 0.0
 	_prev_charging = false
 	_boss_launch_t = 0.0
+	# V4 state reset
+	_prev_sin = 0.0
+	_spawn_t = 0.0
 	# Re-resolve subtype in case the recycled body changed type.
 	if is_instance_valid(_body):
 		_resolve_subtype()
@@ -272,6 +287,12 @@ func trigger_hit_reaction() -> void:
 	if _body.get("is_dead") == true:
 		return
 	_hit_t = _HIT_DURATION
+
+
+func trigger_spawn() -> void:
+	## Scale-in from near-zero to 1 over _SPAWN_DURATION seconds (ease-out).
+	## Called by ZombieSpawner3D on checkout so the zombie pops in gracefully.
+	_spawn_t = _SPAWN_DURATION
 
 
 # ── PROCESS ───────────────────────────────────────────────────────────────────
@@ -378,10 +399,12 @@ func _process(delta: float) -> void:
 	var gait_ramp: float = 12.0 / 0.25 if gait_target > _gait_weight else 12.0 / 0.3
 	_gait_weight = lerpf(_gait_weight, gait_target, 1.0 - exp(-gait_ramp * delta))
 
-	# ── TURN BANKING (spec §5) — read parent yaw, never write it ─────────────
+	# ── TURN BANKING (spec §5) — read _visual yaw, never write it ────────────
+	# After reparent, this animator's parent is the body (owns no yaw).
+	# The AI writes mesh yaw to _visual.rotation.y; read from there.
 	var parent_yaw: float = 0.0
-	if parent is Node3D:
-		parent_yaw = (parent as Node3D).rotation.y
+	if is_instance_valid(_visual):
+		parent_yaw = _visual.rotation.y
 	var raw_yaw_delta: float = parent_yaw - _prev_parent_yaw
 	# Wrap to [-PI, PI].
 	while raw_yaw_delta > PI:
@@ -461,6 +484,13 @@ func _process(delta: float) -> void:
 	# |sin(phase * TAU)| gives double-footed hop feel.
 	var raw_sin: float = sin(_phase * TAU)
 	var raw_bob_val: float = abs(raw_sin)
+
+	# ── FOOTSTEPS (spec §5) — negative zero-crossing at walking speed ─────
+	# Trigger once per step: when gait is active, speed >= 0.5, and the sine
+	# wave crosses from positive to negative (one footfall per cycle).
+	if _gait_weight > 0.5 and h_speed >= 0.5 and _prev_sin >= 0.0 and raw_sin < 0.0:
+		Audio.play_step()
+	_prev_sin = raw_sin
 
 	var walk_pos_y: float = raw_bob_val * p_bob * char_scale * minf(1.0, h_speed / 3.0) * p_bounce
 	var walk_rot_z: float = sin(_phase * TAU * 2.0) * p_roll * speed_factor * sway_mult
@@ -599,6 +629,16 @@ func _process(delta: float) -> void:
 		rot.x += p_hit_lean * sin_env  # small backward kick
 
 	transform = _make_transform(pos, rot, scl)
+
+	# ── SPAWN SCALE-IN (spec §6) — applied to OWN scale, ease-out ────────────
+	# Overrides the animator node's own scale (not the mesh's). While active,
+	# the whole subtree scales from ~0 to 1 over _SPAWN_DURATION seconds.
+	if _spawn_t > 0.0:
+		_spawn_t = max(0.0, _spawn_t - delta)
+		var t_frac: float = 1.0 - (_spawn_t / _SPAWN_DURATION)  # 0→1
+		var ease_val: float = 1.0 - (1.0 - t_frac) * (1.0 - t_frac)  # ease-out quad
+		var s: float = lerpf(0.01, 1.0, ease_val)
+		scale = Vector3(s, s, s)
 
 
 # ── HELPERS ───────────────────────────────────────────────────────────────────

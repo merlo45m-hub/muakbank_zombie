@@ -89,12 +89,16 @@ func _ready() -> void:
 	if weapon_system and weapon_system.has_method("equip_weapon"):
 		weapon_system.equip_weapon("bat")
 
-	# Attach procedural animator to the visual node (same pattern as ZombieBase).
+	# Attach procedural animator to the visual node (same reparent pattern as ZombieBase).
+	# Tree becomes: PlayerVisuals > ProceduralAnimator > Body > GLB geometry.
 	# Guard: mesh may be null (fallback capsule) or not yet in tree.
 	if mesh and mesh.is_inside_tree():
 		var _anim := ProceduralAnimator.new()
 		_anim.name = "ProceduralAnimator"
-		mesh.add_child(_anim)
+		var holder := mesh.get_parent()  # $PlayerVisuals
+		holder.remove_child(mesh)
+		_anim.add_child(mesh)
+		holder.add_child(_anim)
 		_anim.attach(self, mesh)
 
 	# Setup mobile controls
@@ -347,8 +351,11 @@ func _perform_attack() -> void:
 	is_attacking = true
 
 	# Notify the procedural animator so the lunge envelope plays.
-	if mesh and mesh.has_node("ProceduralAnimator"):
-		(mesh.get_node("ProceduralAnimator") as ProceduralAnimator).trigger_attack()
+	var _pv := get_node_or_null("PlayerVisuals")
+	if _pv:
+		var _pa := _pv.get_node_or_null("ProceduralAnimator") as ProceduralAnimator
+		if _pa:
+			_pa.trigger_attack()
 
 	# Apply character attack speed multiplier
 	var speed_mult: float = character_stats.attack_speed if character_stats else 1.0
