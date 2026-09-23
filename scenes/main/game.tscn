@@ -112,15 +112,27 @@ shape = SubResource("GroundCollision")
 [node name="DirectionalLight" type="DirectionalLight3D" parent="Environment/Lighting"]
 transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 10, 15, 8)
 light_color = Color(0.62, 0.68, 0.92, 1)
-light_energy_multiplier = 1.5
+light_energy_multiplier = 2.0
 shadow_enabled = true
 
 [node name="AmbientLight" type="OmniLight3D" parent="Environment/Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 light_color = Color(0.5, 0.58, 0.9, 1)
-light_energy_multiplier = 0.4
+light_energy_multiplier = 0.8
 omni_range = 50.0
 omni_attenuation = 2.0
+
+[node name="StreetLampWarm" type="OmniLight3D" parent="Environment/Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 3.4, 6.0)
+light_color = Color(1, 0.6, 0.28, 1)
+light_energy_multiplier = 3.0
+omni_range = 16.0
+
+[node name="StreetLampWarm2" type="OmniLight3D" parent="Environment/Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 3.4, -5.5)
+light_color = Color(1, 0.52, 0.24, 1)
+light_energy_multiplier = 2.6
+omni_range = 16.0
 
 [node name="NightSky" parent="." instance=ExtResource("night_sky")]
 
