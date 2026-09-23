@@ -55,6 +55,8 @@ func _ready() -> void:
 				if not is_instance_valid(ph_player) or not ph_player.is_inside_tree():
 					print("DIAG-PHYS: player left the tree at frame %d — probe stopped (scene change or death)" % i)
 					break
+				if OS.get_environment("DIAG_GOD") == "1":
+					ph_player.set("health", 9999)
 				await get_tree().physics_frame
 				var cinfo := ""
 				for c in range(ph_player.get_slide_collision_count()):
@@ -189,6 +191,14 @@ func _ready() -> void:
 	# ---- shoot ----
 	for i in range(frames):
 		await get_tree().process_frame
+		# DIAG_GOD: keep the player alive through the capture. Without it the
+		# player dies ~9s in (the harness sends no input), Game.gd swaps to the
+		# game-over scene, this harness node is destroyed mid-loop and the PNG is
+		# silently never written — which is how two renders produced nothing.
+		if OS.get_environment("DIAG_GOD") == "1":
+			var gp = get_tree().get_first_node_in_group("player")
+			if gp:
+				gp.set("health", 9999)
 	await RenderingServer.frame_post_draw
 	var img: Image = get_viewport().get_texture().get_image()
 	var err := img.save_png(out)
