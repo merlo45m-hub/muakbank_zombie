@@ -81,6 +81,7 @@ func _ready() -> void:
 	health = max_health
 	stamina = max_stamina
 	add_to_group("player")
+	_apply_character_model()
 
 	# Setup weapon system
 	if weapon_system and weapon_system.has_method("equip_weapon"):
@@ -590,3 +591,72 @@ func _wait(sec: float) -> bool:
 		return false
 	await t.create_timer(sec).timeout
 	return is_instance_valid(self) and is_inside_tree()
+
+# ──────────────────────────────────────────────
+#  CHARACTER MODEL
+# ──────────────────────────────────────────────
+
+## The character select writes SaveManager.selected_character (autoload "Save") and
+## the five character_*.glb models ship in assets/models/ — but gameplay always drew
+## a placeholder capsule. Attach the chosen model, normalised to human height.
+const CHARACTER_MODEL_DIR := "res://assets/models/character_%s.glb"
+const CHARACTER_HEIGHT := 1.8
+const MODEL_YAW_OFFSET := 0.0   # flip to PI if the model faces backwards
+
+func _apply_character_model() -> void:
+	var visuals := get_node_or_null("PlayerVisuals")
+	if not visuals:
+		return
+	var id := "gamer"
+	var save := get_node_or_null("/root/Save")
+	if save and save.get("selected_character") != null:
+		id = String(save.get("selected_character"))
+	var path := CHARACTER_MODEL_DIR % id
+	if not ResourceLoader.exists(path):
+		print("[Player] character model %s missing — keeping the placeholder capsule" % path)
+		return
+	var packed := load(path) as PackedScene
+	if not packed:
+		print("[Player] could not load %s" % path)
+		return
+	var mdl := packed.instantiate() as Node3D
+	if not mdl:
+		return
+	visuals.add_child(mdl)
+
+	# Normalise: the exported GLBs come at wildly different scales, so measure the
+	# real bounding box and scale to human height, then drop it onto the origin.
+	var aabb := _model_aabb(mdl)
+	var h := aabb.size.y
+	if h > 0.01:
+		var s := CHARACTER_HEIGHT / h
+		mdl.scale = Vector3(s, s, s)
+		mdl.position.y = -aabb.position.y * s
+	mdl.rotate_y(MODEL_YAW_OFFSET)
+	# The placeholder capsule/head stay as a fallback only.
+	for mi in visuals.find_children("*", "MeshInstance3D", true, false):
+		if not mdl.is_ancestor_of(mi):
+			(mi as MeshInstance3D).visible = false
+
+	var anims := 0
+	for n in mdl.find_children("*", "AnimationPlayer", true, false):
+		var ap := n as AnimationPlayer
+		var list := ap.get_animation_list()
+		anims = max(anims, list.size())
+		if list.size() > 0 and not ap.is_playing():
+			ap.play(list[0])
+	print("[Player] character model: %s  raw_h=%.3f  scale=%.3f  animations=%d" % [path, h, mdl.scale.y, anims])
+
+
+func _model_aabb(root: Node3D) -> AABB:
+	var out := AABB()
+	var first := true
+	for mi in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_i := mi as MeshInstance3D
+		if not mesh_i.mesh:
+			continue
+		var xf := root.global_transform.affine_inverse() * mesh_i.global_transform
+		var box: AABB = xf * mesh_i.get_aabb()
+		out = box if first else out.merge(box)
+		first = false
+	return out
