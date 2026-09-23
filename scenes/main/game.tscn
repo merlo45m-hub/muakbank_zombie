@@ -141,6 +141,12 @@ script = ExtResource("2")
 collision_layer = 2
 collision_mask = 1
 
+[node name="PlayerFill" type="OmniLight3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0.9)
+light_color = Color(1, 0.84, 0.64, 1)
+light_energy_multiplier = 1.15
+omni_range = 6.0
+
 [node name="PlayerVisuals" type="Node3D" parent="Player"]
 
 [node name="Body" type="MeshInstance3D" parent="Player/PlayerVisuals"]

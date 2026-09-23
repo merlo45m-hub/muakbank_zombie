@@ -93,6 +93,22 @@ func _ready() -> void:
 			await get_tree().process_frame
 
 
+	# ---- optional player-visual audit (DIAG_PLAYER=1) ----
+	if OS.get_environment("DIAG_PLAYER") == "1":
+		var pv := get_tree().get_first_node_in_group("player")
+		if pv:
+			print("DIAG-PLAYER: %s at %s" % [pv.name, str((pv as Node3D).global_position)])
+			for mi3 in pv.find_children("*", "MeshInstance3D", true, false):
+				var m3 := mi3 as MeshInstance3D
+				var v3 := 0
+				if m3.mesh:
+					for si3 in range(m3.mesh.get_surface_count()):
+						var a3 := m3.mesh.surface_get_arrays(si3)
+						if a3.size() > 0 and a3[0] != null:
+							v3 += (a3[0] as PackedVector3Array).size()
+				print("DIAG-PLAYER:   mesh=%s visible=%s verts=%d world_pos=%s" % [
+					m3.name, str(m3.visible), v3, str(m3.global_position)])
+
 	# ---- optional position trace ----
 	if OS.get_environment("DIAG_TRACE") == "1":
 		var tr_player: Node3D = null

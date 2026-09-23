@@ -638,6 +638,18 @@ func _apply_character_model() -> void:
 		if not mdl.is_ancestor_of(mi):
 			(mi as MeshInstance3D).visible = false
 
+	# The shipped GLBs carry NO materials (verified in the GLB JSON: every model is
+	# one primitive with no material index), so they render as Godot's default
+	# white — backlit at night that reads as a flat dark blob with no silhouette
+	# detail. Give them a consistent readable surface.
+	var skin := StandardMaterial3D.new()
+	skin.albedo_color = Color(0.66, 0.62, 0.58)
+	skin.roughness = 0.85
+	skin.metallic = 0.0
+	for mi4 in mdl.find_children("*", "MeshInstance3D", true, false):
+		(mi4 as MeshInstance3D).material_override = skin
+
+
 	var anims := 0
 	for n in mdl.find_children("*", "AnimationPlayer", true, false):
 		var ap := n as AnimationPlayer
