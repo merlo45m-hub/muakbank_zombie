@@ -114,9 +114,14 @@ func start_game() -> void:
 	zombies_killed = 0
 	time_remaining = GAME_DURATION
 	
-	# Reset player
+	# Reset player. Deliberately NOT the world origin: in old_town_enhanced the origin
+	# sits inside Building6's footprint, so spawning there buries the player inside a
+	# wall - and the third-person camera 2 m behind him inside that same wall, which is
+	# what every "looking at a blank wall" frame in this project's history actually was.
+	# (-2, 0.15, -6) comes from tools/find_spawn.gd, which probed the real level
+	# collision: 6 m of clear space in all 24 directions at knee and chest height.
 	if player:
-		player.position = Vector3(0, 0, 0)
+		player.position = Vector3(-2, 0.15, -6)
 		player.health = player.max_health
 		player.stamina = player.max_stamina
 	

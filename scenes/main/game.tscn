@@ -141,7 +141,7 @@ omni_range = 16.0
 # third-person camera either jammed on it or framed his backside with his legs occluded.
 # tools/find_spawn.gd probed 548 candidate spots and this one has 6 m of clear space in
 # all 24 directions at knee and chest height.
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.15, -6)
 script = ExtResource("2")
 collision_layer = 2
 collision_mask = 1
