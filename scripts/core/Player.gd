@@ -529,9 +529,14 @@ func _flash_red() -> void:
 				break
 	if not mat:
 		return
-	mat.emissive_color = Color(1, 0.2, 0.2)
+	# Godot 4 renamed this: there is no `emissive_color` property (setting it printed
+	# "Godot 3.x SpatialMaterial remapped parameter not found" and did nothing, so damage
+	# never actually flashed). It is emission_enabled + emission now.
+	mat.emission_enabled = true
+	mat.emission = Color(1, 0.2, 0.2)
 	await _wait(0.15)
-	mat.emissive_color = Color(0, 0, 0)
+	mat.emission = Color(0, 0, 0)
+	mat.emission_enabled = false
 
 
 # ──────────────────────────────────────────────

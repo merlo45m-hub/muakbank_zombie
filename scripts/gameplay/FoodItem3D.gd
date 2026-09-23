@@ -16,7 +16,9 @@ var is_collected: bool = false
 var start_y: float = 0.0
 var time_offset: float = 0.0
 
-@onready var mesh: Node3D = $Mesh
+# Some food scenes (takis) build their model from chips and have no "Mesh" container
+# node, so $Mesh errored on every spawn ("Node not found: Mesh"). Callers null-check.
+@onready var mesh: Node3D = get_node_or_null("Mesh")
 
 func _ready() -> void:
 	add_to_group("food")

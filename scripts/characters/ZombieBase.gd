@@ -58,6 +58,12 @@ func _post_ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if not is_inside_tree():
+		# Pooled zombies are parked by taking them out of the tree, and a body outside the
+		# tree has no global transform, so the move_and_slide() at the end of this function
+		# errored on every physics frame ("Condition !is_inside_tree() is true. Returning:
+		# Transform3D()") instead of failing loudly once. The slot is inert anyway.
+		return
 	if is_dead:
 		return
 
