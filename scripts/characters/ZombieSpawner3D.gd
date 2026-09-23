@@ -257,6 +257,11 @@ func _spawn_random_zombie() -> void:
 		if zombie.has_method("set_vfn_field"):
 			zombie.set_vfn_field(vfn_field)
 
+	# Trigger spawn scale-in on the animator (duck-typed — safe if absent).
+	var _sa := zombie.get_node_or_null("ProceduralAnimator") as Node
+	if _sa and _sa.has_method("trigger_spawn"):
+		_sa.trigger_spawn()
+
 	spawn_timer.start(spawn_interval)
 
 
