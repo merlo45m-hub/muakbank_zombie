@@ -7,6 +7,23 @@ class_name ZombieBase
 
 signal died
 
+# Per-type death animation parameters (spec §3).
+# Keys match zombie_type; fall back to "default" if not found.
+# pitch = final rotation.x degrees, spin = rotation.y delta degrees,
+# bounce = upward position.y kick at impact, fall_t = fall tween duration,
+# fade_t = transparency fade duration, spin_dir = fixed dir (0 = randomize).
+const DEATH_PARAMS: Dictionary = {
+	"dog":     {"pitch": 95,  "spin": 130, "bounce": 0.25, "fall_t": 0.45, "fade_t": 0.5,  "spin_dir": 0},
+	"cat":     {"pitch": 100, "spin": 200, "bounce": 0.30, "fall_t": 0.40, "fade_t": 0.45, "spin_dir": 0},
+	"rabbit":  {"pitch": 90,  "spin": 260, "bounce": 0.40, "fall_t": 0.35, "fade_t": 0.4,  "spin_dir": 0},
+	"chicken": {"pitch": 105, "spin": 300, "bounce": 0.35, "fall_t": 0.30, "fade_t": 0.35, "spin_dir": 0},
+	"bear":    {"pitch": 75,  "spin": 60,  "bounce": 0.10, "fall_t": 0.9,  "fade_t": 0.9,  "spin_dir": 0},
+	"runner":  {"pitch": 95,  "spin": 170, "bounce": 0.28, "fall_t": 0.40, "fade_t": 0.5,  "spin_dir": 0},
+	"spitter": {"pitch": 85,  "spin": 90,  "bounce": 0.15, "fall_t": 0.6,  "fade_t": 0.7,  "spin_dir": 0},
+	"boss":    {"pitch": 70,  "spin": 40,  "bounce": 0.08, "fall_t": 1.2,  "fade_t": 1.4,  "spin_dir": 0},
+	"default": {"pitch": 85,  "spin": 120, "bounce": 0.2,  "fall_t": 0.5,  "fade_t": 0.5,  "spin_dir": 0},
+}
+
 # === EXPORTED STATS (override in subclasses) ===
 @export var max_health: int = 30
 @export var move_speed: float = 3.0
@@ -207,6 +224,10 @@ func take_damage(amount: int) -> void:
 	health -= amount
 	_flash_red()
 
+	# Notify animator for hit-reaction squash envelope (spec §4).
+	if mesh and mesh.has_node("ProceduralAnimator"):
+		(mesh.get_node("ProceduralAnimator") as ProceduralAnimator).trigger_hit_reaction()
+
 	if target:
 		var kb = (global_transform.origin - target.global_transform.origin).normalized()
 		velocity.x += kb.x * 3
@@ -225,17 +246,35 @@ func _die() -> void:
 
 	Audio.play_zombie_die()
 
+	# Resolve per-type death params.
+	var dp: Dictionary = DEATH_PARAMS.get(zombie_type, DEATH_PARAMS["default"])
+	var fall_t: float = float(dp["fall_t"])
+	var fade_t: float = float(dp["fade_t"])
+	var pitch_deg: float = float(dp["pitch"])
+	var spin_deg: float = float(dp["spin"])
+	var bounce_amt: float = float(dp["bounce"])
+	var spin_fixed: int = int(dp["spin_dir"])
+	var spin_dir: int = spin_fixed if spin_fixed != 0 else (1 if randi() % 2 == 0 else -1)
+
 	var t = create_tween()
 	if mesh:
-		t.tween_property(mesh, "rotation:x", deg_to_rad(85), fade_duration)
-		t.parallel().tween_property(mesh, "position:y", position.y - 0.2, fade_duration)
+		# t1: fall — pitch over, spin yaw, small upward bounce (ground-contact feel).
+		var target_pitch: float = deg_to_rad(pitch_deg)
+		var target_yaw: float = mesh.rotation.y + deg_to_rad(spin_deg) * spin_dir
+		var bounce_y: float = mesh.position.y + bounce_amt * 0.9
+		t.tween_property(mesh, "rotation:x", target_pitch, fall_t).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		t.parallel().tween_property(mesh, "rotation:y", target_yaw, fall_t).set_ease(Tween.EASE_OUT)
+		t.parallel().tween_property(mesh, "position:y", bounce_y, fall_t)
+		# t2: impact settle — slight rotation settle + position dip, then fade (chained).
+		t.tween_property(mesh, "rotation:x", target_pitch * 0.97, 0.12).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		t.parallel().tween_property(mesh, "position:y", bounce_y - 0.05, 0.12)
 		for mi in _mesh_instances():
 			# Node3D has no `modulate` — fade 3D meshes via
 			# GeometryInstance3D.transparency (0 = opaque, 1 = invisible).
-			t.parallel().tween_property(mi, "transparency", 1.0, fade_duration * 0.6)
+			t.parallel().tween_property(mi, "transparency", 1.0, fade_t)
 	else:
 		# no Mesh child — nothing visual to fade, just wait out the duration
-		t.tween_interval(fade_duration)
+		t.tween_interval(fall_t + fade_t)
 
 	# The spawner's died-handler runs synchronously on the signal above, so a
 	# pooled zombie is already detached from the tree by now — a tween bound to

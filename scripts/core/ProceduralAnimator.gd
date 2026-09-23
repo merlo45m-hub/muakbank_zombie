@@ -1,7 +1,7 @@
 class_name ProceduralAnimator
 extends Node3D
 
-## ProceduralAnimator v2 — Code-driven transform animation for unrigged GLB models.
+## ProceduralAnimator v3 — Code-driven transform animation for unrigged GLB models.
 ## Added as a child of the entity's visual container ("Mesh" node) and only ever
 ## modifies ITS OWN transform (position / rotation / scale). Never touches the
 ## parent's transform, which belongs to the AI (yaw, death tween, pool reset).
@@ -9,6 +9,10 @@ extends Node3D
 ## V2 additions: per-subtype gait registry, squash & stretch, three-phase attack
 ## anticipation/strike/overshoot, state blending with exponential smoothing,
 ## richer idle with per-type quirks, and polished hop-on-chase.
+##
+## V3 additions: horde phase seeds (fix sync), subtype alias normalization,
+## hit reaction envelope, turn banking, landing squash, launch wind-up +
+## runner lean ramp, boss charge wind-up.
 
 # ── EXPORTED DEFAULTS (fallback / generic zombie) ──────────────────────────────
 
@@ -45,7 +49,7 @@ extends Node3D
 # Layout per entry: bob, phase_base, phase_speed, roll, lean_max,
 #                   contact_squash, apex_stretch, bounce,
 #                   breathe_speed (opt), breathe_amp (opt), hop_height,
-#                   idle_roll_freq (opt)
+#                   idle_roll_freq (opt), hit_squash, hit_lean
 
 const GAIT_REGISTRY: Dictionary = {
 	"rabbit": {
@@ -53,6 +57,7 @@ const GAIT_REGISTRY: Dictionary = {
 		"roll": 0.03, "lean": 0.06,
 		"contact_squash": 0.06, "apex_stretch": 0.03, "bounce": 1.6,
 		"hop_height": 0.30,
+		"hit_squash": 0.22, "hit_lean": 0.08,
 	},
 	"cat": {
 		"bob": 0.05, "phase_base": 2.0, "phase_speed": 2.6,
@@ -60,18 +65,21 @@ const GAIT_REGISTRY: Dictionary = {
 		"contact_squash": 0.06, "apex_stretch": 0.03, "bounce": 0.8,
 		"hop_height": 0.22,
 		"idle_roll_freq": 0.7,
+		"hit_squash": 0.20, "hit_lean": 0.08,
 	},
 	"chicken": {
 		"bob": 0.10, "phase_base": 3.4, "phase_speed": 3.6,
 		"roll": 0.04, "lean": 0.05,
 		"contact_squash": 0.06, "apex_stretch": 0.03, "bounce": 1.3,
 		"hop_height": 0.26,
+		"hit_squash": 0.25, "hit_lean": 0.08,
 	},
 	"dog": {
 		"bob": 0.07, "phase_base": 2.2, "phase_speed": 2.8,
 		"roll": 0.06, "lean": 0.11,
 		"contact_squash": 0.06, "apex_stretch": 0.03, "bounce": 1.1,
 		"hop_height": 0.18,
+		"hit_squash": 0.15, "hit_lean": 0.08,
 	},
 	"bear": {
 		"bob": 0.12, "phase_base": 1.1, "phase_speed": 1.8,
@@ -79,30 +87,35 @@ const GAIT_REGISTRY: Dictionary = {
 		"contact_squash": 0.10, "apex_stretch": 0.03, "bounce": 0.6,
 		"breathe_speed": 1.2, "breathe_amp": 0.035,
 		"hop_height": 0.08,
+		"hit_squash": 0.10, "hit_lean": 0.05,
 	},
 	"butcher": {
 		"bob": 0.06, "phase_base": 1.4, "phase_speed": 2.0,
 		"roll": 0.03, "lean": 0.09,
 		"contact_squash": 0.06, "apex_stretch": 0.03, "bounce": 0.7,
 		"hop_height": 0.18,
+		"hit_squash": 0.15, "hit_lean": 0.08,
 	},
 	"runner": {
 		"bob": 0.09, "phase_base": 1.6, "phase_speed": 4.2,
 		"roll": 0.04, "lean": 0.22,
 		"contact_squash": 0.06, "apex_stretch": 0.03, "bounce": 1.2,
 		"hop_height": 0.18,
+		"hit_squash": 0.15, "hit_lean": 0.08,
 	},
 	"spitter": {
 		"bob": 0.06, "phase_base": 1.2, "phase_speed": 1.9,
 		"roll": 0.10, "lean": 0.16,
 		"contact_squash": 0.06, "apex_stretch": 0.03, "bounce": 1.0,
 		"hop_height": 0.18,
+		"hit_squash": 0.15, "hit_lean": 0.08,
 	},
 	"boss": {
 		"bob": 0.16, "phase_base": 0.9, "phase_speed": 1.4,
 		"roll": 0.12, "lean": 0.18,
 		"contact_squash": 0.14, "apex_stretch": 0.03, "bounce": 0.5,
 		"hop_height": 0.06,
+		"hit_squash": 0.08, "hit_lean": 0.05,
 	},
 	"human": {
 		"bob": 0.05, "phase_base": 2.2, "phase_speed": 2.6,
@@ -111,7 +124,21 @@ const GAIT_REGISTRY: Dictionary = {
 		"breathe_amp": 0.012,
 		"hop_height": 0.12,
 		"rest_y": 0.02,
+		"hit_squash": 0.12, "hit_lean": 0.08,
 	},
+}
+
+# Alias normalization: strip common prefixes so "zombie_dog" → "dog".
+const _SUBTYPE_ALIASES: Dictionary = {
+	"zombie_dog": "dog",
+	"zombie_cat": "cat",
+	"zombie_rabbit": "rabbit",
+	"zombie_chicken": "chicken",
+	"zombie_bear": "bear",
+	"zombie_runner": "runner",
+	"zombie_spitter": "spitter",
+	"zombie_boss": "boss",
+	"zombie_butcher": "butcher",
 }
 
 
@@ -120,6 +147,10 @@ const GAIT_REGISTRY: Dictionary = {
 var _body: Node3D = null       # CharacterBody3D driving movement (duck-typed)
 var _subtype: String = ""      # resolved once in attach(), e.g. "rabbit"
 var _gait: Dictionary = {}     # reference into GAIT_REGISTRY (or empty for generic)
+
+# Phase seeds — assigned once in attach(); recycled zombie keeps its own seeds.
+var _phase_seed: float = 0.0
+var _time_seed: float = 0.0
 
 var _time: float = 0.0         # running clock (breathing, idle sway)
 var _phase: float = 0.0        # walk-cycle phase (unbounded; use sin/cos)
@@ -143,6 +174,34 @@ var _lunge_intensity: float = 0.0  # 0..1 derived from phase envelope each frame
 var _quirk_timer: float = 0.0    # seconds since last quirk fired
 var _quirk_active: float = 0.0   # remaining seconds of active quirk display
 
+# ── V3 STATE ──────────────────────────────────────────────────────────────────
+
+# Hit reaction (spec §4)
+var _hit_t: float = 0.0          # remaining envelope time; 0 = inactive
+
+# Turn banking (spec §5)
+var _bank: float = 0.0           # smoothed bank angle (rot.z addition)
+var _prev_parent_yaw: float = 0.0  # previous frame parent.rotation.y
+
+# Landing squash (spec §6)
+var _prev_v_y: float = 0.0       # previous frame vertical velocity
+var _land_t: float = 0.0         # remaining landing squash time; 0 = inactive
+var _land_squash: float = 0.0    # computed impact squash amount
+
+# Launch wind-up (spec §7)
+var _launch_t: float = 0.0       # remaining push-off envelope time; 0 = inactive
+var _prev_gait_target: float = 0.0  # previous frame gait_target (rising-edge detect)
+var _lean_ramp: float = 0.0      # runner lean ramp [0..1]
+
+# Boss charge wind-up (spec §7)
+var _prev_charging: bool = false
+var _boss_launch_t: float = 0.0
+
+# Hit reaction envelope duration constant
+const _HIT_DURATION: float = 0.18
+const _LAUNCH_DURATION: float = 0.14
+const _BOSS_LAUNCH_DURATION: float = 0.14
+
 
 # ── PUBLIC API ─────────────────────────────────────────────────────────────────
 
@@ -151,14 +210,20 @@ func attach(body: Node3D, _visual: Node3D) -> void:
 	## _visual = the node we are a child of — stored for potential future use
 	## but never modified (its transform belongs to the AI layer).
 	_body = body
+	# Assign unique phase seeds once per instance lifetime.
+	_phase_seed = randf() * TAU
+	_time_seed = randf() * TAU
+	_phase = _phase_seed
+	_time = _time_seed
 	_resolve_subtype()
 
 
 func reset_anim() -> void:
 	## Called by ZombieBase.reset_for_pool() — restores pristine animator state
 	## so the recycled zombie starts without stale phase, lunge, or blend weights.
-	_time = 0.0
-	_phase = 0.0
+	## Phase seeds are PRESERVED — recycled zombie keeps its own unique phase.
+	_time = _time_seed
+	_phase = _phase_seed
 	_lunge_active = false
 	_lunge_t = 0.0
 	_hop_t = 0.0
@@ -167,6 +232,18 @@ func reset_anim() -> void:
 	_lunge_intensity = 0.0
 	_quirk_timer = 0.0
 	_quirk_active = 0.0
+	# V3 state reset
+	_hit_t = 0.0
+	_bank = 0.0
+	_prev_parent_yaw = 0.0
+	_prev_v_y = 0.0
+	_land_t = 0.0
+	_land_squash = 0.0
+	_launch_t = 0.0
+	_prev_gait_target = 0.0
+	_lean_ramp = 0.0
+	_prev_charging = false
+	_boss_launch_t = 0.0
 	# Re-resolve subtype in case the recycled body changed type.
 	if is_instance_valid(_body):
 		_resolve_subtype()
@@ -185,6 +262,16 @@ func trigger_attack() -> void:
 func on_start_chase() -> void:
 	## Small startle hop — decaying position.y kick over _hop_duration seconds.
 	_hop_t = _hop_duration
+
+
+func trigger_hit_reaction() -> void:
+	## Squash+kick envelope 0.18s. Guard: never fires after death.
+	## Re-triggering mid-envelope restarts the envelope (max 0.18s).
+	if not is_instance_valid(_body):
+		return
+	if _body.get("is_dead") == true:
+		return
+	_hit_t = _HIT_DURATION
 
 
 # ── PROCESS ───────────────────────────────────────────────────────────────────
@@ -230,6 +317,40 @@ func _process(delta: float) -> void:
 	# Tick idle quirk.
 	_quirk_timer += delta
 
+	# Tick hit reaction.
+	if _hit_t > 0.0:
+		_hit_t = max(0.0, _hit_t - delta)
+
+	# ── LANDING SQUASH (spec §6) — detect on_floor transition ────────────────
+	var v_y: float = vel.y
+	if _prev_v_y < -0.5 and v_y >= -0.1:
+		var impact: float = -_prev_v_y
+		_land_squash = clampf(impact * 0.025, 0.05, 0.18)
+		_land_t = 0.2
+	if _land_t > 0.0:
+		_land_t = max(0.0, _land_t - delta)
+	_prev_v_y = v_y
+
+	# ── LAUNCH WIND-UP (spec §7) — rising edge of gait_target ────────────────
+	var gait_target: float = 1.0 if h_speed >= 0.15 else 0.0
+	if gait_target > 0.5 and _prev_gait_target <= 0.5:
+		_launch_t = _LAUNCH_DURATION
+	if _launch_t > 0.0:
+		_launch_t = max(0.0, _launch_t - delta)
+	_prev_gait_target = gait_target
+
+	# Runner lean ramp (spec §7).
+	if _subtype == "runner":
+		var lean_target: float = 1.0 if _gait_weight > 0.5 else 0.0
+		_lean_ramp = lerpf(_lean_ramp, lean_target, 1.0 - exp(-4.0 * delta))
+
+	# ── BOSS CHARGE WIND-UP (spec §7) — rising edge of is_charging ───────────
+	if is_charging and not _prev_charging:
+		_boss_launch_t = _BOSS_LAUNCH_DURATION
+	if _boss_launch_t > 0.0:
+		_boss_launch_t = max(0.0, _boss_launch_t - delta)
+	_prev_charging = is_charging
+
 	# Resolve per-type parameters from registry (reads const dict, no alloc).
 	var p_bob: float         = _gait.get("bob",           bob_height)
 	var p_phase_base: float  = _gait.get("phase_base",    walk_phase_base)
@@ -244,6 +365,8 @@ func _process(delta: float) -> void:
 	var p_hop: float         = _gait.get("hop_height",    0.18)
 	var p_rest_y: float      = _gait.get("rest_y",        0.0)
 	var p_roll_freq: float   = _gait.get("idle_roll_freq", 1.1)
+	var p_hit_squash: float  = _gait.get("hit_squash",    0.15)
+	var p_hit_lean: float    = _gait.get("hit_lean",      0.08)
 
 	# Scale amplitudes for character scale (uniform scale on the parent Mesh node).
 	var char_scale: float = 1.0
@@ -252,9 +375,24 @@ func _process(delta: float) -> void:
 		char_scale = (parent as Node3D).scale.x
 
 	# Update gait blend weight.
-	var gait_target: float = 1.0 if h_speed >= 0.15 else 0.0
 	var gait_ramp: float = 12.0 / 0.25 if gait_target > _gait_weight else 12.0 / 0.3
 	_gait_weight = lerpf(_gait_weight, gait_target, 1.0 - exp(-gait_ramp * delta))
+
+	# ── TURN BANKING (spec §5) — read parent yaw, never write it ─────────────
+	var parent_yaw: float = 0.0
+	if parent is Node3D:
+		parent_yaw = (parent as Node3D).rotation.y
+	var raw_yaw_delta: float = parent_yaw - _prev_parent_yaw
+	# Wrap to [-PI, PI].
+	while raw_yaw_delta > PI:
+		raw_yaw_delta -= TAU
+	while raw_yaw_delta < -PI:
+		raw_yaw_delta += TAU
+	var bank_target: float = 0.0
+	if _gait_weight > 0.3:
+		bank_target = clampf(-raw_yaw_delta * 12.0, -0.18, 0.18)
+	_bank = lerpf(_bank, bank_target, 1.0 - exp(-10.0 * delta))
+	_prev_parent_yaw = parent_yaw
 
 	# Build transform from scratch each frame (no drift accumulation).
 	var pos := Vector3.ZERO
@@ -268,6 +406,12 @@ func _process(delta: float) -> void:
 		var speed_factor: float = clampf(h_speed / 3.0, 0.0, 1.0)
 		_phase += delta * (p_phase_base + h_speed * p_phase_spd) * 1.5
 		pos.y = abs(sin(_phase * TAU)) * p_bob * char_scale * speed_factor
+		# Boss charge wind-up dip (spec §7).
+		if _boss_launch_t > 0.0:
+			var bl_frac: float = _boss_launch_t / _BOSS_LAUNCH_DURATION
+			scl.y *= 1.0 - 0.09 * sin(PI * (1.0 - bl_frac))
+			scl.x *= 1.0 + 0.09 * 0.5 * sin(PI * bl_frac)
+			scl.z = scl.x
 		transform = _make_transform(pos, rot, scl)
 		return
 
@@ -321,6 +465,10 @@ func _process(delta: float) -> void:
 	var walk_pos_y: float = raw_bob_val * p_bob * char_scale * minf(1.0, h_speed / 3.0) * p_bounce
 	var walk_rot_z: float = sin(_phase * TAU * 2.0) * p_roll * speed_factor * sway_mult
 	var walk_rot_x: float = -clampf(h_speed * 0.02, 0.0, p_lean)
+
+	# Runner lean ramp: modulate forward lean so it doesn't pop instantly (spec §7).
+	if _subtype == "runner":
+		walk_rot_x *= _lean_ramp
 
 	# Chicken: extra fast tiny counter-roll (head-sync at 2x phase rate).
 	var chicken_roll: float = 0.0
@@ -413,6 +561,43 @@ func _process(delta: float) -> void:
 	else:
 		_lunge_intensity = lerpf(_lunge_intensity, 0.0, 1.0 - exp(-12.0 * delta))
 
+	# ── LANDING SQUASH LAYER (spec §6) ───────────────────────────────────────
+	if _land_t > 0.0:
+		var land_elapsed: float = 0.2 - _land_t   # how far into the 0.2s window
+		var land_frac: float = land_elapsed / 0.2  # 0 at impact, 1 at end
+		var decay_w: float = (1.0 - land_frac) * (1.0 - land_frac)  # decaying
+		scl.y *= 1.0 - _land_squash * decay_w
+		scl.x *= 1.0 + _land_squash * 0.4 * decay_w
+		scl.z = scl.x
+
+	# ── LAUNCH WIND-UP LAYER (spec §7) ───────────────────────────────────────
+	if _launch_t > 0.0:
+		var lch_frac: float = _launch_t / _LAUNCH_DURATION  # 1→0 over duration
+		# Phase 1: dip (1→0), Phase 2: stretch (0→1), encoded in one formula:
+		# At frac=1 (just triggered): dip starts. At frac=0: back to neutral.
+		# Use 1-frac to get 0→1 as time progresses.
+		var prog: float = 1.0 - lch_frac  # 0..1 (0=just started, 1=done)
+		var dip_val: float = 1.0 - 0.06 * sin(PI * (1.0 - prog))  # squash first
+		var stretch_val: float = 1.0 + 0.05 * sin(PI * prog)        # then stretch
+		# Blend: early part = dip, late part = stretch, smooth transition.
+		var blend: float = prog
+		scl.y *= lerpf(dip_val, stretch_val, blend)
+		scl.x *= 1.0 + 0.03 * sin(PI * prog)
+		scl.z = scl.x
+
+	# ── TURN BANKING LAYER (spec §5) — added on top of walk roll ─────────────
+	rot.z += _bank
+
+	# ── HIT REACTION LAYER (spec §4) — multiplied over existing scale ────────
+	if _hit_t > 0.0:
+		var hit_frac: float = _hit_t / _HIT_DURATION  # 1→0
+		var hit_prog: float = 1.0 - hit_frac           # 0→1 within envelope time
+		var sin_env: float = sin(PI * hit_prog)        # rises then falls
+		scl.y *= 1.0 - p_hit_squash * sin_env
+		scl.x *= 1.0 + p_hit_squash * 0.5 * sin_env
+		scl.z = scl.x
+		rot.x += p_hit_lean * sin_env  # small backward kick
+
 	transform = _make_transform(pos, rot, scl)
 
 
@@ -420,18 +605,41 @@ func _process(delta: float) -> void:
 
 func _resolve_subtype() -> void:
 	# Called once in attach() and again in reset_anim() to re-detect subtype.
+	# ONLY nodes in the "player" group resolve to "human".
+	# Null/empty zombie_type AND not player → "" (generic zombie).
 	if not is_instance_valid(_body):
-		_subtype = "human"
+		_subtype = ""
 		_gait = {}
 		return
 
-	if _body.is_in_group("player") or _body.get("zombie_type") == null:
+	if _body.is_in_group("player"):
 		_subtype = "human"
+		_gait = GAIT_REGISTRY.get("human", {})
+		return
+
+	var raw_type = _body.get("zombie_type")
+	if raw_type == null:
+		_subtype = ""
+		_gait = {}
+		return
+
+	var type_str: String = str(raw_type).to_lower().strip_edges()
+	if type_str.is_empty():
+		_subtype = ""
+		_gait = {}
+		return
+
+	# Alias normalization: try alias dict first, then strip "zombie_" prefix.
+	if _SUBTYPE_ALIASES.has(type_str):
+		type_str = _SUBTYPE_ALIASES[type_str]
+	elif type_str.begins_with("zombie_"):
+		type_str = type_str.trim_prefix("zombie_")
+
+	# Map any unrecognised subtype to the generic zombie (empty dict = all defaults).
+	if GAIT_REGISTRY.has(type_str):
+		_subtype = type_str
 	else:
-		_subtype = str(_body.get("zombie_type") if _body.get("zombie_type") != null else "").to_lower()
-		# Map any unrecognised subtype to the generic zombie (empty dict = all defaults).
-		if not GAIT_REGISTRY.has(_subtype):
-			_subtype = ""
+		_subtype = ""
 
 	_gait = GAIT_REGISTRY.get(_subtype, {})
 
