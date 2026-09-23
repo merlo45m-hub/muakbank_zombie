@@ -1343,21 +1343,21 @@ material_override = SubResource("TankMaterial")
 [node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 light_color = Color(0.6, 0.55, 0.5, 1.0)
-light_energy_multiplier = 0.5
+light_energy = 0.5
 omni_range = 100.0
 omni_attenuation = 2.0
 
 [node name="DirectionalLight" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 15, 18, 10)
 light_color = Color(0.85, 0.8, 0.75, 1.0)
-light_energy_multiplier = 1.2
+light_energy = 1.2
 shadow_enabled = true
 directional_shadow_mode = 0
 
 [node name="VignetteLight" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
 light_color = Color(0.9, 0.6, 0.4, 1.0)
-light_energy_multiplier = 0.8
+light_energy = 0.8
 omni_range = 50.0
 omni_attenuation = 2.0
 

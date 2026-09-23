@@ -538,34 +538,34 @@ shape = SubResource("CylinderShape3D_plant")
 [node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
 light_color = Color(0.75, 0.72, 0.65, 1.0)
-light_energy_multiplier = 0.4
+light_energy = 0.4
 omni_range = 100
 
 
 [node name="MallLight0" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 9, -30)
 light_color = Color(0.85, 0.85, 0.9, 1.0)
-light_energy_multiplier = 0.7
+light_energy = 0.7
 omni_range = 28
 
 
 [node name="MallLight1" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 9, 30)
 light_color = Color(0.85, 0.85, 0.9, 1.0)
-light_energy_multiplier = 0.7
+light_energy = 0.7
 omni_range = 28
 
 
 [node name="MallLight2" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 9, 30)
 light_color = Color(0.85, 0.85, 0.9, 1.0)
-light_energy_multiplier = 0.7
+light_energy = 0.7
 omni_range = 28
 
 
 [node name="MallLight3" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 9, -30)
 light_color = Color(0.85, 0.85, 0.9, 1.0)
-light_energy_multiplier = 0.7
+light_energy = 0.7
 omni_range = 28
 

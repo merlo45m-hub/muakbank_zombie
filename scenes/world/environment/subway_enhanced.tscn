@@ -1076,14 +1076,14 @@ material_override = SubResource("WallMaterial")
 [node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 light_color = Color(0.5, 0.52, 0.55, 1.0)
-light_energy_multiplier = 0.35
+light_energy = 0.35
 omni_range = 50.0
 omni_attenuation = 2.0
 
 [node name="DirectionalLight" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(0.7, -0.4, 0.59, 0.05, 0.82, 0.57, -0.71, -0.41, 0.57, 8, 12, 6)
 light_color = Color(0.5, 0.53, 0.55, 1.0)
-light_energy_multiplier = 0.6
+light_energy = 0.6
 shadow_enabled = true
 directional_shadow_mode = 0
 

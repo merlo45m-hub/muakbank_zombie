@@ -1814,14 +1814,14 @@ shape = SubResource("BoxShape3D_conveyor_leg")
 [node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
 light_color = Color(0.3, 0.28, 0.25, 1.0)
-light_energy_multiplier = 0.3
+light_energy = 0.3
 omni_range = 80.0
 omni_attenuation = 2.5
 
 [node name="DirectionalLight" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 15, 18, 10)
 light_color = Color(0.4, 0.38, 0.35, 1.0)
-light_energy_multiplier = 0.8
+light_energy = 0.8
 shadow_enabled = true
 directional_shadow_mode = 0
 
@@ -1854,7 +1854,7 @@ material_override = SubResource("LightbulbMaterial")
 [node name="Gondola1Light1" type="OmniLight3D" parent="Lighting/Gondola1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
+light_energy = 0.8
 omni_range = 18.0
 omni_attenuation = 1.5
 
@@ -1888,7 +1888,7 @@ material_override = SubResource("LightbulbMaterial")
 [node name="Gondola2Light1" type="OmniLight3D" parent="Lighting/Gondola2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
+light_energy = 0.8
 omni_range = 18.0
 omni_attenuation = 1.5
 
@@ -1922,7 +1922,7 @@ material_override = SubResource("LightbulbMaterial")
 [node name="Gondola3Light1" type="OmniLight3D" parent="Lighting/Gondola3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
+light_energy = 0.8
 omni_range = 18.0
 omni_attenuation = 1.5
 
@@ -1956,7 +1956,7 @@ material_override = SubResource("LightbulbMaterial")
 [node name="Gondola4Light1" type="OmniLight3D" parent="Lighting/Gondola4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
+light_energy = 0.8
 omni_range = 18.0
 omni_attenuation = 1.5
 
@@ -1990,7 +1990,7 @@ material_override = SubResource("LightbulbMaterial")
 [node name="Gondola5Light1" type="OmniLight3D" parent="Lighting/Gondola5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
+light_energy = 0.8
 omni_range = 18.0
 omni_attenuation = 1.5
 
@@ -2024,7 +2024,7 @@ material_override = SubResource("LightbulbMaterial")
 [node name="Gondola6Light1" type="OmniLight3D" parent="Lighting/Gondola6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 7, 0)
 light_color = Color(1.0, 0.9, 0.7, 1.0)
-light_energy_multiplier = 0.8
+light_energy = 0.8
 omni_range = 18.0
 omni_attenuation = 1.5
 
