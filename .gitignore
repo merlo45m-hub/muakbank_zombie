@@ -25,4 +25,6 @@ dist/
 render_*.png
 title_final*.png
 title_screen_final*.png
+title_*.png.import
+render_*.png.import
 *.idsig
