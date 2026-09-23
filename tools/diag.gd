@@ -165,6 +165,33 @@ func _ready() -> void:
 			print("DIAG: cam->player dist=%.2f dot_fwd_to_player=%.3f  %s" % [
 				to_p.length(), dotf, "OK (player in view)" if dotf > 0.3 else "BROKEN: camera looks away from the player"])
 			print("DIAG: player rot_y=%.1f deg  cam_arm_rot=%s" % [rad_to_deg((pl_node as Node3D).rotation.y), str(cam.get_parent().global_rotation if cam.get_parent() else Vector3.ZERO)])
+			# What is actually filling the frame? Cast rays from the camera and name the
+			# colliders. Guessing from pixels wasted three renders: a pale column could be
+			# the player seen from directly behind OR a level prop.
+			var space := cam.get_world_3d().direct_space_state
+			for probe in [["centre", 0.0, 0.0], ["upper", 0.0, -0.35], ["left", -0.4, 0.0], ["right", 0.4, 0.0]]:
+				var off := cam.project_position(Vector2(
+					360.0 + float(probe[1]) * 360.0, 800.0 + float(probe[2]) * 800.0), 30.0)
+				var from := cam.global_position
+				var to: Vector3 = off
+				var q := PhysicsRayQueryParameters3D.create(from, to)
+				q.collide_with_areas = false
+				var hit := space.intersect_ray(q)
+				if hit.is_empty():
+					print("DIAG-LOOK: %s -> nothing (no collider: mesh-only prop or sky)" % probe[0])
+				else:
+					var col: Node = hit.collider
+					var owner_path := ""
+					var o := col.owner
+					if o == null and col.get_parent():
+						o = col.get_parent()
+					if o:
+						owner_path = str(o.scene_file_path) if o.scene_file_path != "" else str(o.name)
+					print("DIAG-LOOK: %s -> %s (node=%s dist=%.2f owner=%s)" % [
+						probe[0], col.name, col.get_class(), from.distance_to(hit.position), owner_path])
+			print("DIAG-LOOK: player global_pos=%s  player_visible=%s" % [
+				str((pl_node as Node3D).global_position),
+				"y" if (pl_node as Node3D).is_visible_in_tree() else "n"])
 	for e in envs:
 		print("DIAG: env %s" % e)
 
