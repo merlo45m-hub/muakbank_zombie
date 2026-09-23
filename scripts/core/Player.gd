@@ -170,6 +170,15 @@ func _physics_process(delta: float) -> void:
 			var nudge_dir := stuck_check.normalized()
 			global_position += nudge_dir * 0.05
 
+	# ── SAFETY ────────────────────────────────────────────────────────────
+	# Nothing may launch the player: clamp vertical speed to sane values and
+	# recover to the last safe position if he somehow leaves the playable
+	# volume (a character body overlapping the player used to do exactly that).
+	velocity.y = clampf(velocity.y, -60.0, 15.0)
+	if global_position.y > 30.0 or global_position.y < -25.0:
+		global_position = _start_position
+		velocity = Vector3.ZERO
+
 
 # ──────────────────────────────────────────────
 #  INPUT — improved to mirror gdquest controller patterns

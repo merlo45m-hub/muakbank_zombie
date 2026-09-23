@@ -314,5 +314,16 @@ func _on_start_chase() -> void:
 
 
 func attack(target: Node3D) -> void:
-	if target.has_method("take_damage"):
-		target.take_damage(damage)
+	"""Contact-triggered attack (hurtbox overlap / AI call).
+
+	Shares the AI's cooldown so a body merely brushing the player cannot
+	machine-gun damage, and parked or dead pool instances never deal damage.
+	"""
+	if is_dead or pooled:
+		return
+	if attack_timer > 0.0:
+		return
+	if target == null or not target.has_method("take_damage"):
+		return
+	attack_timer = attack_cooldown_time
+	target.take_damage(damage)
