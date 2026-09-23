@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode unshader, cull_disabled, depth_test_less;
+render_mode unshaded, cull_disabled;
 
 // Enhanced damage flash shader for impact feedback
 // Features: Emission glow, saturation boost, outline effect

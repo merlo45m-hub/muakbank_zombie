@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode unshader, cull_disabled, blend_mix, depth_test_less;
+render_mode unshaded, cull_disabled, blend_mix;
 
 // Enhanced dissolve shader for zombie death sequences
 // Features: Emission trails, animated edge glow, particle breakup effect

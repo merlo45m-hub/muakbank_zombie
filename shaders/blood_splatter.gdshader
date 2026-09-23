@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode unshader, cull_disabled, blend_mix, depth_test_less;
+render_mode unshaded, cull_disabled, blend_mix;
 
 // Blood splatter shader for impact decals and gore effects
 // Features: Dynamic pooling, splatter pattern, fade-out animation

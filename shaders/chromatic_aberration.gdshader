@@ -13,12 +13,10 @@ void fragment() {
 
 	if (u_chromatic_offset <= 0.0) {
 		COLOR = texture(screen_texture, uv);
-		return;
+	} else {
+		float r = texture(screen_texture, uv + vec2(u_chromatic_offset, 0.0)).r;
+		float g = texture(screen_texture, uv).g;
+		float b = texture(screen_texture, uv - vec2(u_chromatic_offset, 0.0)).b;
+		COLOR = vec4(r, g, b, 1.0);
 	}
-
-	float r = texture(screen_texture, uv + vec2(u_chromatic_offset, 0.0)).r;
-	float g = texture(screen_texture, uv).g;
-	float b = texture(screen_texture, uv - vec2(u_chromatic_offset, 0.0)).b;
-
-	COLOR = vec4(r, g, b, 1.0);
 }

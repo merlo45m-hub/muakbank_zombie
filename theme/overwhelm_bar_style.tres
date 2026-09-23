@@ -1,6 +1,9 @@
-[gd_resource type="GodotxHealthBarStyle" load_steps=1 format=3]
+[gd_resource type="Resource" script_class="GodotxHealthBarStyle" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://addons/godotx_health_bar/runtime/godotx_health_bar_style.gd" id="1"]
 
 [resource]
+script = ExtResource("1")
 roundness = 20.0
 fill_inset = Vector2(2, 2)
 background_color = Color(0.1, 0.1, 0.1, 0.8)

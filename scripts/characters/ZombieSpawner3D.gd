@@ -191,8 +191,8 @@ func _spawn_random_zombie() -> void:
 		if result:
 			spawn_pos.y = result.position.y
 
-	zombie.global_transform.origin = spawn_pos
 	add_child(zombie)
+	zombie.global_transform.origin = spawn_pos
 	active_zombies.append(zombie)
 	zombie.set("zombie_type", zombie_type)
 

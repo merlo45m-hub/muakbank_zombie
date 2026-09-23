@@ -15,14 +15,13 @@ void fragment() {
 
 	if (u_shake_intensity <= 0.0) {
 		COLOR = texture(screen_texture, uv);
-		return;
+	} else {
+		float t = TIME * u_shake_frequency;
+		vec2 offset = vec2(
+			sin(t * 1.3 + uv.x * 5.0) * 0.5 + cos(t * 0.7 + uv.y * 3.0) * 0.5,
+			cos(t * 0.9 + uv.y * 4.0) * 0.5 + sin(t * 1.1 + uv.x * 6.0) * 0.5
+		) * u_shake_intensity;
+
+		COLOR = texture(screen_texture, uv + offset);
 	}
-
-	float t = TIME * u_shake_frequency;
-	vec2 offset = vec2(
-		sin(t * 1.3 + uv.x * 5.0) * 0.5 + cos(t * 0.7 + uv.y * 3.0) * 0.5,
-		cos(t * 0.9 + uv.y * 4.0) * 0.5 + sin(t * 1.1 + uv.x * 6.0) * 0.5
-	) * u_shake_intensity;
-
-	COLOR = texture(screen_texture, uv + offset);
 }
