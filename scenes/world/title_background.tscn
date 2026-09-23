@@ -1,61 +1,93 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=20 format=3 uid="uid://title_background_v2"]
 
 [sub_resource type="BoxMesh" id="CemeteryFloor"]
-size = Vector3(40, 0.2, 40)
+size = Vector3(50, 0.2, 50)
 
 [sub_resource type="BoxShape3D" id="FloorShape"]
-size = Vector3(40, 0.2, 40)
+size = Vector3(50, 0.2, 50)
 
 [sub_resource type="StandardMaterial3D" id="FloorMaterial"]
-albedo_color = Color(0.18, 0.16, 0.14, 1.0)
-roughness = 0.9
+albedo_color = Color(0.35, 0.32, 0.28, 1.0)
+roughness = 0.95
+metallic = 0.0
 
 [sub_resource type="BoxMesh" id="TombstoneMesh"]
-size = Vector3(0.6, 1.2, 0.2)
+size = Vector3(1.2, 2.4, 0.4)
 
 [sub_resource type="StandardMaterial3D" id="TombMaterial"]
-albedo_color = Color(0.25, 0.22, 0.2, 1.0)
-roughness = 0.85
+albedo_color = Color(0.55, 0.5, 0.42, 1.0)
+roughness = 0.9
+metallic = 0.0
 
 [sub_resource type="BoxMesh" id="TombstoneMesh2"]
-size = Vector3(0.8, 1.5, 0.15)
+size = Vector3(1.6, 3.0, 0.3)
 
 [sub_resource type="BoxMesh" id="CrossMesh"]
 size = Vector3(0.08, 0.9, 0.08)
 
 [sub_resource type="StandardMaterial3D" id="CrossMaterial"]
-albedo_color = Color(0.15, 0.12, 0.1, 1.0)
-roughness = 0.8
+albedo_color = Color(0.25, 0.22, 0.18, 1.0)
+roughness = 0.85
 
 [sub_resource type="SphereMesh" id="FogSphere"]
-radius = 20
+radius = 25
 
 [sub_resource type="StandardMaterial3D" id="FogMaterial"]
-albedo_color = Color(0.3, 0.28, 0.25, 0.12)
+albedo_color = Color(0.3, 0.28, 0.24, 0.25)
 cull_mode = 2
 no_depth_test = true
+transparency = 1
+
+[sub_resource type="CylinderMesh" id="TreeTrunk"]
+radius = 0.15
+height = 3.5
+orientation = 1
+
+[sub_resource type="StandardMaterial3D" id="TreeTrunkMat"]
+albedo_color = Color(0.12, 0.1, 0.08, 1.0)
+roughness = 0.95
+
+[sub_resource type="SphereMesh" id="TreeCanopy"]
+radius = 1.2
+radial_segments = 8
+rings = 4
+
+[sub_resource type="StandardMaterial3D" id="TreeCanopyMat"]
+albedo_color = Color(0.45, 0.4, 0.32, 1.0)
+roughness = 0.9
+transparency = 0
 
 [sub_resource type="Environment" id="TitleEnv"]
 background_mode = 1
-background_color = Color(0.05, 0.06, 0.09, 1.0)
+background_color = Color(0.12, 0.13, 0.18, 1.0)
 ambient_light_source = 2
-ambient_light_color = Color(0.38, 0.4, 0.48, 1.0)
-ambient_light_energy = 0.7
+ambient_light_color = Color(0.5, 0.52, 0.6, 1.0)
+ambient_light_energy = 1.5
 fog_enabled = true
-fog_light_color = Color(0.16, 0.17, 0.22, 1.0)
-fog_density = 0.015
+fog_light_color = Color(0.12, 0.13, 0.18, 1.0)
+fog_density = 0.012
+fog_attenuation = 0.001
 
-[node name="TitleBackground" type="Node3D"]
+[sub_resource type="StandardMaterial3D" id="FogMaterial2"]
+albedo_color = Color(0.2, 0.18, 0.17, 0.08)
+cull_mode = 2
+no_depth_test = true
+transparency = 1
+
+[node name="TitleBackground" type="Node3D" script="res://scripts/ui/TitleBackground.gd"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("TitleEnv")
 
 [node name="Camera" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.866, 0.5, 0, -0.5, 0.866, 0, 3, 8)
+transform = Transform3D(1, 0, 0, 0, 0.866, 0.5, 0, -0.5, 0.866, 0, 0.3, 5)
 current = true
-fov = 60
+fov = 90
+near = 0.1
+far = 100
 
 [node name="Floor" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 
 [node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
 mesh = SubResource("CemeteryFloor")
@@ -64,14 +96,14 @@ material_override = SubResource("FloorMaterial")
 [node name="Tombstones" type="Node3D" parent="."]
 
 [node name="Tomb1" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.6, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.6, -5)
 
 [node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb1"]
 mesh = SubResource("TombstoneMesh")
 material_override = SubResource("TombMaterial")
 
 [node name="Tomb2" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.75, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.75, -7)
 
 [node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb2"]
 mesh = SubResource("TombstoneMesh2")
@@ -83,40 +115,95 @@ mesh = SubResource("CrossMesh")
 material_override = SubResource("CrossMaterial")
 
 [node name="Tomb3" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.6, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.6, -6)
 
 [node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb3"]
 mesh = SubResource("TombstoneMesh")
 material_override = SubResource("TombMaterial")
 
 [node name="Tomb4" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.7, -3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.7, -4)
 
 [node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb4"]
 mesh = SubResource("TombstoneMesh2")
 material_override = SubResource("TombMaterial")
 
 [node name="Tomb5" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.5, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0.5, -2.5)
 
 [node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb5"]
 mesh = SubResource("TombstoneMesh")
 material_override = SubResource("TombMaterial")
 
+[node name="Tomb6" type="StaticBody3D" parent="Tombstones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.65, -7.5)
+
+[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb6"]
+mesh = SubResource("TombstoneMesh")
+material_override = SubResource("TombMaterial")
+
+[node name="Trees" type="Node3D" parent="."]
+
+[node name="Tree1" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -8)
+
+[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree1"]
+mesh = SubResource("TreeTrunk")
+material_override = SubResource("TreeTrunkMat")
+
+[node name="Canopy" type="MeshInstance3D" parent="Trees/Tree1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+mesh = SubResource("TreeCanopy")
+material_override = SubResource("TreeCanopyMat")
+
+[node name="Tree2" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, -9)
+
+[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree2"]
+mesh = SubResource("TreeTrunk")
+material_override = SubResource("TreeTrunkMat")
+
+[node name="Canopy" type="MeshInstance3D" parent="Trees/Tree2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0, 0)
+mesh = SubResource("TreeCanopy")
+material_override = SubResource("TreeCanopyMat")
+
+[node name="Tree3" type="Node3D" parent="Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -12)
+
+[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree3"]
+mesh = SubResource("TreeTrunk")
+material_override = SubResource("TreeTrunkMat")
+
+[node name="Canopy" type="MeshInstance3D" parent="Trees/Tree3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+mesh = SubResource("TreeCanopy")
+material_override = SubResource("TreeCanopyMat")
+
+[node name="Zombies" type="Node3D" parent="."]
+
 [node name="FogSphere" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 mesh = SubResource("FogSphere")
 material_override = SubResource("FogMaterial")
 
 [node name="Moon" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 10, 15, 8)
-light_color = Color(0.7, 0.75, 0.85, 1.0)
-light_energy_multiplier = 1.4
+transform = Transform3D(0.6, -0.7, 0.4, 0.1, 0.6, 0.8, -0.8, -0.4, 0.3, 12, 18, 10)
+light_color = Color(0.75, 0.8, 0.9, 1.0)
+light_energy_multiplier = 3.5
 shadow_enabled = true
+shadow_fade_range = 8.0
+shadow_fog_enable = true
 
 [node name="Ambient" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
-light_color = Color(0.4, 0.35, 0.3, 1.0)
-light_energy_multiplier = 0.8
-omni_range = 40.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+light_color = Color(0.35, 0.3, 0.25, 1.0)
+light_energy_multiplier = 0.7
+omni_range = 50.0
+
+[node name="FogLayer2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("FogSphere")
+material_override = SubResource("FogMaterial2")
 
 [node name="EnemyPositions" type="Node3D" parent="."]
