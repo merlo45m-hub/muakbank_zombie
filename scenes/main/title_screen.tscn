@@ -137,9 +137,10 @@ alignment = 1
 
 [node name="HighScoreLabel" type="Label" parent="VBoxMain/StatsContainer"]
 layout_mode = 2
+custom_minimum_size = Vector2(300, 20)
 text = "HIGH SCORE: 0"
 theme_override_font_size = 14
-horizontal_alignment = 1
+horizontal_alignment = 0
 
 [node name="Spacer" type="Control" parent="VBoxMain/StatsContainer"]
 layout_mode = 2
@@ -147,9 +148,10 @@ size_flags_horizontal = 3
 
 [node name="TotalFedLabel" type="Label" parent="VBoxMain/StatsContainer"]
 layout_mode = 2
+custom_minimum_size = Vector2(300, 20)
 text = "FED: 0"
 theme_override_font_size = 14
-horizontal_alignment = 1
+horizontal_alignment = 2
 
 [node name="FooterLabel" type="Label" parent="VBoxMain"]
 layout_mode = 2
