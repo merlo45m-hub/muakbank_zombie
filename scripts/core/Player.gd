@@ -83,7 +83,7 @@ func _ready() -> void:
 	add_to_group("player")
 
 	# Setup weapon system
-	if weapon_system:
+	if weapon_system and weapon_system.has_method("equip_weapon"):
 		weapon_system.equip_weapon("bat")
 
 	# Setup mobile controls

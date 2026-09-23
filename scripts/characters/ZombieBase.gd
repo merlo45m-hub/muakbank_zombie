@@ -29,6 +29,9 @@ var is_hidden: bool = false
 # === POOLING SUPPORT ===
 var dead: bool = false          # Object-pool compatibility: must be false when alive, true when in dead pool
 var pooled: bool = false       # True when managed by ZombieSpawner3D's pool — suppresses queue_free()
+var pool_entry = null          # Set by ZombieSpawner3D on checkout ({pool, scene, type}) — used to return us
+var zombie_type: String = ""   # Set by ZombieSpawner3D on checkout
+var _mesh_rest_xform: Transform3D = Transform3D()  # pristine mesh transform, restored on pool reuse
 
 # === VFN NAVIGATION ===
 var vfn_field = null  # Reference to the active VFNField (untyped: addon class may be absent)
@@ -44,6 +47,8 @@ var current_state: AIState = AIState.IDLE
 func _ready() -> void:
 	health = max_health
 	add_to_group("enemies")
+	if mesh:
+		_mesh_rest_xform = mesh.transform  # pristine transform, restored by reset_for_pool()
 	_post_ready()
 
 
@@ -198,24 +203,79 @@ func _die() -> void:
 	if mesh:
 		t.tween_property(mesh, "rotation:x", deg_to_rad(85), fade_duration)
 		t.parallel().tween_property(mesh, "position:y", position.y - 0.2, fade_duration)
-		t.parallel().tween_property(mesh, "modulate", Color(1, 1, 1, 0), fade_duration * 0.6)
+		for mi in _mesh_instances():
+			# Node3D has no `modulate` — fade 3D meshes via
+			# GeometryInstance3D.transparency (0 = opaque, 1 = invisible).
+			t.parallel().tween_property(mi, "transparency", 1.0, fade_duration * 0.6)
 	else:
-		t.tween_property(self, "modulate", Color(1, 1, 1, 0), fade_duration)
+		# no Mesh child — nothing visual to fade, just wait out the duration
+		t.tween_interval(fade_duration)
 
-	await t.finished
+	# The spawner's died-handler runs synchronously on the signal above, so a
+	# pooled zombie is already detached from the tree by now — a tween bound to
+	# a node outside the tree never finishes, so only await while still inside.
+	if is_inside_tree():
+		await t.finished
 
 	# ── POOLING: if pooled, do NOT queue_free — return to pool instead ──
 	if pooled:
-		# Hide and pause so the pool can recycle us
+		# Hide and pause so the pool can recycle us; reset_for_pool() restores
+		# health, visibility and the mesh transform on the next checkout.
 		hide()
 		process_mode = Node.PROCESS_MODE_PAUSABLE
-		# The spawner's _return_to_pool will call pool._on_killed() to
-		# move us from alive→dead in the pool dictionary.
 	else:
 		queue_free()
 
 
+func reset_for_pool() -> void:
+	# Restore full working state when ZombieSpawner3D checks this zombie out of
+	# the object pool (called before add_child on every reuse).
+	is_dead = false
+	dead = false
+	health = max_health
+	current_state = AIState.IDLE
+	is_attacking = false
+	attack_timer = 0.0
+	target = null
+	hit_flash_tween = null
+	show()
+	process_mode = Node.PROCESS_MODE_INHERIT
+	if mesh:
+		mesh.transform = _mesh_rest_xform
+	for mi in _mesh_instances():
+		mi.transparency = 0.0
+		mi.material_overlay = null
+
+
 # ── HELPERS ───────────────────────────────────────────────────
+
+func _mesh_instances() -> Array[MeshInstance3D]:
+	# Collect the MeshInstance3D nodes under the Mesh container — the model is
+	# an instanced GLB, so they live one or more levels down and 3D tint/fade
+	# operations (which Node3D itself has no property for) must target them.
+	var out: Array[MeshInstance3D] = []
+	if not mesh:
+		return out
+	var stack: Array[Node] = [mesh]
+	while not stack.is_empty():
+		var n: Node = stack.pop_back()
+		for c in n.get_children():
+			if c is MeshInstance3D:
+				out.append(c)
+			stack.push_back(c)
+	return out
+
+
+func _set_overlay_alpha(a: float) -> void:
+	for mi in _mesh_instances():
+		var m := mi.material_overlay as StandardMaterial3D
+		if m == null:
+			m = StandardMaterial3D.new()
+			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			mi.material_overlay = m
+		m.albedo_color = Color(1, 0.2, 0.2, a)
+
 
 func _flash_red() -> void:
 	if not mesh:
@@ -223,11 +283,13 @@ func _flash_red() -> void:
 	if hit_flash_tween and hit_flash_tween.is_running():
 		hit_flash_tween.kill()
 
-	var mat = mesh.get_surface_override_material(0)
-	if mat:
-		mat.emissive_color = Color(1, 0.2, 0.2)
-		hit_flash_tween = create_tween()
-		hit_flash_tween.tween_property(mat, "emissive_color", Color(0, 0, 0), 0.15)
+	# 3D meshes expose no `modulate`/`emissive_color` on the Node3D container —
+	# tint the GLB's MeshInstance3D children through a fading material_overlay.
+	if _mesh_instances().is_empty():
+		return
+	_set_overlay_alpha(0.55)
+	hit_flash_tween = create_tween()
+	hit_flash_tween.tween_method(_set_overlay_alpha, 0.55, 0.0, 0.15)
 
 
 func set_target(new_target: Node3D) -> void:
