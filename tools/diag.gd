@@ -166,8 +166,16 @@ func _ready() -> void:
 		elif n is WorldEnvironment:
 			var env := (n as WorldEnvironment).environment
 			if env:
-				envs.append("bg=%d fog=%s dens=%.3f ambient=%.2f" % [env.background_mode, str(env.fog_enabled), env.fog_density, env.ambient_light_energy])
+				envs.append("%s path=%s bg=%d fog=%s dens=%.3f ambient=%.2f" % [n.name, n.get_path(), env.background_mode, str(env.fog_enabled), env.fog_density, env.ambient_light_energy])
 	print("DIAG: scene=%s meshes=%d lights=%d" % [scene_path, mesh_count, light_count])
+	# Which environment is ACTUALLY rendering? A WorldEnvironment pushes its environment to
+	# the viewport when it enters the tree, so with several in one scene the LAST to enter
+	# wins. Print the root window's environment - that is the one the renderer uses.
+	var ve := get_root().environment
+	if ve:
+		print("DIAG: RENDERING ENV bg=%d fog=%s dens=%.3f ambient=%.2f bright=%.2f" % [ve.background_mode, str(ve.fog_enabled), ve.fog_density, ve.ambient_light_energy, ve.adjustment_brightness])
+	else:
+		print("DIAG: RENDERING ENV none (root window has no environment)")
 	print("DIAG: top-level: %s" % str(top))
 	for c in cam_positions:
 		print("DIAG: camera %s" % c)
