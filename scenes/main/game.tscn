@@ -137,10 +137,6 @@ omni_range = 16.0
 [node name="NightSky" parent="." instance=ExtResource("night_sky")]
 
 [node name="Player" type="CharacterBody3D" parent="."]
-# Spawn moved off the level origin: the origin put the player behind a fence, so the
-# third-person camera either jammed on it or framed his backside with his legs occluded.
-# tools/find_spawn.gd probed 548 candidate spots and this one has 6 m of clear space in
-# all 24 directions at knee and chest height.
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.15, -6)
 script = ExtResource("2")
 collision_layer = 2
@@ -179,11 +175,6 @@ spring_length = 4.2
 
 [node name="Camera3D" type="Camera3D" parent="Player/Camera"]
 transform = Transform3D(1, 0, 0, 0, 0.985, -0.174, 0, 0.174, 0.985, 0, 0.5, 0)
-# keep_aspect 0 = KEEP_WIDTH, which makes fov HORIZONTAL. On a 720x1600 portrait
-# viewport a 78 deg horizontal fov forces a ~122 deg vertical fov - a fisheye that
-# squashed the character to 176 px in a 1600 px frame (11%), far too small to read.
-# KEEP_HEIGHT + fov 65 gives portrait framing of ~500 px at the 4.2 m spring distance,
-# verified with tools/diag.gd's DIAG-POS screen_height_px readout.
 keep_aspect = 1
 fov = 65.0
 fov = 78.0
@@ -207,7 +198,6 @@ collision_layer = 0
 collision_mask = 256
 
 [node name="ZombieSpawner" type="Node3D" parent="."]
-# Centred on the player spawn so spawn rings land around the player.
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.15, -6)
 script = ExtResource("3")
 
@@ -218,7 +208,6 @@ one_shot = false
 script = ExtResource("19")
 
 [node name="FoodSpawner" type="Node3D" parent="."]
-# Centred on the player spawn so spawn rings land around the player.
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.15, -6)
 script = ExtResource("4")
 
