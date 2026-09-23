@@ -49,6 +49,11 @@ func _ready() -> void:
 	add_to_group("enemies")
 	if mesh:
 		_mesh_rest_xform = mesh.transform  # pristine transform, restored by reset_for_pool()
+		if mesh.is_inside_tree():
+			var _anim := ProceduralAnimator.new()
+			_anim.name = "ProceduralAnimator"
+			mesh.add_child(_anim)
+			_anim.attach(self, mesh)
 	_post_ready()
 
 
@@ -267,6 +272,8 @@ func reset_for_pool() -> void:
 	collision_mask = 1
 	if mesh:
 		mesh.transform = _mesh_rest_xform
+		if mesh.has_node("ProceduralAnimator"):
+			(mesh.get_node("ProceduralAnimator") as ProceduralAnimator).reset_anim()
 	for mi in _mesh_instances():
 		mi.transparency = 0.0
 		mi.material_overlay = null
@@ -335,7 +342,8 @@ func _on_DetectionArea_body_entered(body: Node3D) -> void:
 
 func _on_start_chase() -> void:
 	"""Called when starting to chase (override for sounds/animation)"""
-	pass
+	if mesh and mesh.has_node("ProceduralAnimator"):
+		(mesh.get_node("ProceduralAnimator") as ProceduralAnimator).on_start_chase()
 
 
 func attack(target: Node3D) -> void:
