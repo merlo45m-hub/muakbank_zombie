@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/core/Player.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/gameplay/MobileControls.gd" id="2"]
 
 [sub_resource type="CapsuleShape3D" id="PlayerCollision"]
 radius = 0.3
@@ -115,8 +116,8 @@ shape = SubResource("PlayerCollision")
 
 [node name="WeaponSystem" type="Node" parent="."]
 
-[node name="MobileControls" type="CanvasLayer" parent="."]
-layer = 10
+[node name="MobileControls" type="Control" parent="."]
+script = ExtResource("2")
 
 [node name="JoystickArea" type="Control" parent="MobileControls"]
 anchors_preset = 10
