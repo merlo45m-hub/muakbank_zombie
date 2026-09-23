@@ -129,7 +129,7 @@ func _ready() -> void:
 		elif n is Light3D:
 			light_count += 1
 		elif n is Camera3D:
-			cam_positions.append("%s pos=%s current=%s" % [n.name, str(n.global_position), str((n as Camera3D).current)])
+			cam_positions.append("%s pos=%s current=%s fwd=%s" % [n.name, str(n.global_position), str((n as Camera3D).current), str(-(n as Camera3D).global_transform.basis.z)])
 		elif n is WorldEnvironment:
 			var env := (n as WorldEnvironment).environment
 			if env:
@@ -138,6 +138,17 @@ func _ready() -> void:
 	print("DIAG: top-level: %s" % str(top))
 	for c in cam_positions:
 		print("DIAG: camera %s" % c)
+	# Is the player actually IN FRONT of the current camera? A third-person camera
+	# that looks away from its own player renders a frame with no character in it.
+	var pl_node := get_tree().get_first_node_in_group("player")
+	for n in _all_nodes(inst):
+		if n is Camera3D and (n as Camera3D).current and pl_node is Node3D:
+			var cam := n as Camera3D
+			var to_p: Vector3 = (pl_node as Node3D).global_position - cam.global_position
+			var dotf: float = (-cam.global_transform.basis.z).normalized().dot(to_p.normalized())
+			print("DIAG: cam->player dist=%.2f dot_fwd_to_player=%.3f  %s" % [
+				to_p.length(), dotf, "OK (player in view)" if dotf > 0.3 else "BROKEN: camera looks away from the player"])
+			print("DIAG: player rot_y=%.1f deg  cam_arm_rot=%s" % [rad_to_deg((pl_node as Node3D).rotation.y), str(cam.get_parent().global_rotation if cam.get_parent() else Vector3.ZERO)])
 	for e in envs:
 		print("DIAG: env %s" % e)
 
