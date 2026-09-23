@@ -51,7 +51,9 @@ var special_timer: float = 0.0
 
 # === CAMERA STATE (improved — basis from gdquest controller) ===
 var camrot_h: float = 0.0
-var camrot_v: float = 0.0
+# Default 10 deg down-tilt. At vertical look 0 the camera sits at the arm's height
+# looking horizontally and a wall-clamped arm (2 m) drops the player below frame.
+var camrot_v: float = -0.18
 var h_sensitivity: float = 0.015
 var v_sensitivity: float = 0.012
 
