@@ -124,3 +124,4 @@ textures/vram_compression/import_etc2_astc=true
 textures/decals/filter=1
 textures/light_projectors/filter=1
 environment/defaults/default_clear_color=Color(0.051, 0.039, 0.102, 1)
+environment/defaults/default_environment="res://default_env.tres"

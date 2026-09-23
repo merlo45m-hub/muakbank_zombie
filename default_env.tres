@@ -8,6 +8,21 @@ ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
 sky_material = SubResource("ProceduralSkyMaterial_k8nl8")
 
 [resource]
-background_mode = 2
-sky = SubResource("Sky_1")
-ambient_light_source = 3
+; The project-wide fallback environment. Six of the eight levels have no working
+; WorldEnvironment of their own (hospital, rooftop and subway have no node at all; mall,
+; sewer and warehouse have the node with no Environment resource attached), so this is what
+; they actually render with. It used to be a procedural SKY at 0.646 grey with
+; ambient_light_source = 3 (sky) - daylight - and it was never wired into project.godot, so
+; those levels rendered with nothing at all. It is now a dark night matching the Pet
+; Cemetery and Old Town: near-black background, a low cool ambient so geometry stays
+; readable, and fog that fades into darkness rather than pastel.
+; Levels with their own environment (cemetery, old town) are unaffected.
+background_mode = 1
+background_color = Color(0.05, 0.06, 0.09, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.35, 0.4, 0.55, 1)
+ambient_light_energy = 0.3
+fog_enabled = true
+fog_light_color = Color(0.08, 0.09, 0.12, 1)
+fog_density = 0.015
+tonemap_mode = 2
