@@ -31,6 +31,11 @@ func _ready() -> void:
 	if not player:
 		push_warning("[FoodSpawner] No player found!")
 
+	# SpawnTimer.timeout was never wired in game.tscn, so the timer ticked into
+	# the void and no food ever spawned. Connect here (idempotent).
+	if not spawn_timer.timeout.is_connected(_on_SpawnTimer_timeout):
+		spawn_timer.timeout.connect(_on_SpawnTimer_timeout)
+
 func start_spawning() -> void:
 	can_spawn = true
 	spawn_timer.start(spawn_interval)
