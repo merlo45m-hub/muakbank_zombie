@@ -356,6 +356,10 @@ func reset_for_pool() -> void:
 		var _a := _get_animator()
 		if _a:
 			_a.reset_anim()
+		# Stop any in-flight animation on pool reuse (harmless if absent).
+		var ap := mesh.get_node_or_null("AnimationPlayer")
+		if ap:
+			ap.stop()
 	for mi in _mesh_instances():
 		mi.transparency = 0.0
 		mi.material_overlay = null
