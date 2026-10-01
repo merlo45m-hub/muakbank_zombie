@@ -97,6 +97,12 @@ func _perform_attack() -> void:
 	await _wait(0.3)
 	is_attacking = false
 
+func _should_engage(_dist: float) -> bool:
+	# The runner never commits to an attack — it deals contact damage and keeps
+	# moving, so it stays in CHASE permanently. Its speed is the threat.
+	return false
+
+
 func _attack(delta: float) -> void:
 	# Override to prevent ProceduralAnimator auto-trigger on is_attacking rising edge.
 	# The rig's ATK animation plays via _perform_attack() above.

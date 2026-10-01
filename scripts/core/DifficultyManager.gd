@@ -53,3 +53,19 @@ func get_enemy_damage_multiplier() -> float:
 
 func get_enemy_speed_multiplier() -> float:
 	return 1.0 + (current_difficulty - 1.0) * 0.2
+
+# ──────────────────────────────────────────────
+#  SPAWN TUNING (consumed by ZombieSpawner3D)
+# ──────────────────────────────────────────────
+
+func get_spawn_interval() -> float:
+	# Multiplier on the spawner's own base interval — NOT an absolute. Returning an
+	# absolute would let difficulty override whatever the caller configured (the
+	# WaveManager tunes pacing per wave), so it only ever scales the base.
+	# Higher difficulty → zombies arrive faster.
+	return 1.0 / current_difficulty
+
+func get_max_zombies_multiplier() -> float:
+	# Multiplier on the spawner's own cap, for the same reason as the interval:
+	# WaveManager sets the authoritative cap per wave and must stay in charge.
+	return current_difficulty
