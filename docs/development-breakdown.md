@@ -41,7 +41,7 @@ How we attack game development: 9 sections, each independently testable, each wi
 
 **Files:** `scripts/characters/ZombieSpawner3D.gd`, `scripts/characters/ZombieBase.gd`, `addons/VectorFieldNavigation/`
 
-## Section 4: Food & Economy
+## Section 4: Food & Economy — COMPLETE
 
 **Scope:** Food pickups, hunger meter, score, loot drops, food types
 
@@ -49,9 +49,20 @@ How we attack game development: 9 sections, each independently testable, each wi
 
 **Test:** `test_food.tscn` + dev_room + on-device
 
-**Files:** `scripts/core/FoodDetection.gd`, `scripts/world/FoodSpawner.gd`, `scripts/core/LootTable.gd`
+**Files:** `scripts/gameplay/FoodItem3D.gd`, `scripts/gameplay/FoodSpawner.gd`, `scripts/gameplay/LootTable.gd`, `scripts/core/Game.gd`, `scripts/core/Player.gd`, `scripts/ui/HUD.gd`
 
-## Section 5: HUD & UI
+**Commits:** `6312974` (root-cause fix), `0ebfcdf` (review fixes)
+
+**Lessons:**
+- Food pickup was 100% dead: `area.get_parent()` returned the spawner, not the FoodItem3D (script on Area3D root). Proven with live probe.
+- Spawner `remove_child` during synchronous emit → `get_tree()` null → `on_food_eaten` dead for every spawned food. Resolve game BEFORE emit.
+- Double-heal: pickup healed via `on_food_eaten`, consume healed again. Single owner = `consume_food`.
+- Collision layers were a mess: takis defaults 1/1 (uncollectable), medkit/coffee/battery/ammo were body-detected (layer=0/mask=2) while burger/sushi were area-detected (layer=4/mask=0). All 10 unified to layer=4/mask=0.
+- Two heal tables disagreed on every type (burger 25 vs 35). Scene `health_amount` is now single source of truth, carried in inventory entry.
+- Write-only `foods` flat log removed. Dead `_on_PickupArea` weapon path removed.
+- `eat_food` objective was advanced inside dead `on_food_eaten`. Now in `consume_food`.
+
+## Section 5: HUD & UI — IN PROGRESS
 
 **Scope:** Health bar, food bar, score display, pause menu, settings, level transitions
 
