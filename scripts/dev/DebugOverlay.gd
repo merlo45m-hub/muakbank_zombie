@@ -1,9 +1,11 @@
 extends CanvasLayer
 
+const DevMode := preload("res://scripts/core/DevMode.gd")
+
 var label: Label
 
 func _ready() -> void:
-	if not OS.is_debug_build():
+	if not DevMode.is_active():
 		visible = false
 		set_process(false)
 		return

@@ -102,3 +102,82 @@ render instead of a tofu box.
 
 Owner for the remaining gaps: frontend/godot UI lane. Rendered verification
 belongs to visual QA on device — **not claimed here**.
+
+---
+
+## 6. Performance budget (Android)
+
+Targets are set so a regression is *detectable*, not so a number looks good. The
+game is a 6-level 3D survival brawler with procedural (non-skeletal) animation and
+no baked lightmaps — the expensive things are real-time lights, shadows, and the
+number of live `CharacterBody3D` zombies.
+
+| Metric | Target | Hard ceiling | Why this number |
+|---|---|---|---|
+| Frame rate (S26 Ultra) | 60 FPS | 30 FPS | Flagship device; the loop is the product |
+| Frame rate (mid-range Android) | 30 FPS | 24 FPS | Must stay playable on the `min_sdk` floor |
+| Dropped frames (`Skipped N frames`) | < 1% of a 60 s sample | 5% | Android logs these; that is the cheap proxy for jank |
+| RSS (steady state, in-level) | < 350 MB | 500 MB | A 62 MB APK with 43 MB of textures has no business above this |
+| Concurrent zombies (`max_zombies`) | 12 | 16 | `ZombieSpawner3D.max_zombies` default; each is a physics body + per-frame AI |
+| Real-time lights on screen | 3 | 4 | 1 directional + the player's 2 omnis. Street lamps must not all be live at once |
+| Shadow-casting lights | 1 | 1 | Only the `DirectionalLight3D`. Per-light shadows are the first thing to cut |
+| Draw calls | < 120 | 180 | Props are un-instanced; this is the real mobile bottleneck |
+| Scene boot to playable | < 3 s | 6 s | Measured on device, cold start |
+
+### How to measure (do not guess)
+
+```bash
+# Live sample — requires the game FOREGROUND and the phone awake.
+# Reports frame drops, memory warnings, and CPU spikes from logcat.
+~/bin/perf_monitor.sh com.merlo45.muakbankzombie 60
+
+# Steady-state memory + per-process frame stats (no app change needed):
+rish -c "dumpsys meminfo com.merlo45.muakbankzombie | head -20"
+rish -c "dumpsys gfxinfo com.merlo45.muakbankzombie | head -20"
+```
+
+`perf_monitor.sh` prints **NO DATA** and exits 2 when Shizuku is down or logcat is
+empty — that is a *missing measurement*, never a pass. Never pop the game on a phone
+that is in active use; report the absence of a sample instead.
+
+### Rules
+
+- A new feature that pushes any metric past its **hard ceiling** is not shippable
+  without cutting something else. State the trade in the commit message.
+- Re-measure after anything that adds per-frame work: a new spawner, a new light, a
+  new per-frame `_process` on many nodes.
+- The debug overlay (`scripts/dev/DebugOverlay.gd`) reports FPS and memory live and is
+  the fastest in-game check. It is dev-gated; see §7.
+
+---
+
+## 7. Dev tooling and the shipped build
+
+**`OS.is_debug_build()` is NOT a safe gate for this project.** The Android APK is
+exported with `--export-debug` (`~/bin/deploy_pipeline.sh`), so that call returns
+`true` in the *shipped* build — gating dev tooling on it ships that tooling to every
+player.
+
+The gate is `scripts/core/DevMode.gd` → `DevMode.is_active()`: true inside the editor
+(where dev tooling is the point), and in an exported build true only when the marker
+file `user://dev_mode` contains the expected version string (`MARKER_VERSION = "1"`).
+The marker is versioned so bumping `MARKER_VERSION` invalidates all existing markers —
+a stale marker from an old build cannot silently enable dev mode after an update.
+The title-screen footer long-press (≥1.0 s) toggles the marker; the DEV ROOM button is
+hidden when dev mode is off.
+
+Dev surfaces, all under `scenes/dev/` and `scripts/dev/`:
+
+| File | Purpose |
+|---|---|
+| `scenes/dev/dev_room.tscn` | Sandbox. Keys **1-5** spawn ZombieDog / ZombieBoss / FoodBurger / WeaponPickup_bat / PowerUp 8 m ahead; **R** clears |
+| `scenes/dev/test_player.tscn` | Player movement + camera in isolation |
+| `scenes/dev/test_zombie.tscn` | ZombieDog AI, attack, death |
+| `scenes/dev/test_food.tscn` | Food pickup / health restore |
+| `scenes/dev/test_weapons.tscn` | Weapon pickup + swing |
+| `scripts/dev/DebugOverlay.gd` | FPS / memory / player position / enemy count |
+
+These are editor-driven (F6). In a shipped build they are reachable only with dev mode
+on. **Nothing in the shipped game references them** — verify that claim before
+shipping by grepping outside `scenes/dev` and `scripts/dev`.
+

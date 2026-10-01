@@ -1,10 +1,12 @@
 extends Node3D
 
+const DevMode := preload("res://scripts/core/DevMode.gd")
+
 var spawned_nodes: Array[Node] = []
 var spawn_parent: Node3D
 
 func _ready() -> void:
-	if not OS.is_debug_build():
+	if not DevMode.is_active():
 		set_process_unhandled_input(false)
 		return
 		
