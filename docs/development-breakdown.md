@@ -103,10 +103,13 @@ How we attack game development: 9 sections, each independently testable, each wi
 
 ## Current status
 
-- Section 1: IN PROGRESS
-  - Critical: mobile camera rotation, sprint button, jump button
-  - 3 agents dispatched for fixes (sa-0: buttons, sa-1: camera, sa-2: review)
-- Sections 2-9: NOT STARTED
+- Section 1: COMPLETE (commit 1266b45)
+  - Mobile camera rotation, sprint/jump buttons, anti-slop cleanup
+  - Verified: 6/6 harness, clean boot, no crash
+- Section 2: IN PROGRESS
+  - Critical: WeaponSystem bypassed, no weapon switch on mobile, no ammo HUD, emoji icons
+  - 3 agents dispatched for fixes
+- Sections 3-9: NOT STARTED
 
 ## Anti-Slop Principles
 

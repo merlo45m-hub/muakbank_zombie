@@ -22,7 +22,7 @@ const WEAPONS = {
 		"projectile": false,
 		"spread": 0.0,
 		"recoil": 0.0,
-		"icon": "👊"
+		"icon": "FISTS"
 	},
 	"bat": {
 		"name": "Baseball Bat",
@@ -35,7 +35,7 @@ const WEAPONS = {
 		"projectile": false,
 		"spread": 0.0,
 		"recoil": 0.0,
-		"icon": "🏏"
+		"icon": "BAT"
 	},
 	"knife": {
 		"name": "Combat Knife",
@@ -48,7 +48,7 @@ const WEAPONS = {
 		"projectile": false,
 		"spread": 0.0,
 		"recoil": 0.0,
-		"icon": "🔪"
+		"icon": "KNIFE"
 	},
 	"pistol": {
 		"name": "Pistol",
@@ -61,7 +61,7 @@ const WEAPONS = {
 		"projectile": true,
 		"spread": 0.02,
 		"recoil": 0.1,
-		"icon": "🔫"
+		"icon": "GUN"
 	},
 	"shotgun": {
 		"name": "Shotgun",
@@ -74,7 +74,7 @@ const WEAPONS = {
 		"projectile": false,
 		"spread": 0.15,
 		"recoil": 0.3,
-		"icon": "🔫"
+		"icon": "GUN"
 	},
 	"rifle": {
 		"name": "Assault Rifle",
@@ -87,7 +87,7 @@ const WEAPONS = {
 		"projectile": true,
 		"spread": 0.03,
 		"recoil": 0.05,
-		"icon": "🔫"
+		"icon": "GUN"
 	},
 	"axe": {
 		"name": "Fire Axe",
@@ -100,7 +100,7 @@ const WEAPONS = {
 		"projectile": false,
 		"spread": 0.0,
 		"recoil": 0.0,
-		"icon": "🪓"
+		"icon": "AXE"
 	},
 	"lightsaber": {
 		"name": "Lightsaber",
@@ -113,7 +113,7 @@ const WEAPONS = {
 		"projectile": false,
 		"spread": 0.0,
 		"recoil": 0.0,
-		"icon": "⚔️"
+		"icon": "SABER"
 	},
 	"firegun": {
 		"name": "Fire Gun",
@@ -126,7 +126,7 @@ const WEAPONS = {
 		"projectile": true,
 		"spread": 0.08,
 		"recoil": 0.02,
-		"icon": "🔥"
+		"icon": "FIRE"
 	},
 	"medkit": {
 		"name": "Medkit",
@@ -139,7 +139,7 @@ const WEAPONS = {
 		"projectile": false,
 		"spread": 0.0,
 		"recoil": 0.0,
-		"icon": "🩹",
+		"icon": "MED",
 		"heals": 50
 	}
 }
@@ -167,6 +167,9 @@ func get_current_weapon_data() -> Dictionary:
 func add_weapon_to_inventory(weapon_id: String) -> void:
 	if not inventory.has(weapon_id):
 		inventory.append(weapon_id)
+
+func get_weapons_in_inventory() -> Array:
+	return inventory
 
 func switch_to_next_weapon() -> void:
 	if inventory.size() <= 1:
@@ -201,13 +204,41 @@ func use_ammo() -> void:
 
 func fire() -> Dictionary:
 	if not can_fire():
-		return {}
+		return {"type": "none"}
 	
 	var data = get_current_weapon_data()
 	fire_timer = data["fire_rate"]
 	use_ammo()
 	emit_signal("weapon_fired", data)
-	return data
+	
+	# Handle healing weapons
+	if data.has("heals") and data["heals"] > 0:
+		return {
+			"type": "heal",
+			"heal": data["heals"],
+			"weapon": data["name"]
+		}
+	
+	# Handle projectile weapons — return data for Player.gd to use
+	if data["projectile"]:
+		return {
+			"type": "damage",
+			"damage": data["damage"],
+			"projectile": true,
+			"projectile_speed": 30.0,
+			"weapon": data["name"],
+			"spread": data["spread"],
+			"range": data["range"]
+		}
+	
+	# Standard damage return
+	return {
+		"type": "damage",
+		"damage": data["damage"],
+		"weapon": data["name"],
+		"range": data["range"],
+		"spread": data["spread"]
+	}
 
 func add_ammo(amount: int) -> void:
 	var data = get_current_weapon_data()

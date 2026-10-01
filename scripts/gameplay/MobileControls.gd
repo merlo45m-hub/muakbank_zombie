@@ -9,6 +9,7 @@ signal attack_pressed
 signal special_pressed
 signal sprint_pressed(active: bool)
 signal jump_pressed
+signal weapon_switch_pressed
 
 # === NODE REFS ===
 @onready var joystick_area = $JoystickArea
@@ -19,6 +20,7 @@ signal jump_pressed
 var special_btn: Button = null
 var sprint_btn: Button = null
 var jump_btn: Button = null
+var weapon_btn: Button = null
 var sprint_active: bool = false
 
 # === STATE ===
@@ -42,6 +44,7 @@ func _ready() -> void:
 	_build_special_button()
 	_build_sprint_button()
 	_build_jump_button()
+	_build_weapon_button()
 
 	# Hide on non-mobile platforms (optional)
 	if not OS.has_feature("android") and not OS.has_feature("ios"):
@@ -110,6 +113,25 @@ func _build_jump_button() -> void:
 	jump_btn.add_theme_stylebox_override("normal", style)
 	jump_btn.pressed.connect(func(): emit_signal("jump_pressed"))
 	add_child(jump_btn)
+
+func _build_weapon_button() -> void:
+	weapon_btn = Button.new()
+	weapon_btn.text = "SWAP"
+	weapon_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE)
+	weapon_btn.anchor_left = 1.0
+	weapon_btn.anchor_right = 1.0
+	weapon_btn.anchor_top = 1.0
+	weapon_btn.anchor_bottom = 1.0
+	weapon_btn.offset_left = -100.0
+	weapon_btn.offset_top = -300.0
+	weapon_btn.offset_right = -20.0
+	weapon_btn.offset_bottom = -240.0
+	var style = StyleBoxFlat.new()
+	style.bg_color = BTN_BG_COLOR
+	style.set_corner_radius_all(BTN_CORNER_RADIUS)
+	weapon_btn.add_theme_stylebox_override("normal", style)
+	weapon_btn.pressed.connect(func(): emit_signal("weapon_switch_pressed"))
+	add_child(weapon_btn)
 
 func _on_joystick_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:

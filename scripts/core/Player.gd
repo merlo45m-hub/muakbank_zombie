@@ -116,6 +116,8 @@ func _ready() -> void:
 			mobile_controls.sprint_pressed.connect(_on_mobile_sprint)
 		if mobile_controls.has_signal("jump_pressed"):
 			mobile_controls.jump_pressed.connect(_on_mobile_jump)
+		if mobile_controls.has_signal("weapon_switch_pressed"):
+			mobile_controls.weapon_switch_pressed.connect(_on_mobile_weapon_switch)
 
 	# Mouse capture on desktop; mobile keeps touch-visible mode
 	if OS.has_feature("android") or OS.has_feature("ios"):
@@ -184,6 +186,10 @@ func _process(delta: float) -> void:
 	# Doing this in _process (not _physics_process) keeps the camera smooth
 	# independent of physics tick rate — adapted from gdquest approach.
 	_apply_camera_rotation()
+
+	# Tick the weapon system so fire_timer decrements and cooldowns expire.
+	if weapon_system and weapon_system.has_method("tick"):
+		weapon_system.tick(delta)
 
 	# Regenerate stamina — uses the exported stamina_regen value (was hardcoded 15).
 	if stamina < max_stamina:
@@ -383,6 +389,10 @@ func _on_mobile_jump() -> void:
 		stamina = max(0, stamina - 10)
 		emit_signal("stamina_changed", stamina, max_stamina)
 
+func _on_mobile_weapon_switch() -> void:
+	if weapon_system and weapon_system.has_method("switch_to_next_weapon"):
+		weapon_system.switch_to_next_weapon()
+
 
 # ──────────────────────────────────────────────
 #  ATTACK
@@ -398,10 +408,6 @@ func _perform_attack() -> void:
 		if _pa:
 			_pa.trigger_attack()
 
-	# Apply character attack speed multiplier
-	var speed_mult: float = character_stats.attack_speed if character_stats else 1.0
-	attack_timer = attack_cooldown * speed_mult
-
 	# Play sound (defer to Audio singleton; guard against it being absent)
 	if Audio:
 		Audio.play_click()
@@ -412,7 +418,36 @@ func _perform_attack() -> void:
 		weapon_tween.tween_property(mesh, "rotation:x", mesh.rotation.x - deg_to_rad(45), weapon_swing_duration / 2)
 		weapon_tween.tween_property(mesh, "rotation:x", mesh.rotation.x, weapon_swing_duration / 2)
 
-	# Check for enemies in range
+	# Fire the weapon via WeaponSystem — this enforces the fire_rate cooldown
+	# and returns the weapon's data dict (damage, range, type, etc.).
+	var weapon_data: Dictionary = {}
+	if weapon_system and weapon_system.has_method("fire"):
+		weapon_data = weapon_system.fire()
+
+	# If the weapon can't fire (on cooldown or out of ammo), play the swing and exit.
+	if weapon_data.get("type", "") == "none":
+		await _wait(weapon_swing_duration)
+		is_attacking = false
+		return
+
+	# Heal-type weapons (e.g. medkit) heal the player instead of damaging enemies.
+	if weapon_data.get("type", "") == "heal":
+		heal(int(weapon_data.get("heal", 0)))
+		await _wait(weapon_swing_duration)
+		is_attacking = false
+		return
+
+	# Extract weapon stats from the fired data, falling back to the player's exported
+	# defaults when a key is missing (guards against incomplete weapon definitions).
+	var weapon_damage: int = int(weapon_data.get("damage", attack_damage))
+	var weapon_range: float = float(weapon_data.get("range", attack_range))
+	var weapon_fire_rate: float = float(weapon_data.get("fire_rate", attack_cooldown))
+
+	# Apply character attack speed multiplier to the cooldown.
+	var speed_mult: float = character_stats.attack_speed if character_stats else 1.0
+	attack_timer = weapon_fire_rate * speed_mult
+
+	# Check for enemies in range.
 	var enemies: Array = get_tree().get_nodes_in_group("enemies")
 	for enemy in enemies:
 		if not enemy.is_in_group("enemies"):
@@ -420,17 +455,10 @@ func _perform_attack() -> void:
 		if enemy.has_method("is_dead") and enemy.is_dead:
 			continue
 		var dist: float = global_transform.origin.distance_to(enemy.global_transform.origin)
-		var base_range: float = attack_range
-		var hit_range: float = base_range * (character_stats.attack_range / 2.0 if character_stats else 1.0)
+		var hit_range: float = weapon_range * (character_stats.attack_range / 2.0 if character_stats else 1.0)
 		if dist < hit_range:
 			if enemy.has_method("take_damage"):
-				var damage: int = attack_damage
-				
-				# Use the equipped weapon's damage if a WeaponSystem is present
-				if weapon_system and weapon_system.has_method("get_current_weapon_data"):
-					var wdata = weapon_system.get_current_weapon_data()
-					if wdata and wdata.has("damage") and int(wdata["damage"]) > 0:
-						damage = int(wdata["damage"])
+				var damage: int = weapon_damage
 
 				# Apply weapon multiplier from character stats
 				if character_stats:
