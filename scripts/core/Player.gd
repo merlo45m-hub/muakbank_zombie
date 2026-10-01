@@ -70,6 +70,11 @@ var _last_strong_direction: Vector3 = Vector3.FORWARD
 
 # === MOBILE STATE ===
 var mobile_move_vector: Vector2 = Vector2.ZERO
+var is_mobile_sprinting: bool = false
+
+# Touch drag camera tracking (mobile only — single touch on right half)
+var _camera_touch_index: int = -1
+var _camera_touch_last: Vector2 = Vector2.ZERO
 
 # Track start position for respawn/reset
 var _start_position: Vector3 = Vector3.ZERO
@@ -107,6 +112,10 @@ func _ready() -> void:
 		mobile_controls.attack_pressed.connect(_on_mobile_attack)
 		if mobile_controls.has_signal("special_pressed"):
 			mobile_controls.special_pressed.connect(_on_mobile_special)
+		if mobile_controls.has_signal("sprint_pressed"):
+			mobile_controls.sprint_pressed.connect(_on_mobile_sprint)
+		if mobile_controls.has_signal("jump_pressed"):
+			mobile_controls.jump_pressed.connect(_on_mobile_jump)
 
 	# Mouse capture on desktop; mobile keeps touch-visible mode
 	if OS.has_feature("android") or OS.has_feature("ios"):
@@ -135,13 +144,36 @@ func _apply_character_stats() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	# Consume mouse look here so _process doesn't double-handle.
-	# Pattern adapted from gdquest camera_controller._unhandled_input.
+	# Desktop mouse look — only when mouse is captured (standard desktop behavior).
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		if not is_dead:
 			camrot_h -= event.relative.x * h_sensitivity
 			camrot_v -= event.relative.y * v_sensitivity
 			camrot_v = clamp(camrot_v, deg_to_rad(-75), deg_to_rad(60))
+
+	# Mobile touch-drag camera look — track a single touch starting on the right half.
+	# Left half is the joystick area; UI buttons on the right are Control nodes that
+	# consume their own events via _gui_input, so unhandled touches reaching here are
+	# safe to use for camera control.
+	if OS.has_feature("android") or OS.has_feature("ios"):
+		if event is InputEventScreenTouch:
+			if event.pressed and _camera_touch_index == -1:
+				# Only track touches starting on the right half of the screen.
+				var screen_size: Vector2i = get_viewport().size
+				if event.position.x > screen_size.x / 2:
+					_camera_touch_index = event.index
+					_camera_touch_last = event.position
+			elif not event.pressed and event.index == _camera_touch_index:
+				# Touch ended — stop tracking.
+				_camera_touch_index = -1
+
+		elif event is InputEventScreenDrag:
+			if event.index == _camera_touch_index and not is_dead:
+				var delta: Vector2 = event.position - _camera_touch_last
+				camrot_h -= delta.x * h_sensitivity
+				camrot_v -= delta.y * v_sensitivity
+				camrot_v = clamp(camrot_v, deg_to_rad(-75), deg_to_rad(60))
+				_camera_touch_last = event.position
 
 
 func _process(delta: float) -> void:
@@ -240,7 +272,7 @@ func _handle_movement_input(delta: float) -> void:
 		_last_strong_direction = _camera_oriented_dir.normalized()
 
 	# 5. Sprint
-	var wants_sprint: bool = Input.is_action_pressed("sprint") and stamina > 10 and _raw_input_dir != Vector2.ZERO
+	var wants_sprint: bool = (Input.is_action_pressed("sprint") or is_mobile_sprinting) and stamina > 10 and _raw_input_dir != Vector2.ZERO
 	var speed: float = sprint_speed if wants_sprint else move_speed
 
 	if wants_sprint:
@@ -341,6 +373,15 @@ func _on_mobile_attack() -> void:
 
 func _on_mobile_special() -> void:
 	use_special_ability()
+
+func _on_mobile_sprint(active: bool) -> void:
+	is_mobile_sprinting = active
+
+func _on_mobile_jump() -> void:
+	if not is_dead and is_on_floor():
+		velocity.y = jump_velocity
+		stamina = max(0, stamina - 10)
+		emit_signal("stamina_changed", stamina, max_stamina)
 
 
 # ──────────────────────────────────────────────
