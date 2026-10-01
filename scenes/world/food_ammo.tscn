@@ -9,8 +9,8 @@ size = Vector3(0.3, 0.3, 0.3)
 size = Vector3(0.25, 0.25, 0.25)
 
 [node name="AmmoBox" type="Area3D"]
-collision_layer = 0
-collision_mask = 2
+collision_layer = 4
+collision_mask = 0
 script = ExtResource("1")
 food_type = "ammo"
 health_amount = 5

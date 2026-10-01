@@ -44,9 +44,7 @@ var current_weapon: String = "bat"
 # it (food_burger.tscn declares health_amount = 35). A second hard-coded table in
 # Game.consume_food() disagreed with the scenes on every type, so the same burger
 # healed 35 when walked over and 25 when eaten from the bar.
-# `foods` stays as a flat log of collection order.
 var _inventory: Dictionary = {}
-var foods: Array = []
 var attack_timer: float = 0.0
 var weapon_tween: Tween = null
 var special_timer: float = 0.0
@@ -623,20 +621,15 @@ func get_food_heal(food_type: String) -> int:
 	return int(entry.get("heal", 0)) if entry is Dictionary else 0
 
 func add_food(food_type: String, heal: int) -> void:
-	# Single write path for the inventory, so `foods` (the flat log) and `_inventory`
-	# (the counts) can never drift apart.
 	var entry = _inventory.get(food_type)
 	if entry is Dictionary:
 		entry["count"] = int(entry["count"]) + 1
-		# Keep the freshest declared heal in case the scene value changed.
 		entry["heal"] = heal
 	else:
 		_inventory[food_type] = {"count": 1, "heal": heal}
-	foods.append(food_type)
 	emit_signal("food_picked_up", food_type)
 
 func consume_food_type(food_type: String) -> bool:
-	# Removes exactly one of the type and keeps the flat `foods` log in sync.
 	var entry = _inventory.get(food_type)
 	if not entry is Dictionary or int(entry.get("count", 0)) <= 0:
 		return false
@@ -645,7 +638,6 @@ func consume_food_type(food_type: String) -> bool:
 		entry["count"] = remaining
 	else:
 		_inventory.erase(food_type)
-	foods.erase(food_type)
 	emit_signal("food_picked_up", food_type)
 	return true
 
@@ -711,20 +703,8 @@ func _on_FoodArea_area_entered(area: Area3D) -> void:
 	add_food(food_type, heal)
 
 
-func _on_PickupArea_area_entered(area: Area3D) -> void:
-	if not area.is_in_group("weapon"):
-		return
-	# Same node-shape as food: the WeaponPickup script is on the Area3D root
-	# (weapon_pickup_bat.tscn:12), and it exposes `weapon_id` — not the
-	# get_weapon_name() the old code looked for, so weapon pickups never fired either.
-	var weapon_id: String = area.get("weapon_id") if area.get("weapon_id") != null else ""
-	if weapon_id.is_empty():
-		return
-	equip_weapon(weapon_id)
-	if area.has_method("take"):
-		area.take()
-	else:
-		area.queue_free()
+# PickupArea (mask=256) matched nothing in the scene — dead code removed.
+# WeaponPickup._on_body_entered handles weapon collection via its own body_entered.
 
 
 func _on_EnemyHitbox_body_entered(body: Node3D) -> void:
