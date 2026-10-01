@@ -87,7 +87,7 @@ func get_level_name(level: int) -> String:
 func get_difficulty(level: int) -> float:
 	if difficulty_map.has(level):
 		return difficulty_map[level]
-	return 1.0
+	return 2.5 + (level - 8) * 0.3
 
 func get_enemy_pool(level: int) -> Array:
 	if enemy_pool_map.has(level):

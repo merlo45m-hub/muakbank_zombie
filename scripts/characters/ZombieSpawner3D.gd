@@ -152,9 +152,9 @@ func _get_pool_for_type(zombie_type: String) -> Dictionary:
 #  SPAWNING
 # ──────────────────────────────────────────────
 
-func start_spawning(level: int = 1) -> void:
+func start_spawning() -> void:
 	can_spawn = true
-	current_level = level
+	current_level = Save.get_current_level()
 	spawn_timer.start(spawn_interval)
 	print("[ZombieSpawner] Started spawning zombies")
 

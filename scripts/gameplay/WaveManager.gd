@@ -21,6 +21,7 @@ var wave_active: bool = false
 var wave_timer: float = 0.0
 
 @onready var spawner: Node3D = get_node_or_null("../ZombieSpawner")
+@onready var difficulty_manager: Node = get_node_or_null("../DifficultyManager")
 
 var _level: int = 1
 
@@ -75,7 +76,11 @@ func _spawn_boss() -> void:
 	zombies_alive += 1
 	if boss.has_signal("died"):
 		boss.died.connect(_on_boss_died)
-	print("[WaveManager] BOSS spawned!")
+		print("[WaveManager] BOSS spawned!")
+		# Apply difficulty scaling — the spawner is bypassed here, so do it manually
+		var diff_mult = difficulty_manager.get_level_difficulty(_level) if difficulty_manager else 1.0
+		if boss.has_method("apply_difficulty"):
+			boss.apply_difficulty(diff_mult)
 
 func _on_boss_died() -> void:
 	zombies_alive -= 1

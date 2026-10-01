@@ -37,6 +37,14 @@ const DEATH_PARAMS: Dictionary = {
 # === DIFFICULTY MULTIPLIER (set by spawner at spawn time) ===
 var difficulty_multiplier: float = 1.0
 
+# === BASE STATS (snapshot in _ready, used by apply_difficulty for safe scaling) ===
+# Stored so apply_difficulty always scales from the original values and reset_for_pool
+# can restore them on pool return. Without these, object pooling causes exponential
+# inflation: each reuse multiplies an already-scaled stat (2.5x → 6.25x → 15.6x).
+var base_max_health: int = 0
+var base_damage: int = 0
+var base_move_speed: float = 0.0
+
 # === AI CONFIGURATION ===
 # Separation stops a horde from collapsing into a single point at the player's feet.
 # SCAN_RADIUS is the broadphase cutoff so we don't test every enemy; RADIUS is where
@@ -87,6 +95,11 @@ var current_state: AIState = AIState.IDLE
 
 func _ready() -> void:
 	health = max_health
+	# Snapshot base stats before any difficulty scaling, so apply_difficulty
+	# always scales from the original values and reset_for_pool can restore them.
+	base_max_health = max_health
+	base_damage = damage
+	base_move_speed = move_speed
 	add_to_group("enemies")
 	if mesh:
 		_mesh_rest_xform = mesh.transform  # pristine transform, restored by reset_for_pool()
@@ -445,7 +458,13 @@ func reset_for_pool() -> void:
 	# the object pool (called before add_child on every reuse).
 	is_dead = false
 	dead = false
-	health = max_health
+	# Restore stats to base values so apply_difficulty scales from the original
+	# numbers on the next checkout — without this, pool reuse compounds the multiplier.
+	max_health = base_max_health
+	health = base_max_health
+	damage = base_damage
+	move_speed = base_move_speed
+	difficulty_multiplier = 1.0
 	current_state = AIState.IDLE
 	is_attacking = false
 	attack_timer = 0.0
@@ -581,13 +600,16 @@ func _wait(sec: float) -> bool:
 
 func apply_difficulty(multiplier: float) -> void:
 	"""Scale enemy stats based on difficulty multiplier.
-	
+
 	Called by ZombieSpawner3D at spawn time. The multiplier combines the
 	static per-level difficulty (LevelManager.difficulty_map) with the
 	dynamic difficulty (DifficultyManager.current_difficulty).
+
+	Scales FROM base stats (captured in _ready) so that object-pool reuse
+	does not compound the multiplier on already-scaled values.
 	"""
 	difficulty_multiplier = multiplier
-	max_health = int(max_health * multiplier)
-	health = int(health * multiplier)
-	damage = int(damage * multiplier)
-	move_speed = move_speed * multiplier
+	max_health = int(base_max_health * multiplier)
+	health = max_health
+	damage = int(base_damage * multiplier)
+	move_speed = base_move_speed * multiplier
