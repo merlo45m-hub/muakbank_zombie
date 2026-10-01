@@ -4,6 +4,8 @@
 
 extends Node3D
 
+const DevMenu = preload("res://scripts/ui/DevMenu.gd")
+
 # === NODE REFS ===
 @onready var play_btn = $VBoxMain/ButtonContainer/PlayBtn
 @onready var level_btn = $VBoxMain/ButtonContainer/LevelBtn
@@ -37,6 +39,9 @@ func _ready() -> void:
 	
 	# Animate title text
 	_animate_title()
+
+	# Install dev menu if dev mode is active
+	DevMenu.install_on(self)
 
 
 func _update_stats():
