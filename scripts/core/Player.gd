@@ -759,11 +759,14 @@ func _apply_character_model() -> void:
 	if not mdl:
 		return
 	visuals.add_child(mdl)
-	_normalise_model_transform(mdl)
+	var aabb := _model_aabb(mdl)
+	var h := aabb.size.y
+	_normalise_model_transform(mdl, aabb)
+	var mesh_nodes := _collect_mesh_nodes(mdl)
 	_hide_placeholder_meshes(visuals, mdl)
-	_apply_model_material(mdl)
+	_apply_model_material(mesh_nodes)
 	_play_model_animations(mdl)
-	_report_model_stats(mdl, path)
+	_report_model_stats(mdl, path, h)
 
 func _selected_character_id() -> String:
 	var save := get_node_or_null("/root/Save")
@@ -771,8 +774,9 @@ func _selected_character_id() -> String:
 		return String(save.get("selected_character"))
 	return "gamer"
 
-func _normalise_model_transform(mdl: Node3D) -> void:
-	var aabb := _model_aabb(mdl)
+func _normalise_model_transform(mdl: Node3D, aabb: AABB) -> void:
+	# The exported GLBs come at wildly different scales, so measure the real
+	# bounding box and scale to human height, then drop it onto the origin.
 	var h := aabb.size.y
 	if h > 0.01:
 		var s := CHARACTER_HEIGHT / h
@@ -780,18 +784,31 @@ func _normalise_model_transform(mdl: Node3D) -> void:
 		mdl.position.y = -aabb.position.y * s
 	mdl.rotate_y(MODEL_YAW_OFFSET)
 
+func _collect_mesh_nodes(mdl: Node3D) -> Array[MeshInstance3D]:
+	# Walk the tree ONCE and collect all MeshInstance3D nodes. The old code
+	# traversed the tree three separate times (visibility, materials, stats).
+	var out: Array[MeshInstance3D] = []
+	for mi in mdl.find_children("*", "MeshInstance3D", true, false):
+		out.append(mi as MeshInstance3D)
+	return out
+
 func _hide_placeholder_meshes(visuals: Node3D, mdl: Node3D) -> void:
+	# The placeholder capsule/head stay as a fallback only.
 	for mi in visuals.find_children("*", "MeshInstance3D", true, false):
 		if not mdl.is_ancestor_of(mi):
 			(mi as MeshInstance3D).visible = false
 
-func _apply_model_material(mdl: Node3D) -> void:
+func _apply_model_material(mesh_nodes: Array[MeshInstance3D]) -> void:
+	# The shipped GLBs carry NO materials (verified in the GLB JSON: every model is
+	# one primitive with no material index), so they render as Godot's default
+	# white — backlit at night that reads as a flat dark blob with no silhouette
+	# detail. Give them a consistent readable surface.
 	var skin := StandardMaterial3D.new()
-	skin.albedo_color = Color(0.34, 0.07, 0.09)
+	skin.albedo_color = Color(0.34, 0.07, 0.09)  # dark blood-red: pale cream vanished against the pale plaza floor
 	skin.roughness = 0.85
 	skin.metallic = 0.0
-	for mi in mdl.find_children("*", "MeshInstance3D", true, false):
-		(mi as MeshInstance3D).material_override = skin
+	for mi in mesh_nodes:
+		mi.material_override = skin
 
 func _play_model_animations(mdl: Node3D) -> void:
 	for n in mdl.find_children("*", "AnimationPlayer", true, false):
@@ -800,8 +817,7 @@ func _play_model_animations(mdl: Node3D) -> void:
 		if list.size() > 0 and not ap.is_playing():
 			ap.play(list[0])
 
-func _report_model_stats(mdl: Node3D, path: String) -> void:
-	var aabb := _model_aabb(mdl)
+func _report_model_stats(mdl: Node3D, path: String, raw_height: float) -> void:
 	var verts := 0
 	for mi in mdl.find_children("*", "MeshInstance3D", true, false):
 		var mm := (mi as MeshInstance3D).mesh
@@ -810,7 +826,7 @@ func _report_model_stats(mdl: Node3D, path: String) -> void:
 				var arr := mm.surface_get_arrays(si)
 				if arr.size() > 0 and arr[0] != null:
 					verts += (arr[0] as PackedVector3Array).size()
-	print("[Player] character model: %s  raw_h=%.3f  scale=%.3f  verts=%d" % [path, aabb.size.y, mdl.scale.y, verts])
+	print("[Player] character model: %s  raw_h=%.3f  scale=%.3f  verts=%d" % [path, raw_height, mdl.scale.y, verts])
 	if verts < 200:
 		push_warning("[Player] character model %s has only %d verts - it is a blockout placeholder" % [path, verts])
 
