@@ -62,7 +62,7 @@ How we attack game development: 9 sections, each independently testable, each wi
 - Write-only `foods` flat log removed. Dead `_on_PickupArea` weapon path removed.
 - `eat_food` objective was advanced inside dead `on_food_eaten`. Now in `consume_food`.
 
-## Section 5: HUD & UI — IN PROGRESS
+## Section 5: HUD & UI — COMPLETE
 
 **Scope:** Health bar, food bar, score display, pause menu, settings, level transitions
 
@@ -72,7 +72,17 @@ How we attack game development: 9 sections, each independently testable, each wi
 
 **Files:** `scenes/main/HUD.tscn`, `scenes/main/pause_menu.tscn`, `scripts/ui/`
 
-## Section 6: Level Progression
+**Commits:** `36a27b5` (anti-slop sweep), `66c9666` (Sprite3D fix, god function split, audio), `c86c3cd` (review fixes)
+
+**Lessons:**
+- 29 emoji removed across 9 UI files (HUD, pause, settings, game_over, level_select, credits + their .tscn). Anti-slop rule: named text labels, never glyphs.
+- `Sprite2D` cannot be a child of `Node3D` — TitleScreen food decor silently did not render. Fixed to `Sprite3D` with billboard, then corrected from 2D pixel coords to 3D metric coords (agy CRITICAL: (80, 420) is outside the camera frustum).
+- `_select_character()` called `change_scene_to_file()` on `_ready()` — skipped the whole character select menu. Removed; scene transition is a separate step.
+- Local `_play_click()` helpers in Settings/LevelSelect bypassed `Audio.play_click()` (no pitch variation). Standardized.
+- Copy-paste style functions in CharacterSelect.gd → one `make_style()` helper + 10 color constants.
+- ⚔ emoji in game.tscn + character_gamer.tscn → "VS".
+
+## Section 6: Level Progression — COMPLETE
 
 **Scope:** Level transitions, difficulty curves, win/lose conditions, unlock logic
 
@@ -81,6 +91,17 @@ How we attack game development: 9 sections, each independently testable, each wi
 **Test:** on-device playthrough
 
 **Files:** `scripts/core/LevelManager.gd`, `scripts/core/Game.gd`, `scenes/world/`
+
+**Commits:** `3bdf8e8` (difficulty wiring, per-level scaling, MAX_LEVELS), `d2aa772` (review fixes)
+
+**Lessons:**
+- `DifficultyManager.get_enemy_health_multiplier()` etc. were DEAD CODE — difficulty only affected spawn rate, never enemy stats. Wired via `apply_difficulty()`.
+- `apply_difficulty()` mutated stats in-place → pooled zombies inflated exponentially (2.5x → 6.25x → 15.6x). Must scale FROM stored base stats and reset on pool return.
+- `start_spawning(level: int = 1)` default parameter → WaveManager's arg-less call reset the level to 1 on wave 2. Read `Save.get_current_level()` internally instead of taking a parameter.
+- `zombies_to_kill = 5` was hardcoded but WaveManager spawned 23 — player won midway through wave 2. Level completion now driven by WaveManager's `all_waves_cleared` signal, not a kill quota.
+- `MAX_LEVELS = 30` but only 8 environments exist — levels 9-30 fell back to level 1. Now `Level.get_level_count()`.
+- Boss spawn bypassed the spawner, so it never got `apply_difficulty()`. Bosses were weaker than the horde on high levels.
+- `get_difficulty()` returned 1.0 for unmapped levels — difficulty reset above level 8. Now `2.5 + (level-8)*0.3`.
 
 ## Section 7: Audio & Feedback
 
@@ -126,7 +147,23 @@ How we attack game development: 9 sections, each independently testable, each wi
   - 8 real bugs fixed; 2 reviewer findings rejected with evidence (both false positives)
   - Verified: 6/6 harness, clean boot, runtime probe (died signal = 1 conn across reuse)
   - APK installed, hash a6dfefa8… byte-identical to build artifact
-- Sections 4-9: NOT STARTED
+- Section 4: COMPLETE (commits 6312974, 0ebfcdf, 3b88b52, 94d7740, e4287ed)
+  - Food economy was 100% dead — fixed pickup, signal arity, game group, double-heal, collision layers
+  - Anti-slop pass + review fixes
+  - Verified: real-FoodSpawner probe (pickup → inventory → HUD → consume → score), 6/6 harness
+- Section 5: COMPLETE (commits 36a27b5, 66c9666, c86c3cd)
+  - 29 emoji removed, copy-paste dedup, magic numbers, dead code
+  - Sprite2D→Sprite3D, `_select_character()` god function split, audio standardized
+  - Review: agy 10 findings (6 valid, 4 borderline rejected). pi review failed (noise, no output).
+  - Verified: boot clean, 6/6 harness
+- Section 6: COMPLETE (commits 3bdf8e8, d2aa772)
+  - Difficulty wiring (was dead code), per-level scaling, win condition (was trivially easy), MAX_LEVELS fix
+  - Review: agy 5 findings (all valid). pi review failed (969KB runaway thinking, no findings).
+  - Two self-introduced agent bugs caught and fixed (broken indentation, wrong objective call)
+  - Verified: boot clean, 6/6 harness
+- **Section 7: Audio & Feedback — NOT STARTED (next)**
+- Section 8: Save & Persistence — NOT STARTED
+- Section 9: Polish & Performance — NOT STARTED
 
 ## Reviewer notes (Section 3)
 
