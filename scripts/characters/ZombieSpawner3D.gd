@@ -23,6 +23,7 @@ var player: Node3D = null
 var active_zombies: Array = []
 var can_spawn: bool = false
 var difficulty_manager: Node = null
+var current_level: int = 1
 
 @onready var spawn_timer: Timer = $SpawnTimer
 
@@ -151,8 +152,9 @@ func _get_pool_for_type(zombie_type: String) -> Dictionary:
 #  SPAWNING
 # ──────────────────────────────────────────────
 
-func start_spawning() -> void:
+func start_spawning(level: int = 1) -> void:
 	can_spawn = true
+	current_level = level
 	spawn_timer.start(spawn_interval)
 	print("[ZombieSpawner] Started spawning zombies")
 
@@ -298,6 +300,12 @@ func _spawn_random_zombie() -> void:
 	if vfn_field_ready and vfn_field:
 		if zombie.has_method("set_vfn_field"):
 			zombie.set_vfn_field(vfn_field)
+
+	# Apply difficulty-based stat scaling
+	if difficulty_manager and difficulty_manager.has_method("get_level_difficulty"):
+		var diff_mult = difficulty_manager.get_level_difficulty(current_level)
+		if zombie.has_method("apply_difficulty"):
+			zombie.apply_difficulty(diff_mult)
 
 	# Trigger spawn scale-in on the animator (duck-typed — safe if absent).
 	var _sa := zombie.get_node_or_null("ProceduralAnimator") as Node

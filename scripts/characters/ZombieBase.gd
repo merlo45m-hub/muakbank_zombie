@@ -34,6 +34,9 @@ const DEATH_PARAMS: Dictionary = {
 @export var attack_cooldown_time: float = 1.5
 @export var fade_duration: float = 0.5
 
+# === DIFFICULTY MULTIPLIER (set by spawner at spawn time) ===
+var difficulty_multiplier: float = 1.0
+
 # === AI CONFIGURATION ===
 # Separation stops a horde from collapsing into a single point at the player's feet.
 # SCAN_RADIUS is the broadphase cutoff so we don't test every enemy; RADIUS is where
@@ -573,3 +576,18 @@ func _wait(sec: float) -> bool:
 		return false
 	await t.create_timer(sec).timeout
 	return is_instance_valid(self) and is_inside_tree()
+
+# ── DIFFICULTY ──────────────────────────────────────────────────
+
+func apply_difficulty(multiplier: float) -> void:
+	"""Scale enemy stats based on difficulty multiplier.
+	
+	Called by ZombieSpawner3D at spawn time. The multiplier combines the
+	static per-level difficulty (LevelManager.difficulty_map) with the
+	dynamic difficulty (DifficultyManager.current_difficulty).
+	"""
+	difficulty_multiplier = multiplier
+	max_health = int(max_health * multiplier)
+	health = int(health * multiplier)
+	damage = int(damage * multiplier)
+	move_speed = move_speed * multiplier
