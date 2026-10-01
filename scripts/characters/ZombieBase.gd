@@ -34,6 +34,26 @@ const DEATH_PARAMS: Dictionary = {
 @export var attack_cooldown_time: float = 1.5
 @export var fade_duration: float = 0.5
 
+# === AI CONFIGURATION ===
+# Separation stops a horde from collapsing into a single point at the player's feet.
+# SCAN_RADIUS is the broadphase cutoff so we don't test every enemy; RADIUS is where
+# the push actually starts, and FORCE scales the overlap depth into a velocity nudge.
+const SEPARATION_SCAN_RADIUS = 3.0
+const SEPARATION_RADIUS = 1.5
+const SEPARATION_FORCE = 2.0
+# Attackers are planted (velocity zeroed), so full-strength separation would slide
+# them straight off the player. A fraction lets them jostle for the ring instead.
+const ATTACK_SEPARATION_FACTOR = 0.3
+
+# AI LOD: distant zombies still drift toward the player, but skip the state machine
+# and VFN lookup — that is where the per-frame cost actually lives. The trigger is
+# derived from detection_range instead of a flat 25m: zombies abandon the chase at
+# detection_range * 1.8, so a fixed 25m sat past the give-up range of every common
+# type and the block almost never ran.
+const LOD_DISTANCE_FACTOR = 1.2
+const LOD_INTERVAL = 0.5
+const LOD_SPEED_FACTOR = 0.5
+
 # === STATE ===
 var health: int
 var is_dead: bool = false
@@ -42,6 +62,7 @@ var is_attacking: bool = false
 var attack_timer: float = 0.0
 var hit_flash_tween: Tween = null
 var is_hidden: bool = false
+var _lod_timer: float = 0.0
 
 # === POOLING SUPPORT ===
 var dead: bool = false          # Object-pool compatibility: must be false when alive, true when in dead pool
@@ -104,7 +125,37 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
+	# Cooldown ticks on every frame, including LOD frames — freezing it while a
+	# zombie is far away left its attack timer stale on re-approach.
 	_attack_timer_tick(delta)
+
+	# AI LOD: past the LOD distance a zombie stops running the state machine and
+	# VFN lookup (the expensive parts) and just drifts at the player on a slow tick.
+	var player = get_tree().get_first_node_in_group("player")
+	if player:
+		var dist_to_player = global_transform.origin.distance_to(player.global_transform.origin)
+		if dist_to_player > detection_range * LOD_DISTANCE_FACTOR:
+			_lod_timer += delta
+			if _lod_timer < LOD_INTERVAL:
+				if target:
+					var dir = (target.global_transform.origin - global_transform.origin).normalized()
+					dir.y = 0
+					velocity.x = dir.x * move_speed * LOD_SPEED_FACTOR
+					velocity.z = dir.z * move_speed * LOD_SPEED_FACTOR
+					# Distant hordes are where clumping starts, so separation has to
+					# run on the LOD path too — not only once they arrive.
+					_apply_separation()
+				else:
+					# Targetless (player freed, or a spawn the idle scan has not picked
+					# up yet). Without this the zombie keeps its last horizontal
+					# velocity and slides off forever, since the damp below is skipped.
+					velocity.x = move_toward(velocity.x, 0, 6 * delta)
+					velocity.z = move_toward(velocity.z, 0, 6 * delta)
+				if is_inside_tree():
+					move_and_slide()
+				return
+			_lod_timer = 0.0
+			# Fall through to a full state machine update this tick.
 
 	match current_state:
 		AIState.IDLE:
@@ -119,6 +170,12 @@ func _physics_process(delta: float) -> void:
 	if current_state != AIState.ATTACK:
 		velocity.x = move_toward(velocity.x, 0, 6 * delta)
 		velocity.z = move_toward(velocity.z, 0, 6 * delta)
+	else:
+		# An attacker plants its feet. The damp above deliberately skips ATTACK, so
+		# without this the zombie keeps its chase velocity and slides into the player
+		# for the whole swing.
+		velocity.x = 0.0
+		velocity.z = 0.0
 
 	# ── VFN OVERRIDE: if a field is set and we're chasing, use vector field ──
 	if vfn_field and current_state == AIState.CHASE:
@@ -129,6 +186,15 @@ func _physics_process(delta: float) -> void:
 			if mesh:
 				var rot = atan2(vfn_vec.x, vfn_vec.z)
 				mesh.rotation.y = lerp_angle(mesh.rotation.y, rot, 8 * delta)
+
+	# Local avoidance runs last so it composes with navigation instead of being
+	# overwritten by it. ATTACK is included deliberately — the ring of zombies pressed
+	# against the player is exactly the cluster that needs separating — but at reduced
+	# strength, so attackers jostle for position instead of sliding off the player.
+	if current_state == AIState.CHASE:
+		_apply_separation()
+	elif current_state == AIState.ATTACK:
+		_apply_separation(ATTACK_SEPARATION_FACTOR)
 
 	# Guarded: the frame log showed three 'Condition "!is_inside_tree()" is true' errors with
 	# a backtrace ending here. A zombie can be freed (killed, despawned, level change) between
@@ -177,7 +243,9 @@ func _chase(delta: float) -> void:
 		target = null
 		return
 
-	if dist < attack_range:
+	# Subtypes decide whether to commit to an attack here — a runner deals contact
+	# damage and never stops, so it overrides _should_engage() to stay in CHASE.
+	if _should_engage(dist):
 		current_state = AIState.ATTACK
 		return
 
@@ -192,6 +260,36 @@ func _chase(delta: float) -> void:
 		mesh.rotation.y = lerp_angle(mesh.rotation.y, rot, 8 * delta)
 
 
+func _apply_separation(strength: float = 1.0) -> void:
+	# Local avoidance, layered on top of whatever global navigation produced (VFN
+	# vector or direct chase). It must run AFTER navigation — applying it inside
+	# _chase() meant the VFN override silently overwrote it, so hordes still piled up.
+	# `strength` scales it down for stationary attackers, which should jostle for
+	# position rather than slide.
+	var separation_vec = Vector3.ZERO
+	for other in get_tree().get_nodes_in_group("enemies"):
+		if other == self or not is_instance_valid(other):
+			continue
+		# The group is nominally ZombieBase-only, but a future decoy/turret that
+		# joins it must not crash every separation pass on a transform access.
+		if not (other is Node3D):
+			continue
+		if other is ZombieBase and other.is_dead:
+			continue
+		var to_other = global_transform.origin - other.global_transform.origin
+		var other_dist = to_other.length()
+		if other_dist < 0.01 or other_dist > SEPARATION_SCAN_RADIUS:
+			continue
+		if other_dist < SEPARATION_RADIUS:
+			var overlap = SEPARATION_RADIUS - other_dist
+			separation_vec += to_other.normalized() * overlap * SEPARATION_FORCE
+	# Clamp to the zombie's own move speed — an unclamped sum over a dense horde
+	# can add many times move_speed and launch zombies erratically.
+	separation_vec = separation_vec.limit_length(move_speed) * strength
+	velocity.x += separation_vec.x
+	velocity.z += separation_vec.z
+
+
 func _attack(delta: float) -> void:
 	if not target or is_dead:
 		current_state = AIState.IDLE
@@ -201,7 +299,6 @@ func _attack(delta: float) -> void:
 	if dist > attack_range * 1.3:
 		current_state = AIState.CHASE
 		return
-
 	if attack_timer <= 0 and not is_attacking:
 		_perform_attack()
 
@@ -209,6 +306,12 @@ func _attack(delta: float) -> void:
 func _special_behavior(delta: float) -> void:
 	"""Override for unique behaviors (pounce, stalk, etc.)"""
 	pass
+
+
+func _should_engage(dist: float) -> bool:
+	"""Whether a chasing zombie should commit to an attack at this distance.
+	Overridden by subtypes whose threat model differs — a runner never stops."""
+	return dist < attack_range
 
 
 # ── COMBAT ─────────────────────────────────────────────────────
@@ -345,6 +448,7 @@ func reset_for_pool() -> void:
 	attack_timer = 0.0
 	target = null
 	hit_flash_tween = null
+	_lod_timer = 0.0
 	show()
 	process_mode = Node.PROCESS_MODE_INHERIT
 	# Parked instances are taken out of the tree with collisions zeroed (see

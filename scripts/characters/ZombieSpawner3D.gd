@@ -22,6 +22,7 @@ var zombie_spitter_scene = preload("res://scenes/characters/zombie_spitter.tscn"
 var player: Node3D = null
 var active_zombies: Array = []
 var can_spawn: bool = false
+var difficulty_manager: Node = null
 
 @onready var spawn_timer: Timer = $SpawnTimer
 
@@ -47,6 +48,12 @@ func _ready() -> void:
 	# idempotent so a future scene-level connection can't double-fire it.
 	if not spawn_timer.timeout.is_connected(_spawn_random_zombie):
 		spawn_timer.timeout.connect(_spawn_random_zombie)
+
+	# --- Find DifficultyManager for dynamic spawn tuning ---
+	# It is a child of the Game root, NOT an autoload — "/root/DifficultyManager"
+	# resolved to null forever and the whole tuning path silently fell back to the
+	# exported defaults. The spawner is a sibling of it under Game.
+	difficulty_manager = get_node_or_null("../DifficultyManager")
 
 	# --- Try to find a VFN map in the scene ---
 	vfn_map = get_node_or_null("VFNMap")
@@ -164,8 +171,19 @@ func stop_spawning() -> void:
 func _spawn_random_zombie() -> void:
 	if not can_spawn or not player:
 		return
-	if active_zombies.size() >= max_zombies:
-		spawn_timer.start(spawn_interval)
+	# Use dynamic limits from DifficultyManager when available; fall back to
+	# the exported defaults so the spawner works standalone.
+	# Difficulty SCALES the configured values rather than replacing them, so the
+	# WaveManager (which sets max_zombies per wave) stays the authority.
+	var effective_max = max_zombies
+	var effective_interval = spawn_interval
+	if difficulty_manager:
+		if difficulty_manager.has_method("get_max_zombies_multiplier"):
+			effective_max = int(max_zombies * difficulty_manager.get_max_zombies_multiplier())
+		if difficulty_manager.has_method("get_spawn_interval"):
+			effective_interval = spawn_interval * difficulty_manager.get_spawn_interval()
+	if active_zombies.size() >= effective_max:
+		spawn_timer.start(effective_interval)
 		return
 
 	# Pick a random type
@@ -219,6 +237,25 @@ func _spawn_random_zombie() -> void:
 	if spawn_pos.y > player.global_transform.origin.y + 3.0:
 		spawn_pos.y = player.global_transform.origin.y
 
+	# --- Spawn wall check ---
+	# Cast from the player's chest toward the proposed spawn. The player is excluded
+	# (its own capsule would otherwise register as a hit) and only horizontal
+	# distance counts — the 1.5m lift would make a real wall read as >1m away.
+	# A rejected angle retries next timer tick (SpawnTimer is not one-shot).
+	var wall_query = PhysicsRayQueryParameters3D.create(
+		player.global_transform.origin + Vector3(0, 1.5, 0),
+		spawn_pos + Vector3(0, 1.5, 0)
+	)
+	if player is CollisionObject3D:
+		wall_query.exclude = [player.get_rid()]
+	var wall_result = space_state.intersect_ray(wall_query) if space_state else null
+	if wall_result:
+		var hit_flat = Vector2(wall_result.position.x, wall_result.position.z)
+		var spawn_flat = Vector2(spawn_pos.x, spawn_pos.z)
+		if hit_flat.distance_to(spawn_flat) < 1.0:
+			blocked_spawns += 1
+			return
+
 	# Mark as pool-managed and restore pristine state before it re-enters the world
 	zombie.set("pooled", true)
 	if zombie.has_method("reset_for_pool"):
@@ -232,15 +269,20 @@ func _spawn_random_zombie() -> void:
 	active_zombies.append(zombie)
 	zombie.set("zombie_type", zombie_type)
 
-	# Connect the died signal. The handler is bound with arguments, so
-	# is_connected() cannot recognise an earlier binding — on pooled reuse the
-	# zombie carries its previous connection, which would fire the handler
-	# twice (double loot + double pool return). Disconnect stale bindings first.
+	# Connect the died signal. The handler is bound with arguments, so the bound
+	# Callable is NOT the same object as the bare method reference — disconnect()
+	# with the bare name silently fails ("nonexistent connection") on every spawn.
+	# Keep the exact bound Callable on the zombie so a pooled reuse can drop its
+	# previous connection instead of firing the handler twice.
 	if zombie.has_signal("died"):
-		for c in zombie.died.get_connections():
-			if c.callable.get_method() == "_on_zombie_died":
-				zombie.died.disconnect(c.callable)
-		zombie.died.connect(_on_zombie_died.bind(zombie, zombie_type))
+		# Untyped: get() returns Nil on a zombie's first spawn (the property does not
+		# exist yet) and assigning that to a typed Callable is itself an error.
+		var prev = zombie.get("_died_callable")
+		if prev is Callable and prev.is_valid() and zombie.died.is_connected(prev):
+			zombie.died.disconnect(prev)
+		var bound := _on_zombie_died.bind(zombie, zombie_type)
+		zombie.died.connect(bound)
+		zombie.set("_died_callable", bound)
 
 	# Store a reference to the pool entry on the zombie so _on_zombie_died can return it
 	zombie.set("pool_entry", pool_entry)
@@ -262,7 +304,7 @@ func _spawn_random_zombie() -> void:
 	if _sa and _sa.has_method("trigger_spawn"):
 		_sa.trigger_spawn()
 
-	spawn_timer.start(spawn_interval)
+	spawn_timer.start(effective_interval)
 
 
 func _return_to_pool(zombie: Node3D) -> void:
@@ -329,6 +371,12 @@ func _update_vfn_target() -> void:
 
 
 var _vfn_recalc_timer: float = 0.0
+# Counts spawn attempts rejected by the wall check. Without it a bug in that check
+# just looks like "fewer zombies than expected" — indistinguishable from tuning.
+var blocked_spawns: int = 0
+# 0.5s, not 0.25s: the field is recalculated with the player as its ONLY target,
+# so halving the interval doubles the thread wakeups for a marginally fresher
+# player position. The zombie positions are not part of the field.
 const VFN_RECALC_INTERVAL: float = 0.5
 
 func _process(delta: float) -> void:

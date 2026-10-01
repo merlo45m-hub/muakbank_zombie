@@ -106,10 +106,14 @@ How we attack game development: 9 sections, each independently testable, each wi
 - Section 1: COMPLETE (commit 1266b45)
   - Mobile camera rotation, sprint/jump buttons, anti-slop cleanup
   - Verified: 6/6 harness, clean boot, no crash
-- Section 2: IN PROGRESS
-  - Critical: WeaponSystem bypassed, no weapon switch on mobile, no ammo HUD, emoji icons
-  - 3 agents dispatched for fixes
-- Sections 3-9: NOT STARTED
+- Section 2: COMPLETE (commit 06c9b70)
+  - WeaponSystem wired, medkit healing, cooldown, weapon switch, emoji→text
+  - 3 bugs found & fixed (heal path, cooldown, tick)
+  - Verified: 6/6 harness, clean boot, no crash
+- Section 3: IN PROGRESS
+  - Scope: VFN navigation, spawn pacing, object pooling, difficulty scaling
+  - 3 agents dispatched for review & fixes
+- Sections 4-9: NOT STARTED
 
 ## Anti-Slop Principles
 
