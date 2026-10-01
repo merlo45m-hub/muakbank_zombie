@@ -5,6 +5,14 @@
 
 extends Node3D
 
+const DevMode := preload("res://scripts/core/DevMode.gd")
+
+const TITLE_CAM_FOV = 62.0
+const TITLE_CAM_NEAR = 0.1
+const TITLE_CAM_FAR = 120.0
+const TITLE_CAM_POSITION = Vector3(-0.3, 1.5, 2.6)
+const TITLE_CAM_TARGET = Vector3(-0.7, 0.95, -5.3)
+
 ## Zombie spawn points: (x, z, scale, model_path)
 # Spawn points must sit INSIDE the camera's cone. Godot's fov is vertical, so this portrait
 # viewport has only ~30 degrees of HORIZONTAL field: at 5 m the visible band is about 2.5 m
@@ -32,18 +40,18 @@ func _setup_camera() -> void:
 	if cam == null:
 		printerr("[TitleBackground] no Camera child found - framing unchanged")
 		return
-	print("[TitleBackground] _setup_camera before: ", cam.global_position, " fov=", cam.fov, " in_tree=", is_inside_tree(), " parent=", get_parent().name if get_parent() else "<none>")
-	cam.fov = 62.0
-	cam.near = 0.1
-	cam.far = 120.0
-	# Aim at the tombstone cluster's centroid rather than straight down the empty middle of the
-	# field: from (0,1.55,8) the look axis passed between every prop, which is what produced
-	# two flat featureless bands. Closer eye, graves and animals inside the narrow portrait cone.
-	cam.global_position = Vector3(-0.3, 1.5, 2.6)
-	cam.look_at(Vector3(-0.7, 0.95, -5.3), Vector3.UP)
-	print("[TitleBackground] _setup_camera after: ", cam.global_position, " fov=", cam.fov)
+	if DevMode.is_active():
+		print("[TitleBackground] _setup_camera before: ", cam.global_position, " fov=", cam.fov, " in_tree=", is_inside_tree(), " parent=", get_parent().name if get_parent() else "<none>")
+	cam.fov = TITLE_CAM_FOV
+	cam.near = TITLE_CAM_NEAR
+	cam.far = TITLE_CAM_FAR
+	cam.global_position = TITLE_CAM_POSITION
+	cam.look_at(TITLE_CAM_TARGET, Vector3.UP)
+	if DevMode.is_active():
+		print("[TitleBackground] _setup_camera after: ", cam.global_position, " fov=", cam.fov)
 	await get_tree().process_frame
-	print("[TitleBackground] _setup_camera next_frame: ", cam.global_position, " fov=", cam.fov)
+	if DevMode.is_active():
+		print("[TitleBackground] _setup_camera next_frame: ", cam.global_position, " fov=", cam.fov)
 
 
 func _load_zombies() -> void:

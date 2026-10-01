@@ -69,7 +69,7 @@ size_flags_vertical = 2
 
 [node name="BackBtn" type="Button" parent="VBoxMain"]
 layout_mode = 2
-text = "⬅ BACK"
+text = "BACK"
 custom_minimum_size = Vector2(200, 50)
 theme_override_font_sizes/font_size = 24
 size_flags_horizontal = 4

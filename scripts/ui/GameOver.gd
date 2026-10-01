@@ -52,18 +52,18 @@ func set_results(victory, likes_earned, zombies_fed):
 
 	# Update UI
 	if victory:
-		title_label.text = "🎉 SHIFT COMPLETE! 🎉"
+		title_label.text = "SHIFT COMPLETE!"
 	else:
-		title_label.text = "💀 GAME OVER 💀"
+		title_label.text = "GAME OVER"
 
-	likes_label.text = "❤ Likes: %d" % likes
-	zombies_label.text = "🧟 Zombies Fed: %d" % zombies
-	high_score_label.text = "🏆 High Score: %d" % Save.get_high_score()
+	likes_label.text = "Likes: %d" % likes
+	zombies_label.text = "Zombies Fed: %d" % zombies
+	high_score_label.text = "High Score: %d" % Save.get_high_score()
 
 	# New record check
 	if likes >= Save.get_high_score():
 		new_record_label.visible = true
-		new_record_label.text = "🏆 NEW HIGH SCORE! 🏆"
+		new_record_label.text = "NEW HIGH SCORE!"
 	else:
 		new_record_label.visible = false
 

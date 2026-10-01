@@ -3,6 +3,8 @@
 
 extends Control
 
+const MAX_LEVELS = 30
+
 signal level_selected(level)
 
 @export var levels_per_page = 6
@@ -25,9 +27,16 @@ func _ready():
 	_update_page()
 
 
+func _play_click():
+	"""Play the standard UI click sound."""
+	var _sfx = load("res://audio/sfx/click.wav")
+	if _sfx:
+		Audio.play_sfx(_sfx)
+
+
 func _build_level_buttons():
 	"""Create a button for each level."""
-	for i in range(1, 31):  # 30 levels max
+	for i in range(1, MAX_LEVELS + 1):
 		var btn = Button.new()
 		btn.text = str(i)
 		btn.custom_minimum_size = Vector2(64, 64)
@@ -36,7 +45,7 @@ func _build_level_buttons():
 		# Lock if not unlocked
 		if not Save.is_level_unlocked(i):
 			btn.disabled = true
-			btn.text = "🔒"
+			btn.text = "LOCKED"
 
 		# Highlight current level
 		if i == Save.get_current_level():
@@ -61,17 +70,13 @@ func _update_page():
 
 func _on_level_pressed(level):
 	"""Start selected level."""
-	var _sfx = load("res://audio/sfx/click.wav")
-	if _sfx:
-		Audio.play_sfx(_sfx)
+	_play_click()
 	Save.set_current_level(level)
 	get_tree().change_scene_to_file("res://scenes/main/game.tscn")
 
 
 func _on_back():
-	var _sfx = load("res://audio/sfx/click.wav")
-	if _sfx:
-		Audio.play_sfx(_sfx)
+	_play_click()
 	get_tree().change_scene_to_file("res://scenes/main/title_screen.tscn")
 
 
