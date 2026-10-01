@@ -47,10 +47,7 @@ func collect(player: Node3D) -> void:
 	var game = get_tree().get_first_node_in_group("game")
 	if game and game.has_method("on_food_eaten"):
 		game.on_food_eaten(food_type, health_amount)
-	
-	if player.has_method("eat"):
-		player.eat(food_type, health_amount)
-	
+
 	queue_free()
 
 var _owned_material: StandardMaterial3D = null

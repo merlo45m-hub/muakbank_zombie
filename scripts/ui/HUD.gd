@@ -16,6 +16,9 @@ class_name HUD
 @onready var food_bar = $FoodBar
 var food_slots: Array = []
 var food_types: Array = ["burger", "pizza", "soda", "fries", "sushi", "takis"]
+# Last rendered count per type, so an inventory change can tell a pickup (count went
+# up -> pulse) from a consume (count went down -> just dim).
+var _last_food_counts: Dictionary = {}
 
 # Dynamically created labels
 var wave_label: Label = null
@@ -29,6 +32,7 @@ func _ready() -> void:
 	_build_extra_labels()
 	_collect_food_slots()
 	_connect_food_buttons()
+	_connect_food_signals()
 	print("[HUD] Ready")
 
 func _collect_food_slots() -> void:
@@ -43,6 +47,42 @@ func _connect_food_buttons() -> void:
 	for i in range(food_slots.size()):
 		var slot = food_slots[i]
 		slot.pressed.connect(_on_food_slot_pressed.bind(i))
+
+func _connect_food_signals() -> void:
+	"""Connect to player food signals for reactive bar updates."""
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		return
+	# Player.food_picked_up fires on BOTH pickup and consume (consume emits it after
+	# decrementing), so this one connection covers the whole bar.
+	# Deliberately NOT connecting Game.food_eaten: Game is the scene ROOT, so its
+	# _ready() runs AFTER this node's, which means the "game" group is still empty
+	# here and the lookup would silently return null — a dead connection that looks
+	# live. The player signal is the one that actually works.
+	player.food_picked_up.connect(_on_food_picked_up)
+	_update_food_counts()
+
+func _on_food_picked_up(food_type: String) -> void:
+	"""Inventory changed — refresh the bar, pulse only when the count went UP."""
+	var player = get_tree().get_first_node_in_group("player")
+	var now: int = player.get_food_count(food_type) if player and player.has_method("get_food_count") else 0
+	var slot_index: int = food_types.find(food_type)
+	if slot_index >= 0 and now > int(_last_food_counts.get(food_type, 0)):
+		pulse_food_slot(slot_index)
+	_update_food_counts()
+
+func _update_food_counts() -> void:
+	"""Refresh every slot and remember the counts so the next event can compare."""
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		return
+	for i in range(food_types.size()):
+		var food_type: String = food_types[i]
+		# Ask the player for the count instead of re-deriving it here — a second
+		# counting implementation is a second thing to keep in sync.
+		var count: int = player.get_food_count(food_type) if player.has_method("get_food_count") else 0
+		_last_food_counts[food_type] = count
+		set_food_slot_count(i, count)
 
 func _build_extra_labels() -> void:
 	# Wave label (top-center)
@@ -94,8 +134,11 @@ func _on_food_slot_pressed(slot_index: int) -> void:
 	# Find food in player inventory and eat it
 	var game = get_tree().get_first_node_in_group("game")
 	if game and game.has_method("consume_food"):
-		game.consume_food(food_name)
-	Audio.play_eat()
+		var success = game.consume_food(food_name)
+		if success:
+			# Only play sound and show banner when eat actually happened
+			Audio.play_eat()
+			show_banner("Ate %s!" % food_name, 1.5, Color(0.2, 0.8, 0.2, 1.0))
 
 func set_food_slot_count(slot_index: int, count: int) -> void:
 	"""Update food slot display with count badge. count=0 means empty/dimmed."""

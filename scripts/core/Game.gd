@@ -26,6 +26,7 @@ const MAX_ZOMBIES: int = 12
 const ZOMBIE_SPAWN_INTERVAL: float = 3.0
 const FOOD_SPAWN_INTERVAL: float = 8.0
 const SCORE_PER_KILL: int = 100
+const SCORE_PER_FOOD: int = 50
 
 # === GAME STATE ===
 var score: int = 0
@@ -43,6 +44,7 @@ var achievement_manager: Node = null
 var camera_shake: Node = null
 
 func _ready() -> void:
+	add_to_group("game")
 	print("[Game] Initializing Muak Bank Zombie...")
 	# Auto-detect optional systems if present in scene
 	wave_manager = get_node_or_null("WaveManager")
@@ -429,8 +431,10 @@ func _shake(strength: float) -> void:
 func on_food_eaten(food_type: String, health_amount: int) -> void:
 	if not game_active or not player:
 		return
-	
+
 	player.heal(health_amount)
+	score += SCORE_PER_FOOD
+	emit_signal("score_changed", score)
 	emit_signal("food_eaten", food_type, health_amount)
 	emit_signal("health_changed", player.health, player.max_health)
 	
@@ -445,24 +449,26 @@ func on_food_eaten(food_type: String, health_amount: int) -> void:
 	
 	print("[Game] Ate: ", food_type, " +", health_amount, " HP")
 
-func consume_food(food_type: String) -> void:
-	"""Consume a food item from player inventory (called by HUD food bar)."""
+func consume_food(food_type: String) -> bool:
+	"""Consume a food item from player inventory (called by HUD food bar).
+	Returns true if the food was found and consumed, false otherwise."""
 	if not game_active or not player:
-		return
-	var health_amount = 20  # Default heal
-	match food_type:
-		"medkit": health_amount = 50
-		"coffee": health_amount = 10
-		"sushi": health_amount = 30
-		"burger": health_amount = 25
-		"pizza": health_amount = 20
-		"fries": health_amount = 15
-		"soda": health_amount = 10
-		"takis": health_amount = 15
+		return false
+	if not player.has_method("consume_food_type") or not player.has_food(food_type):
+		print("[Game] consume_food: player has no %s in inventory" % food_type)
+		return false
+	# The heal is whatever the food SCENE declared, recorded at pickup. There used to
+	# be a second hard-coded table here that disagreed with the scenes on every type.
+	var health_amount: int = player.get_food_heal(food_type)
+	if not player.consume_food_type(food_type):
+		return false
 	player.heal(health_amount)
+	score += SCORE_PER_FOOD
+	emit_signal("score_changed", score)
 	emit_signal("food_eaten", food_type, health_amount)
 	emit_signal("health_changed", player.health, player.max_health)
 	print("[Game] Consumed: ", food_type, " +", health_amount, " HP")
+	return true
 
 func on_pickup_weapon(weapon_name: String) -> void:
 	if not game_active or not player:

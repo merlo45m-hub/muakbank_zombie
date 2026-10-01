@@ -33,3 +33,15 @@ func _on_body_entered(body: Node3D) -> void:
 	if body.has_method("equip_weapon"):
 		body.equip_weapon(weapon_id)
 	queue_free()
+
+
+func take() -> void:
+	# Public collection entry point. The player's PickupArea detects this node
+	# directly, so the pickup must be collectable without its own body_entered
+	# having fired (that needs the player BODY in this Area's mask, which is not
+	# guaranteed). Idempotent via `taken`.
+	if taken:
+		return
+	taken = true
+	picked_up.emit(weapon_id)
+	queue_free()

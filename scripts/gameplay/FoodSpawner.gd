@@ -102,7 +102,7 @@ func _spawn_random_food() -> void:
 	
 	spawn_timer.start(spawn_interval)
 
-func _on_food_collected(food: Node3D) -> void:
+func _on_food_collected(_player: Node3D, food: Node3D) -> void:
 	active_food.erase(food)
 	if food.get_parent():
 		food.get_parent().remove_child(food)
