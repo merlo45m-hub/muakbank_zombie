@@ -28,10 +28,7 @@ func _ready():
 
 
 func _play_click():
-	"""Play the standard UI click sound."""
-	var _sfx = load("res://audio/sfx/click.wav")
-	if _sfx:
-		Audio.play_sfx(_sfx)
+	Audio.play_click()
 
 
 func _build_level_buttons():
