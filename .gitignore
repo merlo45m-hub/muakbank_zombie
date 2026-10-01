@@ -32,3 +32,6 @@ diag_*.png
 title_*.png.import
 render_*.png.import
 *.idsig
+
+# Agent scratch (never commit)
+.hermes/
