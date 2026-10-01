@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/world/night_sky.tscn" id="night_sky"]
 [ext_resource type="Script" path="res://scripts/core/Game.gd" id="1"]
@@ -26,6 +26,7 @@
 [ext_resource type="Script" path="res://addons/godotx_health_bar/runtime/godotx_health_bar_control.gd" id="godotx_control"]
 [ext_resource type="PackedScene" path="res://scenes/main/HUD.tscn" id="hud_scene"]
 [ext_resource type="PackedScene" path="res://scenes/main/pause_menu.tscn" id="pause_menu_scene"]
+[ext_resource type="Script" path="res://addons/VectorFieldNavigation/classes/VFNMap.gd" id="vfn_map"]
 
 
 [sub_resource type="StyleBoxFlat" id="JoystickBg"]
@@ -206,6 +207,15 @@ one_shot = false
 
 [node name="LootTable" type="Node" parent="ZombieSpawner"]
 script = ExtResource("19")
+
+[node name="VFNMap" type="Node3D" parent="ZombieSpawner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -0.15, 6)
+script = ExtResource("vfn_map")
+size = Vector2i(50, 50)
+field_scale = 1.0
+height_scale = 1.0
+draw_debug = false
+debug = false
 
 [node name="FoodSpawner" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.15, -6)

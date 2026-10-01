@@ -328,7 +328,14 @@ func _update_vfn_target() -> void:
 	vfn_field.calculate_threaded()
 
 
+var _vfn_recalc_timer: float = 0.0
+const VFN_RECALC_INTERVAL: float = 0.5
+
 func _process(delta: float) -> void:
-	# Periodically recompute the VFN field so zombies home in on the player
+	# Throttle VFN field recalculation — calculate_threaded() on a 50x50 field
+	# is expensive and every-frame recalc is a perf disaster on mobile.
 	if vfn_field_ready and vfn_field:
-		_update_vfn_target()
+		_vfn_recalc_timer += delta
+		if _vfn_recalc_timer >= VFN_RECALC_INTERVAL:
+			_vfn_recalc_timer = 0.0
+			_update_vfn_target()
