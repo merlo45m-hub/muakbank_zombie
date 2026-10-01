@@ -110,10 +110,23 @@ How we attack game development: 9 sections, each independently testable, each wi
   - WeaponSystem wired, medkit healing, cooldown, weapon switch, emoji→text
   - 3 bugs found & fixed (heal path, cooldown, tick)
   - Verified: 6/6 harness, clean boot, no crash
-- Section 3: IN PROGRESS
-  - Scope: VFN navigation, spawn pacing, object pooling, difficulty scaling
-  - 3 agents dispatched for review & fixes
+- Section 3: COMPLETE (commits 10aa55d, f1b4917)
+  - Zombie separation (was dead code — VFN override erased it), AI LOD, difficulty scaling
+  - 8 real bugs fixed; 2 reviewer findings rejected with evidence (both false positives)
+  - Verified: 6/6 harness, clean boot, runtime probe (died signal = 1 conn across reuse)
+  - APK installed, hash a6dfefa8… byte-identical to build artifact
 - Sections 4-9: NOT STARTED
+
+## Reviewer notes (Section 3)
+
+Both pi and agy reviewed the Section 3 cut. Neither is reliable alone — pi found the
+dead DifficultyManager path, agy found the ATTACK velocity slide and the WaveManager
+conflict, and each raised false positives the other got right. Always verify a finding
+against the code before fixing it.
+
+- **Rejected: agy 6b** ("spawner permanently stalls after a blocked spawn") — `SpawnTimer.one_shot = false` (game.tscn:206), so it auto-restarts; the early `return` is correct.
+- **Rejected: pi 14** ("runner behaviour changed") — runner contact damage flows through `Player.gd:665 body.attack(self)`, untouched by `_should_engage()`.
+- **Verified real: pooled `died` disconnect** — `disconnect(_on_zombie_died)` uses the bare method ref, but the connection is `.bind(...)`; different Callable, so it failed on every spawn. Fixed by storing the bound Callable on the zombie.
 
 ## Anti-Slop Principles
 
