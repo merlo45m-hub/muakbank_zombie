@@ -189,7 +189,7 @@ func update_timer(seconds: int) -> void:
 	if timer_label:
 		var mins = seconds / 60
 		var secs = seconds % 60
-		timer_label.text = "⏱ %02d:%02d" % [mins, secs]
+		timer_label.text = "%02d:%02d" % [mins, secs]
 		if seconds < 60:
 			timer_label.modulate = Color(1, 0.3, 0.3)
 
