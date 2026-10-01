@@ -22,9 +22,15 @@ var wave_timer: float = 0.0
 
 @onready var spawner: Node3D = get_node_or_null("../ZombieSpawner")
 
+var _level: int = 1
+
 func _ready() -> void:
 	if spawner:
 		spawner.zombie_killed.connect(_on_zombie_killed)
+	_level = Save.get_current_level()
+	waves_per_level = 3 + _level
+	base_zombies_per_wave = 3 + _level
+	zombies_per_wave_increment = 1 + _level / 2
 
 func start_waves() -> void:
 	current_wave = 0

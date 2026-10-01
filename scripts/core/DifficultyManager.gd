@@ -55,6 +55,22 @@ func get_enemy_speed_multiplier() -> float:
 	return 1.0 + (current_difficulty - 1.0) * 0.2
 
 # ──────────────────────────────────────────────
+#  LEVEL-Combined difficulty (used by spawner for enemy stat scaling)
+# ──────────────────────────────────────────────
+
+func get_level_difficulty(level: int) -> float:
+	"""Combine per-level static difficulty with dynamic difficulty scaling.
+	
+	LevelManager.difficulty_map provides the base multiplier per level
+	(1.0 for level 1, up to 2.5 for level 8). This is multiplied by the
+	current dynamic difficulty (which ramps over time and reacts to player
+	performance) to get the final multiplier applied to enemy health, damage,
+	and speed at spawn time.
+	"""
+	var base = Level.get_difficulty(level)
+	return base * current_difficulty
+
+# ──────────────────────────────────────────────
 #  SPAWN TUNING (consumed by ZombieSpawner3D)
 # ──────────────────────────────────────────────
 

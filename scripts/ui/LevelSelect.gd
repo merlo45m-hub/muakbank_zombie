@@ -3,8 +3,6 @@
 
 extends Control
 
-const MAX_LEVELS = 30
-
 signal level_selected(level)
 
 @export var levels_per_page = 6
@@ -33,7 +31,7 @@ func _play_click():
 
 func _build_level_buttons():
 	"""Create a button for each level."""
-	for i in range(1, MAX_LEVELS + 1):
+	for i in range(1, Level.get_level_count() + 1):
 		var btn = Button.new()
 		btn.text = str(i)
 		btn.custom_minimum_size = Vector2(64, 64)

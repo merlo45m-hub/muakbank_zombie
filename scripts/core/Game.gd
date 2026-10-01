@@ -33,7 +33,8 @@ var score: int = 0
 var zombies_killed: int = 0
 var game_active: bool = false
 var time_remaining: float = GAME_DURATION
-var zombies_to_kill: int = 5  # Kill quota to clear level
+var level := Save.get_current_level()
+var zombies_to_kill: int = 5 + (level - 1) * 3  # Kill quota to clear level — scales per level
 
 # === OPTIONAL SYSTEMS (auto-detected) ===
 var wave_manager: Node = null
@@ -240,7 +241,7 @@ func start_game() -> void:
 	
 	# Start spawners
 	if zombie_spawner:
-		zombie_spawner.start_spawning()
+		zombie_spawner.start_spawning(Save.get_current_level())
 	if food_spawner:
 		food_spawner.start_spawning()
 	

@@ -64,7 +64,7 @@ var enemy_pool_map = {
 	8: ["bear", "runner", "spitter", "dog", "cat"],
 }
 
-var current_level: int = 1
+
 
 func get_ambient_name(level: int) -> String:
 	if ambient_map.has(level):
