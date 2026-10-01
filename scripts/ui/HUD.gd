@@ -205,11 +205,11 @@ func update_stamina(current: int, maximum: int) -> void:
 
 func update_score(score: int) -> void:
 	if score_label:
-		score_label.text = "❤ %d" % score
+		score_label.text = "SCORE %d" % score
 
 func update_kills(kills: int) -> void:
 	if kills_label:
-		kills_label.text = "☠ %d" % kills
+		kills_label.text = "KILLS %d" % kills
 
 func update_wave(wave: int, total: int) -> void:
 	if wave_label:

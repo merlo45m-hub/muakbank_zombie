@@ -406,54 +406,46 @@ func _on_mobile_weapon_switch() -> void:
 
 func _perform_attack() -> void:
 	is_attacking = true
+	_trigger_attack_feedback()
+	var weapon_data := _fire_weapon()
+	if weapon_data.is_empty():
+		await _wait(weapon_swing_duration)
+		is_attacking = false
+		return
+	_apply_damage_to_enemies(weapon_data)
+	await _wait(weapon_swing_duration)
+	is_attacking = false
 
-	# Notify the procedural animator so the lunge envelope plays.
+func _trigger_attack_feedback() -> void:
 	var _pv := get_node_or_null("PlayerVisuals")
 	if _pv:
 		var _pa := _pv.get_node_or_null("ProceduralAnimator") as ProceduralAnimator
 		if _pa:
 			_pa.trigger_attack()
-
-	# Play sound (defer to Audio singleton; guard against it being absent)
 	if Audio:
 		Audio.play_click()
-
-	# Swing animation via weapon mesh
 	if mesh:
 		weapon_tween = create_tween()
 		weapon_tween.tween_property(mesh, "rotation:x", mesh.rotation.x - deg_to_rad(45), weapon_swing_duration / 2)
 		weapon_tween.tween_property(mesh, "rotation:x", mesh.rotation.x, weapon_swing_duration / 2)
 
-	# Fire the weapon via WeaponSystem — this enforces the fire_rate cooldown
-	# and returns the weapon's data dict (damage, range, type, etc.).
-	var weapon_data: Dictionary = {}
-	if weapon_system and weapon_system.has_method("fire"):
-		weapon_data = weapon_system.fire()
-
-	# If the weapon can't fire (on cooldown or out of ammo), play the swing and exit.
+func _fire_weapon() -> Dictionary:
+	if not weapon_system or not weapon_system.has_method("fire"):
+		return {}
+	var weapon_data: Dictionary = weapon_system.fire()
 	if weapon_data.get("type", "") == "none":
-		await _wait(weapon_swing_duration)
-		is_attacking = false
-		return
-
-	# Heal-type weapons (e.g. medkit) heal the player instead of damaging enemies.
+		return {}
 	if weapon_data.get("type", "") == "heal":
 		heal(int(weapon_data.get("heal", 0)))
-		await _wait(weapon_swing_duration)
-		is_attacking = false
-		return
+		return {}
+	return weapon_data
 
-	# Extract weapon stats from the fired data, falling back to the player's exported
-	# defaults when a key is missing (guards against incomplete weapon definitions).
+func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 	var weapon_damage: int = int(weapon_data.get("damage", attack_damage))
 	var weapon_range: float = float(weapon_data.get("range", attack_range))
 	var weapon_fire_rate: float = float(weapon_data.get("fire_rate", attack_cooldown))
-
-	# Apply character attack speed multiplier to the cooldown.
 	var speed_mult: float = character_stats.attack_speed if character_stats else 1.0
 	attack_timer = weapon_fire_rate * speed_mult
-
-	# Check for enemies in range.
 	var enemies: Array = get_tree().get_nodes_in_group("enemies")
 	for enemy in enemies:
 		if not enemy.is_in_group("enemies"):
@@ -465,35 +457,20 @@ func _perform_attack() -> void:
 		if dist < hit_range:
 			if enemy.has_method("take_damage"):
 				var damage: int = weapon_damage
-
-				# Apply weapon multiplier from character stats
 				if character_stats:
 					damage = int(damage * character_stats.weapon_damage_multiplier)
-
-				# Rage mode: double damage
 				if is_rage_active:
 					damage *= 2
-
-				# Critical hit check
 				var is_crit: bool = false
 				if character_stats and randf() < character_stats.critical_chance:
 					damage = int(damage * character_stats.critical_multiplier)
 					is_crit = true
-
-				# Emit hit particles
 				if has_node("HitFeedback") and $HitFeedback.has_method("emit_hit"):
 					$HitFeedback.emit_hit(enemy.global_transform.origin, enemy.get_class())
-
 				enemy.take_damage(damage)
-
-				# Spawn damage number at enemy position
 				if damage_numbers:
 					var dmg_type: int = MinosDamageNumbers3D.DamageType.CRITICAL_HIT if is_crit else MinosDamageNumbers3D.DamageType.NORMAL
 					damage_numbers.display_number(damage, enemy.global_transform.origin, dmg_type)
-
-	# Wait for swing animation to finish
-	await _wait(weapon_swing_duration)
-	is_attacking = false
 
 
 # ──────────────────────────────────────────────
@@ -769,10 +746,7 @@ func _apply_character_model() -> void:
 	var visuals := get_node_or_null("PlayerVisuals")
 	if not visuals:
 		return
-	var id := "gamer"
-	var save := get_node_or_null("/root/Save")
-	if save and save.get("selected_character") != null:
-		id = String(save.get("selected_character"))
+	var id := _selected_character_id()
 	var path := CHARACTER_MODEL_DIR % id
 	if not ResourceLoader.exists(path):
 		print("[Player] character model %s missing — keeping the placeholder capsule" % path)
@@ -785,9 +759,19 @@ func _apply_character_model() -> void:
 	if not mdl:
 		return
 	visuals.add_child(mdl)
+	_normalise_model_transform(mdl)
+	_hide_placeholder_meshes(visuals, mdl)
+	_apply_model_material(mdl)
+	_play_model_animations(mdl)
+	_report_model_stats(mdl, path)
 
-	# Normalise: the exported GLBs come at wildly different scales, so measure the
-	# real bounding box and scale to human height, then drop it onto the origin.
+func _selected_character_id() -> String:
+	var save := get_node_or_null("/root/Save")
+	if save and save.get("selected_character") != null:
+		return String(save.get("selected_character"))
+	return "gamer"
+
+func _normalise_model_transform(mdl: Node3D) -> void:
 	var aabb := _model_aabb(mdl)
 	var h := aabb.size.y
 	if h > 0.01:
@@ -795,41 +779,40 @@ func _apply_character_model() -> void:
 		mdl.scale = Vector3(s, s, s)
 		mdl.position.y = -aabb.position.y * s
 	mdl.rotate_y(MODEL_YAW_OFFSET)
-	# The placeholder capsule/head stay as a fallback only.
+
+func _hide_placeholder_meshes(visuals: Node3D, mdl: Node3D) -> void:
 	for mi in visuals.find_children("*", "MeshInstance3D", true, false):
 		if not mdl.is_ancestor_of(mi):
 			(mi as MeshInstance3D).visible = false
 
-	# The shipped GLBs carry NO materials (verified in the GLB JSON: every model is
-	# one primitive with no material index), so they render as Godot's default
-	# white — backlit at night that reads as a flat dark blob with no silhouette
-	# detail. Give them a consistent readable surface.
+func _apply_model_material(mdl: Node3D) -> void:
 	var skin := StandardMaterial3D.new()
-	skin.albedo_color = Color(0.34, 0.07, 0.09)  # dark blood-red: pale cream vanished against the pale plaza floor
+	skin.albedo_color = Color(0.34, 0.07, 0.09)
 	skin.roughness = 0.85
 	skin.metallic = 0.0
-	for mi4 in mdl.find_children("*", "MeshInstance3D", true, false):
-		(mi4 as MeshInstance3D).material_override = skin
+	for mi in mdl.find_children("*", "MeshInstance3D", true, false):
+		(mi as MeshInstance3D).material_override = skin
 
-
-	var anims := 0
+func _play_model_animations(mdl: Node3D) -> void:
 	for n in mdl.find_children("*", "AnimationPlayer", true, false):
 		var ap := n as AnimationPlayer
 		var list := ap.get_animation_list()
-		anims = max(anims, list.size())
 		if list.size() > 0 and not ap.is_playing():
 			ap.play(list[0])
+
+func _report_model_stats(mdl: Node3D, path: String) -> void:
+	var aabb := _model_aabb(mdl)
 	var verts := 0
-	for mi2 in mdl.find_children("*", "MeshInstance3D", true, false):
-		var mm := (mi2 as MeshInstance3D).mesh
+	for mi in mdl.find_children("*", "MeshInstance3D", true, false):
+		var mm := (mi as MeshInstance3D).mesh
 		if mm:
 			for si in range(mm.get_surface_count()):
 				var arr := mm.surface_get_arrays(si)
 				if arr.size() > 0 and arr[0] != null:
 					verts += (arr[0] as PackedVector3Array).size()
-	print("[Player] character model: %s  raw_h=%.3f  scale=%.3f  verts=%d  animations=%d" % [path, h, mdl.scale.y, verts, anims])
+	print("[Player] character model: %s  raw_h=%.3f  scale=%.3f  verts=%d" % [path, aabb.size.y, mdl.scale.y, verts])
 	if verts < 200:
-		push_warning("[Player] character model %s has only %d verts - it is a blockout placeholder" % [id, verts])
+		push_warning("[Player] character model %s has only %d verts - it is a blockout placeholder" % [path, verts])
 
 
 func _model_aabb(root: Node3D) -> AABB:
