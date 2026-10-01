@@ -158,12 +158,8 @@ func _confirm_selection(index: int, play_sound: bool) -> void:
 
 func _select_character(index: int, play_sound: bool = true) -> void:
 	selected_character = index
-
 	_update_selection_visuals(index)
 	_confirm_selection(index, play_sound)
-
-	# Transition to game
-	get_tree().change_scene_to_file("res://scenes/main/game.tscn")
 
 func _on_back_pressed() -> void:
 	Audio.play_click()
@@ -175,8 +171,8 @@ func _on_back_pressed() -> void:
 func make_style(bg_color: Color, border_color: Color = Color(0, 0, 0, 0), border_width: int = 0, corner_radius: int = 0) -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
 	style.bg_color = bg_color
+	style.border_color = border_color
 	if border_width > 0:
-		style.border_color = border_color
 		style.border_width_left = border_width
 		style.border_width_top = border_width
 		style.border_width_right = border_width

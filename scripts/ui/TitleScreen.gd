@@ -6,13 +6,17 @@ extends Node3D
 
 const DevMenu = preload("res://scripts/ui/DevMenu.gd")
 
-# === FOOD DECOR CONSTANTS ===
-const FOOD_ICON_START_X = 80
-const FOOD_ICON_SPACING = 90
-const FOOD_ICON_BASE_Y = 420
-const FOOD_FLOAT_RANGE = 20
+# === FOOD DECOR CONSTANTS (3D metric space) ===
+const FOOD_ICON_START_X = -3.0
+const FOOD_ICON_SPACING = 1.2
+const FOOD_ICON_BASE_Y = 2.0
+const FOOD_ICON_Z = -4.0
+const FOOD_FLOAT_RANGE = 0.3
 const FOOD_FLOAT_BASE_DURATION = 1.5
 const FOOD_FLOAT_INTERVAL_INCREMENT = 0.2
+const TITLE_FLOAT_DISTANCE = 5.0
+const TITLE_FLOAT_DURATION = 1.5
+const QUIT_DELAY = 0.2
 
 # === NODE REFS ===
 @onready var play_btn = $VBoxMain/ButtonContainer/PlayBtn
@@ -65,10 +69,10 @@ func _animate_title():
 	"""Subtle floating animation on the title."""
 	var tween = create_tween()
 	tween.set_loops()
-	tween.tween_property($VBoxMain/TitleLabel, "position:y", 
-		$VBoxMain/TitleLabel.position.y - 5, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	tween.tween_property($VBoxMain/TitleLabel, "position:y", 
-		$VBoxMain/TitleLabel.position.y + 5, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property($VBoxMain/TitleLabel, "position:y",
+		$VBoxMain/TitleLabel.position.y - TITLE_FLOAT_DISTANCE, TITLE_FLOAT_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property($VBoxMain/TitleLabel, "position:y",
+		$VBoxMain/TitleLabel.position.y + TITLE_FLOAT_DISTANCE, TITLE_FLOAT_DURATION).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
 func _animate_food_decor():
@@ -79,7 +83,7 @@ func _animate_food_decor():
 			continue
 		var sprite = Sprite3D.new()
 		sprite.texture = icon
-		sprite.position = Vector3(FOOD_ICON_START_X + i * FOOD_ICON_SPACING, FOOD_ICON_BASE_Y, 0)
+		sprite.position = Vector3(FOOD_ICON_START_X + i * FOOD_ICON_SPACING, FOOD_ICON_BASE_Y, FOOD_ICON_Z)
 		sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		add_child(sprite)
 
@@ -124,5 +128,5 @@ func _on_credits_pressed():
 func _on_quit_pressed():
 	"""Quit game."""
 	Audio.play_click()
-	await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(QUIT_DELAY).timeout
 	get_tree().quit()

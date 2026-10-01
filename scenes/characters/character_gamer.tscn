@@ -145,6 +145,6 @@ offset_left = -120.0
 offset_top = -120.0
 offset_right = -20.0
 offset_bottom = -20.0
-text = "⚔"
+text = "VS"
 
 [node name="HitFeedback" type="Node3D" parent="."]
