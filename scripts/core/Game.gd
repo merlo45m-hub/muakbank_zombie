@@ -34,7 +34,6 @@ var zombies_killed: int = 0
 var game_active: bool = false
 var time_remaining: float = GAME_DURATION
 var level := Save.get_current_level()
-var zombies_to_kill: int = 5 + (level - 1) * 3  # Kill quota to clear level — scales per level
 
 # === OPTIONAL SYSTEMS (auto-detected) ===
 var wave_manager: Node = null
@@ -65,11 +64,13 @@ func _ready() -> void:
 	if player:
 		player.health_changed.connect(_on_player_health_changed)
 		player.stamina_changed.connect(_on_player_stamina_changed)
-	
+
 	# Connect wave/combo signals for reactive HUD updates
 	if wave_manager:
 		if wave_manager.has_signal("wave_started"):
 			wave_manager.wave_started.connect(_on_wave_started)
+		if wave_manager.has_signal("all_waves_cleared"):
+			wave_manager.all_waves_cleared.connect(_on_all_waves_cleared)
 	if combo_system:
 		if combo_system.has_signal("combo_changed"):
 			combo_system.combo_changed.connect(_on_combo_changed)
@@ -206,7 +207,7 @@ func _setup_objectives() -> void:
 		return
 	objective_manager.clear_objectives()
 	# Core objectives for every level
-	objective_manager.add_objective("kill_zombies", "Kill zombies", zombies_to_kill)
+	# (kill quota removed — level completion is driven by WaveManager's all_waves_cleared signal)
 	objective_manager.add_objective("eat_food", "Eat to stay alive", 3)
 	objective_manager.add_objective("survive", "Survive the shift", 1)
 
@@ -241,7 +242,7 @@ func start_game() -> void:
 	
 	# Start spawners
 	if zombie_spawner:
-		zombie_spawner.start_spawning(Save.get_current_level())
+		zombie_spawner.start_spawning()
 	if food_spawner:
 		food_spawner.start_spawning()
 	
@@ -390,9 +391,8 @@ func on_zombie_killed(zombie_type: String) -> void:
 	emit_signal("kills_changed", zombies_killed)
 	emit_signal("score_changed", score)
 	
-	# Update objectives
-	if objective_manager and objective_manager.has_method("update_progress"):
-		objective_manager.update_progress("kill_zombies", 1)
+	# No kill-quota objective — level completion is driven by WaveManager's
+	# all_waves_cleared signal, not a kill count.
 	
 	# Achievements
 	if achievement_manager:
@@ -400,12 +400,6 @@ func on_zombie_killed(zombie_type: String) -> void:
 			achievement_manager.unlock("first_kill")
 		if combo_system and combo_system.combo_count >= 5:
 			achievement_manager.unlock("combo_5")
-	
-	# Check for level completion
-	if zombies_killed >= zombies_to_kill:
-		# Level complete — survive the wave
-		end_game(true)
-		return
 	
 	print("[Game] Killed: ", zombie_type, " Total: ", zombies_killed)
 
@@ -460,6 +454,10 @@ func on_pickup_weapon(weapon_name: String) -> void:
 	player.equip_weapon(weapon_name)
 	emit_signal("weapon_changed", weapon_name)
 	print("[Game] Equipped: ", weapon_name)
+
+func _on_all_waves_cleared() -> void:
+	if game_active:
+		end_game(true)
 
 func on_player_died() -> void:
 	if not game_active:
