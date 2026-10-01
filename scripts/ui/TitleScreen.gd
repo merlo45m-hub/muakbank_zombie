@@ -77,9 +77,10 @@ func _animate_food_decor():
 		var icon = load("res://assets/textures/%s.png" % food_icons[i])
 		if not icon:
 			continue
-		var sprite = Sprite2D.new()
+		var sprite = Sprite3D.new()
 		sprite.texture = icon
-		sprite.position = Vector2(FOOD_ICON_START_X + i * FOOD_ICON_SPACING, FOOD_ICON_BASE_Y)
+		sprite.position = Vector3(FOOD_ICON_START_X + i * FOOD_ICON_SPACING, FOOD_ICON_BASE_Y, 0)
+		sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		add_child(sprite)
 
 		# Float animation

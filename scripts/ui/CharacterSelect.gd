@@ -119,9 +119,7 @@ func _on_streamer_selected() -> void:
 func _on_hunter_selected() -> void:
 	_select_character(4)
 
-func _select_character(index: int, play_sound: bool = true) -> void:
-	selected_character = index
-
+func _update_selection_visuals(index: int) -> void:
 	# Update visual selection highlight
 	for i in range(card_panels.size()):
 		var is_selected = (i == index)
@@ -147,6 +145,8 @@ func _select_character(index: int, play_sound: bool = true) -> void:
 		else:
 			desc_labels[i].set("theme_override_font_color", normal_color)
 
+
+func _confirm_selection(index: int, play_sound: bool) -> void:
 	if play_sound:
 		Audio.play_click()
 
@@ -154,6 +154,13 @@ func _select_character(index: int, play_sound: bool = true) -> void:
 
 	# Save selection to be loaded in game
 	Save.selected_character = character_names[index].to_lower()
+
+
+func _select_character(index: int, play_sound: bool = true) -> void:
+	selected_character = index
+
+	_update_selection_visuals(index)
+	_confirm_selection(index, play_sound)
 
 	# Transition to game
 	get_tree().change_scene_to_file("res://scenes/main/game.tscn")
