@@ -428,37 +428,14 @@ func _shake(strength: float) -> void:
 	if camera_shake and camera_shake.has_method("shake"):
 		camera_shake.shake(strength)
 
-func on_food_eaten(food_type: String, health_amount: int) -> void:
-	if not game_active or not player:
-		return
-
-	player.heal(health_amount)
-	score += SCORE_PER_FOOD
-	emit_signal("score_changed", score)
-	emit_signal("food_eaten", food_type, health_amount)
-	emit_signal("health_changed", player.health, player.max_health)
-	
-	# Update objectives
-	if objective_manager and objective_manager.has_method("update_progress"):
-		objective_manager.update_progress("eat_food", 1)
-	
-	# Achievement: well fed
-	if achievement_manager and achievement_manager.has_method("unlock"):
-		if Save.get_total_zombies_fed() >= 10:
-			achievement_manager.unlock("well_fed")
-	
-	print("[Game] Ate: ", food_type, " +", health_amount, " HP")
-
 func consume_food(food_type: String) -> bool:
-	"""Consume a food item from player inventory (called by HUD food bar).
-	Returns true if the food was found and consumed, false otherwise."""
+	"""Consume food from inventory: heal + score + objective + achievement.
+	Single owner of the eat reward — pickup only adds to inventory."""
 	if not game_active or not player:
 		return false
 	if not player.has_method("consume_food_type") or not player.has_food(food_type):
 		print("[Game] consume_food: player has no %s in inventory" % food_type)
 		return false
-	# The heal is whatever the food SCENE declared, recorded at pickup. There used to
-	# be a second hard-coded table here that disagreed with the scenes on every type.
 	var health_amount: int = player.get_food_heal(food_type)
 	if not player.consume_food_type(food_type):
 		return false
@@ -467,6 +444,11 @@ func consume_food(food_type: String) -> bool:
 	emit_signal("score_changed", score)
 	emit_signal("food_eaten", food_type, health_amount)
 	emit_signal("health_changed", player.health, player.max_health)
+	if objective_manager and objective_manager.has_method("update_progress"):
+		objective_manager.update_progress("eat_food", 1)
+	if achievement_manager and achievement_manager.has_method("unlock"):
+		if Save.get_total_zombies_fed() >= 10:
+			achievement_manager.unlock("well_fed")
 	print("[Game] Consumed: ", food_type, " +", health_amount, " HP")
 	return true
 

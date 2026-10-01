@@ -38,16 +38,13 @@ func _process(delta: float) -> void:
 		mesh.rotation.y += delta * 1.5
 
 func collect(player: Node3D) -> void:
+	"""Pickup: add to inventory only. Heal + score happen on consume (Game.consume_food).
+	No double-dip — walking over food must not heal AND consuming it heal again."""
 	if is_collected:
 		return
-	
+
 	is_collected = true
 	emit_signal("collected", player)
-	
-	var game = get_tree().get_first_node_in_group("game")
-	if game and game.has_method("on_food_eaten"):
-		game.on_food_eaten(food_type, health_amount)
-
 	queue_free()
 
 var _owned_material: StandardMaterial3D = null

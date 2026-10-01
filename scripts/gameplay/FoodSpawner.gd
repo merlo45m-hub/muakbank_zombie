@@ -97,12 +97,18 @@ func _spawn_random_food() -> void:
 	food.global_position = spawn_pos
 	active_food.append(food)
 	
-	if not food.is_connected("collected", _on_food_collected):
-		food.collected.connect(_on_food_collected.bind(food))
+	# Bind the item as the handler's second arg (emitted args arrive first, bound last).
+	# is_connected() cannot see a bound callable, so the old guard was always false —
+	# it is not a real idempotency check. Each item is a fresh instance and this runs
+	# once per spawn, so a plain connect is correct here.
+	food.collected.connect(_on_food_collected.bind(food))
 	
 	spawn_timer.start(spawn_interval)
 
 func _on_food_collected(_player: Node3D, food: Node3D) -> void:
 	active_food.erase(food)
-	if food.get_parent():
-		food.get_parent().remove_child(food)
+	# Do NOT remove_child() here. This handler runs synchronously INSIDE
+	# FoodItem3D.collect()'s emit_signal, so detaching the node mid-emit makes
+	# get_tree() null for the rest of collect() — which is how the pickup heal,
+	# score and objective silently stopped working. collect() queue_free()s the
+	# item itself; erasing it from active_food is all this handler needs to do.
