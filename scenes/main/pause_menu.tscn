@@ -72,28 +72,28 @@ size_flags_vertical = 2
 
 [node name="ResumeBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "▶ RESUME"
+text = "RESUME"
 custom_minimum_size = Vector2(200, 50)
 theme_override_styles/normal = SubResource("ButtonStyle")
 theme_override_font_sizes/font_size = 24
 
 [node name="RestartBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "🔄 RESTART"
+text = "RESTART"
 custom_minimum_size = Vector2(200, 50)
 theme_override_styles/normal = SubResource("ButtonStyle")
 theme_override_font_sizes/font_size = 24
 
 [node name="SettingsBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "⚙ SETTINGS"
+text = "SETTINGS"
 custom_minimum_size = Vector2(200, 50)
 theme_override_styles/normal = SubResource("ButtonStyle")
 theme_override_font_sizes/font_size = 24
 
 [node name="MenuBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "🏠 MAIN MENU"
+text = "MAIN MENU"
 custom_minimum_size = Vector2(200, 50)
 theme_override_styles/normal = SubResource("ButtonStyle")
 theme_override_font_sizes/font_size = 24

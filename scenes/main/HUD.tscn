@@ -62,7 +62,7 @@ custom_minimum_size = Vector2(200, 0)
 
 [node name="HypeLabel" type="Label" parent="VBoxLeft/HypeContainer"]
 layout_mode = 2
-text = "🔥 HYPE"
+text = "HYPE"
 theme_override_font_size = 16
 custom_minimum_size = Vector2(0, 24)
 
@@ -81,7 +81,7 @@ custom_minimum_size = Vector2(200, 0)
 
 [node name="OverwhelmLabel" type="Label" parent="VBoxLeft/OverwhelmContainer"]
 layout_mode = 2
-text = "⚠ OVERWHELM"
+text = "OVERWHELM"
 theme_override_font_size = 16
 custom_minimum_size = Vector2(0, 24)
 
@@ -106,21 +106,21 @@ theme_override_constants/separation = 8
 
 [node name="TimerLabel" type="Label" parent="VBoxRight"]
 layout_mode = 2
-text = "⏱ 10:00"
+text = "10:00"
 theme_override_font_size = 20
 horizontal_alignment = 2
 custom_minimum_size = Vector2(200, 32)
 
 [node name="LikesLabel" type="Label" parent="VBoxRight"]
 layout_mode = 2
-text = "❤ 0"
+text = "SCORE 0"
 theme_override_font_size = 18
 horizontal_alignment = 2
 custom_minimum_size = Vector2(200, 28)
 
 [node name="KillsLabel" type="Label" parent="VBoxRight"]
 layout_mode = 2
-text = "☠ 0"
+text = "KILLS 0"
 theme_override_font_size = 18
 horizontal_alignment = 2
 custom_minimum_size = Vector2(0, 28)

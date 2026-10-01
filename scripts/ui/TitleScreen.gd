@@ -6,6 +6,14 @@ extends Node3D
 
 const DevMenu = preload("res://scripts/ui/DevMenu.gd")
 
+# === FOOD DECOR CONSTANTS ===
+const FOOD_ICON_START_X = 80
+const FOOD_ICON_SPACING = 90
+const FOOD_ICON_BASE_Y = 420
+const FOOD_FLOAT_RANGE = 20
+const FOOD_FLOAT_BASE_DURATION = 1.5
+const FOOD_FLOAT_INTERVAL_INCREMENT = 0.2
+
 # === NODE REFS ===
 @onready var play_btn = $VBoxMain/ButtonContainer/PlayBtn
 @onready var level_btn = $VBoxMain/ButtonContainer/LevelBtn
@@ -40,6 +48,9 @@ func _ready() -> void:
 	# Animate title text
 	_animate_title()
 
+	# Animate food decoration icons
+	_animate_food_decor()
+
 	# Install dev menu if dev mode is active
 	DevMenu.install_on(self)
 
@@ -68,14 +79,14 @@ func _animate_food_decor():
 			continue
 		var sprite = Sprite2D.new()
 		sprite.texture = icon
-		sprite.position = Vector2(80 + i * 90, 420)
+		sprite.position = Vector2(FOOD_ICON_START_X + i * FOOD_ICON_SPACING, FOOD_ICON_BASE_Y)
 		add_child(sprite)
 
 		# Float animation
 		var tween = create_tween()
-		var start_y = 420
-		var end_y = start_y - 20
-		var duration = 1.5 + i * 0.2
+		var start_y = FOOD_ICON_BASE_Y
+		var end_y = start_y - FOOD_FLOAT_RANGE
+		var duration = FOOD_FLOAT_BASE_DURATION + i * FOOD_FLOAT_INTERVAL_INCREMENT
 
 		tween.set_loops()
 		tween.tween_property(sprite, "position:y", end_y, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT).from(start_y)

@@ -3,6 +3,18 @@
 
 extends Control
 
+# === THEME COLORS ===
+const CARD_NORMAL_BG = Color(0.06, 0.03, 0.08, 1.0)
+const CARD_SELECTED_BG = Color(0.14, 0.04, 0.1, 1.0)
+const CARD_BORDER_DARK = Color(0.2, 0.1, 0.15, 1.0)
+const PEDESTAL_NORMAL_BG = Color(0.1, 0.08, 0.12, 1.0)
+const PEDESTAL_SELECTED_BG = Color(0.2, 0.04, 0.08, 1.0)
+const BLOOD_RED = Color(0.6, 0.1, 0.15, 1.0)
+const DESC_NORMAL = Color(0.5, 0.5, 0.5, 1.0)
+const DESC_HIGHLIGHT = Color(0.75, 0.12, 0.08, 1.0)
+const CARD_CORNER_RADIUS = 8
+const PEDESTAL_CORNER_RADIUS = 999
+
 # === CHARACTER DATA ===
 @export var character_scenes: Array = [
 	"res://scenes/characters/character_gamer.tscn",
@@ -126,8 +138,8 @@ func _select_character(index: int, play_sound: bool = true) -> void:
 
 	# Update description labels (emphasize selected)
 	var desc_labels = [gamer_desc, doctor_desc, nurse_desc, streamer_desc, hunter_desc]
-	var normal_color = Color(0.5, 0.5, 0.5, 1.0)
-	var highlight_color = Color(0.75, 0.12, 0.08, 1.0)  # Blood red
+	var normal_color = DESC_NORMAL
+	var highlight_color = DESC_HIGHLIGHT  # Blood red
 
 	for i in range(desc_labels.size()):
 		if i == index:
@@ -153,57 +165,30 @@ func _on_back_pressed() -> void:
 
 # === STYLE CREATION HELPERS ===
 
-func _get_normal_card_style() -> StyleBoxFlat:
+func make_style(bg_color: Color, border_color: Color = Color(0, 0, 0, 0), border_width: int = 0, corner_radius: int = 0) -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.06, 0.03, 0.08, 1.0)
-	style.border_color = Color(0.2, 0.1, 0.15, 1.0)
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_right = 8
-	style.corner_radius_bottom_left = 8
+	style.bg_color = bg_color
+	if border_width > 0:
+		style.border_color = border_color
+		style.border_width_left = border_width
+		style.border_width_top = border_width
+		style.border_width_right = border_width
+		style.border_width_bottom = border_width
+	if corner_radius > 0:
+		style.corner_radius_top_left = corner_radius
+		style.corner_radius_top_right = corner_radius
+		style.corner_radius_bottom_right = corner_radius
+		style.corner_radius_bottom_left = corner_radius
 	return style
+
+func _get_normal_card_style() -> StyleBoxFlat:
+	return make_style(CARD_NORMAL_BG, CARD_BORDER_DARK, 2, CARD_CORNER_RADIUS)
 
 func _get_selected_card_style() -> StyleBoxFlat:
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.14, 0.04, 0.1, 1.0)
-	style.border_color = Color(0.6, 0.1, 0.15, 1.0)  # Blood red
-	style.border_width_left = 3
-	style.border_width_top = 3
-	style.border_width_right = 3
-	style.border_width_bottom = 3
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_right = 8
-	style.corner_radius_bottom_left = 8
-	return style
+	return make_style(CARD_SELECTED_BG, BLOOD_RED, 3, CARD_CORNER_RADIUS)
 
 func _get_normal_pedestal_style() -> StyleBoxFlat:
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.1, 0.08, 0.12, 1.0)
-	style.border_width_left = 0
-	style.border_width_top = 0
-	style.border_width_right = 0
-	style.border_width_bottom = 0
-	style.corner_radius_top_left = 999
-	style.corner_radius_top_right = 999
-	style.corner_radius_bottom_right = 999
-	style.corner_radius_bottom_left = 999
-	return style
+	return make_style(PEDESTAL_NORMAL_BG, Color(0, 0, 0, 0), 0, PEDESTAL_CORNER_RADIUS)
 
 func _get_selected_pedestal_style() -> StyleBoxFlat:
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.2, 0.04, 0.08, 1.0)
-	style.border_color = Color(0.6, 0.1, 0.15, 1.0)
-	style.border_width_left = 0
-	style.border_width_top = 0
-	style.border_width_right = 0
-	style.border_width_bottom = 0
-	style.corner_radius_top_left = 999
-	style.corner_radius_top_right = 999
-	style.corner_radius_bottom_right = 999
-	style.corner_radius_bottom_left = 999
-	return style
+	return make_style(PEDESTAL_SELECTED_BG, BLOOD_RED, 0, PEDESTAL_CORNER_RADIUS)

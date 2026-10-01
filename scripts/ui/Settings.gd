@@ -27,6 +27,13 @@ func _ready():
 	back_btn.pressed.connect(_on_back)
 
 
+func _play_click():
+	"""Play the standard UI click sound."""
+	var _sfx = load("res://audio/sfx/click.wav")
+	if _sfx:
+		Audio.play_sfx(_sfx)
+
+
 func _on_master_changed(val):
 	Audio.master_volume = val
 
@@ -37,17 +44,13 @@ func _on_music_changed(val):
 
 func _on_sfx_changed(val):
 	Audio.sfx_volume = val
-	var _sfx = load("res://audio/sfx/click.wav")
-	if _sfx:
-		Audio.play_sfx(_sfx)
+	_play_click()
 
 
 func _on_difficulty_selected(idx):
 	Save.set_difficulty(idx)
 	_update_difficulty_label()
-	var _sfx = load("res://audio/sfx/click.wav")
-	if _sfx:
-		Audio.play_sfx(_sfx)
+	_play_click()
 
 
 func _update_difficulty_label():
@@ -61,13 +64,9 @@ func _update_difficulty_label():
 func _on_reset_pressed():
 	Save.reset_progress()
 	_update_difficulty_label()
-	var _sfx = load("res://audio/sfx/click.wav")
-	if _sfx:
-		Audio.play_sfx(_sfx)
+	_play_click()
 
 
 func _on_back():
-	var _sfx = load("res://audio/sfx/click.wav")
-	if _sfx:
-		Audio.play_sfx(_sfx)
+	_play_click()
 	get_tree().change_scene_to_file("res://scenes/main/title_screen.tscn")
