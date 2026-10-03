@@ -8,6 +8,7 @@ class_name Player
 signal health_changed(new_health: int, max_health: int)
 signal stamina_changed(new_stamina: int, max_stamina: int)
 signal died
+signal damaged(amount: int)
 signal ate_food(food_type: String, amount: int)
 signal picked_up_weapon(weapon_name: String)
 signal food_picked_up(food_type: String)
@@ -536,11 +537,16 @@ func take_damage(amount: int) -> void:
 	health -= amount
 	health = max(0, health)
 	emit_signal("health_changed", health, max_health)
+	# Game reacts to this (shake, haptic, difficulty); damage itself is applied here
+	# so there is exactly one funnel.
+	emit_signal("damaged", amount)
 
 	if mesh:
 		_flash_red()
 
 	print("[Player] Took ", amount, " damage — HP: ", health)
+
+	Audio.play_hurt()
 
 	if health <= 0:
 		_die()
@@ -630,6 +636,7 @@ func equip_weapon(weapon_name: String) -> void:
 		if weapon_system.has_method("add_weapon_to_inventory"):
 			weapon_system.add_weapon_to_inventory(weapon_name)
 	emit_signal("picked_up_weapon", weapon_name)
+	Audio.haptic_light()
 	print("[Player] Equipped: ", weapon_name)
 
 

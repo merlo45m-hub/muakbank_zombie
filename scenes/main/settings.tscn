@@ -187,6 +187,21 @@ popup/item_1/text = "Normal"
 popup/item_2/text = "Hard"
 selected = 1
 
+[node name="HapticsContainer" type="HBoxContainer" parent="PanelContainer/VBoxMain/GameplaySection"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HapticsLabel" type="Label" parent="PanelContainer/VBoxMain/GameplaySection/HapticsContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(200, 0)
+text = "Haptics"
+theme_override_font_sizes/font_size = 16
+
+[node name="HapticsToggle" type="CheckButton" parent="PanelContainer/VBoxMain/GameplaySection/HapticsContainer"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="Separator3" type="HSeparator" parent="PanelContainer/VBoxMain"]
 layout_mode = 2
 

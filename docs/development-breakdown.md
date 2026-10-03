@@ -161,7 +161,7 @@ How we attack game development: 9 sections, each independently testable, each wi
   - Review: agy 5 findings (all valid). pi review failed (969KB runaway thinking, no findings).
   - Two self-introduced agent bugs caught and fixed (broken indentation, wrong objective call)
   - Verified: boot clean, 6/6 harness
-- **Section 7: Audio & Feedback — NOT STARTED (next)**
+- **Section 7: Audio & Feedback — COMPLETE (2026-10-03)**
 - Section 8: Save & Persistence — NOT STARTED
 - Section 9: Polish & Performance — NOT STARTED
 

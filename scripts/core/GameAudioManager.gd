@@ -118,6 +118,13 @@ func _setup_buses() -> void:
 	AudioServer.set_bus_volume_db(2, _to_db(sfx_volume))
 	AudioServer.set_bus_volume_db(4, _to_db(ambient_volume))
 
+	# Low-pass on the Music bus — the effect set_intensity() drives.
+	_music_bus_idx = AudioServer.get_bus_index("Music")
+	if _music_bus_idx >= 0 and _intensity_filter == null:
+		_intensity_filter = AudioEffectLowPassFilter.new()
+		_intensity_filter.cutoff_hz = INTENSITY_CUTOFF_CALM
+		AudioServer.add_bus_effect(_music_bus_idx, _intensity_filter)
+
 
 func _setup_sound_manager() -> void:
 	# Try to get SoundManager singleton (registered by addon plugin)
@@ -279,6 +286,9 @@ func play_sfx_varied(stream: AudioStream = null, volume_range: float = 3.0, pitc
 
 
 func play_menu_music() -> void:
+	# Menus have no gameplay intensity; without this the Music bus low-pass would
+	# leave the menu track muffled (it starts at the calm cutoff).
+	set_intensity(1.0)
 	play_music(menu_music_stream)
 
 
@@ -350,6 +360,38 @@ func play_defeat() -> void:
 	play_sfx(defeat_stream, -1.0, 0.95)
 
 
+# === HAPTICS ===
+# Vibration lengths (ms), weighted by event severity. Android caps one call near
+# 1000ms; these stay short so they read as texture, not a ringtone.
+
+const HAPTIC_LIGHT_MS := 18    # pickups, food eaten
+const HAPTIC_MEDIUM_MS := 45   # player took a hit
+const HAPTIC_HEAVY_MS := 90    # boss spawned
+const HAPTIC_LONG_MS := 220    # player died
+
+func _vibrate(duration_ms: int) -> void:
+	# No-op off-device and when haptics are disabled in Settings.
+	if not Save.is_haptics_enabled():
+		return
+	Input.vibrate_handheld(duration_ms)
+
+
+func haptic_light() -> void:
+	_vibrate(HAPTIC_LIGHT_MS)
+
+
+func haptic_medium() -> void:
+	_vibrate(HAPTIC_MEDIUM_MS)
+
+
+func haptic_heavy() -> void:
+	_vibrate(HAPTIC_HEAVY_MS)
+
+
+func haptic_long() -> void:
+	_vibrate(HAPTIC_LONG_MS)
+
+
 # === AMBIENT LAYER SYSTEM ===
 
 func play_ambient_for(scene_name: String) -> void:
@@ -382,6 +424,14 @@ func play_ambient_for(scene_name: String) -> void:
 
 
 # === DYNAMIC MUSIC SYSTEM ===
+# Intensity drives a low-pass on the Music bus: calm = muffled, intense = open.
+
+const INTENSITY_CUTOFF_CALM := 700.0       # Hz
+const INTENSITY_CUTOFF_INTENSE := 20000.0  # Hz
+
+var _music_bus_idx: int = -1
+var _intensity_filter: AudioEffectLowPassFilter = null
+var _last_applied_cutoff: float = -1.0
 
 func set_intensity(value: float) -> void:
 	target_intensity = clamp(value, 0.0, 1.0)
@@ -394,8 +444,18 @@ func _process(delta: float) -> void:
 	# Decay target intensity over time (game gets calmer)
 	target_intensity = max(0.0, target_intensity - intensity_decay * delta)
 
-	# Could crossfade between calm/intense music layers here
-	# This is handled by SoundManager's music player if available
+	_apply_intensity_filter()
+
+
+func _apply_intensity_filter() -> void:
+	if _intensity_filter == null:
+		return
+	var cutoff := lerpf(INTENSITY_CUTOFF_CALM, INTENSITY_CUTOFF_INTENSE, current_intensity)
+	# Skip sub-Hz changes — the filter is not free to retune every frame.
+	if absf(cutoff - _last_applied_cutoff) < 1.0:
+		return
+	_last_applied_cutoff = cutoff
+	_intensity_filter.cutoff_hz = cutoff
 
 
 # === HELPERS ===
