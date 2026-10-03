@@ -465,8 +465,11 @@ func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 				if character_stats and randf() < character_stats.critical_chance:
 					damage = int(damage * character_stats.critical_multiplier)
 					is_crit = true
+				# zombie_type carries the spawner's short key ("bear", "runner") that
+				# HitFeedback matches on; get_class() returns the native class instead,
+				# ignoring class_name, so the bear branch was unreachable.
 				if has_node("HitFeedback") and $HitFeedback.has_method("emit_hit"):
-					$HitFeedback.emit_hit(enemy.global_transform.origin, enemy.get_class())
+					$HitFeedback.emit_hit(enemy.global_transform.origin, str(enemy.get("zombie_type")))
 				enemy.take_damage(damage)
 				if damage_numbers:
 					var dmg_type: int = MinosDamageNumbers3D.DamageType.CRITICAL_HIT if is_crit else MinosDamageNumbers3D.DamageType.NORMAL
