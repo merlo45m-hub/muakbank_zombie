@@ -1,39 +1,27 @@
 ## SaveManager.gd — Autoload Singleton
 ## Project > Project Settings > Autoload > add this as "Save"
-## Handles progress, high scores, settings, unlocks
+## Handles progress, high scores, unlocks
 ## Integrates SaveMadeEasy addon (SaveSystem autoload) for nested-key saves
 
 extends Node
 
-# === SAVE VERSION (for future migrations) ===
+# === SAVE VERSION (bump to trigger a re-save / migration on load) ===
 const SAVE_VERSION: int = 1
 
 # === SAVE DATA ===
-var save_data: Dictionary = {
-	"version": SAVE_VERSION,
-	"high_score": 0,
-	"total_zombies_fed": 0,
-	"total_shifts_completed": 0,
-	"total_likes_earned": 0,
-	"unlocked_foods": ["burger", "noodles", "soda", "donut", "pizza", "taco"],
-	"unlocked_levels": [1],
-	"unlocked_achievements": [],
-	"current_level": 1,
-	"difficulty": 0,  # 0=normal, 1=hard, 2=insane
-	"selected_character": "doctor",  # drives which GLB Player._apply_character_model loads
-	"tutorial_completed": false,
-	"sound_enabled": true,
-	"music_enabled": true
-}
+# Filled by _load_game() at startup. _default_save_data() is the single source of
+# defaults: any key the file lacks (a new key, or an older save) falls back to it.
+var save_data: Dictionary = {}
 
 var save_path: String = "user://savegame.save"
 var selected_character: String = "doctor"   # real geometry (1146 verts); "gamer" is a 64-vert blockout
 var pending_results: Dictionary = {}
 
-# SaveMadeEasy key prefix — all save_data fields stored under "save:" namespace
+# SaveMadeEasy key prefix — all save_data fields stored under "game_" namespace
 const SAVE_KEY_PREFIX: String = "game_"
 
 func _ready() -> void:
+	save_data = _default_save_data()
 	_load_game()
 
 
@@ -47,28 +35,54 @@ func _load_game() -> void:
 	"""Load game data via SaveMadeEasy's _load + get_var, with JSON fallback."""
 	var save_system := _get_save_system()
 	if save_system == null:
-		push_warning("[SaveManager] SaveSystem autoload not found — using defaults")
-		save_data = _default_save_data()
-		_save_game_fallback()
+		# Read-only defaults — never write here. A missing addon must not clobber
+		# whatever real save file already exists on disk.
+		push_warning("[SaveManager] SaveSystem autoload not found — using in-memory defaults")
 		return
 
-	# Load the encrypted/nested save file through SaveMadeEasy
+	# _load() is a no-op on a missing file and does not clear prior state, which would
+	# resurrect whatever SaveMadeEasy last held (it auto-saves on exit). Start clean.
+	if not FileAccess.file_exists(save_path):
+		save_system.delete_all()
 	save_system._load(save_path)
 
-	# Pull values out of SaveSystem's current_state_dictionary into save_data
-	var defaults := _get_defaults()
+	var defaults := _default_save_data()
+	# Fallback 0, not SAVE_VERSION: a pre-versioning file lacks the key and must read
+	# as older so the migration below runs. Defaulting to SAVE_VERSION would mask it.
+	var old_version: int = int(save_system.get_var(SAVE_KEY_PREFIX + "version", 0))
 	for key in defaults:
+		if key == "version":
+			continue
 		var value = save_system.get_var(SAVE_KEY_PREFIX + key, defaults[key])
-		# Type-safety: ensure ints stay ints, bools stay bools
-		if key == "high_score" or key == "total_zombies_fed" or key == "total_shifts_completed" or key == "total_likes_earned" or key == "current_level" or key == "difficulty":
-			value = int(value) if value != null else defaults[key]
-		elif key == "tutorial_completed" or key == "sound_enabled" or key == "music_enabled" or key == "haptics_enabled":
-			value = bool(value) if value != null else defaults[key]
-		save_data[key] = value
-	save_data["version"] = SAVE_VERSION
+		save_data[key] = _coerce(key, value, defaults[key])
+	save_data["version"] = maxi(old_version, SAVE_VERSION)
 	# Player._apply_character_model() reads the member var; save_data is what reaches
 	# disk. Without this line they drift and a character choice survives exactly one run.
 	selected_character = String(save_data.get("selected_character", selected_character))
+
+	# A file written by an older build is rewritten in the current shape so the
+	# defaults we just backfilled reach disk instead of being re-derived every launch.
+	if old_version < SAVE_VERSION:
+		print("[SaveManager] Migrating save v%d -> v%d" % [old_version, SAVE_VERSION])
+		save_game()
+
+func _coerce(key: String, value, fallback):
+	"""Keep stored types stable across a JSON round-trip (a save file is JSON)."""
+	if value == null:
+		return fallback
+	match key:
+		"high_score", "total_zombies_fed", "total_shifts_completed", "total_likes_earned", "current_level", "difficulty":
+			return int(value)
+		"tutorial_completed", "haptics_enabled":
+			return bool(value)
+		"unlocked_levels":
+			# JSON stores ints as floats; level ids must compare as ints
+			# (is_level_unlocked uses has(level) against ints).
+			var levels: Array[int] = []
+			levels.assign(value)
+			return levels
+		_:
+			return value
 
 func save_game() -> void:
 	"""Write save_data to disk via SaveMadeEasy's set_var + save."""
@@ -87,18 +101,25 @@ func save_game() -> void:
 	print("[SaveManager] Game saved")
 
 func _save_game_fallback() -> void:
-	"""Fallback: manual JSON save when SaveSystem is unavailable."""
+	"""Fallback: manual JSON save when SaveSystem is unavailable.
+	Keys carry SAVE_KEY_PREFIX so the file stays readable by the normal load path."""
+	var out: Dictionary = {}
+	for key in save_data:
+		out[SAVE_KEY_PREFIX + key] = save_data[key]
 	var file = FileAccess.open(save_path, FileAccess.WRITE)
 	if file:
-		file.store_string(JSON.stringify(save_data))
+		file.store_string(JSON.stringify(out))
 		file.close()
 		print("[SaveManager] Game saved (fallback JSON)")
 	else:
 		push_warning("[SaveManager] Failed to save game: %s" % FileAccess.get_open_error())
 
 func reset_progress() -> void:
-	"""Reset all progress to defaults."""
+	"""Reset all progress to defaults, including the selected-character member var."""
 	save_data = _default_save_data()
+	# save_game() copies the member var back into save_data, so it must be reset too
+	# or the pre-reset character silently survives.
+	selected_character = save_data["selected_character"]
 	save_game()
 
 func _default_save_data() -> Dictionary:
@@ -110,31 +131,11 @@ func _default_save_data() -> Dictionary:
 		"total_likes_earned": 0,
 		"unlocked_foods": ["burger", "noodles", "soda", "donut", "pizza", "taco"],
 		"unlocked_levels": [1],
-	"unlocked_achievements": [],
+		"unlocked_achievements": [],
 		"current_level": 1,
-		"difficulty": 0,
-		"selected_character": "doctor",
+		"difficulty": 0,  # 0=normal, 1=hard, 2=insane
+		"selected_character": "doctor",  # drives which GLB Player._apply_character_model loads
 		"tutorial_completed": false,
-		"sound_enabled": true,
-		"music_enabled": true,
-		"haptics_enabled": true
-	}
-
-func _get_defaults() -> Dictionary:
-	return {
-		"high_score": 0,
-		"total_zombies_fed": 0,
-		"total_shifts_completed": 0,
-		"total_likes_earned": 0,
-		"unlocked_foods": ["burger", "noodles", "soda", "donut", "pizza", "taco"],
-		"unlocked_levels": [1],
-	"unlocked_achievements": [],
-		"current_level": 1,
-		"difficulty": 0,
-		"selected_character": "doctor",
-		"tutorial_completed": false,
-		"sound_enabled": true,
-		"music_enabled": true,
 		"haptics_enabled": true
 	}
 
@@ -168,12 +169,6 @@ func is_level_unlocked(level: int) -> bool:
 func is_tutorial_completed() -> bool:
 	return save_data["tutorial_completed"]
 
-func is_sound_enabled() -> bool:
-	return save_data["sound_enabled"]
-
-func is_music_enabled() -> bool:
-	return save_data["music_enabled"]
-
 func is_haptics_enabled() -> bool:
 	# Audio autoload may read this before Save has populated its defaults.
 	return save_data.get("haptics_enabled", true)
@@ -206,12 +201,9 @@ func set_difficulty(diff: int) -> void:
 	save_data["difficulty"] = diff
 	save_game()
 
-func set_sound_enabled(enabled: bool) -> void:
-	save_data["sound_enabled"] = enabled
-	save_game()
-
-func set_music_enabled(enabled: bool) -> void:
-	save_data["music_enabled"] = enabled
+func set_selected_character(character_name: String) -> void:
+	selected_character = character_name
+	save_data["selected_character"] = character_name
 	save_game()
 
 func set_haptics_enabled(enabled: bool) -> void:
@@ -237,6 +229,4 @@ func set_unlocked_achievements(ids: Array) -> void:
 	save_game()
 
 func get_unlocked_achievements() -> Array:
-	if save_data.has("unlocked_achievements"):
-		return save_data["unlocked_achievements"]
-	return []
+	return save_data.get("unlocked_achievements", [])
