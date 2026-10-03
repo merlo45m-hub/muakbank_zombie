@@ -111,7 +111,7 @@ How we attack game development: 9 sections, each independently testable, each wi
 
 **Test:** on-device (audio is sensory)
 
-**Files:** `scripts/core/AudioManager.gd`, `scripts/gameplay/CameraShake.gd`, `assets/audio/`
+**Files:** `scripts/core/GameAudioManager.gd`, `scripts/gameplay/CameraShake.gd`, `scripts/gameplay/HitFeedback.gd`, `res://audio/`
 
 ## Section 8: Save & Persistence
 

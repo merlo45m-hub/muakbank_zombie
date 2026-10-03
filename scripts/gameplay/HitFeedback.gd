@@ -130,8 +130,9 @@ func emit_pickup(position: Vector3) -> void:
 
 
 func emit_hit(position: Vector3, enemy_type: String = "default") -> void:
+	# Keys are the spawner's short zombie_type values (see ZombieSpawner3D).
 	match enemy_type:
-		"zombie_bear":
+		"bear":
 			emit_death(position)
 		_:
 			emit_blood(position)
