@@ -62,7 +62,7 @@ func _load_game() -> void:
 		# Type-safety: ensure ints stay ints, bools stay bools
 		if key == "high_score" or key == "total_zombies_fed" or key == "total_shifts_completed" or key == "total_likes_earned" or key == "current_level" or key == "difficulty":
 			value = int(value) if value != null else defaults[key]
-		elif key == "tutorial_completed" or key == "sound_enabled" or key == "music_enabled":
+		elif key == "tutorial_completed" or key == "sound_enabled" or key == "music_enabled" or key == "haptics_enabled":
 			value = bool(value) if value != null else defaults[key]
 		save_data[key] = value
 	save_data["version"] = SAVE_VERSION
@@ -116,7 +116,8 @@ func _default_save_data() -> Dictionary:
 		"selected_character": "doctor",
 		"tutorial_completed": false,
 		"sound_enabled": true,
-		"music_enabled": true
+		"music_enabled": true,
+		"haptics_enabled": true
 	}
 
 func _get_defaults() -> Dictionary:
@@ -133,7 +134,8 @@ func _get_defaults() -> Dictionary:
 		"selected_character": "doctor",
 		"tutorial_completed": false,
 		"sound_enabled": true,
-		"music_enabled": true
+		"music_enabled": true,
+		"haptics_enabled": true
 	}
 
 
@@ -172,6 +174,10 @@ func is_sound_enabled() -> bool:
 func is_music_enabled() -> bool:
 	return save_data["music_enabled"]
 
+func is_haptics_enabled() -> bool:
+	# Audio autoload may read this before Save has populated its defaults.
+	return save_data.get("haptics_enabled", true)
+
 
 # ── SETTERS ───────────────────────────────────────────────────
 
@@ -206,6 +212,10 @@ func set_sound_enabled(enabled: bool) -> void:
 
 func set_music_enabled(enabled: bool) -> void:
 	save_data["music_enabled"] = enabled
+	save_game()
+
+func set_haptics_enabled(enabled: bool) -> void:
+	save_data["haptics_enabled"] = enabled
 	save_game()
 
 func unlock_food(food_name: String) -> void:

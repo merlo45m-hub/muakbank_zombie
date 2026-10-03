@@ -104,7 +104,7 @@ func take_damage(amount: int) -> void:
 		velocity.x += kb.x * 6
 		velocity.z += kb.z * 6
 	
-	Audio.play_hurt()
+	Audio.play_zombie_hit()
 	
 	if health <= 0:
 		_die()

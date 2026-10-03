@@ -7,6 +7,7 @@ class_name WaveManager
 signal wave_started(wave_number, zombie_count)
 signal wave_completed(wave_number)
 signal all_waves_cleared
+signal boss_spawned
 
 @export var waves_per_level: int = 5
 @export var base_zombies_per_wave: int = 5
@@ -81,6 +82,8 @@ func _spawn_boss() -> void:
 		var diff_mult = difficulty_manager.get_level_difficulty(_level) if difficulty_manager else 1.0
 		if boss.has_method("apply_difficulty"):
 			boss.apply_difficulty(diff_mult)
+	# Emit last: a consumer must not run before the death signal is wired.
+	boss_spawned.emit()
 
 func _on_boss_died() -> void:
 	zombies_alive -= 1

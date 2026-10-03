@@ -7,6 +7,7 @@ extends Control
 @onready var music_slider = $PanelContainer/VBoxMain/AudioSection/MusicContainer/MusicSlider
 @onready var sfx_slider = $PanelContainer/VBoxMain/AudioSection/SfxContainer/SfxSlider
 @onready var difficulty_btn = $PanelContainer/VBoxMain/GameplaySection/DifficultyContainer/DifficultyOption
+@onready var haptics_toggle = $PanelContainer/VBoxMain/GameplaySection/HapticsContainer/HapticsToggle
 @onready var reset_btn = $PanelContainer/VBoxMain/DataSection/ResetBtn
 @onready var back_btn = $PanelContainer/VBoxMain/BackBtn
 
@@ -16,12 +17,14 @@ func _ready():
 	master_slider.value = Audio.master_volume
 	music_slider.value = Audio.music_volume
 	sfx_slider.value = Audio.sfx_volume
+	haptics_toggle.button_pressed = Save.is_haptics_enabled()
 	_update_difficulty_label()
 
 	# Connect
 	master_slider.value_changed.connect(_on_master_changed)
 	music_slider.value_changed.connect(_on_music_changed)
 	sfx_slider.value_changed.connect(_on_sfx_changed)
+	haptics_toggle.toggled.connect(_on_haptics_toggled)
 	difficulty_btn.item_selected.connect(_on_difficulty_selected)
 	reset_btn.pressed.connect(_on_reset_pressed)
 	back_btn.pressed.connect(_on_back)
@@ -42,6 +45,12 @@ func _on_music_changed(val):
 func _on_sfx_changed(val):
 	Audio.sfx_volume = val
 	_play_click()
+
+
+func _on_haptics_toggled(enabled: bool):
+	Save.set_haptics_enabled(enabled)
+	if enabled:
+		Audio.haptic_light()
 
 
 func _on_difficulty_selected(idx):

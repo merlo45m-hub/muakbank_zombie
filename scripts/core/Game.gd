@@ -9,7 +9,6 @@ signal stamina_changed(new_stamina, max_stamina)
 signal score_changed(new_score)
 signal kills_changed(new_kills)
 signal timer_changed(seconds_left)
-signal weapon_changed(weapon_name)
 signal food_eaten(food_type, amount)
 
 # === NODE REFS ===
@@ -27,6 +26,10 @@ const ZOMBIE_SPAWN_INTERVAL: float = 3.0
 const FOOD_SPAWN_INTERVAL: float = 8.0
 const SCORE_PER_KILL: int = 100
 const SCORE_PER_FOOD: int = 50
+# Combo count that saturates music intensity at 1.0 (matches the "combo_5" achievement).
+const COMBO_INTENSITY_MAX: float = 5.0
+# Music intensity floor applied on taking damage — danger is at least this tense.
+const INTENSITY_DAMAGE_FLOOR: float = 0.8
 
 # === GAME STATE ===
 var score: int = 0
@@ -64,6 +67,7 @@ func _ready() -> void:
 	if player:
 		player.health_changed.connect(_on_player_health_changed)
 		player.stamina_changed.connect(_on_player_stamina_changed)
+		player.damaged.connect(_on_player_damaged)
 
 	# Connect wave/combo signals for reactive HUD updates
 	if wave_manager:
@@ -71,6 +75,8 @@ func _ready() -> void:
 			wave_manager.wave_started.connect(_on_wave_started)
 		if wave_manager.has_signal("all_waves_cleared"):
 			wave_manager.all_waves_cleared.connect(_on_all_waves_cleared)
+		if wave_manager.has_signal("boss_spawned"):
+			wave_manager.boss_spawned.connect(_on_boss_spawned)
 	if combo_system:
 		if combo_system.has_signal("combo_changed"):
 			combo_system.combo_changed.connect(_on_combo_changed)
@@ -258,7 +264,11 @@ func start_game() -> void:
 	# Start timer
 	if game_timer:
 		game_timer.start(1.0)  # Tick every second
-	
+
+	# Start in-game music (menu music stops itself on scene entry via TitleScreen)
+	Audio.play_game_music()
+	Audio.set_intensity(0.0)
+
 	# Initial HUD update
 	_update_hud()
 	print("[Game] Started! Survive the zombie animal apocalypse!")
@@ -343,6 +353,7 @@ func end_game(survived: bool) -> void:
 		game_timer.stop()
 	
 	print("[Game] Game over! Survived: ", survived, " Score: ", score)
+	Audio.stop_music()
 	emit_signal("game_over", survived, score, zombies_killed)
 	
 	# Save progress BEFORE scene change (race condition fix)
@@ -383,6 +394,8 @@ func on_zombie_killed(zombie_type: String) -> void:
 	if combo_system and combo_system.has_method("register_kill"):
 		combo_system.register_kill()
 		score += int(SCORE_PER_KILL * (combo_system.get_score_multiplier() - 1.0))
+		# Music tightens as the combo climbs; intensity_decay relaxes it again.
+		Audio.set_intensity(clampf(float(combo_system.combo_count) / COMBO_INTENSITY_MAX, 0.0, 1.0))
 	
 	# Apply difficulty scaling
 	if difficulty_manager and difficulty_manager.has_method("register_kill"):
@@ -403,21 +416,16 @@ func on_zombie_killed(zombie_type: String) -> void:
 	
 	print("[Game] Killed: ", zombie_type, " Total: ", zombies_killed)
 
-func on_player_damaged(damage: int) -> void:
+func _on_player_damaged(amount: int) -> void:
+	# Player.take_damage() owns applying damage and emits this; react only.
 	if not game_active or not player:
 		return
-	
-	player.take_damage(damage)
-	emit_signal("health_changed", player.health, player.max_health)
-	
 	# Screen shake proportional to damage
-	_shake(clampf(damage / 40.0, 0.1, 0.5))
-	
+	_shake(clampf(amount / 40.0, 0.1, 0.5))
+	Audio.haptic_medium()
+	Audio.set_intensity(maxf(Audio.target_intensity, INTENSITY_DAMAGE_FLOOR))
 	if difficulty_manager and difficulty_manager.has_method("register_damage_taken"):
 		difficulty_manager.register_damage_taken()
-	
-	if player.health <= 0:
-		end_game(false)
 
 func _shake(strength: float) -> void:
 	if camera_shake and camera_shake.has_method("shake"):
@@ -444,24 +452,27 @@ func consume_food(food_type: String) -> bool:
 	if achievement_manager and achievement_manager.has_method("unlock"):
 		if Save.get_total_zombies_fed() >= 10:
 			achievement_manager.unlock("well_fed")
+	Audio.haptic_light()
 	print("[Game] Consumed: ", food_type, " +", health_amount, " HP")
 	return true
-
-func on_pickup_weapon(weapon_name: String) -> void:
-	if not game_active or not player:
-		return
-	
-	player.equip_weapon(weapon_name)
-	emit_signal("weapon_changed", weapon_name)
-	print("[Game] Equipped: ", weapon_name)
 
 func _on_all_waves_cleared() -> void:
 	if game_active:
 		end_game(true)
 
+func _on_boss_spawned() -> void:
+	# WaveManager can tick into teardown after end_game; don't play boss music over
+	# the Game Over screen.
+	if not game_active:
+		return
+	Audio.play_music(Audio.boss_music_stream)
+	Audio.haptic_heavy()
+	Audio.set_intensity(1.0)
+
 func on_player_died() -> void:
 	if not game_active:
 		return
+	Audio.haptic_long()
 	end_game(false)
 
 func on_powerup_collected(powerup_type: String) -> void:
