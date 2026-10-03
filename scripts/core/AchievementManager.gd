@@ -9,7 +9,10 @@ signal achievement_unlocked(achievement_id)
 var achievements: Dictionary = {}  # id -> {title, desc, unlocked}
 
 func _ready() -> void:
-	_load_progress()
+	# Intentionally empty: achievements are registered by Game._setup_achievements()
+	# AFTER this runs, and load_progress() only marks ids that already exist. Loading
+	# here (as it did) found an empty dict and silently dropped every unlock.
+	pass
 
 func register_achievement(id: String, title: String, desc: String) -> void:
 	achievements[id] = {
@@ -42,16 +45,19 @@ func get_total_count() -> int:
 # === PERSISTENCE ===
 
 func _save_progress() -> void:
-	"""Save unlocked achievement ids via the Save singleton."""
-	var unlocked_ids: Array = []
+	"""Union this scene's unlocks into the global set, then persist.
+	AchievementManager is a per-scene node that re-registers only its own ids, so
+	writing just `achievements` would erase unlocks earned in other scenes."""
+	if not Save or not Save.has_method("get_unlocked_achievements"):
+		return
+	var unlocked_ids: Array = Save.get_unlocked_achievements().duplicate()
 	for id in achievements:
-		if achievements[id].unlocked:
+		if achievements[id].unlocked and not unlocked_ids.has(id):
 			unlocked_ids.append(id)
-	if Save and Save.has_method("set_unlocked_achievements"):
-		Save.set_unlocked_achievements(unlocked_ids)
+	Save.set_unlocked_achievements(unlocked_ids)
 
-func _load_progress() -> void:
-	"""Load unlocked achievement ids from the Save singleton."""
+func load_progress() -> void:
+	"""Apply persisted unlocks. Must be called AFTER achievements are registered."""
 	if not Save or not Save.has_method("get_unlocked_achievements"):
 		return
 	var unlocked_ids: Array = Save.get_unlocked_achievements()

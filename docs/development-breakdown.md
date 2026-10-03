@@ -162,8 +162,8 @@ How we attack game development: 9 sections, each independently testable, each wi
   - Two self-introduced agent bugs caught and fixed (broken indentation, wrong objective call)
   - Verified: boot clean, 6/6 harness
 - **Section 7: Audio & Feedback — COMPLETE (2026-10-03)**
-- Section 8: Save & Persistence — NOT STARTED
-- Section 9: Polish & Performance — NOT STARTED
+- Section 8: Save & Persistence — COMPLETE (2026-10-03)
+- Section 9: Polish & Performance — NOT STARTED (next)
 
 ## Reviewer notes (Section 3)
 

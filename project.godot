@@ -18,10 +18,10 @@ config/icon="res://muakbank_icon.png"
 [autoload]
 
 SceneManager="*SceneManager.gd"
-Audio="*scripts/core/GameAudioManager.gd"
-Save="*scripts/core/SaveManager.gd"
-Level="*scripts/core/LevelManager.gd"
 SaveSystem="*uid://dfu2pldj84cy1"
+Save="*scripts/core/SaveManager.gd"
+Audio="*scripts/core/GameAudioManager.gd"
+Level="*scripts/core/LevelManager.gd"
 SoundManager="*uid://6q1wagejt60k"
 MinosDamageNumbers2D="*uid://cmstxlu50gkl7"
 MinosDamageNumbers3D="*uid://bqk86tyyf62lx"

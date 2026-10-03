@@ -34,9 +34,9 @@ const INTENSITY_DAMAGE_FLOOR: float = 0.8
 # === GAME STATE ===
 var score: int = 0
 var zombies_killed: int = 0
+var damage_taken_this_level: bool = false  # for the "untouchable" achievement
 var game_active: bool = false
 var time_remaining: float = GAME_DURATION
-var level := Save.get_current_level()
 
 # === OPTIONAL SYSTEMS (auto-detected) ===
 var wave_manager: Node = null
@@ -227,11 +227,17 @@ func _setup_achievements() -> void:
 	am.register_achievement("survivor", "Survivor", "Complete a level")
 	am.register_achievement("well_fed", "Well Fed", "Eat 10 food items")
 	am.register_achievement("untouchable", "Untouchable", "Complete a level without taking damage")
+	# Registered now, so persisted unlocks can finally be applied (see _ready note).
+	if am.has_method("load_progress"):
+		am.load_progress()
 
 func start_game() -> void:
-	game_active = true
+	# game_active gates _on_player_damaged; keep it false through placement so a stray
+	# hit during the spawn frame cannot mark the run "damaged" for untouchable.
+	game_active = false
 	score = 0
 	zombies_killed = 0
+	damage_taken_this_level = false
 	time_remaining = GAME_DURATION
 	
 	# Reset player. The spot is PROBED against the level's real collision and then
@@ -245,7 +251,11 @@ func start_game() -> void:
 		await _place_player(player)
 		player.health = player.max_health
 		player.stamina = player.max_stamina
-	
+
+	# Placement done — the run is live now (gated above so the spawn frame can't
+	# register a hit).
+	game_active = true
+
 	# Start spawners
 	if zombie_spawner:
 		zombie_spawner.start_spawning()
@@ -369,6 +379,8 @@ func end_game(survived: bool) -> void:
 		# Achievement: survivor
 		if achievement_manager and achievement_manager.has_method("unlock"):
 			achievement_manager.unlock("survivor")
+			if not damage_taken_this_level:
+				achievement_manager.unlock("untouchable")
 	
 	# Store results in Save singleton for the game over screen to retrieve
 	# This avoids race condition with scene change + await
@@ -420,6 +432,7 @@ func _on_player_damaged(amount: int) -> void:
 	# Player.take_damage() owns applying damage and emits this; react only.
 	if not game_active or not player:
 		return
+	damage_taken_this_level = true
 	# Screen shake proportional to damage
 	_shake(clampf(amount / 40.0, 0.1, 0.5))
 	Audio.haptic_medium()

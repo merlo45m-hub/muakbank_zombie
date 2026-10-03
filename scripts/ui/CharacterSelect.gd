@@ -152,8 +152,9 @@ func _confirm_selection(index: int, play_sound: bool) -> void:
 
 	print("[CharacterSelect] Selected: ", character_names[index])
 
-	# Save selection to be loaded in game
-	Save.selected_character = character_names[index].to_lower()
+	# Persist immediately — the member var alone is lost if the app dies before the
+	# next gameplay save.
+	Save.set_selected_character(character_names[index].to_lower())
 
 
 func _select_character(index: int, play_sound: bool = true) -> void:
