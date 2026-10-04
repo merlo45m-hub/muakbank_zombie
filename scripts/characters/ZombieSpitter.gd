@@ -63,7 +63,7 @@ func _perform_attack() -> void:
 
 	_spit()
 
-	await get_tree().create_timer(0.4).timeout
+	await _wait(0.4)
 	is_attacking = false
 	is_spitting = false
 	current_state = AIState.CHASE

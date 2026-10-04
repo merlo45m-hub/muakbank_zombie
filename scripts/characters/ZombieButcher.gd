@@ -101,6 +101,6 @@ func _perform_attack() -> void:
 			if p.has_method("take_damage"):
 				p.take_damage(damage)
 
-	await get_tree().create_timer(0.6).timeout
+	await _wait(0.6)
 	is_attacking = false
 	current_state = AIState.CHASE

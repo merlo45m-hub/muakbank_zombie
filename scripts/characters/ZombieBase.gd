@@ -282,8 +282,11 @@ func _apply_separation(strength: float = 1.0) -> void:
 	# _chase() meant the VFN override silently overwrote it, so hordes still piled up.
 	# `strength` scales it down for stationary attackers, which should jostle for
 	# position rather than slide.
+	var tree := get_tree()
+	if tree == null:
+		return
 	var separation_vec = Vector3.ZERO
-	for other in get_tree().get_nodes_in_group("enemies"):
+	for other in tree.get_nodes_in_group("enemies"):
 		if other == self or not is_instance_valid(other):
 			continue
 		# The group is nominally ZombieBase-only, but a future decoy/turret that

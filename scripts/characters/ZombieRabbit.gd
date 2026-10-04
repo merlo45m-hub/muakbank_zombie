@@ -88,7 +88,7 @@ func _perform_attack() -> void:
 			if target.has_method("take_damage"):
 				target.take_damage(damage)
 	
-	await get_tree().create_timer(0.2).timeout
+	await _wait(0.2)
 	is_attacking = false
 
 func take_damage(amount: int) -> void:
