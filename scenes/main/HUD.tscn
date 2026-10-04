@@ -47,6 +47,13 @@ corner_radius_bottom_right = 50
 corner_radius_bottom_left = 50
 
 [node name="HUD" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1")
 
 [node name="VBoxLeft" type="VBoxContainer" parent="."]
@@ -170,9 +177,9 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -228.0
-offset_top = -100.0
-offset_right = 228.0
+offset_left = -246.0
+offset_top = -92.0
+offset_right = 246.0
 offset_bottom = -20.0
 alignment = 1
 theme_override_constants/separation = 12
@@ -183,6 +190,7 @@ texture_normal = ExtResource("2")
 theme_override_styles/normal = SubResource("FoodSlotBg")
 theme_override_styles/hover = SubResource("FoodSlotBg")
 theme_override_styles/pressed = SubResource("FoodSlotBg")
+ignore_texture_size = true
 theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot2" type="TextureButton" parent="FoodBar"]
@@ -191,6 +199,7 @@ texture_normal = ExtResource("3")
 theme_override_styles/normal = SubResource("FoodSlotBg")
 theme_override_styles/hover = SubResource("FoodSlotBg")
 theme_override_styles/pressed = SubResource("FoodSlotBg")
+ignore_texture_size = true
 theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot3" type="TextureButton" parent="FoodBar"]
@@ -199,6 +208,7 @@ texture_normal = ExtResource("4")
 theme_override_styles/normal = SubResource("FoodSlotBg")
 theme_override_styles/hover = SubResource("FoodSlotBg")
 theme_override_styles/pressed = SubResource("FoodSlotBg")
+ignore_texture_size = true
 theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot4" type="TextureButton" parent="FoodBar"]
@@ -207,6 +217,7 @@ texture_normal = ExtResource("5")
 theme_override_styles/normal = SubResource("FoodSlotBg")
 theme_override_styles/hover = SubResource("FoodSlotBg")
 theme_override_styles/pressed = SubResource("FoodSlotBg")
+ignore_texture_size = true
 theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot5" type="TextureButton" parent="FoodBar"]
@@ -215,6 +226,7 @@ texture_normal = ExtResource("6")
 theme_override_styles/normal = SubResource("FoodSlotBg")
 theme_override_styles/hover = SubResource("FoodSlotBg")
 theme_override_styles/pressed = SubResource("FoodSlotBg")
+ignore_texture_size = true
 theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot6" type="TextureButton" parent="FoodBar"]
@@ -223,4 +235,5 @@ texture_normal = ExtResource("7")
 theme_override_styles/normal = SubResource("FoodSlotBg")
 theme_override_styles/hover = SubResource("FoodSlotBg")
 theme_override_styles/pressed = SubResource("FoodSlotBg")
+ignore_texture_size = true
 theme_override_font_sizes/font_size = 12

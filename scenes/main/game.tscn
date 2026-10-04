@@ -228,11 +228,19 @@ one_shot = false
 
 [node name="HUD" parent="." instance=ExtResource("hud_scene")]
 [node name="MobileControls" type="Control" parent="Player"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 layer = 10
 script = ExtResource("6")
 
 [node name="JoystickArea" type="Control" parent="Player/MobileControls"]
-anchors_preset = 10
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = 20.0
 offset_top = -140.0
 offset_right = 120.0
