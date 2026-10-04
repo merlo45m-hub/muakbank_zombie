@@ -70,7 +70,7 @@ func _start_charge() -> void:
 	velocity.z = dir.z * charge_speed
 	
 	# Charge for 1 second
-	await get_tree().create_timer(1.0).timeout
+	await _wait(1.0)
 	is_charging = false
 	current_state = AIState.CHASE
 
@@ -98,7 +98,7 @@ func _perform_attack() -> void:
 				if p.has_method("take_damage"):
 					p.take_damage(slam_damage)
 	
-	await get_tree().create_timer(1.0).timeout
+	await _wait(1.0)
 	is_attacking = false
 	current_state = AIState.CHASE
 

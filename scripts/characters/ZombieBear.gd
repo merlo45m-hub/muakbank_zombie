@@ -99,6 +99,6 @@ func _perform_slam() -> void:
 			if target.has_method("take_damage"):
 				target.take_damage(damage)
 	
-	await get_tree().create_timer(1.0).timeout
+	await _wait(1.0)
 	is_attacking = false
 	current_state = AIState.CHASE
