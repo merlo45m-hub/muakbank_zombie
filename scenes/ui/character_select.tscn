@@ -1,509 +1,87 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=7 format=3]
 
-[ext_resource type="Script" path="res://scripts/ui/CharacterSelect.gd" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/world/title_background.tscn" id="bg"]
-[ext_resource type="PackedScene" path="res://scenes/characters/character_gamer.tscn" id="gamer"]
-[ext_resource type="PackedScene" path="res://scenes/characters/character_doctor.tscn" id="doctor"]
-[ext_resource type="PackedScene" path="res://scenes/characters/character_nurse.tscn" id="nurse"]
-[ext_resource type="PackedScene" path="res://scenes/characters/character_streamer.tscn" id="streamer"]
-[ext_resource type="PackedScene" path="res://scenes/characters/character_hunter.tscn" id="hunter"]
-[ext_resource type="FontFile" path="res://assets/fonts/Nosifer-Regular.ttf" id="font_nosifer"]
+[ext_resource type="Script" path="res://scripts/ui/CharacterSelect.gd" id="1_cs"]
+[ext_resource type="PackedScene" path="res://scenes/world/title_background.tscn" id="2_bg"]
+[ext_resource type="Shader" path="res://shaders/title_blood_drip.gdshader" id="3_drip"]
+[ext_resource type="FontFile" path="res://assets/fonts/Nosifer-Regular.ttf" id="4_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/SpecialElite-Regular.ttf" id="5_se"]
 
-[sub_resource type="StyleBoxFlat" id="ButtonStyle"]
-bg_color = Color(0.08, 0.04, 0.1, 1.0)
-border_color = Color(0.4, 0.1, 0.2, 1.0)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="ButtonHover"]
-bg_color = Color(0.15, 0.08, 0.18, 1.0)
-border_color = Color(0.6, 0.2, 0.3, 1.0)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="LabelSettings" id="TitleSettings"]
-font_size = 52
-font = ExtResource("font_nosifer")
-font_color = Color(0.75, 0.12, 0.08, 1.0)
-outline_size = 5
-outline_color = Color(0.05, 0.01, 0.02, 1.0)
-
-[sub_resource type="StyleBoxFlat" id="CardBackground"]
-bg_color = Color(0.06, 0.03, 0.08, 1.0)
-border_color = Color(0.2, 0.1, 0.15, 1.0)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-anti_aliasing = true
-anti_aliasing_size = 1.0
-
-[sub_resource type="StyleBoxFlat" id="CardBackgroundSelected"]
-bg_color = Color(0.14, 0.04, 0.1, 1.0)
-border_color = Color(0.6, 0.1, 0.15, 1.0)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-anti_aliasing = true
-anti_aliasing_size = 1.0
-
-[sub_resource type="StyleBoxFlat" id="PedestalDark"]
-bg_color = Color(0.1, 0.08, 0.12, 1.0)
-border_color = Color(0.2, 0.15, 0.25, 1.0)
-border_width_left = 0
-border_width_top = 0
-border_width_right = 0
-border_width_bottom = 0
-corner_radius_top_left = 999
-corner_radius_top_right = 999
-corner_radius_bottom_right = 999
-corner_radius_bottom_left = 999
-anti_aliasing = true
-anti_aliasing_size = 2.0
-
-[sub_resource type="StyleBoxFlat" id="PedestalSelected"]
-bg_color = Color(0.2, 0.04, 0.08, 1.0)
-border_color = Color(0.6, 0.1, 0.15, 1.0)
-border_width_left = 0
-border_width_top = 0
-border_width_right = 0
-border_width_bottom = 0
-corner_radius_top_left = 999
-corner_radius_top_right = 999
-corner_radius_bottom_right = 999
-corner_radius_bottom_left = 999
-anti_aliasing = true
-anti_aliasing_size = 2.0
-
-[sub_resource type="StyleBoxFlat" id="WoodPlank"]
-bg_color = Color(0.35, 0.2, 0.12, 1.0)
-border_color = Color(0.5, 0.25, 0.1, 1.0)
-border_width_left = 4
-border_width_top = 8
-border_width_right = 4
-border_width_bottom = 8
-corner_radius_top_left = 0
-corner_radius_top_right = 0
-corner_radius_bottom_right = 0
-corner_radius_bottom_left = 0
-anti_aliasing = true
-anti_aliasing_size = 1.0
-
-[sub_resource type="StyleBoxFlat" id="WoodPlankHover"]
-bg_color = Color(0.45, 0.28, 0.16, 1.0)
-border_color = Color(0.6, 0.3, 0.12, 1.0)
-border_width_left = 4
-border_width_top = 8
-border_width_right = 4
-border_width_bottom = 8
-corner_radius_top_left = 0
-corner_radius_top_right = 0
-corner_radius_bottom_right = 0
-corner_radius_bottom_left = 0
-anti_aliasing = true
-anti_aliasing_size = 1.0
-
-[sub_resource type="LabelSettings" id="NameSettings"]
-font_size = 22
-font_color = Color(0.85, 0.85, 0.85, 1.0)
-outline_size = 2
-outline_color = Color(0.05, 0.05, 0.05, 1.0)
-
-[sub_resource type="LabelSettings" id="DescSettings"]
-font_size = 14
-font_color = Color(0.5, 0.5, 0.5, 1.0)
-outline_size = 1
-outline_color = Color(0.05, 0.05, 0.05, 1.0)
+[sub_resource type="ShaderMaterial" id="DripMat"]
+shader = ExtResource("3_drip")
 
 [node name="CharacterSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cs")
+
+[node name="Background3D" parent="." instance=ExtResource("2_bg")]
+build_animals = false
+
+[node name="UI" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
-script = ExtResource("1")
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[node name="Background3D" parent="." instance=ExtResource("bg")]
+[node name="TitleLabel" type="Label" parent="UI"]
 layout_mode = 1
-anchors_preset = 15
-
-[node name="VBoxMain" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-alignment = 1
-
-[node name="SpacerTop" type="Control" parent="VBoxMain"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TitleLabel" type="Label" parent="VBoxMain"]
-layout_mode = 2
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -580.0
+offset_top = 8.0
+offset_right = 580.0
+offset_bottom = 100.0
+grow_horizontal = 2
+material = SubResource("DripMat")
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_font_sizes/font_size = 52
 text = "CHOOSE YOUR SURVIVOR"
-label_settings = SubResource("TitleSettings")
 horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="SubtitleLabel" type="Label" parent="VBoxMain"]
-layout_mode = 2
+[node name="SubtitleLabel" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -420.0
+offset_top = 106.0
+offset_right = 420.0
+offset_bottom = 138.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.92, 0.9, 0.86, 0.95)
+theme_override_colors/font_outline_color = Color(0.05, 0.03, 0.06, 0.9)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("5_se")
+theme_override_font_sizes/font_size = 22
 text = "Who will face the cemetery?"
-label_settings = SubResource("DescSettings")
 horizontal_alignment = 1
-custom_minimum_size = Vector2(500, 24)
-theme_override_colors/font_color = Color(0.72, 0.68, 0.64, 1.0)
 
-[node name="SpacerMid" type="Control" parent="VBoxMain"]
-layout_mode = 2
-size_flags_vertical = 2
-
-[node name="CharactersContainer" type="HBoxContainer" parent="VBoxMain"]
-layout_mode = 2
-alignment = 1
-theme_override_constants/separation = 12
-
-[node name="GamerCard" type="Panel" parent="VBoxMain/CharactersContainer"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("CardBackground")
-custom_minimum_size = Vector2(158, 280)
-
-[node name="CardLayout" type="VBoxContainer" parent="VBoxMain/CharactersContainer/GamerCard"]
+[node name="StageZones" type="Control" parent="UI"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-offset_left = 7.0
-offset_top = 7.0
-offset_right = -7.0
-offset_bottom = -7.0
-theme_override_constants/separation = 6
-
-[node name="GamerPreview" type="SubViewportContainer" parent="VBoxMain/CharactersContainer/GamerCard/CardLayout"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 144)
-size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="GamerViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerPreview"]
-size = Vector2i(144, 150)
-
-[node name="GamerCamera" type="Camera3D" parent="VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerPreview/GamerViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 2.7)
-fov = 42.0
-current = true
-
-[node name="GamerPedestal" type="Panel" parent="VBoxMain/CharactersContainer/GamerCard/CardLayout"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("PedestalDark")
-custom_minimum_size = Vector2(0, 6)
-
-[node name="GamerName" type="Label" parent="VBoxMain/CharactersContainer/GamerCard/CardLayout"]
-layout_mode = 2
-text = "GAMER"
-label_settings = SubResource("NameSettings")
-horizontal_alignment = 1
-
-[node name="GamerDesc" type="Label" parent="VBoxMain/CharactersContainer/GamerCard/CardLayout"]
-layout_mode = 2
-text = "Headset ready"
-label_settings = SubResource("DescSettings")
-horizontal_alignment = 1
-
-[node name="GamerBtn" type="Button" parent="VBoxMain/CharactersContainer/GamerCard/CardLayout"]
-layout_mode = 2
-text = "SELECT"
-custom_minimum_size = Vector2(0, 44)
-theme_override_styles/normal = SubResource("WoodPlank")
-theme_override_styles/hover = SubResource("WoodPlankHover")
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
-
-[node name="DoctorCard" type="Panel" parent="VBoxMain/CharactersContainer"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("CardBackground")
-custom_minimum_size = Vector2(158, 280)
-
-[node name="CardLayout" type="VBoxContainer" parent="VBoxMain/CharactersContainer/DoctorCard"]
+[node name="BottomBar" type="MarginContainer" parent="UI"]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -158.0
+offset_right = -28.0
+offset_bottom = -14.0
 grow_horizontal = 2
-grow_vertical = 2
-offset_left = 7.0
-offset_top = 7.0
-offset_right = -7.0
-offset_bottom = -7.0
-theme_override_constants/separation = 6
-
-[node name="DoctorPreview" type="SubViewportContainer" parent="VBoxMain/CharactersContainer/DoctorCard/CardLayout"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 144)
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="DoctorViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorPreview"]
-size = Vector2i(144, 150)
-
-[node name="DoctorCamera" type="Camera3D" parent="VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorPreview/DoctorViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 2.7)
-fov = 42.0
-current = true
-
-[node name="DoctorPedestal" type="Panel" parent="VBoxMain/CharactersContainer/DoctorCard/CardLayout"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("PedestalDark")
-custom_minimum_size = Vector2(0, 6)
-
-[node name="DoctorName" type="Label" parent="VBoxMain/CharactersContainer/DoctorCard/CardLayout"]
-layout_mode = 2
-text = "DOCTOR"
-label_settings = SubResource("NameSettings")
-horizontal_alignment = 1
-
-[node name="DoctorDesc" type="Label" parent="VBoxMain/CharactersContainer/DoctorCard/CardLayout"]
-layout_mode = 2
-text = "Stethoscope ready"
-label_settings = SubResource("DescSettings")
-horizontal_alignment = 1
-
-[node name="DoctorBtn" type="Button" parent="VBoxMain/CharactersContainer/DoctorCard/CardLayout"]
-layout_mode = 2
-text = "SELECT"
-custom_minimum_size = Vector2(0, 44)
-theme_override_styles/normal = SubResource("WoodPlank")
-theme_override_styles/hover = SubResource("WoodPlankHover")
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
-
-[node name="NurseCard" type="Panel" parent="VBoxMain/CharactersContainer"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("CardBackground")
-custom_minimum_size = Vector2(158, 280)
-
-[node name="CardLayout" type="VBoxContainer" parent="VBoxMain/CharactersContainer/NurseCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-offset_left = 7.0
-offset_top = 7.0
-offset_right = -7.0
-offset_bottom = -7.0
-theme_override_constants/separation = 6
-
-[node name="NursePreview" type="SubViewportContainer" parent="VBoxMain/CharactersContainer/NurseCard/CardLayout"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 144)
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="NurseViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/NurseCard/CardLayout/NursePreview"]
-size = Vector2i(144, 150)
-
-[node name="NurseCamera" type="Camera3D" parent="VBoxMain/CharactersContainer/NurseCard/CardLayout/NursePreview/NurseViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 2.7)
-fov = 42.0
-current = true
-
-[node name="NursePedestal" type="Panel" parent="VBoxMain/CharactersContainer/NurseCard/CardLayout"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("PedestalDark")
-custom_minimum_size = Vector2(0, 6)
-
-[node name="NurseName" type="Label" parent="VBoxMain/CharactersContainer/NurseCard/CardLayout"]
-layout_mode = 2
-text = "NURSE"
-label_settings = SubResource("NameSettings")
-horizontal_alignment = 1
-
-[node name="NurseDesc" type="Label" parent="VBoxMain/CharactersContainer/NurseCard/CardLayout"]
-layout_mode = 2
-text = "Syringe ready"
-label_settings = SubResource("DescSettings")
-horizontal_alignment = 1
-
-[node name="NurseBtn" type="Button" parent="VBoxMain/CharactersContainer/NurseCard/CardLayout"]
-layout_mode = 2
-text = "SELECT"
-custom_minimum_size = Vector2(0, 44)
-theme_override_styles/normal = SubResource("WoodPlank")
-theme_override_styles/hover = SubResource("WoodPlankHover")
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
-
-[node name="StreamerCard" type="Panel" parent="VBoxMain/CharactersContainer"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("CardBackground")
-custom_minimum_size = Vector2(158, 280)
-
-[node name="CardLayout" type="VBoxContainer" parent="VBoxMain/CharactersContainer/StreamerCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-offset_left = 7.0
-offset_top = 7.0
-offset_right = -7.0
-offset_bottom = -7.0
-theme_override_constants/separation = 6
-
-[node name="StreamerPreview" type="SubViewportContainer" parent="VBoxMain/CharactersContainer/StreamerCard/CardLayout"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 144)
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="StreamerViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerPreview"]
-size = Vector2i(144, 150)
-
-[node name="StreamerCamera" type="Camera3D" parent="VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerPreview/StreamerViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 2.7)
-fov = 42.0
-current = true
-
-[node name="StreamerPedestal" type="Panel" parent="VBoxMain/CharactersContainer/StreamerCard/CardLayout"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("PedestalDark")
-custom_minimum_size = Vector2(0, 6)
-
-[node name="StreamerName" type="Label" parent="VBoxMain/CharactersContainer/StreamerCard/CardLayout"]
-layout_mode = 2
-text = "STREAMER"
-label_settings = SubResource("NameSettings")
-horizontal_alignment = 1
-
-[node name="StreamerDesc" type="Label" parent="VBoxMain/CharactersContainer/StreamerCard/CardLayout"]
-layout_mode = 2
-text = "Ring light ready"
-label_settings = SubResource("DescSettings")
-horizontal_alignment = 1
-
-[node name="StreamerBtn" type="Button" parent="VBoxMain/CharactersContainer/StreamerCard/CardLayout"]
-layout_mode = 2
-text = "SELECT"
-custom_minimum_size = Vector2(0, 44)
-theme_override_styles/normal = SubResource("WoodPlank")
-theme_override_styles/hover = SubResource("WoodPlankHover")
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
-
-[node name="HunterCard" type="Panel" parent="VBoxMain/CharactersContainer"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("CardBackground")
-custom_minimum_size = Vector2(158, 280)
-
-[node name="CardLayout" type="VBoxContainer" parent="VBoxMain/CharactersContainer/HunterCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-offset_left = 7.0
-offset_top = 7.0
-offset_right = -7.0
-offset_bottom = -7.0
-theme_override_constants/separation = 6
-
-[node name="HunterPreview" type="SubViewportContainer" parent="VBoxMain/CharactersContainer/HunterCard/CardLayout"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 144)
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="HunterViewport" type="SubViewport" parent="VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterPreview"]
-size = Vector2i(144, 150)
-
-[node name="HunterCamera" type="Camera3D" parent="VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterPreview/HunterViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 2.7)
-fov = 42.0
-current = true
-
-[node name="HunterPedestal" type="Panel" parent="VBoxMain/CharactersContainer/HunterCard/CardLayout"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("PedestalDark")
-custom_minimum_size = Vector2(0, 6)
-
-[node name="HunterName" type="Label" parent="VBoxMain/CharactersContainer/HunterCard/CardLayout"]
-layout_mode = 2
-text = "HUNTER"
-label_settings = SubResource("NameSettings")
-horizontal_alignment = 1
-
-[node name="HunterDesc" type="Label" parent="VBoxMain/CharactersContainer/HunterCard/CardLayout"]
-layout_mode = 2
-text = "Bat ready"
-label_settings = SubResource("DescSettings")
-horizontal_alignment = 1
-
-[node name="HunterBtn" type="Button" parent="VBoxMain/CharactersContainer/HunterCard/CardLayout"]
-layout_mode = 2
-text = "SELECT"
-custom_minimum_size = Vector2(0, 44)
-theme_override_styles/normal = SubResource("WoodPlank")
-theme_override_styles/hover = SubResource("WoodPlankHover")
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
-
-[node name="SpacerBottom" type="Control" parent="VBoxMain"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="PlayBtn" type="Button" parent="VBoxMain"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "PLAY"
-custom_minimum_size = Vector2(260, 54)
-theme_override_styles/normal = SubResource("WoodPlank")
-theme_override_styles/hover = SubResource("WoodPlankHover")
-theme_override_font_sizes/font_size = 26
-theme_override_colors/font_color = Color(0.95, 0.92, 0.88, 1.0)
-
-[node name="SpacerBottomTiny" type="Control" parent="VBoxMain"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 12)
-
-[node name="BackBtn" type="Button" parent="VBoxMain"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "BACK"
-custom_minimum_size = Vector2(140, 44)
-theme_override_styles/normal = SubResource("ButtonStyle")
-theme_override_styles/hover = SubResource("ButtonHover")
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1.0)
-
-[connection signal="pressed" from="VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerBtn" to="." method="_on_gamer_selected"]
-[connection signal="pressed" from="VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorBtn" to="." method="_on_doctor_selected"]
-[connection signal="pressed" from="VBoxMain/CharactersContainer/NurseCard/CardLayout/NurseBtn" to="." method="_on_nurse_selected"]
-[connection signal="pressed" from="VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerBtn" to="." method="_on_streamer_selected"]
-[connection signal="pressed" from="VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterBtn" to="." method="_on_hunter_selected"]
-[connection signal="pressed" from="VBoxMain/PlayBtn" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="VBoxMain/BackBtn" to="." method="_on_back_pressed"]
+grow_vertical = 0

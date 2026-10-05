@@ -7,6 +7,10 @@
 
 extends Node3D
 
+## The four blocky animals flank the title screen; the character select turns
+## them off so its five pedestals own the stage (matches the reference art).
+@export var build_animals := true
+
 const DevMode := preload("res://scripts/core/DevMode.gd")
 
 const TITLE_CAM_FOV = 62.0
@@ -32,7 +36,10 @@ var _animal_spawns = [
 func _ready() -> void:
 	_setup_camera()
 	_build_scenery()
-	_build_animals()
+	_build_mist()
+	_build_props()
+	if build_animals:
+		_build_animals()
 
 
 func _setup_camera() -> void:
@@ -91,6 +98,53 @@ func _build_scenery() -> void:
 		add_child(_box(Vector3(0.75, 0.95, 0.24), stone, spot + Vector3(0, 0.67, 0)))
 		add_child(_box(Vector3(0.12, 0.55, 0.1), stone, spot + Vector3(0, 1.35, 0)))
 		add_child(_box(Vector3(0.4, 0.12, 0.1), stone, spot + Vector3(0, 1.45, 0)))
+
+
+func _build_mist() -> void:
+	# Low ground mist: flattened translucent spheres drifting between the
+	# graves. Unshaded so they read as haze in every renderer (the environment
+	# depth-fog alone was invisible on the phone).
+	for m: Dictionary in [
+		{"p": Vector3(-3.5, 0.8, -4.5), "s": Vector3(3.0, 0.55, 1.3)},
+		{"p": Vector3(3.2, 0.7, -5.0), "s": Vector3(2.8, 0.5, 1.1)},
+		{"p": Vector3(0.0, 0.9, -7.5), "s": Vector3(4.5, 0.7, 1.5)},
+		{"p": Vector3(-5.5, 0.6, -2.0), "s": Vector3(1.8, 0.4, 1.0)},
+		{"p": Vector3(5.8, 0.6, -1.5), "s": Vector3(1.8, 0.4, 1.0)},
+		{"p": Vector3(-2.5, 0.7, -0.8), "s": Vector3(2.4, 0.45, 1.1)},
+		{"p": Vector3(2.6, 0.6, -1.2), "s": Vector3(2.2, 0.4, 1.0)},
+		{"p": Vector3(0.0, 1.2, -9.5), "s": Vector3(6.5, 0.9, 1.4)},
+		{"p": Vector3(-4.0, 1.0, -8.5), "s": Vector3(3.5, 0.7, 1.2)},
+	]:
+		var blob := _sphere(1.0, Color(0.62, 0.68, 0.80), m.p)
+		blob.scale = m.s
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.albedo_color = Color(0.62, 0.68, 0.80, 0.20)
+		blob.material_override = mat
+		add_child(blob)
+
+
+func _build_props() -> void:
+	# Stepping stones down the path, grass tufts, and the fancy headstone
+	# shapes from the reference (rounded top, obelisk, cross-topped).
+	for sp: Vector3 in [Vector3(-0.35, 0, -0.6), Vector3(0.3, 0, -1.5), Vector3(-0.25, 0, -2.6), Vector3(0.35, 0, -3.7), Vector3(-0.3, 0, -4.8)]:
+		add_child(_box(Vector3(1.1, 0.14, 0.85), Color(0.45, 0.44, 0.47), sp + Vector3(0, 0.30, 0), Vector3(0, randf() * 0.4 - 0.2, 0)))
+	for tp: Vector3 in [Vector3(-1.6, 0, -1.2), Vector3(1.7, 0, -2.0), Vector3(-2.2, 0, -3.4), Vector3(2.4, 0, -4.2), Vector3(-6.8, 0, -1.0), Vector3(6.6, 0, -2.4)]:
+		add_child(_cone(0.16, 0.34, Color(0.13, 0.19, 0.11), tp + Vector3(0, 0.37, 0)))
+	var stone := Color(0.36, 0.36, 0.39)
+	var rp := Vector3(-5.8, 0, -3.6)
+	add_child(_box(Vector3(0.8, 1.0, 0.22), stone, rp + Vector3(0, 0.7, 0)))
+	var round_top := _sphere(0.4, stone, rp + Vector3(0, 1.2, 0))
+	round_top.scale = Vector3(1.0, 0.45, 0.28)
+	add_child(round_top)
+	var op := Vector3(5.6, 0, -4.4)
+	add_child(_box(Vector3(0.5, 1.6, 0.5), stone, op + Vector3(0, 1.0, 0)))
+	add_child(_cone(0.36, 0.5, stone, op + Vector3(0, 2.05, 0)))
+	var cp := Vector3(-6.9, 0, -5.6)
+	add_child(_box(Vector3(0.7, 1.1, 0.2), stone, cp + Vector3(0, 0.75, 0)))
+	add_child(_box(Vector3(0.14, 0.7, 0.12), stone, cp + Vector3(0, 1.65, 0)))
+	add_child(_box(Vector3(0.5, 0.14, 0.12), stone, cp + Vector3(0, 1.75, 0)))
 
 
 func _shadow_disc(r: float) -> MeshInstance3D:

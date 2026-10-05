@@ -1,261 +1,303 @@
-## CharacterSelect.gd — Character Selection Screen
-## Horror theme: Nosifer headings, dark graveyard palette, blood-red accents
-
+## CharacterSelect.gd — Character Selection Screen (rebuilt, no card grid)
+## One continuous stage: the five survivors stand on glowing pedestals IN the
+## graveyard backdrop. Tapping a character on the stage selects it; the bottom
+## bar mirrors the selection. The old per-card SubViewports swallowed taps and
+## hid the cemetery behind five boxes — both are gone.
 extends Control
 
-# === THEME COLORS ===
-const CARD_NORMAL_BG = Color(0.06, 0.03, 0.08, 1.0)
-const CARD_SELECTED_BG = Color(0.14, 0.04, 0.1, 1.0)
-const CARD_BORDER_DARK = Color(0.2, 0.1, 0.15, 1.0)
-const PEDESTAL_NORMAL_BG = Color(0.1, 0.08, 0.12, 1.0)
-const PEDESTAL_SELECTED_BG = Color(0.2, 0.04, 0.08, 1.0)
-const BLOOD_RED = Color(0.6, 0.1, 0.15, 1.0)
-const DESC_NORMAL = Color(0.5, 0.5, 0.5, 1.0)
-const DESC_HIGHLIGHT = Color(0.75, 0.12, 0.08, 1.0)
-const CARD_CORNER_RADIUS = 8
-const PEDESTAL_CORNER_RADIUS = 999
+const WOOD_TEX := preload("res://assets/textures/wood_planks.jpg")
 
-# === PREVIEW RIG ===
-# The preview must frame the display-only model without any gameplay nodes:
-# camera dead ahead of the +Z-facing model, slightly above its mid point.
-const PREVIEW_CAMERA_POS = Vector3(0, 0.8, 3.3)
-const PREVIEW_CAMERA_TARGET = Vector3(0, 0.2, 0)
-const PREVIEW_FOV = 45.0  # frames the full model with headroom (the ring-light hat is tall)
-const TURNTABLE_SPEED = 0.45  # rad/s — slow spin so every card reads as "alive"
-
-# === CHARACTER DATA ===
-@export var character_scenes: Array = [
+const CHARACTER_SCENES: Array[String] = [
 	"res://scenes/characters/character_gamer.tscn",
 	"res://scenes/characters/character_doctor.tscn",
 	"res://scenes/characters/character_nurse.tscn",
 	"res://scenes/characters/character_streamer.tscn",
 	"res://scenes/characters/character_hunter.tscn",
 ]
+const CHARACTER_NAMES: Array[String] = ["GAMER", "DOCTOR", "NURSE", "STREAMER", "HUNTER"]
+const CHARACTER_COLORS: Array[Color] = [
+	Color(1.0, 0.32, 0.72),   # gamer — neon pink
+	Color(0.25, 0.45, 1.0),   # doctor — neon blue
+	Color(0.15, 0.95, 1.0),   # nurse — neon cyan
+	Color(0.72, 0.38, 1.0),   # streamer — neon purple
+	Color(0.95, 0.85, 0.25),  # hunter — neon yellow
+]
+const CHARACTER_DESCS: Array[String] = [
+	"Speed and snacks on demand",
+	"Tanky frame, medkits go further",
+	"Fast healer, fragile",
+	"Trades health for damage",
+	"Ranged specialist, steady aim",
+]
 
-@export var character_names: Array = ["GAMER", "DOCTOR", "NURSE", "STREAMER", "HUNTER"]
+# Stage layout (world units, matches the shared backdrop camera framing).
+const PEDESTAL_X: Array[float] = [-3.4, -1.7, 0.0, 1.7, 3.4]
+const PEDESTAL_Z := -1.6
+const PEDESTAL_TOP := 0.7
+const MODEL_ORIGIN_Y := PEDESTAL_TOP + 0.8  # PlayerVisuals feet sit at local -0.8
+const BOB_AMPLITUDE := 0.03
+const BOB_SPEED := 1.2
+# Screen-space fraction of a pedestal's column on the shared camera: the stage
+# is 10.92 world units wide at the pedestal depth, so frac = 0.5 + x / 10.92.
+const STAGE_WORLD_WIDTH := 10.92
 
-# === STATE ===
-var selected_character: int = 0
-var preview_models: Array[Node3D] = []
-
-# === NODE REFS ===
-@onready var gamer_btn = $VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerBtn
-@onready var doctor_btn = $VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorBtn
-@onready var nurse_btn = $VBoxMain/CharactersContainer/NurseCard/CardLayout/NurseBtn
-@onready var streamer_btn = $VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerBtn
-@onready var hunter_btn = $VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterBtn
-@onready var back_btn = $VBoxMain/BackBtn
-
-@onready var gamer_viewport = $VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerPreview/GamerViewport
-@onready var doctor_viewport = $VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorPreview/DoctorViewport
-@onready var nurse_viewport = $VBoxMain/CharactersContainer/NurseCard/CardLayout/NursePreview/NurseViewport
-@onready var streamer_viewport = $VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerPreview/StreamerViewport
-@onready var hunter_viewport = $VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterPreview/HunterViewport
-
-@onready var gamer_card = $VBoxMain/CharactersContainer/GamerCard
-@onready var doctor_card = $VBoxMain/CharactersContainer/DoctorCard
-@onready var nurse_card = $VBoxMain/CharactersContainer/NurseCard
-@onready var streamer_card = $VBoxMain/CharactersContainer/StreamerCard
-@onready var hunter_card = $VBoxMain/CharactersContainer/HunterCard
-
-@onready var gamer_pedestal = $VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerPedestal
-@onready var doctor_pedestal = $VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorPedestal
-@onready var nurse_pedestal = $VBoxMain/CharactersContainer/NurseCard/CardLayout/NursePedestal
-@onready var streamer_pedestal = $VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerPedestal
-@onready var hunter_pedestal = $VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterPedestal
-
-@onready var gamer_desc = $VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerDesc
-@onready var doctor_desc = $VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorDesc
-@onready var nurse_desc = $VBoxMain/CharactersContainer/NurseCard/CardLayout/NurseDesc
-@onready var streamer_desc = $VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerDesc
-@onready var hunter_desc = $VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterDesc
-
-var card_panels: Array[Panel] = []
-var pedestal_panels: Array[Panel] = []
+var selected_character: int = 1  # doctor default, matches the old screen
+var _models: Array[Node3D] = []
+var _lights: Array[OmniLight3D] = []
+var _disc_mats: Array[StandardMaterial3D] = []
+var _col_buttons: Array[Button] = []
+var _zone_buttons: Array[Button] = []
+var _name_label: Label
+var _desc_label: Label
+var _btn_font: Font = null
+var _t := 0.0
 
 
 func _ready() -> void:
-	# Build card/pedestal reference arrays
-	card_panels = [gamer_card, doctor_card, nurse_card, streamer_card, hunter_card]
-	pedestal_panels = [gamer_pedestal, doctor_pedestal, nurse_pedestal, streamer_pedestal, hunter_pedestal]
-
-	# Setup viewport previews with lighting
-	_setup_viewports()
-
-	# Default selection: doctor (player's saved default)
+	var f := "res://assets/fonts/SpecialElite-Regular.ttf"
+	if ResourceLoader.exists(f):
+		_btn_font = load(f)
+	_build_stage()
+	_build_ui()
 	_select_character(1, false)
-
-	# Play menu music
+	print("[CharacterSelect] zones=", _zone_buttons.size(), " cols=", _col_buttons.size(), " models=", _models.size())
 	Audio.play_menu_music()
 
 
 func _process(delta: float) -> void:
-	# Turntable: a slow spin keeps each card's preview visibly alive.
-	for model in preview_models:
-		model.rotate_y(delta * TURNTABLE_SPEED)
+	_t += delta
+	for i in range(_models.size()):
+		var m := _models[i]
+		if is_instance_valid(m):
+			m.position.y = MODEL_ORIGIN_Y + sin(_t * BOB_SPEED + float(i) * 1.3) * BOB_AMPLITUDE
 
 
-func _setup_viewports() -> void:
-	# Instantiate each character into its SubViewport for preview.
-	# Use the PlayerVisuals subtree only — the full player scene carries a script,
-	# physics, input and its own camera, none of which belong in a menu preview.
-	var viewports = [gamer_viewport, doctor_viewport, nurse_viewport, streamer_viewport, hunter_viewport]
-	var camera_names = ["GamerCamera", "DoctorCamera", "NurseCamera", "StreamerCamera", "HunterCamera"]
+# ── STAGE (3D) ─────────────────────────────────────────────────
 
-	for i in range(viewports.size()):
-		# The turntable animates every frame; the default update mode only redraws
-		# when the viewport believes something changed.
-		viewports[i].render_target_update_mode = SubViewport.UPDATE_ALWAYS
-		# Isolate the preview. By default a SubViewport SHARES the parent scene's
-		# World3D: all five models would stack at the origin, sit inside the menu
-		# background, and leak into the main view. Give each card its own world.
-		# Create it explicitly — the engine does not materialize an own world on
-		# the flag alone.
-		viewports[i].world_3d = World3D.new()
-		viewports[i].own_world_3d = true
+func _build_stage() -> void:
+	var bg: Node3D = $Background3D
+	for i in range(PEDESTAL_X.size()):
+		var x: float = PEDESTAL_X[i]
+		var col: Color = CHARACTER_COLORS[i]
 
-		if i >= character_scenes.size():
-			continue
-		var scene: PackedScene = load(character_scenes[i]) as PackedScene
+		# Stone plinth
+		var base := MeshInstance3D.new()
+		var cyl := CylinderMesh.new()
+		cyl.top_radius = 0.52
+		cyl.bottom_radius = 0.6
+		cyl.height = 0.5
+		cyl.radial_segments = 14
+		base.mesh = cyl
+		base.position = Vector3(x, 0.45, PEDESTAL_Z)
+		var stone := StandardMaterial3D.new()
+		stone.albedo_color = Color(0.3, 0.29, 0.33)
+		stone.roughness = 0.9
+		base.material_override = stone
+		bg.add_child(base)
+
+		# Neon top disc
+		var disc := MeshInstance3D.new()
+		var dcyl := CylinderMesh.new()
+		dcyl.top_radius = 0.5
+		dcyl.bottom_radius = 0.5
+		dcyl.height = 0.06
+		dcyl.radial_segments = 14
+		disc.mesh = dcyl
+		disc.position = Vector3(x, PEDESTAL_TOP + 0.03, PEDESTAL_Z)
+		var dmat := StandardMaterial3D.new()
+		dmat.albedo_color = col.darkened(0.4)
+		dmat.emission_enabled = true
+		dmat.emission = col
+		dmat.emission_energy_multiplier = 0.9
+		disc.material_override = dmat
+		bg.add_child(disc)
+		_disc_mats.append(dmat)
+
+		# Glow light (dims/brightens with selection)
+		var light := OmniLight3D.new()
+		light.position = Vector3(x, PEDESTAL_TOP + 0.5, PEDESTAL_Z + 0.3)
+		light.light_color = col
+		light.light_energy = 0.12
+		light.omni_range = 4.5
+		bg.add_child(light)
+		_lights.append(light)
+
+		# Contact shadow so the plinth sits in the scene instead of floating.
+		var shadow := MeshInstance3D.new()
+		var scyl := CylinderMesh.new()
+		scyl.top_radius = 0.78
+		scyl.bottom_radius = 0.78
+		scyl.height = 0.01
+		scyl.radial_segments = 18
+		shadow.mesh = scyl
+		shadow.position = Vector3(x, 0.212, PEDESTAL_Z)
+		var smat := StandardMaterial3D.new()
+		smat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		smat.albedo_color = Color(0.02, 0.02, 0.025, 0.65)
+		shadow.material_override = smat
+		bg.add_child(shadow)
+
+		# The survivor — display-only PlayerVisuals subtree, facing the camera.
+		var scene: PackedScene = load(CHARACTER_SCENES[i]) as PackedScene
 		if scene == null:
-			push_warning("CharacterSelect: missing scene " + str(character_scenes[i]))
+			push_warning("CharacterSelect: missing scene " + CHARACTER_SCENES[i])
 			continue
-
-		var full = scene.instantiate()
+		var full := scene.instantiate()
 		var vis: Node3D = full.get_node_or_null("PlayerVisuals") as Node3D
 		if vis == null:
-			# Fallback: an unusual character scene without PlayerVisuals —
-			# ship the whole (still not-in-tree) instance rather than nothing.
-			vis = full as Node3D
+			vis = full
 		else:
 			full.remove_child(vis)
 			full.free()
-
-		vis.position = Vector3.ZERO
-		viewports[i].add_child(vis)
-		preview_models.append(vis)
-
-		# Add ambient light so models are visible
-		var world_env = WorldEnvironment.new()
-		var env = Environment.new()
-		env.background_mode = Environment.BG_COLOR
-		env.background_color = Color(0.05, 0.035, 0.07, 1.0)
-		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-		env.ambient_light_color = Color(0.4, 0.4, 0.5, 1.0)
-		env.ambient_light_energy = 0.8
-		world_env.environment = env
-		viewports[i].add_child(world_env)
-
-		# Key light: ambient alone flattens every shape into a silhouette.
-		var key = DirectionalLight3D.new()
-		key.rotation_degrees = Vector3(-28, 40, 0)
-		key.light_energy = 1.1
-		key.shadow_enabled = false
-		viewports[i].add_child(key)
-
-		# Frame the model (the authored camera transform is not trustworthy).
-		var cam: Camera3D = viewports[i].get_node_or_null(camera_names[i]) as Camera3D
-		if cam != null:
-			cam.look_at_from_position(PREVIEW_CAMERA_POS, PREVIEW_CAMERA_TARGET, Vector3.UP)
-			cam.fov = PREVIEW_FOV
+		vis.position = Vector3(x, MODEL_ORIGIN_Y, PEDESTAL_Z)
+		bg.add_child(vis)
+		_models.append(vis)
 
 
-# ── SELECTION HANDLERS ─────────────────────────────────────────
+# ── UI ─────────────────────────────────────────────────────────
 
-func _on_gamer_selected() -> void:
-	_select_character(0)
+func _build_ui() -> void:
+	var bar: MarginContainer = $UI/BottomBar
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 8)
+	bar.add_child(vbox)
 
-func _on_doctor_selected() -> void:
-	_select_character(1)
+	# Character name buttons (also select, mirroring the stage zones)
+	var cols := HBoxContainer.new()
+	cols.add_theme_constant_override("separation", 10)
+	vbox.add_child(cols)
+	for i in range(CHARACTER_NAMES.size()):
+		var b := Button.new()
+		b.text = CHARACTER_NAMES[i]
+		b.custom_minimum_size = Vector2(0, 54)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.focus_mode = Control.FOCUS_NONE
+		_style_button(b, 22)
+		var idx := i
+		b.pressed.connect(func() -> void: _select_character(idx))
+		cols.add_child(b)
+		_col_buttons.append(b)
 
-func _on_nurse_selected() -> void:
-	_select_character(2)
+	# Action row: BACK | selected name + desc | PLAY
+	var actions := HBoxContainer.new()
+	actions.add_theme_constant_override("separation", 14)
+	vbox.add_child(actions)
+	var back := Button.new()
+	back.text = "BACK"
+	back.custom_minimum_size = Vector2(150, 58)
+	back.focus_mode = Control.FOCUS_NONE
+	_style_button(back, 22)
+	back.pressed.connect(_on_back_pressed)
+	actions.add_child(back)
 
-func _on_streamer_selected() -> void:
-	_select_character(3)
+	var mid := VBoxContainer.new()
+	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mid.add_theme_constant_override("separation", 0)
+	actions.add_child(mid)
+	_name_label = Label.new()
+	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_name_label.add_theme_font_size_override("font_size", 26)
+	mid.add_child(_name_label)
+	_desc_label = Label.new()
+	_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_desc_label.add_theme_font_size_override("font_size", 15)
+	_desc_label.add_theme_color_override("font_color", Color(0.72, 0.70, 0.68))
+	mid.add_child(_desc_label)
 
-func _on_hunter_selected() -> void:
-	_select_character(4)
+	var play := Button.new()
+	play.text = "PLAY"
+	play.custom_minimum_size = Vector2(240, 58)
+	play.focus_mode = Control.FOCUS_NONE
+	_style_button(play, 24)
+	play.pressed.connect(_on_play_pressed)
+	actions.add_child(play)
 
-func _update_selection_visuals(index: int) -> void:
-	# Update visual selection highlight
-	for i in range(card_panels.size()):
-		var is_selected = (i == index)
-		var panel = card_panels[i]
-		var pedestal = pedestal_panels[i]
+	# Invisible tap zones over each pedestal: tapping the character itself
+	# selects it. The old screen only responded on the tiny SELECT buttons —
+	# this is the fix for "tapping a character does nothing".
+	var zones: Control = $UI/StageZones
+	for i in range(PEDESTAL_X.size()):
+		var z := Button.new()
+		var frac := 0.5 + PEDESTAL_X[i] / STAGE_WORLD_WIDTH
+		z.anchor_left = frac - 0.075
+		z.anchor_right = frac + 0.075
+		z.anchor_top = 0.10
+		z.anchor_bottom = 0.76
+		z.flat = true
+		z.focus_mode = Control.FOCUS_NONE
+		var empty := StyleBoxEmpty.new()
+		z.add_theme_stylebox_override("normal", empty)
+		z.add_theme_stylebox_override("hover", empty)
+		z.add_theme_stylebox_override("pressed", empty)
+		z.add_theme_stylebox_override("focus", empty)
+		var idx2 := i
+		z.pressed.connect(func() -> void: _select_character(idx2))
+		zones.add_child(z)
+		_zone_buttons.append(z)
 
-		# Card background: darker when selected
-		if is_selected:
-			panel.set("theme_override_styles/panel", _get_selected_card_style())
-			pedestal.set("theme_override_styles/panel", _get_selected_pedestal_style())
-		else:
-			panel.set("theme_override_styles/panel", _get_normal_card_style())
-			pedestal.set("theme_override_styles/panel", _get_normal_pedestal_style())
 
-	# Update description labels (emphasize selected)
-	var desc_labels = [gamer_desc, doctor_desc, nurse_desc, streamer_desc, hunter_desc]
-	var normal_color = DESC_NORMAL
-	var highlight_color = DESC_HIGHLIGHT  # Blood red
+func _style_button(b: Button, font_size: int) -> void:
+	b.add_theme_stylebox_override("normal", _wood_style(Color(0.52, 0.4, 0.32)))
+	b.add_theme_stylebox_override("hover", _wood_style(Color(0.66, 0.51, 0.4)))
+	b.add_theme_stylebox_override("pressed", _wood_style(Color(0.4, 0.3, 0.25)))
+	b.add_theme_stylebox_override("focus", _wood_style(Color(0.66, 0.51, 0.4)))
+	b.add_theme_font_size_override("font_size", font_size)
+	b.add_theme_color_override("font_color", Color(0.93, 0.88, 0.8))
+	b.add_theme_color_override("font_hover_color", Color(1.0, 0.96, 0.88))
+	b.add_theme_color_override("font_pressed_color", Color(0.85, 0.8, 0.72))
+	if _btn_font != null:
+		b.add_theme_font_override("font", _btn_font)
 
-	for i in range(desc_labels.size()):
-		if i == index:
-			desc_labels[i].set("theme_override_font_color", highlight_color)
-		else:
-			desc_labels[i].set("theme_override_font_color", normal_color)
+
+func _wood_style(mod: Color) -> StyleBoxTexture:
+	var s := StyleBoxTexture.new()
+	s.texture = WOOD_TEX
+	s.texture_margin_left = 14.0
+	s.texture_margin_top = 14.0
+	s.texture_margin_right = 14.0
+	s.texture_margin_bottom = 14.0
+	s.modulate_color = mod
+	s.content_margin_left = 16.0
+	s.content_margin_right = 16.0
+	s.content_margin_top = 8.0
+	s.content_margin_bottom = 8.0
+	return s
+
+
+# ── SELECTION ──────────────────────────────────────────────────
+
+func _select_character(index: int, play_sound: bool = true) -> void:
+	selected_character = index
+	for i in range(_models.size()):
+		var sel := (i == index)
+		if i < _lights.size() and is_instance_valid(_lights[i]):
+			_lights[i].light_energy = 1.6 if sel else 0.12
+		if i < _disc_mats.size():
+			_disc_mats[i].emission_energy_multiplier = 2.6 if sel else 0.9
+		if i < _col_buttons.size() and is_instance_valid(_col_buttons[i]):
+			_col_buttons[i].modulate = Color(1, 1, 1) if sel else Color(0.66, 0.66, 0.66)
+	if _name_label != null:
+		_name_label.text = CHARACTER_NAMES[index]
+		_name_label.add_theme_color_override("font_color", CHARACTER_COLORS[index])
+	if _desc_label != null:
+		_desc_label.text = CHARACTER_DESCS[index]
+	_confirm_selection(index, play_sound)
 
 
 func _confirm_selection(index: int, play_sound: bool) -> void:
 	if play_sound:
 		Audio.play_click()
+	print("[CharacterSelect] Selected: ", CHARACTER_NAMES[index])
+	# Persist immediately — the member var alone is lost if the app dies before
+	# the next gameplay save.
+	Save.set_selected_character(CHARACTER_NAMES[index].to_lower())
 
-	print("[CharacterSelect] Selected: ", character_names[index])
-
-	# Persist immediately — the member var alone is lost if the app dies before the
-	# next gameplay save.
-	Save.set_selected_character(character_names[index].to_lower())
-
-
-func _select_character(index: int, play_sound: bool = true) -> void:
-	selected_character = index
-	_update_selection_visuals(index)
-	_confirm_selection(index, play_sound)
 
 func _on_play_pressed() -> void:
-	# This screen used to be a dead end — PLAY now routes to level selection.
 	Audio.play_click()
 	get_tree().change_scene_to_file("res://scenes/ui/level_select.tscn")
+
 
 func _on_back_pressed() -> void:
 	Audio.play_click()
 	get_tree().change_scene_to_file("res://scenes/main/title_screen.tscn")
-
-
-# === STYLE CREATION HELPERS ===
-
-func make_style(bg_color: Color, border_color: Color = Color(0, 0, 0, 0), border_width: int = 0, corner_radius: int = 0) -> StyleBoxFlat:
-	var style = StyleBoxFlat.new()
-	style.bg_color = bg_color
-	style.border_color = border_color
-	if border_width > 0:
-		style.border_width_left = border_width
-		style.border_width_top = border_width
-		style.border_width_right = border_width
-		style.border_width_bottom = border_width
-	if corner_radius > 0:
-		style.corner_radius_top_left = corner_radius
-		style.corner_radius_top_right = corner_radius
-		style.corner_radius_bottom_right = corner_radius
-		style.corner_radius_bottom_left = corner_radius
-	return style
-
-func _get_normal_card_style() -> StyleBoxFlat:
-	return make_style(CARD_NORMAL_BG, CARD_BORDER_DARK, 2, CARD_CORNER_RADIUS)
-
-func _get_selected_card_style() -> StyleBoxFlat:
-	return make_style(CARD_SELECTED_BG, BLOOD_RED, 3, CARD_CORNER_RADIUS)
-
-func _get_normal_pedestal_style() -> StyleBoxFlat:
-	return make_style(PEDESTAL_NORMAL_BG, Color(0, 0, 0, 0), 0, PEDESTAL_CORNER_RADIUS)
-
-func _get_selected_pedestal_style() -> StyleBoxFlat:
-	return make_style(PEDESTAL_SELECTED_BG, BLOOD_RED, 0, PEDESTAL_CORNER_RADIUS)

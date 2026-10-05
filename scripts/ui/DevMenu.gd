@@ -16,11 +16,9 @@ func _ready() -> void:
 	if not is_instance_valid(parent):
 		return
 
-	var vbox = parent.get_node_or_null("VBoxMain")
-	if not is_instance_valid(vbox):
-		return
-		
-	var btn_container = vbox.get_node_or_null("ButtonContainer")
+	# The title screen was rebuilt: buttons live in UI/ButtonsBox, footer at
+	# UI/FooterLabel. (The old VBoxMain/ButtonContainer path is gone.)
+	var btn_container = parent.get_node_or_null("UI/ButtonsBox")
 	if is_instance_valid(btn_container):
 		dev_btn = Button.new()
 		dev_btn.text = "DEV ROOM"
@@ -39,7 +37,7 @@ func _ready() -> void:
 		btn_container.add_child(dev_btn)
 		dev_btn.pressed.connect(_on_dev_btn_pressed)
 		
-	footer_label = vbox.get_node_or_null("FooterLabel")
+	footer_label = parent.get_node_or_null("UI/FooterLabel")
 	if is_instance_valid(footer_label):
 		footer_label.mouse_filter = Control.MOUSE_FILTER_PASS
 		footer_label.gui_input.connect(_on_footer_gui_input)
