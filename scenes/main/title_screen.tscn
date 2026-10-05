@@ -294,7 +294,9 @@ grow_vertical = 0
 
 [node name="HighScoreLabel" type="Label" parent="UI/StatsContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.89, 0.84, 1)
+theme_override_colors/font_color = Color(0.95, 0.93, 0.89, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.04, 0.9)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 17
 text = "HIGH SCORE: 0"
@@ -305,7 +307,9 @@ size_flags_horizontal = 3
 
 [node name="TotalFedLabel" type="Label" parent="UI/StatsContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.89, 0.84, 1)
+theme_override_colors/font_color = Color(0.95, 0.93, 0.89, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.04, 0.9)
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 17
 text = "FED: 0"
