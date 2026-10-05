@@ -8,10 +8,14 @@ uniform float drip_intensity : hint_range(0.0, 1.0) = 0.5;
 uniform float drip_length : hint_range(0.01, 0.25) = 0.18;
 uniform vec4 blood_color : source_color = vec4(0.65, 0.03, 0.03, 1.0);
 uniform vec4 blood_dark : source_color = vec4(0.35, 0.01, 0.01, 1.0);
+// A canvas_item material REPLACES the label's draw color, so the sampled glyphs
+// render white regardless of font_color. Tint them here — this is the real text color.
+uniform vec4 text_color : source_color = vec4(0.82, 0.10, 0.07, 1.0);
 
 void fragment() {
 	vec4 original = texture(TEXTURE, UV);
 	COLOR = original;
+	COLOR.rgb = original.rgb * text_color.rgb;
 
 	if (original.a < 0.005) {
 		// Pixel is background — check if we should draw a drip here (below text)

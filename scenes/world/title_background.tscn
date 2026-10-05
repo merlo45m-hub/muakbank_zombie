@@ -64,10 +64,10 @@ background_mode = 1
 background_color = Color(0.12, 0.13, 0.18, 1.0)
 ambient_light_source = 2
 ambient_light_color = Color(0.5, 0.52, 0.6, 1.0)
-ambient_light_energy = 0.7
+ambient_light_energy = 0.95
 fog_enabled = true
-fog_light_color = Color(0.12, 0.13, 0.18, 1.0)
-fog_density = 0.012
+fog_light_color = Color(0.17, 0.18, 0.24, 1.0)
+fog_density = 0.02
 fog_attenuation = 0.001
 
 [sub_resource type="StandardMaterial3D" id="FogMaterial2"]
@@ -75,6 +75,54 @@ albedo_color = Color(0.2, 0.18, 0.17, 0.08)
 cull_mode = 1
 no_depth_test = false
 transparency = 1
+
+[sub_resource type="SphereMesh" id="MoonMesh"]
+radius = 3.4
+height = 6.8
+radial_segments = 32
+rings = 16
+
+[sub_resource type="StandardMaterial3D" id="MoonMat"]
+shading_mode = 0
+albedo_color = Color(1, 0.99, 0.95, 1)
+emission_enabled = true
+emission = Color(1, 0.98, 0.92, 1)
+emission_energy_multiplier = 2.4
+
+[sub_resource type="SphereMesh" id="HaloMesh"]
+radius = 4.1
+height = 8.2
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="HaloMat"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.9, 0.92, 1, 0.06)
+
+[sub_resource type="SphereMesh" id="HaloMesh2"]
+radius = 5.9
+height = 11.8
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="HaloMat2"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.85, 0.88, 0.98, 0.05)
+
+[sub_resource type="SphereMesh" id="OrbMesh"]
+radius = 0.09
+height = 0.18
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="OrbMat"]
+shading_mode = 0
+albedo_color = Color(1, 0.62, 0.2, 1)
+emission_enabled = true
+emission = Color(1, 0.55, 0.15, 1)
+emission_energy_multiplier = 2.2
 
 [node name="TitleBackground" type="Node3D"]
 script = ExtResource("1_tb")
@@ -238,3 +286,39 @@ mesh = SubResource("FogSphere")
 material_override = SubResource("FogMaterial2")
 
 [node name="EnemyPositions" type="Node3D" parent="."]
+
+[node name="Moon" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 7.5, -32)
+mesh = SubResource("MoonMesh")
+material_override = SubResource("MoonMat")
+
+[node name="MoonHalo" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 7.5, -32)
+mesh = SubResource("HaloMesh")
+material_override = SubResource("HaloMat")
+
+[node name="MoonHalo2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 7.5, -32)
+mesh = SubResource("HaloMesh2")
+material_override = SubResource("HaloMat2")
+
+[node name="MenuFill" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 2.4, -1)
+light_color = Color(0.95, 0.82, 0.68, 1)
+light_energy = 1.5
+omni_range = 12.0
+
+[node name="LeftFill" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 1.8, -1.2)
+light_color = Color(0.95, 0.85, 0.7, 1)
+light_energy = 1.6
+omni_range = 9.0
+shadow_enabled = false
+
+[node name="RightFill" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 1.8, -1.2)
+light_color = Color(0.95, 0.85, 0.7, 1)
+light_energy = 1.6
+omni_range = 9.0
+shadow_enabled = false
+shadow_enabled = false
