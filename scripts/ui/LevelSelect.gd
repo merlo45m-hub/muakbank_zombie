@@ -12,15 +12,13 @@ var buttons = []
 
 @onready var grid = $VBoxMain/ScrollContainer/GridContainer
 @onready var page_label = $VBoxMain/PaginationContainer/PageLabel
-@onready var back_btn = $VBoxMain/ButtonContainer/BackBtn
 @onready var prev_btn = $VBoxMain/PaginationContainer/PrevBtn
 @onready var next_btn = $VBoxMain/PaginationContainer/NextBtn
 
 
 func _ready():
-	back_btn.pressed.connect(_on_back)
-	prev_btn.pressed.connect(_on_prev)
-	next_btn.pressed.connect(_on_next)
+	# Button signals are wired in the scene file; connecting them again here
+	# printed "already connected" errors on every scene load.
 	_build_level_buttons()
 	_update_page()
 
