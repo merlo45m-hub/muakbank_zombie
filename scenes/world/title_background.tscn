@@ -17,7 +17,7 @@ metallic = 0.0
 size = Vector3(1.2, 2.4, 0.4)
 
 [sub_resource type="StandardMaterial3D" id="TombMaterial"]
-albedo_color = Color(0.24, 0.235, 0.25, 1.0)
+albedo_color = Color(0.33, 0.325, 0.35, 1.0)
 roughness = 0.9
 metallic = 0.0
 
@@ -28,7 +28,7 @@ size = Vector3(1.6, 3.0, 0.3)
 size = Vector3(0.08, 0.9, 0.08)
 
 [sub_resource type="StandardMaterial3D" id="CrossMaterial"]
-albedo_color = Color(0.25, 0.22, 0.18, 1.0)
+albedo_color = Color(0.32, 0.29, 0.24, 1.0)
 roughness = 0.85
 
 [sub_resource type="SphereMesh" id="FogSphere"]
@@ -69,6 +69,10 @@ fog_enabled = true
 fog_light_color = Color(0.17, 0.18, 0.24, 1.0)
 fog_density = 0.02
 fog_attenuation = 0.001
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.25
+glow_hdr_threshold = 0.85
 
 [sub_resource type="StandardMaterial3D" id="FogMaterial2"]
 albedo_color = Color(0.2, 0.18, 0.17, 0.08)
@@ -77,39 +81,38 @@ no_depth_test = false
 transparency = 1
 
 [sub_resource type="SphereMesh" id="MoonMesh"]
-radius = 3.4
-height = 6.8
+radius = 4.5
+height = 9.0
 radial_segments = 32
 rings = 16
 
 [sub_resource type="StandardMaterial3D" id="MoonMat"]
-shading_mode = 0
 albedo_color = Color(1, 0.99, 0.95, 1)
 emission_enabled = true
 emission = Color(1, 0.98, 0.92, 1)
 emission_energy_multiplier = 2.4
 
 [sub_resource type="SphereMesh" id="HaloMesh"]
-radius = 4.1
-height = 8.2
+radius = 6.2
+height = 12.4
 radial_segments = 24
 rings = 12
 
 [sub_resource type="StandardMaterial3D" id="HaloMat"]
-transparency = 1
 shading_mode = 0
-albedo_color = Color(0.9, 0.92, 1, 0.06)
+blend_mode = 1
+albedo_color = Color(0.14, 0.16, 0.24, 1)
 
 [sub_resource type="SphereMesh" id="HaloMesh2"]
-radius = 5.9
-height = 11.8
+radius = 8.2
+height = 16.4
 radial_segments = 24
 rings = 12
 
 [sub_resource type="StandardMaterial3D" id="HaloMat2"]
-transparency = 1
 shading_mode = 0
-albedo_color = Color(0.85, 0.88, 0.98, 0.05)
+blend_mode = 1
+albedo_color = Color(0.07, 0.08, 0.12, 1)
 
 [sub_resource type="SphereMesh" id="OrbMesh"]
 radius = 0.09
@@ -246,7 +249,7 @@ mesh = SubResource("TreeCanopy")
 material_override = SubResource("TreeCanopyMat")
 
 [node name="Tree3" type="Node3D" parent="Trees"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0, -11.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.0, 0, -11.5)
 
 [node name="Trunk" type="MeshInstance3D" parent="Trees/Tree3"]
 mesh = SubResource("TreeTrunk")
@@ -305,20 +308,20 @@ material_override = SubResource("HaloMat2")
 [node name="MenuFill" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 2.4, -1)
 light_color = Color(0.95, 0.82, 0.68, 1)
-light_energy = 1.5
+light_energy = 1.8
 omni_range = 12.0
 
 [node name="LeftFill" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 1.8, -1.2)
 light_color = Color(0.95, 0.85, 0.7, 1)
-light_energy = 1.6
+light_energy = 2.0
 omni_range = 9.0
 shadow_enabled = false
 
 [node name="RightFill" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 1.8, -1.2)
 light_color = Color(0.95, 0.85, 0.7, 1)
-light_energy = 1.6
+light_energy = 2.0
 omni_range = 9.0
 shadow_enabled = false
 shadow_enabled = false
