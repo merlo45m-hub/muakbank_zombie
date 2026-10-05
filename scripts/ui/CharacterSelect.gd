@@ -15,6 +15,14 @@ const DESC_HIGHLIGHT = Color(0.75, 0.12, 0.08, 1.0)
 const CARD_CORNER_RADIUS = 8
 const PEDESTAL_CORNER_RADIUS = 999
 
+# === PREVIEW RIG ===
+# The preview must frame the display-only model without any gameplay nodes:
+# camera dead ahead of the +Z-facing model, slightly above its mid point.
+const PREVIEW_CAMERA_POS = Vector3(0, 0.8, 3.3)
+const PREVIEW_CAMERA_TARGET = Vector3(0, 0.2, 0)
+const PREVIEW_FOV = 45.0  # frames the full model with headroom (the ring-light hat is tall)
+const TURNTABLE_SPEED = 0.45  # rad/s — slow spin so every card reads as "alive"
+
 # === CHARACTER DATA ===
 @export var character_scenes: Array = [
 	"res://scenes/characters/character_gamer.tscn",
@@ -28,20 +36,21 @@ const PEDESTAL_CORNER_RADIUS = 999
 
 # === STATE ===
 var selected_character: int = 0
+var preview_models: Array[Node3D] = []
 
 # === NODE REFS ===
-@onready var gamer_btn = $VBoxMain/CharactersContainer/GamerCard/GamerBtn
-@onready var doctor_btn = $VBoxMain/CharactersContainer/DoctorCard/DoctorBtn
-@onready var nurse_btn = $VBoxMain/CharactersContainer/NurseCard/NurseBtn
-@onready var streamer_btn = $VBoxMain/CharactersContainer/StreamerCard/StreamerBtn
-@onready var hunter_btn = $VBoxMain/CharactersContainer/HunterCard/HunterBtn
+@onready var gamer_btn = $VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerBtn
+@onready var doctor_btn = $VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorBtn
+@onready var nurse_btn = $VBoxMain/CharactersContainer/NurseCard/CardLayout/NurseBtn
+@onready var streamer_btn = $VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerBtn
+@onready var hunter_btn = $VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterBtn
 @onready var back_btn = $VBoxMain/BackBtn
 
-@onready var gamer_viewport = $VBoxMain/CharactersContainer/GamerCard/GamerViewport
-@onready var doctor_viewport = $VBoxMain/CharactersContainer/DoctorCard/DoctorViewport
-@onready var nurse_viewport = $VBoxMain/CharactersContainer/NurseCard/NurseViewport
-@onready var streamer_viewport = $VBoxMain/CharactersContainer/StreamerCard/StreamerViewport
-@onready var hunter_viewport = $VBoxMain/CharactersContainer/HunterCard/HunterViewport
+@onready var gamer_viewport = $VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerPreview/GamerViewport
+@onready var doctor_viewport = $VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorPreview/DoctorViewport
+@onready var nurse_viewport = $VBoxMain/CharactersContainer/NurseCard/CardLayout/NursePreview/NurseViewport
+@onready var streamer_viewport = $VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerPreview/StreamerViewport
+@onready var hunter_viewport = $VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterPreview/HunterViewport
 
 @onready var gamer_card = $VBoxMain/CharactersContainer/GamerCard
 @onready var doctor_card = $VBoxMain/CharactersContainer/DoctorCard
@@ -49,17 +58,17 @@ var selected_character: int = 0
 @onready var streamer_card = $VBoxMain/CharactersContainer/StreamerCard
 @onready var hunter_card = $VBoxMain/CharactersContainer/HunterCard
 
-@onready var gamer_pedestal = $VBoxMain/CharactersContainer/GamerCard/GamerPedestal
-@onready var doctor_pedestal = $VBoxMain/CharactersContainer/DoctorCard/DoctorPedestal
-@onready var nurse_pedestal = $VBoxMain/CharactersContainer/NurseCard/NursePedestal
-@onready var streamer_pedestal = $VBoxMain/CharactersContainer/StreamerCard/StreamerPedestal
-@onready var hunter_pedestal = $VBoxMain/CharactersContainer/HunterCard/HunterPedestal
+@onready var gamer_pedestal = $VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerPedestal
+@onready var doctor_pedestal = $VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorPedestal
+@onready var nurse_pedestal = $VBoxMain/CharactersContainer/NurseCard/CardLayout/NursePedestal
+@onready var streamer_pedestal = $VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerPedestal
+@onready var hunter_pedestal = $VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterPedestal
 
-@onready var gamer_desc = $VBoxMain/CharactersContainer/GamerCard/GamerDesc
-@onready var doctor_desc = $VBoxMain/CharactersContainer/DoctorCard/DoctorDesc
-@onready var nurse_desc = $VBoxMain/CharactersContainer/NurseCard/NurseDesc
-@onready var streamer_desc = $VBoxMain/CharactersContainer/StreamerCard/StreamerDesc
-@onready var hunter_desc = $VBoxMain/CharactersContainer/HunterCard/HunterDesc
+@onready var gamer_desc = $VBoxMain/CharactersContainer/GamerCard/CardLayout/GamerDesc
+@onready var doctor_desc = $VBoxMain/CharactersContainer/DoctorCard/CardLayout/DoctorDesc
+@onready var nurse_desc = $VBoxMain/CharactersContainer/NurseCard/CardLayout/NurseDesc
+@onready var streamer_desc = $VBoxMain/CharactersContainer/StreamerCard/CardLayout/StreamerDesc
+@onready var hunter_desc = $VBoxMain/CharactersContainer/HunterCard/CardLayout/HunterDesc
 
 var card_panels: Array[Panel] = []
 var pedestal_panels: Array[Panel] = []
@@ -80,26 +89,75 @@ func _ready() -> void:
 	Audio.play_menu_music()
 
 
+func _process(delta: float) -> void:
+	# Turntable: a slow spin keeps each card's preview visibly alive.
+	for model in preview_models:
+		model.rotate_y(delta * TURNTABLE_SPEED)
+
+
 func _setup_viewports() -> void:
-	# Instantiate each character into its SubViewport for preview
+	# Instantiate each character into its SubViewport for preview.
+	# Use the PlayerVisuals subtree only — the full player scene carries a script,
+	# physics, input and its own camera, none of which belong in a menu preview.
 	var viewports = [gamer_viewport, doctor_viewport, nurse_viewport, streamer_viewport, hunter_viewport]
+	var camera_names = ["GamerCamera", "DoctorCamera", "NurseCamera", "StreamerCamera", "HunterCamera"]
 
 	for i in range(viewports.size()):
-		if i < character_scenes.size():
-			var scene = load(character_scenes[i])
-			if scene:
-				var instance = scene.instantiate()
-				viewports[i].add_child(instance)
-				instance.position = Vector3(0, 0, 0)
+		# The turntable animates every frame; the default update mode only redraws
+		# when the viewport believes something changed.
+		viewports[i].render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		# Isolate the preview. By default a SubViewport SHARES the parent scene's
+		# World3D: all five models would stack at the origin, sit inside the menu
+		# background, and leak into the main view. Give each card its own world.
+		# Create it explicitly — the engine does not materialize an own world on
+		# the flag alone.
+		viewports[i].world_3d = World3D.new()
+		viewports[i].own_world_3d = true
 
-				# Add ambient light so models are visible
-				var world_env = WorldEnvironment.new()
-				var env = Environment.new()
-				env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-				env.ambient_light_color = Color(0.4, 0.4, 0.5, 1.0)
-				env.ambient_light_energy = 0.8
-				world_env.environment = env
-				viewports[i].add_child(world_env)
+		if i >= character_scenes.size():
+			continue
+		var scene: PackedScene = load(character_scenes[i]) as PackedScene
+		if scene == null:
+			push_warning("CharacterSelect: missing scene " + str(character_scenes[i]))
+			continue
+
+		var full = scene.instantiate()
+		var vis: Node3D = full.get_node_or_null("PlayerVisuals") as Node3D
+		if vis == null:
+			# Fallback: an unusual character scene without PlayerVisuals —
+			# ship the whole (still not-in-tree) instance rather than nothing.
+			vis = full as Node3D
+		else:
+			full.remove_child(vis)
+			full.free()
+
+		vis.position = Vector3.ZERO
+		viewports[i].add_child(vis)
+		preview_models.append(vis)
+
+		# Add ambient light so models are visible
+		var world_env = WorldEnvironment.new()
+		var env = Environment.new()
+		env.background_mode = Environment.BG_COLOR
+		env.background_color = Color(0.05, 0.035, 0.07, 1.0)
+		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		env.ambient_light_color = Color(0.4, 0.4, 0.5, 1.0)
+		env.ambient_light_energy = 0.8
+		world_env.environment = env
+		viewports[i].add_child(world_env)
+
+		# Key light: ambient alone flattens every shape into a silhouette.
+		var key = DirectionalLight3D.new()
+		key.rotation_degrees = Vector3(-28, 40, 0)
+		key.light_energy = 1.1
+		key.shadow_enabled = false
+		viewports[i].add_child(key)
+
+		# Frame the model (the authored camera transform is not trustworthy).
+		var cam: Camera3D = viewports[i].get_node_or_null(camera_names[i]) as Camera3D
+		if cam != null:
+			cam.look_at_from_position(PREVIEW_CAMERA_POS, PREVIEW_CAMERA_TARGET, Vector3.UP)
+			cam.fov = PREVIEW_FOV
 
 
 # ── SELECTION HANDLERS ─────────────────────────────────────────
@@ -161,6 +219,11 @@ func _select_character(index: int, play_sound: bool = true) -> void:
 	selected_character = index
 	_update_selection_visuals(index)
 	_confirm_selection(index, play_sound)
+
+func _on_play_pressed() -> void:
+	# This screen used to be a dead end — PLAY now routes to level selection.
+	Audio.play_click()
+	get_tree().change_scene_to_file("res://scenes/ui/level_select.tscn")
 
 func _on_back_pressed() -> void:
 	Audio.play_click()
