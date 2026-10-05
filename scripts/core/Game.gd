@@ -77,6 +77,8 @@ func _ready() -> void:
 			wave_manager.all_waves_cleared.connect(_on_all_waves_cleared)
 		if wave_manager.has_signal("boss_spawned"):
 			wave_manager.boss_spawned.connect(_on_boss_spawned)
+		if wave_manager.has_signal("boss_defeated"):
+			wave_manager.boss_defeated.connect(_on_boss_defeated)
 	if combo_system:
 		if combo_system.has_signal("combo_changed"):
 			combo_system.combo_changed.connect(_on_combo_changed)
@@ -481,6 +483,14 @@ func _on_boss_spawned() -> void:
 	Audio.play_music(Audio.boss_music_stream)
 	Audio.haptic_heavy()
 	Audio.set_intensity(1.0)
+
+func _on_boss_defeated() -> void:
+	# The boss is spawned by WaveManager, not the spawner, so spawner.zombie_killed
+	# never fires for it — award the kill here so score/combo/difficulty/achievements
+	# all land (and boss_slayer becomes obtainable).
+	on_zombie_killed("boss")
+	if achievement_manager and achievement_manager.has_method("unlock"):
+		achievement_manager.unlock("boss_slayer")
 
 func on_player_died() -> void:
 	if not game_active:

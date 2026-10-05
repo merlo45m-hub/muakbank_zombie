@@ -97,9 +97,13 @@ func _ready() -> void:
 	health = max_health
 	# Snapshot base stats before any difficulty scaling, so apply_difficulty
 	# always scales from the original values and reset_for_pool can restore them.
-	base_max_health = max_health
-	base_damage = damage
-	base_move_speed = move_speed
+	# Guarded: pool-EXPANSION instances (created by pool.init(), never parked
+	# through this ready pass) reach their first checkout with zeroed bases — a
+	# re-snapshot there would capture already-scaled stats and compound on reuse.
+	if base_max_health <= 0:
+		base_max_health = max_health
+		base_damage = damage
+		base_move_speed = move_speed
 	add_to_group("enemies")
 	if mesh:
 		_mesh_rest_xform = mesh.transform  # pristine transform, restored by reset_for_pool()
@@ -459,6 +463,13 @@ func _die() -> void:
 func reset_for_pool() -> void:
 	# Restore full working state when ZombieSpawner3D checks this zombie out of
 	# the object pool (called before add_child on every reuse).
+	# Pool-EXPANSION instances (pool.init() after exhaustion) never ran the ready
+	# pass, so their base stats are still zero — snapshot the scene values on the
+	# first reset instead of restoring zeros (0 HP / 0 damage / 0 speed zombies).
+	if base_max_health <= 0:
+		base_max_health = max_health
+		base_damage = damage
+		base_move_speed = move_speed
 	is_dead = false
 	dead = false
 	# Restore stats to base values so apply_difficulty scales from the original

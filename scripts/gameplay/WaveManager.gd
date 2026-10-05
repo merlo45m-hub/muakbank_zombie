@@ -2,12 +2,13 @@ extends Node
 class_name WaveManager
 
 ## WaveManager — Progressive zombie wave system
-## Attach to root game node. Emits wave_started/wave_completed signals.
+## Attach to root game node. Emits wave_started/wave_completed/boss_defeated signals.
 
 signal wave_started(wave_number, zombie_count)
 signal wave_completed(wave_number)
 signal all_waves_cleared
 signal boss_spawned
+signal boss_defeated
 
 @export var waves_per_level: int = 5
 @export var base_zombies_per_wave: int = 5
@@ -70,6 +71,13 @@ func _spawn_boss() -> void:
 	if not chosen:
 		return
 	var boss = chosen.instantiate()
+	# The spawner is bypassed for the boss, so replicate its wiring here: the
+	# zombie_type key drives the death-anim params and the death-shake branch in
+	# ZombieBase._die, and set_target engages immediately instead of waiting for
+	# range-based acquisition in _idle().
+	boss.set("zombie_type", "boss")
+	if boss.has_method("set_target"):
+		boss.set_target(player)
 	var angle = randf() * TAU
 	var dist = 12.0
 	boss.global_position = player.global_position + Vector3(cos(angle) * dist, 0, sin(angle) * dist)
@@ -86,7 +94,11 @@ func _spawn_boss() -> void:
 	boss_spawned.emit()
 
 func _on_boss_died() -> void:
-	zombies_alive -= 1
+	# Single decrement only — the old code decremented here AND again inside
+	# _on_zombie_killed, driving zombies_alive negative and letting a wave
+	# "complete" with a straggler still alive. boss_defeated carries the reward
+	# path: the spawner's zombie_killed never fires for a WaveManager-spawned boss.
+	boss_defeated.emit()
 	_on_zombie_killed("boss")
 
 func _on_zombie_killed(_type: String) -> void:
