@@ -70,9 +70,14 @@ fog_light_color = Color(0.28, 0.31, 0.40, 1.0)
 fog_density = 0.03
 fog_attenuation = 0.001
 glow_enabled = true
-glow_intensity = 0.9
-glow_bloom = 0.25
-glow_hdr_threshold = 0.85
+glow_intensity = 1.0
+glow_bloom = 0.32
+glow_hdr_threshold = 0.8
+tonemap_mode = 3
+adjustment_enabled = true
+adjustment_brightness = 1.02
+adjustment_contrast = 1.07
+adjustment_saturation = 1.15
 
 [sub_resource type="StandardMaterial3D" id="FogMaterial2"]
 albedo_color = Color(0.2, 0.18, 0.17, 0.08)
@@ -112,6 +117,18 @@ blend_mode = 1
 billboard_mode = 1
 albedo_texture = SubResource("GlowTex")
 albedo_color = Color(0.95, 0.97, 1, 1)
+
+[sub_resource type="Gradient" id="VignetteGrad"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.6)
+
+[sub_resource type="GradientTexture2D" id="VignetteTex"]
+gradient = SubResource("VignetteGrad")
+width = 512
+height = 512
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [sub_resource type="SphereMesh" id="HaloMesh"]
 radius = 6.2
@@ -312,6 +329,25 @@ material_override = SubResource("MoonMat")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 7.5, -32)
 mesh = SubResource("GlowQuad")
 material_override = SubResource("GlowMat")
+
+[node name="RimLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.906, 0, 0.423, 0, 1, 0, -0.423, 0, 0.906, 0, 3, 0)
+light_color = Color(0.55, 0.62, 0.95, 1)
+light_energy = 0.4
+
+[node name="VignetteLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Vignette" type="TextureRect" parent="VignetteLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("VignetteTex")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="MenuFill" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 2.4, -1)
