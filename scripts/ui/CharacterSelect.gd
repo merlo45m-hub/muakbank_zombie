@@ -271,9 +271,9 @@ func _select_character(index: int, play_sound: bool = true) -> void:
 	for i in range(_models.size()):
 		var sel := (i == index)
 		if i < _lights.size() and is_instance_valid(_lights[i]):
-			_lights[i].light_energy = 1.6 if sel else 0.12
+			_lights[i].light_energy = 2.0 if sel else 0.12
 		if i < _disc_mats.size():
-			_disc_mats[i].emission_energy_multiplier = 2.6 if sel else 0.9
+			_disc_mats[i].emission_energy_multiplier = 3.2 if sel else 0.9
 		if i < _col_buttons.size() and is_instance_valid(_col_buttons[i]):
 			_col_buttons[i].modulate = Color(1, 1, 1) if sel else Color(0.66, 0.66, 0.66)
 	if _name_label != null:
