@@ -34,7 +34,7 @@ const CHARACTER_DESCS: Array[String] = [
 const PEDESTAL_X: Array[float] = [-3.4, -1.7, 0.0, 1.7, 3.4]
 const PEDESTAL_Z := -1.6
 const PEDESTAL_TOP := 0.7
-const MODEL_ORIGIN_Y := PEDESTAL_TOP + 0.8  # PlayerVisuals feet sit at local -0.8
+const MODEL_ORIGIN_Y := PEDESTAL_TOP + 0.86  # feet at local -0.8 land on the neon disc top (0.76)
 const BOB_AMPLITUDE := 0.03
 const BOB_SPEED := 1.2
 # Screen-space fraction of a pedestal's column on the shared camera: the stage
@@ -83,8 +83,8 @@ func _build_stage() -> void:
 		# Stone plinth
 		var base := MeshInstance3D.new()
 		var cyl := CylinderMesh.new()
-		cyl.top_radius = 0.52
-		cyl.bottom_radius = 0.6
+		cyl.top_radius = 0.64
+		cyl.bottom_radius = 0.74
 		cyl.height = 0.5
 		cyl.radial_segments = 14
 		base.mesh = cyl
@@ -98,8 +98,8 @@ func _build_stage() -> void:
 		# Neon top disc
 		var disc := MeshInstance3D.new()
 		var dcyl := CylinderMesh.new()
-		dcyl.top_radius = 0.5
-		dcyl.bottom_radius = 0.5
+		dcyl.top_radius = 0.62
+		dcyl.bottom_radius = 0.62
 		dcyl.height = 0.06
 		dcyl.radial_segments = 14
 		disc.mesh = dcyl
