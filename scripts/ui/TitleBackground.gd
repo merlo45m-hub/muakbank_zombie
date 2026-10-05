@@ -38,6 +38,7 @@ func _ready() -> void:
 	_build_scenery()
 	_build_mist()
 	_build_props()
+	_build_branches()
 	if build_animals:
 		_build_animals()
 
@@ -114,6 +115,8 @@ func _build_mist() -> void:
 		{"p": Vector3(2.6, 0.6, -1.2), "s": Vector3(2.2, 0.4, 1.0)},
 		{"p": Vector3(0.0, 1.2, -9.5), "s": Vector3(6.5, 0.9, 1.4)},
 		{"p": Vector3(-4.0, 1.0, -8.5), "s": Vector3(3.5, 0.7, 1.2)},
+		{"p": Vector3(-7.6, 0.7, -4.0), "s": Vector3(2.2, 0.5, 1.2)},
+		{"p": Vector3(7.8, 0.7, -3.5), "s": Vector3(2.2, 0.5, 1.2)},
 	]:
 		var blob := _sphere(1.0, Color(0.62, 0.68, 0.80), m.p)
 		blob.scale = m.s
@@ -125,6 +128,39 @@ func _build_mist() -> void:
 		add_child(blob)
 
 
+func _build_branches() -> void:
+	# Bare, twisted dead trees framing the scene — the reference art has no
+	# leaves at all. Limbs are tapered cylinders angled off the trunk top.
+	var bark := Color(0.16, 0.13, 0.11)
+	for t: Dictionary in [
+		{"p": Vector3(-4.2, 0, -9.5), "s": 1.4},
+		{"p": Vector3(4.0, 0, -10.5), "s": 1.4},
+		{"p": Vector3(-7.0, 0, -11.5), "s": 1.3},
+	]:
+		var base: Vector3 = t.p
+		var sc: float = t.s
+		for b: Dictionary in [
+			{"o": Vector3(-0.5, 3.0, 0.1), "rz": 0.75, "ry": 0.0, "l": 1.7},
+			{"o": Vector3(0.55, 3.25, -0.1), "rz": -0.7, "ry": 0.5, "l": 1.5},
+			{"o": Vector3(-0.3, 3.7, -0.15), "rz": 0.5, "ry": -0.6, "l": 1.3},
+			{"o": Vector3(0.35, 2.6, 0.15), "rz": -0.95, "ry": 0.9, "l": 1.4},
+			{"o": Vector3(0.1, 4.15, 0.05), "rz": 0.3, "ry": 2.2, "l": 1.2},
+		]:
+			var br := MeshInstance3D.new()
+			var cyl := CylinderMesh.new()
+			cyl.top_radius = 0.04
+			cyl.bottom_radius = 0.09
+			cyl.height = float(b.l) * sc
+			cyl.radial_segments = 6
+			br.mesh = cyl
+			br.position = base + Vector3(float(b.o.x) * sc, float(b.o.y) * sc, float(b.o.z) * sc)
+			br.rotation = Vector3(0, float(b.ry), float(b.rz))
+			var mat := StandardMaterial3D.new()
+			mat.albedo_color = bark
+			br.material_override = mat
+			add_child(br)
+
+
 func _build_props() -> void:
 	# Stepping stones down the path, grass tufts, and the fancy headstone
 	# shapes from the reference (rounded top, obelisk, cross-topped).
@@ -132,6 +168,21 @@ func _build_props() -> void:
 		add_child(_box(Vector3(1.1, 0.14, 0.85), Color(0.45, 0.44, 0.47), sp + Vector3(0, 0.30, 0), Vector3(0, randf() * 0.4 - 0.2, 0)))
 	for tp: Vector3 in [Vector3(-1.6, 0, -1.2), Vector3(1.7, 0, -2.0), Vector3(-2.2, 0, -3.4), Vector3(2.4, 0, -4.2), Vector3(-6.8, 0, -1.0), Vector3(6.6, 0, -2.4)]:
 		add_child(_cone(0.16, 0.34, Color(0.13, 0.19, 0.11), tp + Vector3(0, 0.37, 0)))
+	# Mid-ground stones: the back row is lost in the mist on a phone screen,
+	# so the graveyard read comes from these closer, brighter markers.
+	var mid_stone := Color(0.46, 0.45, 0.49)
+	for ms: Dictionary in [
+		{"p": Vector3(-2.3, 0, -2.9), "h": 1.3, "cross": true},
+		{"p": Vector3(2.4, 0, -3.2), "h": 1.1, "cross": false},
+		{"p": Vector3(-3.4, 0, -4.3), "h": 1.5, "cross": true},
+		{"p": Vector3(3.5, 0, -4.6), "h": 1.2, "cross": false},
+	]:
+		var mp: Vector3 = ms.p
+		var mh: float = float(ms.h)
+		add_child(_box(Vector3(0.72, mh, 0.22), mid_stone, mp + Vector3(0, 0.2 + mh * 0.5, 0), Vector3(0, randf() * 0.3 - 0.15, 0)))
+		if bool(ms.cross):
+			add_child(_box(Vector3(0.14, 0.5, 0.12), mid_stone, mp + Vector3(0, 0.2 + mh + 0.2, 0)))
+			add_child(_box(Vector3(0.44, 0.14, 0.12), mid_stone, mp + Vector3(0, 0.2 + mh + 0.28, 0)))
 	var stone := Color(0.36, 0.36, 0.39)
 	var rp := Vector3(-5.8, 0, -3.6)
 	add_child(_box(Vector3(0.8, 1.0, 0.22), stone, rp + Vector3(0, 0.7, 0)))
