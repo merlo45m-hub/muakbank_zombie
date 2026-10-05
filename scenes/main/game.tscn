@@ -250,11 +250,13 @@ grow_vertical = 0
 [node name="JoystickBg" type="Panel" parent="Player/MobileControls/JoystickArea"]
 layout_mode = 1
 anchors_preset = 15
+mouse_filter = 2
 theme_override_styles/panel = SubResource("JoystickBg")
 
 [node name="JoystickKnob" type="Panel" parent="Player/MobileControls/JoystickArea"]
 layout_mode = 1
 anchors_preset = 8
+mouse_filter = 2
 offset_left = 25.0
 offset_top = 25.0
 offset_right = 75.0
