@@ -1,7 +1,9 @@
-## TitleBackground.gd — Loads zombie animals into the cemetery backdrop
-## The .tscn has static geometry (floor, tombstones, trees, fog, lights).
-## This script instances the zombie GLB models at runtime and attaches
-## shambling animation.
+## TitleBackground.gd - Builds the cemetery backdrop's zombie animals.
+## The .tscn has the static geometry (floor, tombstones, trees, fog, lights).
+## The GLB "animals" turned out to be 64-vert blockout boxes (the same placeholder
+## disease the player model had), so the four flankers are assembled from
+## primitives instead: readable silhouettes with ears, snouts, tails and eyes,
+## matching the cover art (dog + cat left, bear + chicken right).
 
 extends Node3D
 
@@ -13,21 +15,21 @@ const TITLE_CAM_FAR = 120.0
 const TITLE_CAM_POSITION = Vector3(-0.3, 1.5, 2.6)
 const TITLE_CAM_TARGET = Vector3(-0.7, 0.95, -5.3)
 
-## Zombie spawn points: (x, z, scale, model_path)
-# Spawn points must sit INSIDE the camera's cone. Godot's fov is vertical, so this portrait
-# viewport has only ~30 degrees of HORIZONTAL field: at 5 m the visible band is about 2.5 m
-# wide. The previous points (x -7 .. +4.5) were all outside it, which is why no animal ever
-# appeared in the backdrop. These keep the bear centre-frame as the hero silhouette.
-var _zombie_spawns = [
-	{"x": -1.2, "z": -2.0, "scale": 1.0, "path": "res://assets/models/zombie_dog.glb", "y_offset": 0.5},
-	{"x": 1.4,  "z": -3.2, "scale": 0.9, "path": "res://assets/models/zombie_cat.glb", "y_offset": 0.4},
-	{"x": -0.2, "z": -4.6, "scale": 1.3, "path": "res://assets/models/zombie_bear.glb", "y_offset": 0.7},
+# Four flankers frame the menu the way the cover art does. Spawn points must sit
+# INSIDE the camera's cone; the landscape viewport is wide, so x up to ~4.6 is
+# visible at z -2.4..-3.8. All animals face +Z (toward the camera) with a slight
+# inward yaw so they read as standing guard around the menu.
+var _animal_spawns = [
+	{"kind": "dog", "x": -4.4, "z": -3.4, "yaw": 0.35},
+	{"kind": "cat", "x": -2.5, "z": -2.4, "yaw": -0.30},
+	{"kind": "bear", "x": 2.1, "z": -2.8, "yaw": 0.20},
+	{"kind": "chicken", "x": 4.4, "z": -3.6, "yaw": -0.40},
 ]
 
 
 func _ready() -> void:
 	_setup_camera()
-	_load_zombies()
+	_build_animals()
 
 
 func _setup_camera() -> void:
@@ -41,85 +43,159 @@ func _setup_camera() -> void:
 		printerr("[TitleBackground] no Camera child found - framing unchanged")
 		return
 	if DevMode.is_active():
-		print("[TitleBackground] _setup_camera before: ", cam.global_position, " fov=", cam.fov, " in_tree=", is_inside_tree(), " parent=", get_parent().name if get_parent() else "<none>")
+		print("[TitleBackground] _setup_camera before: ", cam.global_position, " fov=", cam.fov)
 	cam.fov = TITLE_CAM_FOV
 	cam.near = TITLE_CAM_NEAR
 	cam.far = TITLE_CAM_FAR
 	cam.global_position = TITLE_CAM_POSITION
 	cam.look_at(TITLE_CAM_TARGET, Vector3.UP)
-	if DevMode.is_active():
-		print("[TitleBackground] _setup_camera after: ", cam.global_position, " fov=", cam.fov)
-	await get_tree().process_frame
-	if DevMode.is_active():
-		print("[TitleBackground] _setup_camera next_frame: ", cam.global_position, " fov=", cam.fov)
 
 
-func _load_zombies() -> void:
-	for spawn in _zombie_spawns:
-		var packed = load(spawn.path)
-		if packed == null:
-			printerr("TitleBackground: could not load %s" % spawn.path)
-			continue
-
-		# PackedScene instancing: get the root node, find the mesh inside
-		var scene = packed.instantiate()
-		if scene == null:
-			continue
-
-		# Find the first MeshInstance3D in the instanced scene
-		var mesh_node = scene.get_node_or_null("MeshInstance3D")
-		if mesh_node == null:
-			# Try to find any MeshInstance3D child
-			for child in scene.get_children():
-				if child is MeshInstance3D:
-					mesh_node = child
-					break
-
-		if mesh_node == null:
-			continue
-
-		# Position the zombie. The spawn entries are Dictionary values (Variants) and the
-		# Transform3D/Vector3 constructors reject Variant arguments - that parse error is
-		# why this script never loaded at all. Convert explicitly.
-		var pos := Vector3(float(spawn.x), float(spawn.y_offset), float(spawn.z))
-		var scl := float(spawn.scale)
-		# The mesh is still parented to the instantiated glTF scene, and add_child()
-		# refuses a node that already has a parent - which is why the pet zombies never
-		# showed up in the backdrop. Detach it first, then re-parent.
-		if mesh_node.get_parent() != null:
-			mesh_node.get_parent().remove_child(mesh_node)
-		# owner is a packing concept; leaving it set makes Godot warn that the owner
-		# ('zombie_dog') is inconsistent when the node lands under Zombies.
-		mesh_node.owner = null
-		mesh_node.transform = Transform3D(Basis.IDENTITY, pos)
-		mesh_node.scale = Vector3(scl, scl, scl)
-
-		# Assign a dark material
-		var mat = StandardMaterial3D.new()
-		mat.albedo_color = _zombie_color(str(spawn.path))
-		mat.roughness = 0.85
-		mat.metallic = 0.0
-		mesh_node.material_override = mat
-
-		# Add to the Zombies node
-		var zombies_node = get_node_or_null("Zombies")
-		if zombies_node:
-			zombies_node.add_child(mesh_node)
-
-		# Attach shambling animation script. TitleZombieAnim.gd declares no class_name, so
-		# the bare identifier resolved to nothing; preload the script and instantiate it.
+func _build_animals() -> void:
+	var holder = get_node_or_null("Zombies")
+	if holder == null:
+		holder = self
+	for spawn in _animal_spawns:
+		var animal := _make_animal(str(spawn.kind))
+		animal.position = Vector3(float(spawn.x), 0.0, float(spawn.z))
+		animal.rotation.y = float(spawn.yaw)
+		holder.add_child(animal)
 		var anim = preload("res://scripts/ui/TitleZombieAnim.gd").new()
 		anim.shamble_speed = 0.3 + randf() * 0.2
-		anim.shamble_amount = 0.06 + randf() * 0.04
+		anim.shamble_amount = 0.05 + randf() * 0.03
 		anim.bob_amount = 0.02 + randf() * 0.02
-		mesh_node.add_child(anim)
+		animal.add_child(anim)
 
 
-func _zombie_color(path: String) -> Color:
-	if path.contains("dog"):
-		return Color(0.55, 0.45, 0.35, 1.0)
-	elif path.contains("cat"):
-		return Color(0.5, 0.42, 0.32, 1.0)
-	elif path.contains("bear"):
-		return Color(0.58, 0.48, 0.38, 1.0)
-	return Color(0.52, 0.43, 0.34, 1.0)
+# --- PRIMITIVE HELPERS -------------------------------------------
+
+func _box(size: Vector3, color: Color, pos: Vector3, rot := Vector3.ZERO) -> MeshInstance3D:
+	var m := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = size
+	m.mesh = bm
+	m.material_override = _mat(color, 0.0)
+	m.position = pos
+	m.rotation = rot
+	return m
+
+
+func _sphere(r: float, color: Color, pos: Vector3, glow := 0.0) -> MeshInstance3D:
+	var m := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	sm.radius = r
+	sm.height = r * 2.0
+	sm.radial_segments = 12
+	sm.rings = 6
+	m.mesh = sm
+	m.material_override = _mat(color, glow)
+	m.position = pos
+	return m
+
+
+func _cone(r: float, h: float, color: Color, pos: Vector3, rot := Vector3.ZERO) -> MeshInstance3D:
+	var m := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.0
+	cm.bottom_radius = r
+	cm.height = h
+	cm.radial_segments = 4
+	m.mesh = cm
+	m.material_override = _mat(color, 0.0)
+	m.position = pos
+	m.rotation = rot
+	return m
+
+
+func _mat(color: Color, glow: float) -> StandardMaterial3D:
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.roughness = 0.9
+	mat.metallic = 0.0
+	if glow > 0.0:
+		mat.emission_enabled = true
+		mat.emission = color
+		mat.emission_energy_multiplier = glow
+	return mat
+
+
+func _make_animal(kind: String) -> Node3D:
+	var root := Node3D.new()
+	root.name = kind.capitalize()
+	match kind:
+		"dog":
+			_build_dog(root)
+		"cat":
+			_build_cat(root)
+		"bear":
+			_build_bear(root)
+		"chicken":
+			_build_chicken(root)
+	return root
+
+
+# --- ANIMALS (all face +Z, standing on y=0) -----------------------
+
+func _build_dog(root: Node3D) -> void:
+	var coat := Color(0.55, 0.40, 0.26)
+	var dark := Color(0.42, 0.30, 0.19)
+	root.add_child(_box(Vector3(0.55, 0.42, 1.0), coat, Vector3(0, 0.62, 0)))
+	root.add_child(_box(Vector3(0.5, 0.45, 0.3), coat, Vector3(0, 0.66, 0.5)))
+	root.add_child(_box(Vector3(0.42, 0.4, 0.42), coat, Vector3(0, 0.95, 0.62)))
+	root.add_child(_box(Vector3(0.24, 0.18, 0.3), dark, Vector3(0, 0.86, 0.86)))
+	root.add_child(_box(Vector3(0.12, 0.24, 0.1), dark, Vector3(-0.14, 1.2, 0.58), Vector3(0, 0, 0.35)))
+	root.add_child(_box(Vector3(0.12, 0.24, 0.1), dark, Vector3(0.14, 1.2, 0.58), Vector3(0, 0, -0.35)))
+	root.add_child(_sphere(0.045, Color(1, 0.85, 0.4), Vector3(-0.11, 1.0, 0.84), 1.8))
+	root.add_child(_sphere(0.045, Color(1, 0.85, 0.4), Vector3(0.11, 1.0, 0.84), 1.8))
+	for sx: float in [-0.19, 0.19]:
+		for sz: float in [-0.32, 0.38]:
+			root.add_child(_box(Vector3(0.13, 0.42, 0.13), dark, Vector3(sx, 0.21, sz)))
+	root.add_child(_box(Vector3(0.1, 0.1, 0.42), coat, Vector3(0, 0.78, -0.6), Vector3(-0.5, 0, 0)))
+
+
+func _build_cat(root: Node3D) -> void:
+	var coat := Color(0.62, 0.62, 0.68)
+	var dark := Color(0.48, 0.48, 0.55)
+	root.add_child(_box(Vector3(0.38, 0.34, 0.7), coat, Vector3(0, 0.5, 0)))
+	root.add_child(_box(Vector3(0.34, 0.34, 0.34), coat, Vector3(0, 0.78, 0.42)))
+	root.add_child(_cone(0.1, 0.16, dark, Vector3(-0.1, 1.0, 0.42), Vector3(0, 0, 0.2)))
+	root.add_child(_cone(0.1, 0.16, dark, Vector3(0.1, 1.0, 0.42), Vector3(0, 0, -0.2)))
+	root.add_child(_sphere(0.04, Color(0.4, 1, 0.35), Vector3(-0.09, 0.82, 0.6), 2.2))
+	root.add_child(_sphere(0.04, Color(0.4, 1, 0.35), Vector3(0.09, 0.82, 0.6), 2.2))
+	root.add_child(_box(Vector3(0.14, 0.1, 0.12), dark, Vector3(0, 0.74, 0.6)))
+	for sx: float in [-0.13, 0.13]:
+		for sz: float in [-0.22, 0.26]:
+			root.add_child(_box(Vector3(0.1, 0.34, 0.1), dark, Vector3(sx, 0.17, sz)))
+	root.add_child(_box(Vector3(0.08, 0.5, 0.08), coat, Vector3(0, 0.72, -0.4), Vector3(0.5, 0, 0)))
+	root.add_child(_box(Vector3(0.07, 0.22, 0.07), dark, Vector3(0, 1.0, -0.55), Vector3(0.9, 0, 0)))
+
+
+func _build_bear(root: Node3D) -> void:
+	var coat := Color(0.52, 0.36, 0.23)
+	var dark := Color(0.4, 0.27, 0.17)
+	root.add_child(_box(Vector3(0.85, 0.75, 1.1), coat, Vector3(0, 0.85, 0)))
+	root.add_child(_box(Vector3(0.6, 0.55, 0.55), coat, Vector3(0, 1.45, 0.45)))
+	root.add_child(_box(Vector3(0.3, 0.22, 0.28), dark, Vector3(0, 1.35, 0.78)))
+	root.add_child(_sphere(0.14, dark, Vector3(-0.2, 1.75, 0.42)))
+	root.add_child(_sphere(0.14, dark, Vector3(0.2, 1.75, 0.42)))
+	root.add_child(_sphere(0.05, Color(1, 0.8, 0.35), Vector3(-0.13, 1.5, 0.72), 1.6))
+	root.add_child(_sphere(0.05, Color(1, 0.8, 0.35), Vector3(0.13, 1.5, 0.72), 1.6))
+	for sx: float in [-0.28, 0.28]:
+		for sz: float in [-0.38, 0.42]:
+			root.add_child(_box(Vector3(0.22, 0.5, 0.22), dark, Vector3(sx, 0.25, sz)))
+	# the glowing orb it guards, held at the front paws
+	root.add_child(_sphere(0.16, Color(1, 0.62, 0.2), Vector3(0.28, 0.62, 0.62), 2.4))
+
+
+func _build_chicken(root: Node3D) -> void:
+	var coat := Color(0.90, 0.87, 0.80)
+	var red := Color(0.75, 0.12, 0.10)
+	root.add_child(_sphere(0.26, coat, Vector3(0, 0.55, 0)))
+	root.add_child(_sphere(0.16, coat, Vector3(0, 0.92, 0.18)))
+	root.add_child(_cone(0.07, 0.12, Color(0.95, 0.6, 0.15), Vector3(0, 0.9, 0.34), Vector3(1.2, 0, 0)))
+	root.add_child(_box(Vector3(0.06, 0.12, 0.18), red, Vector3(0, 1.08, 0.16)))
+	root.add_child(_sphere(0.035, Color(0.9, 0.9, 0.9), Vector3(-0.07, 0.95, 0.3), 0.8))
+	root.add_child(_sphere(0.035, Color(0.9, 0.9, 0.9), Vector3(0.07, 0.95, 0.3), 0.8))
+	root.add_child(_box(Vector3(0.05, 0.3, 0.05), Color(0.9, 0.6, 0.15), Vector3(-0.09, 0.15, 0.02)))
+	root.add_child(_box(Vector3(0.05, 0.3, 0.05), Color(0.9, 0.6, 0.15), Vector3(0.09, 0.15, 0.02)))
+	root.add_child(_box(Vector3(0.16, 0.2, 0.3), coat, Vector3(0, 0.62, -0.28), Vector3(0.6, 0, 0)))
