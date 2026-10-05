@@ -52,7 +52,9 @@ func _ready() -> void:
 
 	# ---- death ----
 	z.take_damage(99999)
-	await get_tree().create_timer(1.0).timeout
+	# Death tween emits `died` at ~1.07s (fall+settle+rebound; the fade runs
+	# parallel to the rebound) — a 1.0s wait missed it and cascaded 5 false fails.
+	await get_tree().create_timer(2.0).timeout
 	print("POOLTEST: after death dead=%d alive=%d is_dead=%s visible=%s" % [pool.get_dead_size(), pool.get_alive_size(), str(z.is_dead), str(z.visible)])
 	if pool.get_dead_size() != 3 or pool.get_alive_size() != 0:
 		print("POOLTEST: FAIL — zombie did not return to the dead pool")

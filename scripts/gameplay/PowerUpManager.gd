@@ -59,7 +59,9 @@ func _on_spawn_timer_timeout() -> void:
 	
 	spawn_timer.start()
 
-func _on_powerup_collected(powerup: Node) -> void:
+func _on_powerup_collected(powerup_type: String, powerup: Node) -> void:
+	# `collected` emits the type and .bind(powerup) appends the node — the handler
+	# must declare BOTH or Godot drops the call at emit time ("Method expected 1
+	# argument(s), but called with 2") and every power-up silently does nothing.
 	active_powerups.erase(powerup)
-	var type = powerup.get("powerup_type") if powerup.get("powerup_type") else "unknown"
-	powerup_collected.emit(type)
+	powerup_collected.emit(powerup_type if powerup_type else "unknown")
