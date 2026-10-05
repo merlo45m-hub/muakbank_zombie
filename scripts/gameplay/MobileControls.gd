@@ -31,7 +31,10 @@ var move_input: Vector2 = Vector2.ZERO
 
 # Button layout constants — named so the layout is adjustable in one place
 const SPRINT_BTN_RECT := Rect2(20.0, -220.0, 80.0, 60.0)
-const JUMP_BTN_RECT := Rect2(-100.0, -220.0, 80.0, 60.0)
+# JUMP used to sit almost fully inside the SPECIAL button's rect (both right-column
+# offsets overlapped), so SPECIAL was half-eaten and the labels rendered on top of
+# each other. Park JUMP left of the VS attack button — same bottom band, no overlap.
+const JUMP_BTN_RECT := Rect2(-220.0, -120.0, 80.0, 100.0)
 const BTN_FONT_SIZE: int = 14
 const BTN_BG_COLOR := Color(0.1, 0.1, 0.1, 0.7)
 const BTN_BG_ACTIVE := Color(0.2, 0.4, 0.2, 0.8)
@@ -122,7 +125,7 @@ func _build_weapon_button() -> void:
 	weapon_btn.anchor_right = 1.0
 	weapon_btn.anchor_top = 1.0
 	weapon_btn.anchor_bottom = 1.0
-	weapon_btn.offset_left = -100.0
+	weapon_btn.offset_left = -120.0
 	weapon_btn.offset_top = -300.0
 	weapon_btn.offset_right = -20.0
 	weapon_btn.offset_bottom = -240.0
@@ -134,27 +137,55 @@ func _build_weapon_button() -> void:
 	add_child(weapon_btn)
 
 func _on_joystick_input(event: InputEvent) -> void:
+	# Touch path — the real device path. The panels inside the area are visual
+	# only (mouse_filter IGNORE in the scene); they used to sit on top with the
+	# default STOP filter and swallow every touch, so this handler never ran
+	# and the character could not be moved at all.
 	if event is InputEventScreenTouch:
 		if event.pressed and joystick_touch_index == -1:
-			# Check if touch is in joystick area
-			var local_pos = event.position - joystick_area.global_position
-			if joystick_area.get_rect().has_point(local_pos):
+			# gui_input delivers event.position ALREADY in this control's local
+			# space (verified in-engine: a push at global (70,558) arrives as
+			# (50,50)). The original code subtracted global_position from these
+			# local coords, so the bounds check rejected every real press.
+			if Rect2(Vector2.ZERO, joystick_area.size).has_point(event.position):
 				joystick_touch_index = event.index
 				joystick_touch_start = event.position
 				joystick_knob.position = joystick_area.size / 2
+				print("[MobileControls] joystick engaged")
 		elif not event.pressed and event.index == joystick_touch_index:
 			joystick_touch_index = -1
 			joystick_knob.position = joystick_area.size / 2
 			move_input = Vector2.ZERO
 			emit_signal("move_vector_changed", move_input)
-	
+
 	elif event is InputEventScreenDrag and event.index == joystick_touch_index:
-		var drag = event.position - joystick_touch_start
-		if drag.length() > joystick_radius:
-			drag = drag.normalized() * joystick_radius
-		move_input = drag / joystick_radius
-		emit_signal("move_vector_changed", move_input)
-		joystick_knob.position = joystick_area.size / 2 + drag
+		_apply_drag(event.position - joystick_touch_start)
+
+	# Mouse path — covers the emulated mouse from touch (emulate_mouse_from_touch
+	# is on by default) and any setup where the controls are visible on desktop.
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed and joystick_touch_index == -1:
+			if Rect2(Vector2.ZERO, joystick_area.size).has_point(event.position):
+				joystick_touch_index = 0
+				joystick_touch_start = event.position
+				joystick_knob.position = joystick_area.size / 2
+				print("[MobileControls] joystick engaged")
+		elif not event.pressed and joystick_touch_index == 0:
+			joystick_touch_index = -1
+			joystick_knob.position = joystick_area.size / 2
+			move_input = Vector2.ZERO
+			emit_signal("move_vector_changed", move_input)
+
+	elif event is InputEventMouseMotion and joystick_touch_index == 0:
+		_apply_drag(event.position - joystick_touch_start)
+
+
+func _apply_drag(drag: Vector2) -> void:
+	if drag.length() > joystick_radius:
+		drag = drag.normalized() * joystick_radius
+	move_input = drag / joystick_radius
+	emit_signal("move_vector_changed", move_input)
+	joystick_knob.position = joystick_area.size / 2 + drag
 
 func get_movement_vector() -> Vector2:
 	return move_input

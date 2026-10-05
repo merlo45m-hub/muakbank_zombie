@@ -86,6 +86,10 @@ var _camera_touch_last: Vector2 = Vector2.ZERO
 # Track start position for respawn/reset
 var _start_position: Vector3 = Vector3.ZERO
 
+# The visible character root applied by _apply_character_model (scene visuals,
+# GLB fallback, or null when the placeholder body is the only visual).
+var _applied_visual: Node3D = null
+
 
 func _ready() -> void:
 	# Load character stats if assigned
@@ -101,17 +105,19 @@ func _ready() -> void:
 	if weapon_system and weapon_system.has_method("equip_weapon"):
 		weapon_system.equip_weapon("bat")
 
-	# Attach procedural animator to the visual node (same reparent pattern as ZombieBase).
-	# Tree becomes: PlayerVisuals > ProceduralAnimator > Body > GLB geometry.
-	# Guard: mesh may be null (fallback capsule) or not yet in tree.
-	if mesh and mesh.is_inside_tree():
+	# Attach procedural animator to the VISIBLE model root (same reparent pattern as
+	# ZombieBase). Tree becomes: PlayerVisuals > ProceduralAnimator > <visible root>.
+	# It used to wrap the placeholder Body, which _apply_character_model hides — so
+	# the visible model never animated and read as a frozen statue.
+	var anim_target: Node3D = _applied_visual if _applied_visual != null else mesh
+	if anim_target and anim_target.is_inside_tree():
 		var _anim := ProceduralAnimator.new()
 		_anim.name = "ProceduralAnimator"
-		var holder := mesh.get_parent()  # $PlayerVisuals
-		holder.remove_child(mesh)
-		_anim.add_child(mesh)
+		var holder := anim_target.get_parent()  # $PlayerVisuals
+		holder.remove_child(anim_target)
+		_anim.add_child(anim_target)
 		holder.add_child(_anim)
-		_anim.attach(self, mesh)
+		_anim.attach(self, anim_target)
 
 	# Setup mobile controls
 	if mobile_controls:
@@ -326,13 +332,22 @@ func _get_raw_input_dir() -> Vector2:
 
 
 func _rotate_toward_direction(direction: Vector3, delta: float) -> void:
-	if not mesh:
+	var vis: Node3D = _visual_root()
+	if vis == null:
 		return
 	if direction.length() < 0.01:
 		return
 	var target_rot: float = atan2(direction.x, direction.z)
 	var rot_speed: float = 10.0
-	mesh.rotation.y = lerp_angle(mesh.rotation.y, target_rot, rot_speed * delta)
+	vis.rotation.y = lerp_angle(vis.rotation.y, target_rot, rot_speed * delta)
+
+
+func _visual_root() -> Node3D:
+	# The node the animation / facing / flash code should drive: the applied
+	# character visuals when present, else the placeholder body.
+	if _applied_visual != null and is_instance_valid(_applied_visual):
+		return _applied_visual
+	return mesh
 
 
 func _handle_jump(delta: float) -> void:
@@ -425,10 +440,11 @@ func _trigger_attack_feedback() -> void:
 			_pa.trigger_attack()
 	if Audio:
 		Audio.play_click()
-	if mesh:
+	var swing_vis: Node3D = _visual_root()
+	if swing_vis:
 		weapon_tween = create_tween()
-		weapon_tween.tween_property(mesh, "rotation:x", mesh.rotation.x - deg_to_rad(45), weapon_swing_duration / 2)
-		weapon_tween.tween_property(mesh, "rotation:x", mesh.rotation.x, weapon_swing_duration / 2)
+		weapon_tween.tween_property(swing_vis, "rotation:x", swing_vis.rotation.x - deg_to_rad(45), weapon_swing_duration / 2)
+		weapon_tween.tween_property(swing_vis, "rotation:x", swing_vis.rotation.x, weapon_swing_duration / 2)
 
 func _fire_weapon() -> Dictionary:
 	if not weapon_system or not weapon_system.has_method("fire"):
@@ -541,8 +557,7 @@ func take_damage(amount: int) -> void:
 	# so there is exactly one funnel.
 	emit_signal("damaged", amount)
 
-	if mesh:
-		_flash_red()
+	_flash_red()
 
 	print("[Player] Took ", amount, " damage — HP: ", health)
 
@@ -564,13 +579,15 @@ func _die() -> void:
 	print("[Player] DIED!")
 	emit_signal("died")
 
-	# Fall + fade visual on player mesh (spec §3). Does not block gameplay state.
-	if mesh:
+	# Fall + fade visual on the VISIBLE model (was the hidden placeholder body,
+	# so deaths were invisible on the actual character). Does not block gameplay.
+	var die_vis: Node3D = _visual_root()
+	if die_vis:
 		var dt = create_tween()
-		dt.tween_property(mesh, "rotation:x", deg_to_rad(100.0), 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-		dt.parallel().tween_property(mesh, "position:y", mesh.position.y - 0.15, 0.5)
+		dt.tween_property(die_vis, "rotation:x", deg_to_rad(100.0), 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		dt.parallel().tween_property(die_vis, "position:y", die_vis.position.y - 0.15, 0.5)
 		# Transparency requires MeshInstance3D children — iterate them.
-		for _mi in mesh.find_children("*", "MeshInstance3D", true, false):
+		for _mi in die_vis.find_children("*", "MeshInstance3D", true, false):
 			var _mi3 := _mi as MeshInstance3D
 			if _mi3:
 				dt.parallel().tween_property(_mi3, "transparency", 1.0, 0.8).set_delay(0.3)
@@ -645,26 +662,34 @@ func equip_weapon(weapon_name: String) -> void:
 # ──────────────────────────────────────────────
 
 func _flash_red() -> void:
-	if not mesh:
+	var vis: Node3D = _visual_root()
+	if vis == null:
 		return
-	var mat = mesh.material_override if mesh is MeshInstance3D else null
-	if not mat:
-		# `mesh` is a Node3D container in some scenes (character select) and 3D
-		# nodes have no per-surface API — find an owned material on a child mesh.
-		for c in mesh.get_children():
-			if c is MeshInstance3D and c.material_override:
-				mat = c.material_override
-				break
-	if not mat:
+	# Override every mesh with a shared emissive red material, then restore the
+	# previous overrides. The old version only flashed a mesh that already had a
+	# material_override, which the character visuals never have.
+	var meshes: Array[MeshInstance3D] = []
+	for m in vis.find_children("*", "MeshInstance3D", true, false):
+		meshes.append(m as MeshInstance3D)
+	if meshes.is_empty():
 		return
-	# Godot 4 renamed this: there is no `emissive_color` property (setting it printed
-	# "Godot 3.x SpatialMaterial remapped parameter not found" and did nothing, so damage
-	# never actually flashed). It is emission_enabled + emission now.
-	mat.emission_enabled = true
-	mat.emission = Color(1, 0.2, 0.2)
+	var prev: Array = []
+	for m in meshes:
+		prev.append(m.material_override)
+	var flash := StandardMaterial3D.new()
+	flash.albedo_color = Color(1.0, 0.25, 0.25)
+	flash.emission_enabled = true
+	flash.emission = Color(1.0, 0.2, 0.2)
+	flash.emission_energy_multiplier = 0.8
+	for m in meshes:
+		m.material_override = flash
 	await _wait(0.15)
-	mat.emission = Color(0, 0, 0)
-	mat.emission_enabled = false
+	if not is_instance_valid(self) or not is_inside_tree():
+		return
+	for i in meshes.size():
+		var m := meshes[i]
+		if is_instance_valid(m):
+			m.material_override = prev[i]
 
 
 # ──────────────────────────────────────────────
@@ -749,6 +774,7 @@ func _wait(sec: float) -> bool:
 ## the five character_*.glb models ship in assets/models/ — but gameplay always drew
 ## a placeholder capsule. Attach the chosen model, normalised to human height.
 const CHARACTER_MODEL_DIR := "res://assets/models/character_%s.glb"
+const CHARACTER_SCENE_DIR := "res://scenes/characters/character_%s.tscn"
 const CHARACTER_HEIGHT := 1.8
 const MODEL_YAW_OFFSET := 0.0   # flip to PI if the model faces backwards
 
@@ -757,6 +783,33 @@ func _apply_character_model() -> void:
 	if not visuals:
 		return
 	var id := _selected_character_id()
+	# Preferred: the authored character scene — the SAME visuals the character
+	# select shows. Extract only its PlayerVisuals subtree; the scene root carries
+	# a full player rig (script, camera, mobile controls) that must not enter
+	# gameplay. The old GLB path shipped 64-vert blockout placeholders, so the
+	# character picked in the menu was never the character you played.
+	var scene_path := CHARACTER_SCENE_DIR % id
+	if ResourceLoader.exists(scene_path):
+		var packed_scene := load(scene_path) as PackedScene
+		if packed_scene != null:
+			var full := packed_scene.instantiate()
+			var vis := full.get_node_or_null("PlayerVisuals") as Node3D
+			if vis != null:
+				full.remove_child(vis)
+				full.free()
+				vis.name = "CharacterVisuals"
+				vis.position = Vector3.ZERO
+				visuals.add_child(vis)
+				_applied_visual = vis
+				_hide_placeholder_meshes(visuals, vis)
+				var vcount := 0
+				for mi in vis.find_children("*", "MeshInstance3D", true, false):
+					if (mi as MeshInstance3D).visible:
+						vcount += 1
+				print("[Player] character visuals: %s meshes=%d" % [scene_path, vcount])
+				return
+			full.free()
+	# Fallback: the GLB blockout models.
 	var path := CHARACTER_MODEL_DIR % id
 	if not ResourceLoader.exists(path):
 		print("[Player] character model %s missing — keeping the placeholder capsule" % path)
@@ -769,6 +822,7 @@ func _apply_character_model() -> void:
 	if not mdl:
 		return
 	visuals.add_child(mdl)
+	_applied_visual = mdl
 	var aabb := _model_aabb(mdl)
 	var h := aabb.size.y
 	_normalise_model_transform(mdl, aabb)
