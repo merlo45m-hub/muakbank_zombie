@@ -14,9 +14,9 @@ font_size = 78
 font_color = Color(1, 1, 1, 1)
 outline_size = 8
 outline_color = Color(0.03, 0.005, 0.005, 0.95)
-shadow_size = 5
-shadow_color = Color(0, 0, 0, 0.6)
-shadow_offset = Vector2(0, 6)
+shadow_size = 3
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="ShaderMaterial" id="TitleBloodDripMat"]
 shader = ExtResource("2")
@@ -33,7 +33,7 @@ content_margin_top = 14.0
 content_margin_right = 56.0
 content_margin_bottom = 14.0
 texture = ExtResource("5")
-modulate_color = Color(0.78, 0.74, 0.68, 1)
+modulate_color = Color(0.72, 0.68, 0.62, 1)
 
 [sub_resource type="StyleBoxTexture" id="WoodHover"]
 content_margin_left = 56.0
@@ -71,9 +71,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -620.0
-offset_top = 24.0
+offset_top = 18.0
 offset_right = 620.0
-offset_bottom = 246.0
+offset_bottom = 240.0
 grow_horizontal = 2
 text = "MUAK BANK\nZOMBIE"
 label_settings = SubResource("TitleSettings")
@@ -114,16 +114,17 @@ theme_override_styles/focus = SubResource("WoodHover")
 text = "PLAY"
 
 [node name="Blood" type="TextureRect" parent="UI/ButtonsBox/PlayBtn"]
+rotation = 0.25
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -122.0
-offset_top = -31.0
+offset_left = -140.0
+offset_top = -34.0
 offset_right = -6.0
-offset_bottom = 31.0
+offset_bottom = 34.0
 grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 2
@@ -149,16 +150,17 @@ theme_override_styles/focus = SubResource("WoodHover")
 text = "LEVELS"
 
 [node name="Blood" type="TextureRect" parent="UI/ButtonsBox/LevelBtn"]
+rotation = -0.35
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -122.0
-offset_top = -31.0
+offset_left = -100.0
+offset_top = -28.0
 offset_right = -6.0
-offset_bottom = 31.0
+offset_bottom = 28.0
 grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 2
@@ -185,6 +187,7 @@ theme_override_styles/focus = SubResource("WoodHover")
 text = "SETTINGS"
 
 [node name="Blood" type="TextureRect" parent="UI/ButtonsBox/SettingsBtn"]
+rotation = 0.45
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -220,16 +223,17 @@ theme_override_styles/focus = SubResource("WoodHover")
 text = "CREDITS"
 
 [node name="Blood" type="TextureRect" parent="UI/ButtonsBox/CreditsBtn"]
+rotation = -0.2
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -122.0
-offset_top = -31.0
+offset_left = -100.0
+offset_top = -28.0
 offset_right = -6.0
-offset_bottom = 31.0
+offset_bottom = 28.0
 grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 2
@@ -256,16 +260,17 @@ theme_override_styles/focus = SubResource("WoodHover")
 text = "QUIT"
 
 [node name="Blood" type="TextureRect" parent="UI/ButtonsBox/QuitBtn"]
+rotation = 0.1
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -122.0
-offset_top = -31.0
+offset_left = -140.0
+offset_top = -34.0
 offset_right = -6.0
-offset_bottom = 31.0
+offset_bottom = 34.0
 grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 2

@@ -19,16 +19,19 @@ const TITLE_CAM_TARGET = Vector3(-0.7, 0.95, -5.3)
 # INSIDE the camera's cone; the landscape viewport is wide, so x up to ~4.6 is
 # visible at z -2.4..-3.8. All animals face +Z (toward the camera) with a slight
 # inward yaw so they read as standing guard around the menu.
+# Per-animal scale keeps the left (dog + cat) and right (bear + chicken)
+# pairs at matching visual weight - the bear build is naturally the biggest.
 var _animal_spawns = [
-	{"kind": "dog", "x": -4.4, "z": -3.4, "yaw": 0.35},
-	{"kind": "cat", "x": -2.5, "z": -2.4, "yaw": -0.30},
-	{"kind": "bear", "x": 2.1, "z": -2.8, "yaw": 0.20},
-	{"kind": "chicken", "x": 4.4, "z": -3.6, "yaw": -0.40},
+	{"kind": "dog", "x": -4.0, "z": -3.4, "yaw": 0.35, "scale": 1.25},
+	{"kind": "cat", "x": -2.4, "z": -2.4, "yaw": -0.30, "scale": 1.05},
+	{"kind": "bear", "x": 2.1, "z": -2.8, "yaw": 0.20, "scale": 0.85},
+	{"kind": "chicken", "x": 4.2, "z": -3.6, "yaw": -0.40, "scale": 1.0},
 ]
 
 
 func _ready() -> void:
 	_setup_camera()
+	_build_scenery()
 	_build_animals()
 
 
@@ -57,14 +60,54 @@ func _build_animals() -> void:
 		holder = self
 	for spawn in _animal_spawns:
 		var animal := _make_animal(str(spawn.kind))
-		animal.position = Vector3(float(spawn.x), 0.0, float(spawn.z))
+		animal.position = Vector3(float(spawn.x), 0.2, float(spawn.z))
 		animal.rotation.y = float(spawn.yaw)
+		var s := float(spawn.get("scale", 1.0))
+		animal.scale = Vector3(s, s, s)
+		# contact shadow so the animal sits on the ground instead of floating
+		var disc := _shadow_disc(0.6)
+		disc.position.y = 0.015 / s
+		animal.add_child(disc)
 		holder.add_child(animal)
 		var anim = preload("res://scripts/ui/TitleZombieAnim.gd").new()
 		anim.shamble_speed = 0.3 + randf() * 0.2
 		anim.shamble_amount = 0.05 + randf() * 0.03
 		anim.bob_amount = 0.02 + randf() * 0.02
 		animal.add_child(anim)
+
+
+func _build_scenery() -> void:
+	# The GLB cemetery read as vague dark rectangles in the render, so the
+	# graveyard is stated plainly: a fence silhouette across the back, a worn
+	# dirt path leading in, and headstone-and-cross clusters at the edges.
+	for i in range(-10, 11):
+		var x := float(i) * 0.8
+		add_child(_box(Vector3(0.09, 1.2, 0.09), Color(0.30, 0.23, 0.16), Vector3(x, 0.6, -6.2)))
+	add_child(_box(Vector3(17.0, 0.07, 0.07), Color(0.33, 0.25, 0.18), Vector3(0, 0.72, -6.2)))
+	add_child(_box(Vector3(17.0, 0.07, 0.07), Color(0.33, 0.25, 0.18), Vector3(0, 0.34, -6.2)))
+	add_child(_box(Vector3(1.5, 0.02, 5.4), Color(0.33, 0.30, 0.28), Vector3(0.0, 0.212, -2.6)))
+	for spot: Vector3 in [Vector3(-6.6, 0, -5.2), Vector3(-5.3, 0, -5.8), Vector3(6.2, 0, -5.4)]:
+		var stone := Color(0.33, 0.325, 0.35)
+		add_child(_box(Vector3(0.75, 0.95, 0.24), stone, spot + Vector3(0, 0.67, 0)))
+		add_child(_box(Vector3(0.12, 0.55, 0.1), stone, spot + Vector3(0, 1.35, 0)))
+		add_child(_box(Vector3(0.4, 0.12, 0.1), stone, spot + Vector3(0, 1.45, 0)))
+
+
+func _shadow_disc(r: float) -> MeshInstance3D:
+	var m := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = r
+	cm.bottom_radius = r
+	cm.height = 0.02
+	cm.radial_segments = 16
+	m.mesh = cm
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.albedo_color = Color(0.01, 0.01, 0.02, 0.38)
+	m.material_override = mat
+	m.position = Vector3(0, 0.012, 0)
+	return m
 
 
 # --- PRIMITIVE HELPERS -------------------------------------------
