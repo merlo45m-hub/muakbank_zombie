@@ -74,6 +74,26 @@ func _ready() -> void:
 		ok_all = false
 		print(TAG, "FAIL zone tap target under 44px")
 
+	# 1b. Hard geometry check: lowest mesh vertex of each survivor must sit at
+	# the pedestal top (0.7). Catches floaters/sinkers without relying on vision.
+	for i in range(models.size()):
+		var m: Node3D = models[i]
+		var lowest := INF
+		for mi in m.find_children("*", "MeshInstance3D", true, false):
+			var mesh_i: MeshInstance3D = mi
+			if mesh_i.mesh == null:
+				continue
+			var ab: AABB = mesh_i.mesh.get_aabb()
+			for cx in [ab.position.x, ab.position.x + ab.size.x]:
+				for cy in [ab.position.y, ab.position.y + ab.size.y]:
+					for cz in [ab.position.z, ab.position.z + ab.size.z]:
+						var w: Vector3 = mesh_i.global_transform * Vector3(cx, cy, cz)
+						lowest = minf(lowest, w.y)
+		print(TAG, "survivor ", i, " lowest_y=", lowest, " pos=", m.global_position)
+		if lowest > 0.90 or lowest < 0.60:
+			ok_all = false
+			print(TAG, "FAIL survivor ", i, " not standing on pedestal (y=", lowest, ")")
+
 	# 2. Render one drawn frame and screenshot (the vision check target).
 	await RenderingServer.frame_post_draw
 	var img: Image = get_viewport().get_texture().get_image()
