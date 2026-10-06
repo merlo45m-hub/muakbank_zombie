@@ -120,7 +120,18 @@ func _ready() -> void:
 			_anim.add_child(mesh)
 			holder.add_child(_anim)
 			_anim.attach(self, mesh)
-	_post_ready()
+			# Skeletal animation is now the visual driver — disable the ProceduralAnimator
+			# so its walk transforms do not fight the rig's idle/run clips. The node stays
+			# alive because _die() / reset_for_pool() / hit-reaction code may reference it.
+			var pa := get_node_or_null("ProceduralAnimator")
+			if pa:
+				pa.set_process(false)
+			# Attach the rigged animation pipeline (idle/run/jump + skin) to the mesh.
+			if mesh:
+				var skin_key := _get_zombie_skin_key()
+				var skin: Dictionary = CharacterAnim.ZOMBIE_SKINS.get(skin_key, CharacterAnim.ZOMBIE_SKINS["zombie"])
+				CharacterAnim.setup_rigged(mesh, skin.tex, skin.tint)
+			_post_ready()
 
 
 func _post_ready() -> void:
@@ -130,6 +141,28 @@ func _post_ready() -> void:
 
 func _get_animator() -> ProceduralAnimator:
 	return get_node_or_null("ProceduralAnimator") as ProceduralAnimator
+
+## Derive the zombie skin key from the concrete subclass name when zombie_type
+## has not been set by the spawner yet (first-spawn path). The four human types
+## (Runner, Butcher, Spitter, Boss) map directly to ZOMBIE_SKINS keys; every other
+## class falls back to "zombie". zombie_type (set by ZombieSpawner3D on checkout)
+## takes priority so pooled reuses keep the same skin.
+func _get_zombie_skin_key() -> String:
+	if zombie_type != "":
+		return zombie_type
+	var scr := get_script() as Script
+	if scr == null or not scr.resource_path.ends_with(".gd"):
+		return "zombie"
+	var cls := scr.resource_path.get_file().get_basename()
+	if cls == "ZombieRunner":
+		return "runner"
+	elif cls == "ZombieButcher":
+		return "butcher"
+	elif cls == "ZombieSpitter":
+		return "spitter"
+	elif cls == "ZombieBoss":
+		return "boss"
+	return "zombie"
 
 
 func _physics_process(delta: float) -> void:
@@ -221,6 +254,7 @@ func _physics_process(delta: float) -> void:
 	# the top-of-function guard and this call, and move_and_slide() then errors on a body with
 	# no space. Re-checking costs nothing.
 	if is_inside_tree():
+		_drive_anim(delta)
 		move_and_slide()
 
 
@@ -354,6 +388,25 @@ func _perform_attack() -> void:
 	await _wait(0.3)
 	is_attacking = false
 
+
+## Drive the idle/run skeletal clips from the zombie's actual movement.
+## Plays "run" while chasing and moving, "idle" otherwise, with a short blend
+## time so the transition is smooth. The run clip's playback speed scales with
+## move_speed (clamped 0.8..1.5) so faster zombies look faster.
+func _drive_anim(delta: float) -> void:
+	var ap := mesh.get_node_or_null("AnimationPlayer")
+	if ap == null or is_dead:
+		return
+	var h_speed := Vector2(velocity.x, velocity.z).length()
+	if current_state == AIState.CHASE and h_speed > 0.2:
+		if ap.get_current_animation() != "run":
+			ap.play("run", 0.15)
+		var speed_factor := clampf(move_speed / 3.0, 0.8, 1.5)
+		ap.set_speed_scale(speed_factor)
+	else:
+		if ap.get_current_animation() != "idle":
+			ap.play("idle", 0.2)
+		ap.set_speed_scale(1.0)
 
 func take_damage(amount: int) -> void:
 	if is_dead:
@@ -496,10 +549,18 @@ func reset_for_pool() -> void:
 		var _a := _get_animator()
 		if _a:
 			_a.reset_anim()
-		# Stop any in-flight animation on pool reuse (harmless if absent).
-		var ap := mesh.get_node_or_null("AnimationPlayer")
+		# Ensure the AnimationPlayer exists — pool-expansion instances (created by
+		# pool.init() after exhaustion) never went through _ready(), so they have no
+		# AP. Create it here rather than duplicating it on every reuse.
+		var ap := mesh.get_node_or_null("AnimationPlayer") as AnimationPlayer
+		if ap == null:
+			var skin_key := _get_zombie_skin_key()
+			var skin: Dictionary = CharacterAnim.ZOMBIE_SKINS.get(skin_key, CharacterAnim.ZOMBIE_SKINS["zombie"])
+			CharacterAnim.setup_rigged(mesh, skin.tex, skin.tint)
+			ap = mesh.get_node_or_null("AnimationPlayer") as AnimationPlayer
 		if ap:
 			ap.stop()
+			ap.play("idle")
 	for mi in _mesh_instances():
 		mi.transparency = 0.0
 		mi.material_overlay = null

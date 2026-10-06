@@ -16,11 +16,20 @@ const ANIM_DIR := "res://assets/models/cc0/kenney_anim/"
 ## Per-character skin: the survivor PNG skins + a tint that keeps the five
 ## survivors visually distinct while sharing one rigged model.
 const SKINS := {
-	"gamer": {"tex": "survivorMaleB.png", "tint": Color(0.60, 0.76, 1.0)},
-	"doctor": {"tex": "survivorMaleB.png", "tint": Color(0.96, 0.97, 1.0)},
-	"nurse": {"tex": "survivorFemaleA.png", "tint": Color(1.0, 0.70, 0.76)},
-	"streamer": {"tex": "survivorFemaleA.png", "tint": Color(0.86, 0.62, 1.0)},
-	"hunter": {"tex": "survivorMaleB.png", "tint": Color(0.60, 0.92, 0.58)},
+	"gamer": {"tex": "skaterMaleA.png", "tint": Color(0.86, 0.92, 1.0)},
+	"doctor": {"tex": "survivorMaleB.png", "tint": Color(1.0, 1.0, 1.0)},
+	"nurse": {"tex": "skaterFemaleA.png", "tint": Color(1.0, 0.94, 0.96)},
+	"streamer": {"tex": "cyborgFemaleA.png", "tint": Color(0.94, 0.86, 1.0)},
+	"hunter": {"tex": "criminalMaleA.png", "tint": Color(0.84, 1.0, 0.82)},
+}
+
+## Zombie types: the same rig, zombie skins, per-type tint.
+const ZOMBIE_SKINS := {
+	"runner": {"tex": "zombieA.png", "tint": Color(0.72, 1.0, 0.72)},
+	"butcher": {"tex": "zombieC.png", "tint": Color(1.0, 0.72, 0.72)},
+	"spitter": {"tex": "zombieA.png", "tint": Color(0.72, 1.0, 0.82)},
+	"boss": {"tex": "zombieC.png", "tint": Color(0.86, 0.86, 0.92)},
+	"zombie": {"tex": "zombieA.png", "tint": Color(0.80, 1.0, 0.78)},
 }
 
 
@@ -28,6 +37,15 @@ const SKINS := {
 ## Returns the AnimationPlayer (with idle/run/jump), or null if no rigged
 ## model is present.
 static func setup(visuals: Node3D, char_id: String) -> AnimationPlayer:
+	var skin: Dictionary = SKINS.get(char_id, {})
+	return setup_rigged(visuals, String(skin.get("tex", "")), skin.get("tint", Color.WHITE))
+
+## Attach merged idle/run/jump clips to the rigged model inside `visuals` and
+## apply an explicit skin (texture + tint) instead of the survivor SKINS map.
+## Used by zombies, whose skins are keyed by type.
+## Returns the AnimationPlayer (with idle/run/jump), or null if no rigged
+## model is present.
+static func setup_rigged(visuals: Node3D, tex_name: String, tint: Color) -> AnimationPlayer:
 	var model: Node3D = null
 	var direct := visuals.get_node_or_null("Model") as Node3D
 	if direct != null and _has_skeleton(direct):
@@ -64,10 +82,9 @@ static func setup(visuals: Node3D, char_id: String) -> AnimationPlayer:
 		return null
 	ap.add_animation_library("", lib)
 
-	_apply_skin(model, char_id)
-	print("[CharacterAnim] %s: %d clips merged (%s)" % [char_id, merged, ", ".join(ap.get_animation_list())])
+	apply_skin_raw(model, tex_name, tint)
+	print("[CharacterAnim] rigged: %d clips merged (%s)" % [merged, ", ".join(ap.get_animation_list())])
 	return ap
-
 
 static func _has_skeleton(n: Node) -> bool:
 	return not n.find_children("*", "Skeleton3D", true, false).is_empty()
@@ -118,10 +135,15 @@ static func _retarget(anim: Animation, skeleton: Skeleton3D, sk_path: String) ->
 ## Texture + tint every mesh in the model so the five survivors read distinct.
 static func _apply_skin(model: Node3D, char_id: String) -> void:
 	var skin: Dictionary = SKINS.get(char_id, {})
+	apply_skin_raw(model, String(skin.get("tex", "")), skin.get("tint", Color.WHITE))
+
+
+## Texture + tint a rigged model from an explicit skin name (used by zombies,
+## whose skins are keyed by type rather than by survivor id).
+static func apply_skin_raw(model: Node3D, tex_name: String, tint: Color) -> void:
 	var tex: Texture2D = null
-	if skin.has("tex") and ResourceLoader.exists(ANIM_DIR + String(skin["tex"])):
-		tex = load(ANIM_DIR + String(skin["tex"])) as Texture2D
-	var tint: Color = skin.get("tint", Color.WHITE)
+	if tex_name != "" and ResourceLoader.exists(ANIM_DIR + tex_name):
+		tex = load(ANIM_DIR + tex_name) as Texture2D
 	var mat := StandardMaterial3D.new()
 	mat.albedo_texture = tex
 	mat.albedo_color = tint

@@ -14,9 +14,6 @@ class_name ZombieRunner
 var strafe_timer: float = 0.0
 var strafe_dir: float = 1.0
 
-# Reference to the rigged model's animation library, set in _post_ready().
-var _anim_lib = null
-
 func _post_ready() -> void:
 	max_health = 22
 	move_speed = 6.5
@@ -26,21 +23,9 @@ func _post_ready() -> void:
 	attack_cooldown_time = 0.8
 	fade_duration = 0.35
 
-	# Neutralize the ProceduralAnimator for this subtype — all movement and
-	# combat visuals come from the AnimationPlayer baked animations instead.
-	var pa := get_node_or_null("ProceduralAnimator")
-	if pa:
-		pa.set_process(false)
-
-	# Attach the rigged model's animation library to the AnimationPlayer.
-	# The AnimationPlayer node is a child of Mesh (added in zombie_runner.tscn).
-	var ap: AnimationPlayer = get_node_or_null("Mesh/AnimationPlayer")
-	if ap:
-		_anim_lib = preload("res://assets/models/zombie_rigged/zombie_rigged.gltf").animation_library
-		if _anim_lib:
-			ap.animation_library = _anim_lib
-		# Start in IDLE.
-		ap.play("IDLE")
+	# The base class already disabled the ProceduralAnimator and attached the
+	# rigged AnimationPlayer (idle/run/jump) via CharacterAnim.setup_rigged().
+	# This subtype no longer loads the old zombie_rigged.gltf library.
 
 func _physics_process(delta: float) -> void:
 	if strafe_timer > 0:
@@ -50,18 +35,18 @@ func _physics_process(delta: float) -> void:
 	# Drive animations from movement speed (skip if dead — DEAD animation owns the corpse).
 	if not is_dead:
 		var ap: AnimationPlayer = get_node_or_null("Mesh/AnimationPlayer")
-		if not ap or not _anim_lib:
+		if ap == null:
 			return
 		var h_speed: float = Vector2(velocity.x, velocity.z).length()
 		if h_speed < 0.2:
-			if ap.get_current_animation() != "IDLE":
-				ap.play("IDLE")
+			if ap.get_current_animation() != "idle":
+				ap.play("idle", 0.2)
 		elif h_speed < move_speed * 0.5:
-			if ap.get_current_animation() != "WALK":
-				ap.play("WALK")
+			if ap.get_current_animation() != "run":
+				ap.play("run", 0.15)
 		else:
-			if ap.get_current_animation() != "RUN":
-				ap.play("RUN")
+			if ap.get_current_animation() != "run":
+				ap.play("run", 0.15)
 
 func take_damage(amount: int) -> void:
 	# Chance to dodge before taking damage
@@ -72,13 +57,13 @@ func take_damage(amount: int) -> void:
 			t.tween_property(mesh, "scale", Vector3(1, 1, 1), 0.12)
 		# Play HIT animation on the rig instead of procedural squash.
 		var ap: AnimationPlayer = get_node_or_null("Mesh/AnimationPlayer")
-		if ap and _anim_lib:
-			ap.play("HIT")
+		if ap:
+			ap.play("run", 0.15)
 		return
-	# Neutralize procedural hit reaction — the rig's HIT animation handles it.
+	# Neutralize procedural hit reaction — the rig's animation handles it.
 	var ap: AnimationPlayer = get_node_or_null("Mesh/AnimationPlayer")
-	if ap and _anim_lib:
-		ap.play("HIT")
+	if ap:
+		ap.play("run", 0.15)
 	super.take_damage(amount)
 
 func _on_start_chase() -> void:
@@ -117,29 +102,8 @@ func _attack(delta: float) -> void:
 		_perform_attack()
 
 func _die() -> void:
-	# Play the rig's DEAD animation and skip the procedural death tween entirely.
-	# The rig's DEAD animation owns the corpse visuals (rotation, pose, fade).
-	is_dead = true
-	current_state = AIState.DEAD
-	collision_layer = 0
-	collision_mask = 0
-	Audio.play_zombie_die()
-
-	var ap: AnimationPlayer = get_node_or_null("Mesh/AnimationPlayer")
-	if ap and _anim_lib:
-		ap.play("DEAD")
-		if is_inside_tree():
-			await ap.animation_finished
-
-	# Emit AFTER the animation so the spawner's detach/score/loot logic runs
-	# once the corpse is already invisible — no corpse-pop.
-	emit_signal("died")
-
-	# Pooling: if pooled, do NOT queue_free — return to pool instead.
-	if pooled:
-		hide()
-		process_mode = Node.PROCESS_MODE_PAUSABLE
-	else:
-		queue_free()
+	# The new pipeline (idle/run/jump) has no DEAD clip — fall back to the
+	# base class procedural death tween (rotation, bounce, fade).
+	super._die()
 
 
