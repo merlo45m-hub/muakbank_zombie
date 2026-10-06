@@ -169,11 +169,8 @@ func _parked_cars() -> void:
 		return
 	var cars: Array[String] = []
 	for p in _car_paths:
-		var leaf := p.get_file()
-		if leaf.begins_with("debris") or leaf.begins_with("cone") or leaf.begins_with("box") \
-			or leaf.begins_with("wheel") or leaf.begins_with("tire"):
-			continue
-		cars.append(p)
+		if _is_vehicle(p):
+			cars.append(p)
 	if cars.is_empty():
 		return
 	for i in range(CAR_COUNT):
@@ -189,11 +186,7 @@ func _parked_cars() -> void:
 func _street_furniture() -> void:
 	var pool: Array[String] = []
 	for p in _road_paths:
-		var leaf := p.get_file()
-		if leaf.begins_with("dumpster") or leaf.begins_with("construction") \
-			or leaf.begins_with("sign") or leaf.begins_with("road-cone") \
-			or leaf.begins_with("hydrant") or leaf.begins_with("bench") \
-			or leaf.begins_with("bin") or leaf.begins_with("traffic"):
+		if _is_street_prop(p):
 			pool.append(p)
 	for i in range(PROP_COUNT):
 		if pool.is_empty():
@@ -222,3 +215,20 @@ func _street_furniture() -> void:
 		lamp.light_color = Color(1.0, 0.86, 0.66)
 		lamp.position = Vector3(0, 3.0, 0)
 		node.add_child(lamp)
+
+## Vehicle models only: the car kit also ships loose debris/wheel/cone parts.
+func _is_vehicle(path: String) -> bool:
+	var leaf := path.get_file()
+	for bad in ["debris", "cone", "box", "wheel", "tire"]:
+		if leaf.begins_with(bad):
+			return false
+	return true
+
+
+## Roadside dressing: dumpsters, barriers, signs, cones, bins, benches.
+func _is_street_prop(path: String) -> bool:
+	var leaf := path.get_file()
+	for good in ["dumpster", "construction", "sign", "road-cone", "hydrant", "bench", "bin", "traffic"]:
+		if leaf.begins_with(good):
+			return true
+	return false
