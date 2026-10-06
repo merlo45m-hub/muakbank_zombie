@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tools/test_pool_waitfix.gd" id="1_tpwf"]
+
+[node name="TestPoolWaitFix" type="Node"]
+script = ExtResource("1_tpwf")

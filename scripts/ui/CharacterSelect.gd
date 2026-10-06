@@ -34,7 +34,7 @@ const CHARACTER_DESCS: Array[String] = [
 const PEDESTAL_X: Array[float] = [-3.4, -1.7, 0.0, 1.7, 3.4]
 const PEDESTAL_Z := -1.6
 const PEDESTAL_TOP := 0.7
-const MODEL_ORIGIN_Y := PEDESTAL_TOP + 0.86  # feet at local -0.8 land on the neon disc top (0.76)
+const MODEL_ORIGIN_Y := PEDESTAL_TOP + 0.06  # rigged models carry feet at local 0 -> disc top (0.76)
 const BOB_AMPLITUDE := 0.03
 const BOB_SPEED := 1.2
 # Screen-space fraction of a pedestal's column on the shared camera: the stage
@@ -67,7 +67,7 @@ func _dim_model_materials(vis: Node3D) -> void:
 		var src: Material = m.get_active_material(0)
 		if src is StandardMaterial3D:
 			var dim := (src as StandardMaterial3D).duplicate() as StandardMaterial3D
-			dim.albedo_color = Color(0.72, 0.72, 0.76, dim.albedo_color.a)
+			dim.albedo_color = Color(dim.albedo_color.r * 0.78, dim.albedo_color.g * 0.78, dim.albedo_color.b * 0.84, dim.albedo_color.a)
 			m.material_override = dim
 
 
@@ -188,6 +188,10 @@ func _build_stage() -> void:
 		vis.position = Vector3(x, MODEL_ORIGIN_Y, PEDESTAL_Z)
 		bg.add_child(vis)
 		_dim_model_materials(vis)
+		var cid := String(CHARACTER_SCENES[i]).get_file().trim_prefix("character_").trim_suffix(".tscn")
+		var sap := CharacterAnim.setup(vis, cid)
+		if sap != null:
+			sap.play("idle")
 		_models.append(vis)
 
 
