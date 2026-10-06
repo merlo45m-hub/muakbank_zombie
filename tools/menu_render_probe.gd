@@ -141,7 +141,9 @@ func _ready() -> void:
 			print(TAG, "FAIL name tap did not select hunter")
 
 	# 5. PLAY routing (real tap).
-	var play := _find_button(menu, "PLAY")
+	var play: Button = menu.get("_play_btn") as Button
+	if play == null:
+		play = _find_button(menu, "PLAY")
 	if play == null:
 		ok_all = false
 		print(TAG, "FAIL PLAY button missing")
