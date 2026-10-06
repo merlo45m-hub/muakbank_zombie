@@ -47,13 +47,46 @@ var _lights: Array[OmniLight3D] = []
 var _disc_mats: Array[StandardMaterial3D] = []
 var _col_buttons: Array[Button] = []
 var _zone_buttons: Array[Button] = []
+var _play_btn: Button = null
+var _hint_label: Label = null
 var _name_label: Label
 var _desc_label: Label
 var _btn_font: Font = null
 var _t := 0.0
 
 
+func _dim_model_materials(vis: Node3D) -> void:
+	# The survivor models import with KHR_materials_unlit: their albedo renders
+	# at full brightness no matter the scene light, so white outfits (doctor,
+	# nurse) read as featureless white against the dark graveyard. Dim a
+	# per-instance material copy; the source scenes keep their own values.
+	for mi in vis.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		if m.mesh == null:
+			continue
+		var src: Material = m.get_active_material(0)
+		if src is StandardMaterial3D:
+			var dim := (src as StandardMaterial3D).duplicate() as StandardMaterial3D
+			dim.albedo_color = Color(0.72, 0.72, 0.76, dim.albedo_color.a)
+			m.material_override = dim
+
+
+func _soften_bloom() -> void:
+	# The survivor models import unlit (full-bright albedo). The title screen's
+	# bloom, tuned for the moon, blows the white outfits to featureless white.
+	# Soften a per-instance copy here so the title keeps its look.
+	var we := get_node_or_null("Background3D/WorldEnvironment") as WorldEnvironment
+	if we == null or we.environment == null:
+		return
+	var env := we.environment.duplicate() as Environment
+	env.glow_intensity = 0.55
+	env.glow_bloom = 0.12
+	env.glow_hdr_threshold = 1.0
+	we.environment = env
+
+
 func _ready() -> void:
+	_soften_bloom()
 	var f := "res://assets/fonts/SpecialElite-Regular.ttf"
 	if ResourceLoader.exists(f):
 		_btn_font = load(f)
@@ -70,6 +103,9 @@ func _process(delta: float) -> void:
 		var m := _models[i]
 		if is_instance_valid(m):
 			m.position.y = MODEL_ORIGIN_Y + sin(_t * BOB_SPEED + float(i) * 1.3) * BOB_AMPLITUDE
+	if _play_btn != null and is_instance_valid(_play_btn):
+		# The way forward should be the loudest thing on the screen.
+		_play_btn.modulate = Color(1, 1, 1, 0.84 + 0.16 * (0.5 + 0.5 * sin(_t * 3.4)))
 
 
 # ── STAGE (3D) ─────────────────────────────────────────────────
@@ -151,6 +187,7 @@ func _build_stage() -> void:
 			full.free()
 		vis.position = Vector3(x, MODEL_ORIGIN_Y, PEDESTAL_Z)
 		bg.add_child(vis)
+		_dim_model_materials(vis)
 		_models.append(vis)
 
 
@@ -203,14 +240,48 @@ func _build_ui() -> void:
 	_desc_label.add_theme_font_size_override("font_size", 15)
 	_desc_label.add_theme_color_override("font_color", Color(0.72, 0.70, 0.68))
 	mid.add_child(_desc_label)
+	_hint_label = Label.new()
+	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hint_label.add_theme_font_size_override("font_size", 17)
+	_hint_label.add_theme_color_override("font_color", Color(1.0, 0.72, 0.25))
+	mid.add_child(_hint_label)
 
 	var play := Button.new()
-	play.text = "PLAY"
-	play.custom_minimum_size = Vector2(240, 58)
+	play.text = "PLAY  \u25b6"  # right-pointing triangle: obvious way forward
+	play.custom_minimum_size = Vector2(300, 92)
 	play.focus_mode = Control.FOCUS_NONE
-	_style_button(play, 24)
+	var cta := StyleBoxFlat.new()
+	cta.bg_color = Color(0.62, 0.08, 0.08)
+	cta.set_border_width_all(3)
+	cta.border_color = Color(1, 0.85, 0.8, 0.5)
+	cta.set_corner_radius_all(18)
+	play.add_theme_stylebox_override("normal", cta)
+	var cta_hover := cta.duplicate() as StyleBoxFlat
+	cta_hover.bg_color = Color(0.78, 0.12, 0.10)
+	play.add_theme_stylebox_override("hover", cta_hover)
+	play.add_theme_stylebox_override("pressed", cta_hover)
+	play.add_theme_color_override("font_color", Color(1, 0.97, 0.93))
+	play.add_theme_color_override("font_outline_color", Color(0.1, 0.01, 0.01, 0.9))
+	play.add_theme_constant_override("outline_size", 5)
+	play.add_theme_font_size_override("font_size", 34)
+	if _btn_font != null:
+		play.add_theme_font_override("font", _btn_font)
 	play.pressed.connect(_on_play_pressed)
 	actions.add_child(play)
+	_play_btn = play
+
+	# Step hint so the flow is never a dead end: what this screen is, and the
+	# exact next move. The user tapped a character and saw no direction forward.
+	var steps := Label.new()
+	steps.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	steps.text = "1  Pick a survivor     2  PLAY     3  Choose a level"
+	steps.add_theme_font_size_override("font_size", 18)
+	steps.add_theme_color_override("font_color", Color(0.85, 0.83, 0.78))
+	steps.add_theme_color_override("font_outline_color", Color(0.03, 0.02, 0.04, 0.95))
+	steps.add_theme_constant_override("outline_size", 5)
+	if _btn_font != null:
+		steps.add_theme_font_override("font", _btn_font)
+	vbox.add_child(steps)
 
 	# Invisible tap zones over each pedestal: tapping the character itself
 	# selects it. The old screen only responded on the tiny SELECT buttons —
@@ -271,9 +342,9 @@ func _select_character(index: int, play_sound: bool = true) -> void:
 	for i in range(_models.size()):
 		var sel := (i == index)
 		if i < _lights.size() and is_instance_valid(_lights[i]):
-			_lights[i].light_energy = 2.0 if sel else 0.12
+			_lights[i].light_energy = 1.1 if sel else 0.12
 		if i < _disc_mats.size():
-			_disc_mats[i].emission_energy_multiplier = 3.2 if sel else 0.9
+			_disc_mats[i].emission_energy_multiplier = 2.0 if sel else 0.9
 		if i < _col_buttons.size() and is_instance_valid(_col_buttons[i]):
 			_col_buttons[i].modulate = Color(1, 1, 1) if sel else Color(0.66, 0.66, 0.66)
 	if _name_label != null:
@@ -281,6 +352,9 @@ func _select_character(index: int, play_sound: bool = true) -> void:
 		_name_label.add_theme_color_override("font_color", CHARACTER_COLORS[index])
 	if _desc_label != null:
 		_desc_label.text = CHARACTER_DESCS[index]
+	if _hint_label != null:
+		# Explicit next move; tapping the survivor should never be a dead end.
+		_hint_label.text = CHARACTER_NAMES[index] + " selected. Tap PLAY to continue"
 	_confirm_selection(index, play_sound)
 
 

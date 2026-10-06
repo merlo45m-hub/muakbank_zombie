@@ -22,6 +22,19 @@ func _ready():
 	_build_level_buttons()
 	_update_page()
 
+	# Direction: say what this screen wants. Tapping a tile starts the run.
+	var hint := Label.new()
+	hint.text = "Tap a level and it starts right away"
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.add_theme_font_size_override("font_size", 20)
+	hint.add_theme_color_override("font_color", Color(1.0, 0.75, 0.3))
+	var vbox := $VBoxMain as VBoxContainer
+	vbox.add_child(hint)
+	vbox.move_child(hint, 1)
+	prev_btn.add_theme_font_size_override("font_size", 22)
+	next_btn.add_theme_font_size_override("font_size", 22)
+	page_label.add_theme_font_size_override("font_size", 22)
+
 
 func _play_click():
 	Audio.play_click()
@@ -32,7 +45,8 @@ func _build_level_buttons():
 	for i in range(1, Level.get_level_count() + 1):
 		var btn = Button.new()
 		btn.text = str(i)
-		btn.custom_minimum_size = Vector2(64, 64)
+		btn.custom_minimum_size = Vector2(130, 130)
+		btn.add_theme_font_size_override("font_size", 34)
 		btn.pressed.connect(_on_level_pressed.bind(i))
 
 		# Lock if not unlocked
