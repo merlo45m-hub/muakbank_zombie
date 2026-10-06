@@ -86,6 +86,11 @@ var _camera_touch_last: Vector2 = Vector2.ZERO
 # Track start position for respawn/reset
 var _start_position: Vector3 = Vector3.ZERO
 
+# Skeletal animation (Kenney rigged survivors). Null = procedural animator only.
+var _skeletal: AnimationPlayer = null
+var _anim_state := ""
+var _jump_lock := 0.0
+
 # The visible character root applied by _apply_character_model (scene visuals,
 # GLB fallback, or null when the placeholder body is the only visual).
 var _applied_visual: Node3D = null
@@ -118,6 +123,11 @@ func _ready() -> void:
 		_anim.add_child(anim_target)
 		holder.add_child(_anim)
 		_anim.attach(self, anim_target)
+		# Skeletal clips drive the whole body now; the procedural walk would
+		# fight the run cycle. Keep the node (die pose, weapon hooks) but stop
+		# its per-frame transform writes.
+		if _skeletal != null:
+			_anim.set_process(false)
 
 	# Setup mobile controls
 	if mobile_controls:
@@ -221,6 +231,7 @@ func _physics_process(delta: float) -> void:
 	# Gather and process input
 	_handle_movement_input(delta)
 	_handle_jump(delta)
+	_update_skeletal_anim(delta)
 	_handle_attack(delta)
 
 	# Apply movement
@@ -352,9 +363,35 @@ func _visual_root() -> Node3D:
 	return mesh
 
 
+func _play_jump_anim() -> void:
+	if _skeletal != null and is_instance_valid(_skeletal) and _skeletal.has_animation("jump"):
+		_jump_lock = 0.42
+		_anim_state = "jump"
+		_skeletal.play("jump", 0.08)
+
+
+## Drive idle/run/jump from actual speed every physics tick.
+func _update_skeletal_anim(delta: float) -> void:
+	if _skeletal == null or not is_instance_valid(_skeletal):
+		return
+	if _jump_lock > 0.0:
+		_jump_lock -= delta
+		return
+	var spd := Vector2(velocity.x, velocity.z).length()
+	var want := "idle" if spd < 0.35 else "run"
+	if _anim_state != want:
+		_anim_state = want
+		_skeletal.play(want, 0.18)
+	if want == "run":
+		_skeletal.speed_scale = clampf(spd / 2.3, 0.75, 1.7)
+	else:
+		_skeletal.speed_scale = 1.0
+
+
 func _handle_jump(delta: float) -> void:
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_velocity
+		_play_jump_anim()
 		stamina = max(0, stamina - 10)
 		emit_signal("stamina_changed", stamina, max_stamina)
 
@@ -410,6 +447,7 @@ func _on_mobile_sprint(active: bool) -> void:
 func _on_mobile_jump() -> void:
 	if not is_dead and is_on_floor():
 		velocity.y = jump_velocity
+		_play_jump_anim()
 		stamina = max(0, stamina - 10)
 		emit_signal("stamina_changed", stamina, max_stamina)
 
@@ -814,6 +852,10 @@ func _apply_character_model() -> void:
 				var aabb := _model_aabb(vis)
 				if aabb.size.y > 0.01:
 					vis.position.y = -aabb.position.y
+				_skeletal = CharacterAnim.setup(vis, id)
+				if _skeletal != null:
+					_skeletal.play("idle")
+					_anim_state = "idle"
 				_applied_visual = vis
 				_hide_placeholder_meshes(visuals, vis)
 				var vcount := 0

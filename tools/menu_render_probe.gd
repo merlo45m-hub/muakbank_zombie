@@ -164,6 +164,10 @@ func _ready() -> void:
 	var ls: Node = get_tree().current_scene
 	if ls != null and is_instance_valid(ls) and ls.scene_file_path.ends_with("level_select.tscn"):
 		var grid: Node = ls.get_node_or_null("VBoxMain/ScrollContainer/GridContainer")
+		if grid == null:
+			var grids := ls.find_children("*", "GridContainer", true, false)
+			if not grids.is_empty():
+				grid = grids[0]
 		var btns: Array = []
 		var locked: int = 0
 		if grid != null:

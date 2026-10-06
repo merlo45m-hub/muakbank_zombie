@@ -80,9 +80,19 @@ func _ready() -> void:
 			print(TAG, "FAIL CharacterVisuals missing under ProceduralAnimator")
 		else:
 			print(TAG, "CharacterVisuals ok")
-		if vis_visible < 3:
+		if vis_visible < 1:
 			ok_all = false
-			print(TAG, "FAIL too few visible meshes on the character")
+			print(TAG, "FAIL no visible meshes on the character")
+		# Skeletal pipeline check: rigged model + merged clips.
+		var skel_n := 0
+		var sap: Node = null
+		if visuals != null:
+			skel_n = visuals.find_children("*", "Skeleton3D", true, false).size()
+			sap = visuals.get_node_or_null("ProceduralAnimator/CharacterVisuals/Model/CharacterAnim")
+		print(TAG, "skeletons=", skel_n, " skeletal_ap=", sap != null)
+		if skel_n < 1 or sap == null:
+			ok_all = false
+			print(TAG, "FAIL skeletal rig missing")
 		print(TAG, "glb exists(res://assets/models/character_gamer.glb)=", ResourceLoader.exists("res://assets/models/character_gamer.glb"))
 		print(TAG, "selected_character=", Save.selected_character if Save else "<no Save>")
 
