@@ -322,7 +322,9 @@ func _handle_movement_input(delta: float) -> void:
 
 
 func _get_raw_input_dir() -> Vector2:
-	if OS.has_feature("android") or OS.has_feature("ios"):
+	# Device branch is the phone path; the extra vector check keeps desktop /
+	# headless probe runs honest (a live joystick vector is always real input).
+	if OS.has_feature("android") or OS.has_feature("ios") or mobile_move_vector != Vector2.ZERO:
 		return mobile_move_vector
 	else:
 		return Vector2(
@@ -800,6 +802,13 @@ func _apply_character_model() -> void:
 				vis.name = "CharacterVisuals"
 				vis.position = Vector3.ZERO
 				visuals.add_child(vis)
+				# The menu-built scenes sink the model so its feet rest on a
+				# pedestal (-0.8035 baked in). Here the character root IS the
+				# feet line (capsule bottom), so re-ground by AABB: without
+				# this the body renders half-sunk into the floor.
+				var aabb := _model_aabb(vis)
+				if aabb.size.y > 0.01:
+					vis.position.y = -aabb.position.y
 				_applied_visual = vis
 				_hide_placeholder_meshes(visuals, vis)
 				var vcount := 0

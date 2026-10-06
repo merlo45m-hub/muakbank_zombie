@@ -121,9 +121,11 @@ const GAIT_REGISTRY: Dictionary = {
 		"hit_squash": 0.08, "hit_lean": 0.05,
 	},
 	"human": {
-		"bob": 0.05, "phase_base": 2.2, "phase_speed": 2.6,
-		"roll": 0.02, "lean": 0.08,
-		"contact_squash": 0.06, "apex_stretch": 0.03, "bounce": 1.0,
+		# Player-facing gait: readable stride from the third-person camera.
+		# (Zombie-tier amplitudes made the survivor glide stiffly.)
+		"bob": 0.11, "phase_base": 2.4, "phase_speed": 3.2,
+		"roll": 0.05, "lean": 0.14,
+		"contact_squash": 0.09, "apex_stretch": 0.05, "bounce": 1.0,
 		"breathe_amp": 0.012,
 		"hop_height": 0.12,
 		"rest_y": 0.02,
