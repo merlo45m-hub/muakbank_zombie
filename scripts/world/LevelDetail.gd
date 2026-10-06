@@ -15,6 +15,25 @@ var _rng := RandomNumberGenerator.new()
 var _wood: StandardMaterial3D = null
 var _wood_dark: StandardMaterial3D = null
 
+# ── street / town tuning ──────────────────────────────────────────────────
+const STREET_ROAD_Y := 0.02          # road surface above ground top (y=0).
+const STREET_ROAD_W := 3.4           # road width.
+const STREET_SIDE_W := 0.5           # sidewalk width.
+const STREET_SIDE_Y := 0.06          # sidewalk proud of road surface.
+const STREET_BUILD_MAX := 4          # max procedural buildings (perf cap).
+const STREET_LAMP_MAX := 4           # max lit street lamps (mobile perf).
+const STREET_MAIN_Z := -4.0          # main road centre Z (east-west axis).
+const STREET_CROSS_X := 11.0         # cross road centre X (north-south axis).
+const STREET_ROAD_LEN := 38.0        # main road length.
+const STREET_CROSS_LEN := 24.0       # cross road length.
+
+var _asphalt: StandardMaterial3D = null
+var _sidewalk: StandardMaterial3D = null
+var _road_line: StandardMaterial3D = null
+var _bldg_mat_c: StandardMaterial3D = null
+var _roof_mat_c: StandardMaterial3D = null
+var _win_mat_c: StandardMaterial3D = null
+
 
 func _ready() -> void:
 	_rng.seed = 20261005
@@ -29,6 +48,13 @@ func _ready() -> void:
 	_scatter_small()
 	_blood()
 	_lamps()
+	_roads()
+	_sidewalks()
+	# Buildings come from StreetDetail (real CC0 city kit models); the
+	# procedural fallback below stays for environments without the packs.
+	_street_lamps()
+	_infrastructure()
+	_debris()
 
 
 # ── helpers ──────────────────────────────────────────────────────────────
@@ -124,6 +150,47 @@ func _cyl(r: float, h: float, pos: Vector3, mat: Material) -> void:
 	mi.material_override = mat
 	mi.position = pos
 	add_child(mi)
+
+# ── street materials ──────────────────────────────────────────────────────
+
+func _asphalt_mat() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.12, 0.12, 0.13)
+	m.roughness = 0.95
+	m.metallic = 0.0
+	return m
+
+func _sidewalk_mat() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.72, 0.72, 0.74)
+	m.roughness = 0.9
+	return m
+
+func _road_line_mat() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.9, 0.85, 0.4)
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return m
+
+func _building_mat() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.55, 0.53, 0.5)
+	m.roughness = 0.85
+	return m
+
+func _roof_mat() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.22, 0.2, 0.18)
+	m.roughness = 0.8
+	return m
+
+func _window_mat() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.05, 0.05, 0.08)
+	m.emission = Color(0.4, 0.5, 0.7)
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return m
+
 
 
 # ── ground ───────────────────────────────────────────────────────────────
@@ -333,3 +400,150 @@ func _lamps() -> void:
 			inst.add_child(l)
 	_place("kaykit/post_lantern.gltf", Vector3(2.9, 0.0, 13.0), 0.0, 2.2)
 	_place("kaykit/post_lantern.gltf", Vector3(-2.9, 0.0, 13.0), 0.0, 2.2)
+
+# ── roads ──────────────────────────────────────────────────────────────────
+
+func _roads() -> void:
+	# Main road (east-west) and cross road (north-south) as procedural
+	# asphalt boxes with dashed centre-line markings. No city-kit road
+	# models exist in res://assets/models/cc0/city/, so we build flat.
+	var asph := _asphalt_mat()
+	var line := _road_line_mat()
+	var half := STREET_ROAD_LEN * 0.5
+	# Main road bed.
+	_box(Vector3(STREET_ROAD_LEN, STREET_ROAD_W, 0.08), Vector3(0, STREET_ROAD_Y, STREET_MAIN_Z), asph)
+	# Cross road bed.
+	_box(Vector3(STREET_CROSS_LEN, STREET_ROAD_W, 0.08), Vector3(STREET_CROSS_X, STREET_ROAD_Y, 0), asph)
+	# Main road dashes.
+	var dw := 1.2
+	var dg := 1.8
+	var n := int((STREET_ROAD_LEN - 2.0) / (dw + dg))
+	for i in range(n):
+		var x := -half + 1.0 + dw * 0.5 + float(i) * (dw + dg)
+		_box(Vector3(dw, 0.02, 0.14), Vector3(x, STREET_ROAD_Y + 0.04, STREET_MAIN_Z), line)
+	# Cross road dashes.
+	for i in range(int((STREET_CROSS_LEN - 2.0) / (dw + dg))):
+		var z := -STREET_CROSS_LEN * 0.5 + 1.0 + dw * 0.5 + float(i) * (dw + dg)
+		_box(Vector3(0.14, 0.02, dw), Vector3(STREET_CROSS_X, STREET_ROAD_Y + 0.04, z), line)
+
+# ── sidewalks ──────────────────────────────────────────────────────────────
+
+func _sidewalks() -> void:
+	# Light grey slabs flanking each road, set slightly proud so they read
+	# as a separate surface from the asphalt.
+	var sw_mat := _sidewalk_mat()
+	var rhw := STREET_ROAD_W * 0.5
+	# Main road: north + south sidewalks.
+	_box(Vector3(STREET_ROAD_LEN, STREET_SIDE_W, 0.1), Vector3(0, STREET_SIDE_Y, STREET_MAIN_Z + rhw + STREET_SIDE_W * 0.5), sw_mat)
+	_box(Vector3(STREET_ROAD_LEN, STREET_SIDE_W, 0.1), Vector3(0, STREET_SIDE_Y, STREET_MAIN_Z - rhw - STREET_SIDE_W * 0.5), sw_mat)
+	# Cross road: east + west sidewalks.
+	var ch := STREET_CROSS_LEN * 0.5
+	_box(Vector3(STREET_SIDE_W, 0.1, STREET_CROSS_LEN), Vector3(STREET_CROSS_X + rhw + STREET_SIDE_W * 0.5, STREET_SIDE_Y, 0), sw_mat)
+	_box(Vector3(STREET_SIDE_W, 0.1, STREET_CROSS_LEN), Vector3(STREET_CROSS_X - rhw - STREET_SIDE_W * 0.5, STREET_SIDE_Y, 0), sw_mat)
+
+# ── buildings ──────────────────────────────────────────────────────────────
+
+func _buildings() -> void:
+	# Blocky low-poly buildings ringing the play area, each facing its
+	# nearest street. Procedural fallback since no city-kit building models
+	# exist in res://assets/models/cc0/city/. Capped at STREET_BUILD_MAX.
+	var bmat := _building_mat()
+	var rmat := _roof_mat()
+	var wmat := _window_mat()
+	var specs := [
+		{"p": Vector3(-9.0, 0.0, -1.2), "s": Vector3(3.0, 2.4, 3.0), "y": 0.0},
+		{"p": Vector3(7.0, 0.0, -6.9), "s": Vector3(2.8, 2.0, 3.2), "y": PI},
+		{"p": Vector3(13.8, 0.0, 1.0), "s": Vector3(3.0, 2.6, 3.0), "y": -PI * 0.5},
+		{"p": Vector3(8.4, 0.0, -3.0), "s": Vector3(2.6, 2.2, 3.4), "y": PI * 0.5},
+	]
+	var count := 0
+	for sp in specs:
+		if count >= STREET_BUILD_MAX:
+			break
+		count += 1
+		var pos: Vector3 = sp["p"]
+		var size: Vector3 = sp["s"]
+		var yaw: float = sp["y"]
+		# Shell with collider.
+		_box(size, pos + Vector3(0, size.y * 0.5, 0), bmat, yaw, true)
+		# Roof slab (no collider, sits on top).
+		var rs := Vector3(size.x + 0.25, 0.15, size.z + 0.25)
+		_box(rs, pos + Vector3(0, size.y + 0.075, 0), rmat, yaw)
+		# Emissive window quads on the street-facing face.
+		var fc := _face_center(pos, size, yaw)
+		var wy := size.y * 0.55
+		var win_s := Vector3(0.5, 0.04, 0.7) if absf(yaw) < 0.01 or absf(yaw - PI) < 0.01 else Vector3(0.7, 0.04, 0.5)
+		_box(win_s, fc + Vector3(0, wy, 0), wmat)
+		_box(win_s, fc + Vector3(0, wy - 0.85, 0), wmat)
+
+func _face_center(pos: Vector3, size: Vector3, yaw: float) -> Vector3:
+	var h := size * 0.5
+	if absf(yaw) < 0.01:
+		return Vector3(pos.x, 0, pos.z - h.z)
+	elif absf(yaw - PI) < 0.01:
+		return Vector3(pos.x, 0, pos.z + h.z)
+	elif absf(yaw - PI * 0.5) < 0.01:
+		return Vector3(pos.x + h.x, 0, pos.z)
+	elif absf(yaw + PI * 0.5) < 0.01:
+		return Vector3(pos.x - h.x, 0, pos.z)
+	return pos
+
+# ── street lamps ───────────────────────────────────────────────────────────
+
+func _street_lamps() -> void:
+	# Post lanterns along the main road sidewalk, each with a warm OmniLight.
+	# Capped at STREET_LAMP_MAX for mobile perf.
+	var spots := [
+		Vector3(-12.0, 0.0, STREET_MAIN_Z + STREET_ROAD_W * 0.5 + STREET_SIDE_W + 0.25),
+		Vector3(-4.0, 0.0, STREET_MAIN_Z + STREET_ROAD_W * 0.5 + STREET_SIDE_W + 0.25),
+		Vector3(4.0, 0.0, STREET_MAIN_Z + STREET_ROAD_W * 0.5 + STREET_SIDE_W + 0.25),
+		Vector3(12.0, 0.0, STREET_MAIN_Z + STREET_ROAD_W * 0.5 + STREET_SIDE_W + 0.25),
+	]
+	var count := 0
+	for p in spots:
+		if count >= STREET_LAMP_MAX:
+			break
+		var inst := _place("kaykit/post_lantern.gltf", p, 0.0, 2.2)
+		if inst:
+			var l := OmniLight3D.new()
+			l.light_color = Color(1.0, 0.8, 0.5)
+			l.light_energy = 1.2
+			l.omni_range = 7.0
+			l.position = Vector3(0, 1.7, 0)
+			inst.add_child(l)
+			count += 1
+
+# ── infrastructure ─────────────────────────────────────────────────────────
+
+func _infrastructure() -> void:
+	# Small props (mailbox-style boxes) along the sidewalk.
+	# No dedicated mailbox/hydrant models in the asset tree, so we use
+	# plain boxes as set dressing. No colliders on these.
+	var imat := _building_mat()
+	var spots := [
+		Vector3(-10.5, 0.0, STREET_MAIN_Z + STREET_ROAD_W * 0.5 + STREET_SIDE_W + 0.05),
+		Vector3(-2.5, 0.0, STREET_MAIN_Z + STREET_ROAD_W * 0.5 + STREET_SIDE_W + 0.05),
+		Vector3(13.5, 0.0, STREET_MAIN_Z + STREET_ROAD_W * 0.5 + STREET_SIDE_W + 0.05),
+		Vector3(STREET_CROSS_X + STREET_ROAD_W * 0.5 + STREET_SIDE_W + 0.05, 0.0, 4.0),
+	]
+	for p in spots:
+		_box(Vector3(0.3, 0.55, 0.3), p + Vector3(0, 0.275, 0), imat)
+
+# ── debris ─────────────────────────────────────────────────────────────────
+
+func _debris() -> void:
+	# Scattered planks and small boxes as street debris, tilted at random
+	# yaw for a lived-in feel. Kept off the road surfaces.
+	for i in range(5):
+		var p := Vector3(
+			_rng.randf_range(-17.0, 17.0),
+			0.0,
+			_rng.randf_range(-14.0, 14.0)
+		)
+		if absf(p.z - STREET_MAIN_Z) < STREET_ROAD_W * 0.5 + 0.6:
+			continue
+		if absf(p.x - STREET_CROSS_X) < STREET_ROAD_W * 0.5 + 0.6:
+			continue
+		var s := Vector3(_rng.randf_range(0.3, 0.7), 0.04, _rng.randf_range(0.3, 0.7))
+		var yaw := _rng.randf_range(0.0, TAU)
+		_box(s, p + Vector3(0, s.y * 0.5, 0), _building_mat(), yaw)
