@@ -10,10 +10,21 @@ const SHOT_PATH := "res://tools/menu_render.png"
 
 var ok_all: bool = true
 
+## Stretch (canvas_items) makes control rects logical-space; push_input wants
+## window/screen space. Convert before feeding synthetic events.
+func _to_screen(p: Vector2) -> Vector2:
+	var win := Vector2(DisplayServer.window_get_size())
+	var vis := get_viewport().get_visible_rect().size
+	if vis.x <= 0.0 or vis.y <= 0.0:
+		return p
+	return Vector2(p.x * win.x / vis.x, p.y * win.y / vis.y)
+
+
+
 
 func _tap(control: Control) -> void:
 	var vp := get_viewport()
-	var pos: Vector2 = control.get_global_rect().get_center()
+	var pos: Vector2 = _to_screen(control.get_global_rect().get_center())
 	var mm := InputEventMouseMotion.new()
 	mm.position = pos
 	vp.push_input(mm)

@@ -26,23 +26,33 @@ var sprint_active: bool = false
 # === STATE ===
 var joystick_touch_index: int = -1
 var joystick_touch_start: Vector2 = Vector2.ZERO
-var joystick_radius: float = 60.0
+var joystick_radius: float = 120.0
 var move_input: Vector2 = Vector2.ZERO
 
 # Button layout constants — named so the layout is adjustable in one place
-const SPRINT_BTN_RECT := Rect2(20.0, -220.0, 80.0, 60.0)
+const SPRINT_BTN_RECT := Rect2(30.0, -520.0, 270.0, -390.0)
 # JUMP used to sit almost fully inside the SPECIAL button's rect (both right-column
 # offsets overlapped), so SPECIAL was half-eaten and the labels rendered on top of
 # each other. Park JUMP left of the VS attack button — same bottom band, no overlap.
-const JUMP_BTN_RECT := Rect2(-220.0, -120.0, 80.0, 100.0)
-const BTN_FONT_SIZE: int = 14
-const BTN_BG_COLOR := Color(0.1, 0.1, 0.1, 0.7)
-const BTN_BG_ACTIVE := Color(0.2, 0.4, 0.2, 0.8)
-const BTN_CORNER_RADIUS: int = 8
+const JUMP_BTN_RECT := Rect2(-510.0, -250.0, -310.0, -50.0)
+const BTN_FONT_SIZE: int = 34
+const BTN_BG_COLOR := Color(0.08, 0.08, 0.10, 0.85)
+const BTN_BG_ACTIVE := Color(0.2, 0.45, 0.2, 0.9)
+const BTN_CORNER_RADIUS: int = 18
 
 func _ready() -> void:
 	if attack_btn:
 		attack_btn.pressed.connect(func(): emit_signal("attack_pressed"))
+		# Thumb-sized attack button, 2x2 right-hand cluster with SPECIAL/JUMP/SWAP.
+		# Its scene anchor is center-right; re-anchor to the bottom or the offsets
+		# below land it halfway up the screen.
+		attack_btn.anchor_top = 1.0
+		attack_btn.anchor_bottom = 1.0
+		attack_btn.offset_left = -250.0
+		attack_btn.offset_top = -250.0
+		attack_btn.offset_right = -50.0
+		attack_btn.offset_bottom = -50.0
+		attack_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE + 6)
 	
 	_build_special_button()
 	_build_sprint_button()
@@ -55,20 +65,32 @@ func _ready() -> void:
 	
 	if joystick_area:
 		joystick_area.gui_input.connect(_on_joystick_input)
+		# Thumb-sized joystick zone (was a 100px box -- postage stamp on a phone).
+		joystick_area.offset_left = 30.0
+		joystick_area.offset_top = -350.0
+		joystick_area.offset_right = 290.0
+		joystick_area.offset_bottom = -90.0
+		if joystick_knob:
+			joystick_knob.anchor_left = 0.0
+			joystick_knob.anchor_top = 0.0
+			joystick_knob.anchor_right = 0.0
+			joystick_knob.anchor_bottom = 0.0
+			joystick_knob.size = Vector2(120, 120)
+			joystick_knob.position = joystick_area.size / 2.0 - joystick_knob.size / 2.0
 
 func _build_special_button() -> void:
 	"""Special ability button, above the attack button."""
 	special_btn = Button.new()
 	special_btn.text = "SPECIAL"
-	special_btn.add_theme_font_size_override("font_size", 22)
+	special_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE)
 	special_btn.anchor_left = 1.0
 	special_btn.anchor_right = 1.0
 	special_btn.anchor_top = 1.0
 	special_btn.anchor_bottom = 1.0
-	special_btn.offset_left = -120.0
-	special_btn.offset_top = -230.0
-	special_btn.offset_right = -20.0
-	special_btn.offset_bottom = -140.0
+	special_btn.offset_left = -250.0
+	special_btn.offset_top = -490.0
+	special_btn.offset_right = -50.0
+	special_btn.offset_bottom = -290.0
 	special_btn.pressed.connect(func(): emit_signal("special_pressed"))
 	add_child(special_btn)
 
@@ -86,10 +108,14 @@ func _build_sprint_button() -> void:
 	sprint_btn.offset_bottom = SPRINT_BTN_RECT.end.y
 	var style = StyleBoxFlat.new()
 	style.bg_color = BTN_BG_COLOR
+	style.set_border_width_all(3)
+	style.border_color = Color(1, 1, 1, 0.28)
 	style.set_corner_radius_all(BTN_CORNER_RADIUS)
 	sprint_btn.add_theme_stylebox_override("normal", style)
 	var active_style = StyleBoxFlat.new()
 	active_style.bg_color = BTN_BG_ACTIVE
+	active_style.set_border_width_all(3)
+	active_style.border_color = Color(1, 1, 1, 0.4)
 	active_style.set_corner_radius_all(BTN_CORNER_RADIUS)
 	sprint_btn.add_theme_stylebox_override("pressed", active_style)
 	sprint_btn.pressed.connect(func():
@@ -112,6 +138,8 @@ func _build_jump_button() -> void:
 	jump_btn.offset_bottom = JUMP_BTN_RECT.end.y
 	var style = StyleBoxFlat.new()
 	style.bg_color = BTN_BG_COLOR
+	style.set_border_width_all(3)
+	style.border_color = Color(1, 1, 1, 0.28)
 	style.set_corner_radius_all(BTN_CORNER_RADIUS)
 	jump_btn.add_theme_stylebox_override("normal", style)
 	jump_btn.pressed.connect(func(): emit_signal("jump_pressed"))
@@ -125,12 +153,14 @@ func _build_weapon_button() -> void:
 	weapon_btn.anchor_right = 1.0
 	weapon_btn.anchor_top = 1.0
 	weapon_btn.anchor_bottom = 1.0
-	weapon_btn.offset_left = -120.0
-	weapon_btn.offset_top = -300.0
-	weapon_btn.offset_right = -20.0
-	weapon_btn.offset_bottom = -240.0
+	weapon_btn.offset_left = -510.0
+	weapon_btn.offset_top = -490.0
+	weapon_btn.offset_right = -310.0
+	weapon_btn.offset_bottom = -290.0
 	var style = StyleBoxFlat.new()
 	style.bg_color = BTN_BG_COLOR
+	style.set_border_width_all(3)
+	style.border_color = Color(1, 1, 1, 0.28)
 	style.set_corner_radius_all(BTN_CORNER_RADIUS)
 	weapon_btn.add_theme_stylebox_override("normal", style)
 	weapon_btn.pressed.connect(func(): emit_signal("weapon_switch_pressed"))
@@ -150,11 +180,11 @@ func _on_joystick_input(event: InputEvent) -> void:
 			if Rect2(Vector2.ZERO, joystick_area.size).has_point(event.position):
 				joystick_touch_index = event.index
 				joystick_touch_start = event.position
-				joystick_knob.position = joystick_area.size / 2
+				joystick_knob.position = joystick_area.size / 2.0 - joystick_knob.size / 2.0
 				print("[MobileControls] joystick engaged")
 		elif not event.pressed and event.index == joystick_touch_index:
 			joystick_touch_index = -1
-			joystick_knob.position = joystick_area.size / 2
+			joystick_knob.position = joystick_area.size / 2.0 - joystick_knob.size / 2.0
 			move_input = Vector2.ZERO
 			emit_signal("move_vector_changed", move_input)
 
@@ -168,11 +198,11 @@ func _on_joystick_input(event: InputEvent) -> void:
 			if Rect2(Vector2.ZERO, joystick_area.size).has_point(event.position):
 				joystick_touch_index = 0
 				joystick_touch_start = event.position
-				joystick_knob.position = joystick_area.size / 2
+				joystick_knob.position = joystick_area.size / 2.0 - joystick_knob.size / 2.0
 				print("[MobileControls] joystick engaged")
 		elif not event.pressed and joystick_touch_index == 0:
 			joystick_touch_index = -1
-			joystick_knob.position = joystick_area.size / 2
+			joystick_knob.position = joystick_area.size / 2.0 - joystick_knob.size / 2.0
 			move_input = Vector2.ZERO
 			emit_signal("move_vector_changed", move_input)
 
@@ -185,7 +215,7 @@ func _apply_drag(drag: Vector2) -> void:
 		drag = drag.normalized() * joystick_radius
 	move_input = drag / joystick_radius
 	emit_signal("move_vector_changed", move_input)
-	joystick_knob.position = joystick_area.size / 2 + drag
+	joystick_knob.position = joystick_area.size / 2.0 - joystick_knob.size / 2.0 + drag
 
 func get_movement_vector() -> Vector2:
 	return move_input
