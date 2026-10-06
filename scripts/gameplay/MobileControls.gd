@@ -40,9 +40,22 @@ const BTN_BG_COLOR := Color(0.08, 0.08, 0.10, 0.85)
 const BTN_BG_ACTIVE := Color(0.2, 0.45, 0.2, 0.9)
 const BTN_CORNER_RADIUS: int = 18
 
+func _punch(btn: Control) -> void:
+	# Press feedback: a quick squash-back pop. Buttons that don't visibly react
+	# read as dead, especially with no sound on the attack.
+	if btn == null:
+		return
+	btn.pivot_offset = btn.size * 0.5
+	var t := create_tween()
+	t.tween_property(btn, "scale", Vector2(0.9, 0.9), 0.05)
+	t.tween_property(btn, "scale", Vector2.ONE, 0.13).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
 func _ready() -> void:
 	if attack_btn:
-		attack_btn.pressed.connect(func(): emit_signal("attack_pressed"))
+		attack_btn.pressed.connect(func():
+			emit_signal("attack_pressed")
+			Input.vibrate_handheld(35))
 		# Thumb-sized attack button, 2x2 right-hand cluster with SPECIAL/JUMP/SWAP.
 		# Its scene anchor is center-right; re-anchor to the bottom or the offsets
 		# below land it halfway up the screen.
@@ -58,6 +71,10 @@ func _ready() -> void:
 	_build_sprint_button()
 	_build_jump_button()
 	_build_weapon_button()
+	# Every action button gets the same press pop.
+	for b in [attack_btn, special_btn, sprint_btn, jump_btn, weapon_btn]:
+		if b is Control:
+			(b as Control).button_down.connect(_punch.bind(b))
 
 	# Hide on non-mobile platforms (optional)
 	if not OS.has_feature("android") and not OS.has_feature("ios"):

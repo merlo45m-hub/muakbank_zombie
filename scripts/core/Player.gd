@@ -490,6 +490,11 @@ func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 				if has_node("HitFeedback") and $HitFeedback.has_method("emit_hit"):
 					$HitFeedback.emit_hit(enemy.global_transform.origin, str(enemy.get("zombie_type")))
 				enemy.take_damage(damage)
+				# Impact feel: a light camera kick + haptic tick per landed hit.
+				Input.vibrate_handheld(18)
+				var game_scene := get_tree().current_scene
+				if game_scene and game_scene.has_method("_shake"):
+					game_scene._shake(0.10 if not is_crit else 0.18)
 				if damage_numbers:
 					var dmg_type: int = MinosDamageNumbers3D.DamageType.CRITICAL_HIT if is_crit else MinosDamageNumbers3D.DamageType.NORMAL
 					damage_numbers.display_number(damage, enemy.global_transform.origin, dmg_type)

@@ -4,7 +4,7 @@ extends Node3D
 ## Burger, Soda, Pizza, Fries, Sushi, Takis
 
 @export var max_food: int = 8
-@export var spawn_interval: float = 8.0
+@export var spawn_interval: float = 4.5
 @export var spawn_radius: float = 12.0
 @export var min_spawn_distance: float = 4.0
 
@@ -38,6 +38,16 @@ func _ready() -> void:
 
 func start_spawning() -> void:
 	can_spawn = true
+	# Seed the arena immediately: an empty level for the first 8 seconds read as
+	# "there is nothing to pick up". Five visible items around the player fix that.
+	# Game may start the spawner before this node's deferred player lookup ran,
+	# so resolve on demand and bail cleanly if the player truly is not there yet.
+	if player == null:
+		player = get_tree().get_first_node_in_group("player")
+	for i in range(5):
+		if player == null:
+			break
+		_spawn_random_food()
 	spawn_timer.start(spawn_interval)
 	print("[FoodSpawner] Started spawning food")
 
@@ -58,6 +68,8 @@ func _on_SpawnTimer_timeout() -> void:
 	_spawn_random_food()
 
 func _spawn_random_food() -> void:
+	if player == null:
+		return
 	var scenes = [
 		food_burger_scene,
 		food_soda_scene,
@@ -112,3 +124,13 @@ func _on_food_collected(_player: Node3D, food: Node3D) -> void:
 	# get_tree() null for the rest of collect() — which is how the pickup heal,
 	# score and objective silently stopped working. collect() queue_free()s the
 	# item itself; erasing it from active_food is all this handler needs to do.
+	# Pickup feedback: particle pop, banner, haptic tap.
+	if _player != null and is_instance_valid(_player):
+		var hf := _player.get_node_or_null("HitFeedback")
+		if hf and hf.has_method("emit_pickup"):
+			hf.emit_pickup(food.global_position)
+		var hud := get_tree().current_scene.get_node_or_null("HUD") if get_tree().current_scene else null
+		if hud and hud.has_method("show_banner"):
+			var ftype: String = str(food.get("food_type")) if food.get("food_type") != null else "FOOD"
+			hud.show_banner("PICKED UP " + ftype.to_upper(), 1.1, Color(1.0, 0.82, 0.35))
+		Input.vibrate_handheld(15)
