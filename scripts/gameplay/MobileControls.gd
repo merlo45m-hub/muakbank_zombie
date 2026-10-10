@@ -6,7 +6,7 @@ class_name MobileControls
 
 signal move_vector_changed(vector: Vector2)
 signal attack_pressed
-signal special_pressed
+signal punch_pickup_pressed
 signal sprint_pressed(active: bool)
 signal jump_pressed
 signal weapon_switch_pressed
@@ -56,7 +56,7 @@ func _ready() -> void:
 		attack_btn.pressed.connect(func():
 			emit_signal("attack_pressed")
 			Input.vibrate_handheld(35))
-		# Thumb-sized attack button, 2x2 right-hand cluster with SPECIAL/JUMP/SWAP.
+		# Thumb-sized attack button, 2x2 right-hand cluster with PUNCH/PICKUP/JUMP/SWAP.
 		# Its scene anchor is center-right; re-anchor to the bottom or the offsets
 		# below land it halfway up the screen.
 		attack_btn.anchor_top = 1.0
@@ -66,8 +66,8 @@ func _ready() -> void:
 		attack_btn.offset_right = -50.0
 		attack_btn.offset_bottom = -50.0
 		attack_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE + 6)
-	
-	_build_special_button()
+
+	_build_punch_pickup_button()
 	_build_sprint_button()
 	_build_jump_button()
 	_build_weapon_button()
@@ -95,10 +95,12 @@ func _ready() -> void:
 			joystick_knob.size = Vector2(120, 120)
 			joystick_knob.position = joystick_area.size / 2.0 - joystick_knob.size / 2.0
 
-func _build_special_button() -> void:
-	"""Special ability button, above the attack button."""
+func _build_punch_pickup_button() -> void:
+	"""PUNCH/PICKUP button — Roblox-style dual-action.
+	Short press (< 0.3s): punch attack.
+	Long press OR near pickup: grab/use nearby food or weapon."""
 	special_btn = Button.new()
-	special_btn.text = "SPECIAL"
+	special_btn.text = "PUNCH/PICKUP"
 	special_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE)
 	special_btn.anchor_left = 1.0
 	special_btn.anchor_right = 1.0
@@ -108,7 +110,30 @@ func _build_special_button() -> void:
 	special_btn.offset_top = -490.0
 	special_btn.offset_right = -50.0
 	special_btn.offset_bottom = -290.0
-	special_btn.pressed.connect(func(): emit_signal("special_pressed"))
+	# Hold detection: track press time, emit different signals on short vs long release.
+	var press_start := 0.0
+	var hold_timer: float = 0.0
+	const SHORT_PRESS_MAX: float = 0.3
+	var pressed_down := false
+	special_btn.button_down.connect(func():
+		pressed_down = true
+		press_start = Time.get_ticks_msec() / 1000.0
+		hold_timer = 0.0
+	)
+	special_btn.button_up.connect(func():
+		if not pressed_down:
+			return
+		pressed_down = false
+		hold_timer = Time.get_ticks_msec() / 1000.0 - press_start
+		if hold_timer < SHORT_PRESS_MAX:
+			# Short press = punch
+			emit_signal("punch_pickup_pressed", false)
+			Input.vibrate_handheld(20)
+		else:
+			# Long press = grab attempt
+			emit_signal("punch_pickup_pressed", true)
+			Input.vibrate_handheld(30)
+	)
 	add_child(special_btn)
 
 func _build_sprint_button() -> void:
@@ -135,9 +160,12 @@ func _build_sprint_button() -> void:
 	active_style.border_color = Color(1, 1, 1, 0.4)
 	active_style.set_corner_radius_all(BTN_CORNER_RADIUS)
 	sprint_btn.add_theme_stylebox_override("pressed", active_style)
-	sprint_btn.pressed.connect(func():
-		sprint_active = not sprint_active
-		emit_signal("sprint_pressed", sprint_active)
+	# Hold-to-sprint: emit true on button_down, false on button_up.
+	sprint_btn.button_down.connect(func():
+		emit_signal("sprint_pressed", true)
+	)
+	sprint_btn.button_up.connect(func():
+		emit_signal("sprint_pressed", false)
 	)
 	add_child(sprint_btn)
 

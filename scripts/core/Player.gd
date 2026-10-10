@@ -133,8 +133,8 @@ func _ready() -> void:
 	if mobile_controls:
 		mobile_controls.move_vector_changed.connect(_on_mobile_move)
 		mobile_controls.attack_pressed.connect(_on_mobile_attack)
-		if mobile_controls.has_signal("special_pressed"):
-			mobile_controls.special_pressed.connect(_on_mobile_special)
+		if mobile_controls.has_signal("punch_pickup_pressed"):
+			mobile_controls.punch_pickup_pressed.connect(_on_mobile_punch_pickup)
 		if mobile_controls.has_signal("sprint_pressed"):
 			mobile_controls.sprint_pressed.connect(_on_mobile_sprint)
 		if mobile_controls.has_signal("jump_pressed"):
@@ -397,6 +397,12 @@ func _handle_jump(delta: float) -> void:
 
 
 func _handle_attack(delta: float) -> void:
+	# ── INTERACTION CHECK ──────────────────────────────────────────────────────
+	# If the player is near an interactive prop, route the attack press to it
+	# instead of combat. This lets the same button open doors, punch walls, etc.
+	if _try_prop_interaction():
+		return
+
 	if attack_timer > 0:
 		attack_timer -= delta
 
@@ -438,8 +444,58 @@ func _on_mobile_attack() -> void:
 	if not is_dead:
 		_perform_attack()
 
-func _on_mobile_special() -> void:
-	use_special_ability()
+func _on_mobile_punch_pickup(grab: bool) -> void:
+	"""PUNCH/PICKUP button handler.
+	grab=false: short press -> punch attack.
+	grab=true: long press -> attempt to pick up nearby food/weapon."""
+	if not is_dead:
+		if grab:
+			# Long press: try to pick up nearby items
+			_pickup_nearby()
+		else:
+			# Short press: punch attack
+			_perform_attack()
+
+func _pickup_nearby() -> void:
+	"""Detect and pick up nearby food or weapon pickups within range."""
+	var space := get_world_3d().direct_space_state
+	if space == null:
+		return
+	var pick_range := 3.0
+	var query := PhysicsShapeQueryParameters3D.new()
+	var shape := SphereShape3D.new()
+	shape.radius = pick_range
+	query.shape = shape
+	query.transform = Transform3D(Basis(), global_position + Vector3(0, 0.5, 0))
+	query.collide_with_areas = true
+	query.exclude = [get_rid()]
+	var results := space.intersect_shape(query, 10)
+	if results.is_empty():
+		return
+	# Check each result for food or weapon pickup areas
+	for result in results:
+		var body := result["collider"] if result.has("collider") else null
+		if body == null:
+			continue
+		# Food pickup
+		if body.has_method("collect") and not (body.get("is_collected") == true):
+			var food_type := body.get("food_type") if body.has("food_type") else ""
+			var heal := int(body.get("health_amount")) if body.has("health_amount") else 0
+			if food_type != "":
+				body.collect(self)
+				add_food(food_type, heal)
+				Audio.play_pickup()
+				Input.vibrate_handheld(15)
+				return
+		# Weapon pickup
+		if body.has_method("take") and not (body.get("taken") == true):
+			var weapon_id := body.get("weapon_id") if body.has("weapon_id") else ""
+			if weapon_id != "":
+				body.take()
+				equip_weapon(weapon_id)
+				Audio.play_pickup()
+				Input.vibrate_handheld(25)
+				return
 
 func _on_mobile_sprint(active: bool) -> void:
 	is_mobile_sprinting = active
@@ -799,6 +855,60 @@ func _register_input_actions() -> void:
 		var input_key: InputEventKey = InputEventKey.new()
 		input_key.keycode = INPUT_ACTIONS[action]
 		InputMap.action_add_event(action, input_key)
+
+func _try_prop_interaction() -> bool:
+	## Check if the player is near an interactive prop and route the attack press to it.
+	## Returns true if the interaction was consumed (no combat this press).
+	## The door's long-press hold is handled by InteractiveDoor itself — it tracks
+	## hold duration internally via its own timer.
+	if not is_instance_valid(self) or not is_inside_tree():
+		return false
+
+	var player_pos := global_transform.origin
+	var nearest_prop: Node3D = null
+	var nearest_dist: float = 3.5  # interact_range
+
+	for prop in get_tree().get_nodes_in_group("interactive_prop"):
+		if not is_instance_valid(prop) or not prop.is_inside_tree():
+			continue
+		var dist := player_pos.distance_to(prop.global_transform.origin)
+		if dist > nearest_dist:
+			continue
+		# Check player is in the prop's interaction zone
+		var zone := prop.get_node_or_null("InteractionZone")
+		if zone:
+			var overlapping := zone.get_overlapping_bodies()
+			var player_in_zone := false
+			for body in overlapping:
+				if body.is_in_group("player"):
+					player_in_zone = true
+					break
+			if not player_in_zone:
+				continue
+		# Found a candidate
+		if nearest_prop == null or dist < nearest_dist:
+			nearest_prop = prop
+			nearest_dist = dist
+
+	if nearest_prop == null:
+		return false
+
+	# Route to prop's interact method
+	if nearest_prop.has_method("interact"):
+		nearest_prop.interact()
+		# Feedback
+		var hf := get_node_or_null("HitFeedback")
+		if hf and hf.has_method("emit_pickup"):
+			hf.emit_pickup(nearest_prop.global_transform.origin)
+		Input.vibrate_handheld(12)
+		return true
+
+	# Special case: wall punch
+	if nearest_prop.has_method("punch"):
+		nearest_prop.punch()
+		return true
+
+	return false
 
 func _wait(sec: float) -> bool:
 	# Both the player and zombies can be freed/pooled while a timer await is

@@ -26,6 +26,13 @@ SoundManager="*uid://6q1wagejt60k"
 MinosDamageNumbers2D="*uid://cmstxlu50gkl7"
 MinosDamageNumbers3D="*uid://bqk86tyyf62lx"
 
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/VectorFieldNavigation/plugin.cfg", "res://addons/godotx_health_bar/plugin.cfg", "res://addons/minos_damage_numbers/plugin.cfg", "res://addons/save_system/plugin.cfg", "res://addons/sound_manager/plugin.cfg")
@@ -125,10 +132,3 @@ textures/decals/filter=1
 textures/light_projectors/filter=1
 environment/defaults/default_clear_color=Color(0.051, 0.039, 0.102, 1)
 environment/defaults/default_environment="res://default_env.tres"
-
-[display]
-
-window/size/viewport_width=1600
-window/size/viewport_height=900
-window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
