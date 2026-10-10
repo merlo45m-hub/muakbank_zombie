@@ -1,4 +1,9 @@
-[gd_scene load_steps=53 format=3]
+[gd_scene load_steps=59 format=3]
+[ext_resource type="Script" path="res://scripts/world/interactive/InteractiveDoor.gd" id="54"]
+[ext_resource type="Script" path="res://scripts/world/interactive/InteractiveWall.gd" id="55"]
+[ext_resource type="Script" path="res://scripts/world/interactive/FoodCrate.gd" id="56"]
+[ext_resource type="Script" path="res://scripts/gameplay/FoodSpawner.gd" id="57"]
+[ext_resource type="Script" path="res://scripts/world/interactive/InteractiveVehicle.gd" id="58"]
 
 [sub_resource type="Environment" id="OldTownEnv"]
 background_mode = 1
@@ -41,6 +46,9 @@ roughness = 0.4
 metallic = 0.3
 
 [sub_resource type="BoxMesh" id="BoxMesh_door"]
+size = Vector3(1.5, 2.5, 0.15)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_door"]
 size = Vector3(1.5, 2.5, 0.15)
 
 [sub_resource type="StandardMaterial3D" id="DoorMaterial"]
@@ -1715,3 +1723,258 @@ material_override = SubResource("DebrisMaterial")
 
 [node name="ND5Col" type="CollisionShape3D" parent="NearBandStructures/NearDebris5"]
 shape = SubResource("BoxShape3D_debris")
+
+;; ── INTERACTIVE PROPS (Level 1 interactivity) ─────────────────────────────────
+
+[node name="HouseProp" type="Node3D" parent="Interactive"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -8)
+
+[node name="HouseBody" type="StaticBody3D" parent="Interactive/HouseProp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 3.5, -8)
+collision_layer = 1
+
+[node name="HouseMesh" type="MeshInstance3D" parent="Interactive/HouseProp/HouseBody"]
+mesh = SubResource("BoxMesh_building3")
+material_override = SubResource("BrickMaterial")
+
+[node name="HouseCol" type="CollisionShape3D" parent="Interactive/HouseProp/HouseBody"]
+shape = SubResource("BoxShape3D_building3")
+
+;; ── INTERACTIVE DOOR (two hinged panels) ────────────────────────────────────────
+
+[node name="FrontDoor" type="Node3D" parent="Interactive/HouseProp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.25, -4.6)
+script = ExtResource("54")
+
+[node name="DoorInteractionZone" type="Area3D" parent="Interactive/HouseProp/FrontDoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+collision_layer = 1
+collision_mask = 256
+
+[node name="DoorZoneShape" type="CollisionShape3D" parent="Interactive/HouseProp/FrontDoor/DoorInteractionZone"]
+shape = SubResource("BoxShape3D_door")
+
+[node name="PanelA" type="RigidBody3D" parent="Interactive/HouseProp/FrontDoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.76, 0, 0)
+collision_layer = 1
+
+[node name="PanelAMesh" type="MeshInstance3D" parent="Interactive/HouseProp/FrontDoor/PanelA"]
+mesh = SubResource("BoxMesh_door")
+material_override = SubResource("DoorMaterial")
+
+[node name="PanelACol" type="CollisionShape3D" parent="Interactive/HouseProp/FrontDoor/PanelA"]
+shape = SubResource("BoxShape3D_door")
+
+[node name="PanelB" type="RigidBody3D" parent="Interactive/HouseProp/FrontDoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.76, 0, 0)
+collision_layer = 1
+
+[node name="PanelBMesh" type="MeshInstance3D" parent="Interactive/HouseProp/FrontDoor/PanelB"]
+mesh = SubResource("BoxMesh_door")
+material_override = SubResource("DoorMaterial")
+
+[node name="PanelBCol" type="CollisionShape3D" parent="Interactive/HouseProp/FrontDoor/PanelB"]
+shape = SubResource("BoxShape3D_door")
+
+[node name="HingeA" type="HingeJoint3D" parent="Interactive/HouseProp/FrontDoor"]
+node_a = NodePath("PanelA")
+node_b = NodePath("../HouseBody")
+hinge_axis = Vector3(0, 0, 1)
+limit_angle = 0.0
+
+[node name="HingeB" type="HingeJoint3D" parent="Interactive/HouseProp/FrontDoor"]
+node_a = NodePath("PanelB")
+node_b = NodePath("../HouseBody")
+hinge_axis = Vector3(0, 0, 1)
+limit_angle = 0.0
+
+;; ── INTERACTIVE WALL (punchable brick wall) ──────────────────────────────────────
+
+[node name="BrickWall" type="Node3D" parent="Interactive/HouseProp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.5, -12)
+script = ExtResource("55")
+
+[node name="WallMesh" type="MeshInstance3D" parent="Interactive/HouseProp/BrickWall"]
+mesh = SubResource("BoxMesh_building3")
+material_override = SubResource("BrickMaterial")
+
+[node name="WallCollision" type="StaticBody3D" parent="Interactive/HouseProp/BrickWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.5, -12)
+collision_layer = 1
+
+[node name="WallColShape" type="CollisionShape3D" parent="Interactive/HouseProp/BrickWall/WallCollision"]
+shape = SubResource("BoxShape3D_building3")
+
+[node name="WallInteractionZone" type="Area3D" parent="Interactive/HouseProp/BrickWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+collision_layer = 1
+collision_mask = 256
+
+[node name="WallZoneShape" type="CollisionShape3D" parent="Interactive/HouseProp/BrickWall/WallInteractionZone"]
+shape = SubResource("BoxShape3D_door")
+
+;; ── FOOD CRATE (one-shot food spawner) ───────────────────────────────────────────
+
+[node name="FoodCrate" type="Node3D" parent="Interactive/HouseProp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.5, -10)
+script = ExtResource("56")
+
+[node name="CrateMesh" type="MeshInstance3D" parent="Interactive/HouseProp/FoodCrate"]
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("WoodMaterial")
+
+[node name="CrateCollision" type="StaticBody3D" parent="Interactive/HouseProp/FoodCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.5, -10)
+collision_layer = 1
+
+[node name="CrateColShape" type="CollisionShape3D" parent="Interactive/HouseProp/FoodCrate/CrateCollision"]
+shape = SubResource("BoxShape3D_crate")
+
+[node name="Lid" type="MeshInstance3D" parent="Interactive/HouseProp/FoodCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+mesh = SubResource("BoxMesh_crate")
+material_override = SubResource("WoodMaterial_dark")
+
+[node name="CrateInteractionZone" type="Area3D" parent="Interactive/HouseProp/FoodCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+collision_layer = 1
+collision_mask = 256
+
+[node name="CrateZoneShape" type="CollisionShape3D" parent="Interactive/HouseProp/FoodCrate/CrateInteractionZone"]
+shape = SubResource("BoxShape3D_crate")
+
+;; ── STAIRCASE (visual only, a few units high) ─────────────────────────────────────
+
+[node name="Stairs" type="Node3D" parent="Interactive/HouseProp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0, -9)
+
+[node name="Stair1" type="MeshInstance3D" parent="Interactive/HouseProp/Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+mesh = SubResource("BoxMesh_timber")
+material_override = SubResource("WoodMaterial_dark")
+
+[node name="Stair2" type="MeshInstance3D" parent="Interactive/HouseProp/Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+mesh = SubResource("BoxMesh_timber")
+material_override = SubResource("WoodMaterial_dark")
+
+[node name="Stair3" type="MeshInstance3D" parent="Interactive/HouseProp/Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("BoxMesh_timber")
+material_override = SubResource("WoodMaterial_dark")
+
+;; ── INTERACTIVE VEHICLE (cart with door + hood + wheels) ─────────────────────────
+
+[node name="OldCart" type="Node3D" parent="Interactive"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.3, 15)
+script = ExtResource("58")
+
+[node name="CartBody" type="StaticBody3D" parent="Interactive/OldCart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.3, 15)
+collision_layer = 1
+
+[node name="CartMesh" type="MeshInstance3D" parent="Interactive/OldCart/CartBody"]
+mesh = SubResource("CapsuleMesh_overturned_cart_body")
+material_override = SubResource("WoodMaterial")
+
+[node name="CartCol" type="CollisionShape3D" parent="Interactive/OldCart/CartBody"]
+shape = SubResource("CapsuleShape3D_overturned_cart")
+
+[node name="CartInteractionZone" type="Area3D" parent="Interactive/OldCart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+collision_layer = 1
+collision_mask = 256
+
+[node name="CartZoneShape" type="CollisionShape3D" parent="Interactive/OldCart/CartInteractionZone"]
+shape = SubResource("CapsuleShape3D_overturned_cart")
+
+[node name="Door" type="RigidBody3D" parent="Interactive/OldCart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.3, 0)
+collision_layer = 1
+
+[node name="DoorMesh" type="MeshInstance3D" parent="Interactive/OldCart/Door"]
+mesh = SubResource("BoxMesh_door")
+material_override = SubResource("DoorMaterial")
+
+[node name="DoorCol" type="CollisionShape3D" parent="Interactive/OldCart/Door"]
+shape = SubResource("BoxShape3D_door")
+
+[node name="DoorHinge" type="HingeJoint3D" parent="Interactive/OldCart"]
+node_a = NodePath("Door")
+node_b = NodePath("CartBody")
+hinge_axis = Vector3(0, 0, 1)
+limit_angle = 0.0
+
+[node name="DoorBody" type="RigidBody3D" parent="Interactive/OldCart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.3, 0)
+collision_layer = 1
+
+[node name="DoorBodyCol" type="CollisionShape3D" parent="Interactive/OldCart/DoorBody"]
+shape = SubResource("BoxShape3D_door")
+
+[node name="Hood" type="MeshInstance3D" parent="Interactive/OldCart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0.6, 0.3)
+mesh = SubResource("BoxMesh_car_cabin")
+material_override = SubResource("TrunkMaterial")
+
+[node name="WheelFL" type="MeshInstance3D" parent="Interactive/OldCart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.2, 0.4)
+mesh = SubResource("CylinderMesh_cart_wheel")
+material_override = SubResource("DarkMetalMaterial")
+
+[node name="WheelFR" type="MeshInstance3D" parent="Interactive/OldCart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.2, 0.4)
+mesh = SubResource("CylinderMesh_cart_wheel")
+material_override = SubResource("DarkMetalMaterial")
+
+[node name="WheelRL" type="MeshInstance3D" parent="Interactive/OldCart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.2, -0.4)
+mesh = SubResource("CylinderMesh_cart_wheel")
+material_override = SubResource("DarkMetalMaterial")
+
+[node name="WheelRR" type="MeshInstance3D" parent="Interactive/OldCart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.2, -0.4)
+mesh = SubResource("CylinderMesh_cart_wheel")
+material_override = SubResource("DarkMetalMaterial")
+
+;; ── FOOD SPAWNERS (5 spawners inside level bounds) ───────────────────────────────
+
+[node name="FoodSpawner1" type="Node3D" parent="Interactive"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.15, -4)
+script = ExtResource("57")
+
+[node name="SpawnTimer" type="Timer" parent="Interactive/FoodSpawner1"]
+one_shot = false
+wait_time = 4.5
+
+[node name="FoodSpawner2" type="Node3D" parent="Interactive"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.15, 6)
+script = ExtResource("57")
+
+[node name="SpawnTimer" type="Timer" parent="Interactive/FoodSpawner2"]
+one_shot = false
+wait_time = 4.5
+
+[node name="FoodSpawner3" type="Node3D" parent="Interactive"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.15, 10)
+script = ExtResource("57")
+
+[node name="SpawnTimer" type="Timer" parent="Interactive/FoodSpawner3"]
+one_shot = false
+wait_time = 4.5
+
+[node name="FoodSpawner4" type="Node3D" parent="Interactive"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.15, -12)
+script = ExtResource("57")
+
+[node name="SpawnTimer" type="Timer" parent="Interactive/FoodSpawner4"]
+one_shot = false
+wait_time = 4.5
+
+[node name="FoodSpawner5" type="Node3D" parent="Interactive"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, -18)
+script = ExtResource("57")
+
+[node name="SpawnTimer" type="Timer" parent="Interactive/FoodSpawner5"]
+one_shot = false
+wait_time = 4.5
