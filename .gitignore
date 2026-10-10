@@ -35,3 +35,4 @@ render_*.png.import
 
 # Agent scratch (never commit)
 .hermes/
+.git-credentials
