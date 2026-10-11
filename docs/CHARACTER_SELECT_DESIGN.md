@@ -3,7 +3,16 @@
 **Status:** awaiting approval
 **Branch:** `feat/charselect-blocky`
 **Scope:** the character-select screen (2nd screen: title → character select → level select) and the five survivor characters it displays.
-**Reference art:** `second_brain/muakbank zombie character select scene.md` → five blocky survivors on glowing pedestals in the graveyard. Confirmed by the user as "exactly how I want it".
+**Reference art:** the user's image `IMG_20261011_183806_060.jpg`, filed in the Obsidian vault at
+`/storage/emulated/0/ObsidianVault/hermes_brain/second_brain/` and referenced from the note
+`muakbank zombie character select scene.md`. Confirmed by the user as "exactly how I want it".
+It is **not** in the git repo — copy it to `docs/reference/` on approval so the acceptance bar is
+inspectable by whoever builds this.
+
+**Project pattern reference:** `godot-game-dev` **skill** (not the repo) →
+`references/character-scene-enhancement.md`, at
+`/data/data/com.termux/files/home/.hermes/skills/godot-game-dev/references/`. There is no
+`references/` directory in the repo.
 
 ---
 
@@ -89,13 +98,14 @@ The outgoing helper `CharacterAnim.setup_rigged()` **cannot drive this rig** and
 
 - New file: `scripts/core/BlockyAnim.gd`
 - Responsibilities: locate the sibling `AnimationPlayer`, map game states → blocky clip names, force `loop_mode = LOOP` on the looping set, expose `play_state(state: String)`.
-- Clip mapping (the blocky set's real names):
-  - `idle` → `idle`
-  - `walk` → `walk`
-  - `sprint` → `sprint`
-  - `attack` → `attack-melee-right` (fallback `attack-kick-right`)
-  - `death` → `die`
-- `CharacterAnim.gd` is **left alone** — zombies depend on it (§7) and touching it is the one change that would break them.
+- **It must serve both the menu and gameplay.** The menu wants `idle`; gameplay asks for `idle` / `run` / `jump` (`Player.gd:367,370,381`). See §7.3b for the full mapping and the two clips that do not exist.
+- Force `loop_mode` on a **`duplicate()`d `Animation`**, not the shared imported resource.
+- `CharacterAnim.gd` is **left alone** — zombies depend on it (§7, §9) and touching it is the one change that would break them.
+
+### Traps the implementer must not miss
+- The `AnimationPlayer` is a **sibling** of the glb root. Use `find_child(..., true)` or check the parent — a root-only `get_node_or_null("AnimationPlayer")` returns `null`. (The existing `ZombieBase._drive_anim()` already has this latent bug.)
+- **Keep the node names `PlayerVisuals` and a child named `Model`.** `Player.gd:951` and `CharacterAnim.gd:50` look these up by name; rename either and it silently falls back to the blockout GLB.
+- Imported clips are `loop_mode = LOOP_NONE` — they freeze after one cycle.
 
 ---
 
@@ -111,9 +121,28 @@ Reference → blocky skin. Two of five are a direct match; three need work. This
 | **Nurse** | teal scrubs, teal cap, blue surgical mask, syringe | none — `-i`/`-p` are white lab coats | 🔴 **needs skin edit** (recolour to teal) |
 | **Gamer** | purple hoodie, rainbow-LED headset, controller | none — `-f` is a *green* hood | 🔴 **needs skin edit** (recolour to purple) |
 
-**Approach:** take the closest skin, edit the PNG (recolour hood → purple, coat → teal), keep everything else Kenney-authored. Editing a texture is not "generating art" — it is recolouring existing art, which keeps the pack's hand-authored style. **The two edited skins will be shown to the user for approval before being wired in.**
+**Approach — technique now specified (the first draft left this undecided; a builder could not have produced the preview it promised).**
 
-**Props** are rebuilt as primitives under `PlayerVisuals` (the established pattern, `references/character-scene-enhancement.md`): gamer headset + controller, doctor stethoscope, nurse mask + syringe, streamer ring light + phone, hunter bat. Attached to `arm-right` for hand items (no `hand` node exists).
+The blocky atlases are **1024×1024 8-bit palette PNGs** (`mode=P`, 256-entry `PLTE`) — verified by decoding them. The garment colour is a **palette index**, not a pixel region. Measured examples:
+
+| Skin | Garment | Palette index | Colour |
+|---|---|---|---|
+| `texture-f` (gamer base) | green hood | 9 | `#58bd98` |
+| `texture-i` (nurse base) | white coat | 8 | `#d0e8ff` |
+
+Three candidate techniques, and only one is acceptable:
+
+- ❌ **Runtime `albedo_color` tint** — multiplies the *whole* texture. Cannot turn a green hood purple without wrecking skin, beard and hair. This is the approach the *outgoing* system used (five tinted copies of four skins), and it is exactly the "five recolours" anti-goal in §2.
+- ❌ **Repaint pixels in the UV region** — the per-part UV footprint is **not a clean grid** (`BLOCKY_RIG_NOTES`), so this needs per-part UV work for no benefit over the next option.
+- ✅ **Edit the palette entry** — the colour is garment-only, so remapping one index recolours the garment and touches nothing else.
+
+**Decision:** copy `texture-f.png` → `texture-gamer.png` and `texture-i.png` → `texture-nurse.png`, edit the **palette index** in the copy, and **leave the stock Kenney PNGs untouched**. The GLB's external `baseColorTexture` URI is then repointed at the new file — which means a small GLB edit, or (preferred) loading the new texture at runtime onto the rig's shared `StandardMaterial3D.albedo_texture`.
+
+**Preferred implementation: runtime, not GLB surgery.** The rig has **one shared material** across all six parts (verified), so setting `albedo_texture` once reskins the whole character. A `duplicate()`d material + our own texture avoids editing any Kenney source file and keeps the CC0 assets pristine. The recoloured PNGs live in the project, not over the pack.
+
+**The two edited skins will be rendered and shown to the user for approval before being wired in.**
+
+**Props** are rebuilt as primitives under `PlayerVisuals` (the established pattern, `godot-game-dev` skill → `references/character-scene-enhancement.md`): gamer headset + controller, doctor stethoscope, nurse mask + syringe, streamer ring light + phone, hunter bat. Attachment points and the size rule are in §7.3b — **not** `arm-right` for everything, and the outgoing transforms are not reusable.
 
 ---
 
@@ -134,7 +163,37 @@ Four confirmed bugs, each with evidence in the audit docs.
 ### 7.3 The rig faces backwards 🔴
 The blocky rig faces **+Z**; `Player.gd` and every `Zombie*.gd` compute yaw as `atan2(dir.x, dir.z)` assuming **−Z**. Uncorrected, characters run backwards.
 
-**Fix:** `Player.gd:934` already has the hook — set `MODEL_YAW_OFFSET := PI`. Verify by rendering a character mid-run.
+**Correction to an earlier draft of this design.** The draft said "`Player.gd:934` already has the hook — set `MODEL_YAW_OFFSET := PI`". **That is wrong and would have shipped dead code.** Verified: `MODEL_YAW_OFFSET` is read at exactly one site, `Player.gd:1015` (`mdl.rotate_y(MODEL_YAW_OFFSET)`), which lives in `_normalise_model_transform` — the **GLB blockout fallback path**. Gameplay and the menu use the *scene* path (`Player.gd:942-966`), which never reaches it.
+
+**Real fix site:** the live facing is applied at `Player.gd:353-355`:
+```gdscript
+var target_rot: float = atan2(direction.x, direction.z)
+vis.rotation.y = lerp_angle(vis.rotation.y, target_rot, rot_speed * delta)
+```
+Apply the 180° here — a yaw offset on `target_rot`, or a one-time `rotate_y(PI)` on the visual root at attach time. **Do NOT** add `+PI` inside `ZombieBase.gd`: the zombies keep the outgoing rig and would be flipped instead.
+
+### 7.3b Gameplay animation is rewired too 🔴 (added after builder review)
+The first draft of this design only gave the **menu** a `BlockyAnim` path and left `Player.gd:965` calling `CharacterAnim.setup(vis, id)`. For a `skins:0` rig that returns `null`, so in gameplay:
+- `_skeletal` stays `null` (`Player.gd:90`),
+- `_update_skeletal_anim()` early-returns (`Player.gd:374-376`),
+- `ProceduralAnimator` stays **enabled** (`Player.gd:129-130` disables it only when `_skeletal != null`),
+- the survivor procedurally sways with no walk cycle, and acceptance #7 fails in gameplay while passing in the menu.
+
+**Fix:** replace the `Player.gd:965` call with `BlockyAnim`. The clip map in §5 is therefore **wrong as written** — it must cover the names `Player.gd` actually asks for:
+
+| `Player.gd` asks for | Site | Blocky clip |
+|---|---|---|
+| `"idle"` | `:381` | `idle` |
+| `"run"` | `:381` | `sprint` (the set has no `run`) |
+| `"jump"` | `:367,370` | **none** — the set has no `jump`; the `has_animation("jump")` guard at `:367` already makes this a clean no-op, so jump plays the fallback and that is acceptable |
+| attack | `WeaponSystem` path | `attack-melee-right` |
+| death | death path | `die` |
+
+Also: **drop the sine idle-bob** at `CharacterSelect.gd:105` — `idle` is now a real looping clip and the two fight each other.
+
+**Prop attachment, made concrete.** Headset and mask → `head`; stethoscope → `torso`; controller / syringe / phone / bat → `arm-right` (no `hand` node exists; the mesh's hand end is at local `y ≈ −1.0`). **Size a prop in model units as `metres / 0.6667`** — a child of `arm-right` inherits the rig scale. The outgoing props' transforms were tuned for scale `0.00425` and are **not reusable**; recompute each from the recipe in `BLOCKY_RIG_NOTES`.
+
+**Ring light is a live decision:** `Player.gd` extracts the same `PlayerVisuals` for gameplay, so anything parented under it follows the survivor into a level. A stage-only prop must not be parented there.
 
 ### 7.4 The stats are dead 🔴
 `Player.gd:32` declares `var character_stats: CharacterStats = null` and **nothing ever assigns it** (`grep -rn "character_stats\s*="` returns nothing). The five `assets/materials/stats_*.tres` files are unreferenced. All five survivors currently play identically and no special ability fires.
@@ -191,6 +250,16 @@ Explicitly preserved, because it works:
 
 ## 11. Open questions for the user
 
-1. **Doctor identity** — `texture-j` (older, grey beard) or `texture-i` (younger, purple hair)? Reference shows a younger brown-haired man.
-2. **The two edited skins** (purple hoodie, teal scrubs) — approve the recolour before wiring, or use the closest unedited skin and accept the mismatch?
-3. **Gameplay too?** Gameplay extracts `PlayerVisuals` from the same scenes, so gameplay gets the new rig automatically. Confirm that is wanted (it changes the in-game character, not just the menu).
+**These are the only ones that need your call** — everything else the doc now settles, or a builder decides.
+
+1. **Gameplay gets the new rig too?** Gameplay extracts the same `PlayerVisuals`, so the survivors change in-game, not just in the menu. §7.3b now wires gameplay animation properly — but confirm you want the in-game character changed at all, versus a menu-only reskin. (My recommendation: yes, both — otherwise the menu lies about what you play.)
+
+2. **Nurse and gamer bases — pick the body.** The recolour base *is* the model, since `character-<x>.glb` hard-references `texture-<x>.png`. Nurse: `character-i` or `character-p`? Gamer: confirm `character-f`? The body shape/hair you see is that letter's.
+
+3. **Doctor: `texture-j` (older, grey beard) or `texture-i` (younger, purple hair)?** Your reference shows a younger brown-haired man; neither matches exactly, so pick the closer trade.
+
+4. **The ring light — carry it or leave it on the pedestal?** `PlayerVisuals` goes into gameplay, so a ring light parented there follows the survivor into a level. Stage-prop-only is the other option.
+
+5. **Approve the two recoloured skins before wiring.** I'll render purple-hoodie and teal-scrubs previews and show you before they go in.
+
+**Settled by this design, listed so you can overrule:** scale 0.6667; animation via a new `BlockyAnim` helper with `CharacterAnim.gd` untouched; palette-index recolour into new project textures rather than editing Kenney sources or tinting at runtime; hunter=`texture-k`, streamer=`texture-r`; the four defect fixes in §7; the `run`→`sprint` / no-`jump` mapping.
