@@ -36,3 +36,7 @@ render_*.png.import
 # Agent scratch (never commit)
 .hermes/
 .git-credentials
+
+# Signing keys — never commit
+*.keystore
+*.jks
