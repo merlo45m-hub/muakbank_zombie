@@ -40,6 +40,28 @@ Attribution line:
 
 ## 3D Models
 
+### CC0 — public domain, no attribution required
+
+| Pack | Directory | Author | Source |
+|------|-----------|--------|--------|
+| City Kit Commercial 2.1 | `cc0/city/commercial/` | Kenney | [kenney.nl](https://kenney.nl/assets/city-kit-commercial) |
+| City Kit Suburban 2.0 | `cc0/city/suburban/` | Kenney | [kenney.nl](https://kenney.nl/assets/city-kit-suburban) |
+| City Kit Roads 2.1 | `cc0/city/roads/` | Kenney | [kenney.nl](https://kenney.nl/assets/city-kit-roads) |
+| Car Kit 3.1 | `cc0/cars/` | Kenney | [kenney.nl](https://kenney.nl/assets/car-kit) |
+| Animated Characters Survivors 1.1 | `cc0/kenney_anim/` | Kenney | [kenney.nl](https://kenney.nl/assets/animated-characters-1) |
+| Graveyard Kit (stones) | `cc0/kenney/` | Kenney | [kenney.nl](https://kenney.nl/assets/graveyard-kit) |
+| Mini Characters 1 | `cc0/minis/` | Kenney | [kenney.nl](https://kenney.nl/assets/mini-characters-1) |
+| Blocky Characters | `cc0/blocks/` | Kenney | [kenney.nl](https://kenney.nl/assets/blocky-characters) |
+| Halloween Bits | `cc0/kaykit/` | Kay Lousberg / KayKit | [kaylousberg.itch.io/halloween-bits](https://kaylousberg.itch.io/halloween-bits) |
+| Animals (dequantized) | `cc0/animals/` | Kenney / public CC0 sources | see `assets/models/ASSET_INVENTORY.md` |
+
+All packs above are CC0 1.0 Universal. The per-pack `License.txt` files live inside
+each kit directory where the publisher shipped one; the remaining packs were
+verified CC0 at their published source and are recorded in
+`assets/models/ASSET_INVENTORY.md`.
+
+### Generated in-project
+
 - `character_*.glb`, `weapon_*.glb`, `zombie_*.glb` — generated in-project with
   trimesh (blocky style), no external license.
 
