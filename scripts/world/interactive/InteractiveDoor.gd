@@ -118,7 +118,7 @@ func door_interact() -> void:
 		return
 
 	# Building up long-press timer
-	long_press_timer += get_process_delta_time()
+	long_press_timer += _delta_time()
 	if long_press_timer >= LONG_PRESS_THRESHOLD and not long_press_hold:
 		long_press_hold = true
 		open_fully()
@@ -212,5 +212,8 @@ func _process(delta: float) -> void:
 			_reset_pending = false
 			toggle_to_closed()
 
-func get_process_delta_time() -> float:
-	return Engine.get_physics_frames() > 0 and get_tree().get_process_delta_time() or 0.016
+# NOTE: renamed from get_process_delta_time() — that name overrides a native Node
+# method, which Godot 4 rejects as a parse error (warning treated as error).
+func _delta_time() -> float:
+	var d: float = get_tree().get_process_delta_time() if get_tree() else 0.016
+	return d if d > 0.0 else 0.016

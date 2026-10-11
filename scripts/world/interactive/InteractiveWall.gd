@@ -24,7 +24,9 @@ var hit_feedback: HitFeedback = null
 func _ready() -> void:
 	add_to_group("interactive_prop")
 	mesh_node = get_node_or_null("Mesh")  # the BoxMesh visual
-	body_node = get_node_or_null("Collision") or get_node_or_null("Body")  # StaticBody3D
+	body_node = get_node_or_null("Collision")
+	if body_node == null:
+		body_node = get_node_or_null("Body")
 	# Discover HitFeedback from the level
 	hit_feedback = get_tree().get_first_node_in_group("hit_feedback")
 	if not hit_feedback:

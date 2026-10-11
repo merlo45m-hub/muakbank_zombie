@@ -42,7 +42,9 @@ func _ready() -> void:
 	add_to_group("interactive_prop")
 	lid_node = get_node_or_null("Lid")
 	interaction_zone = get_node_or_null("InteractionZone")
-	body_node = get_node_or_null("Collision") or get_node_or_null("Body")
+	body_node = get_node_or_null("Collision")
+	if body_node == null:
+		body_node = get_node_or_null("Body")
 
 	if interaction_zone:
 		interaction_zone.body_entered.connect(_on_zone_body_entered)

@@ -52,11 +52,13 @@ func _ready() -> void:
 	door_body = get_node_or_null("Door")
 	hood_node = find_child_mesh("Hood")
 	interaction_zone = get_node_or_null("InteractionZone")
-	body_node = get_node_or_null("Body") or get_node_or_null("Collision")
+	body_node = get_node_or_null("Body")
+	if body_node == null:
+		body_node = get_node_or_null("Collision")
 	# Wheels — look for any child MeshInstance3D whose name contains "Wheel"
 	for child in get_children():
 		if child is MeshInstance3D:
-			var n := str(child.name).lower()
+			var n := str(child.name).to_lower()
 			if n.contains("wheel"):
 				if n.contains("fl") or n.contains("front_left"):
 					wheel_fl = child
