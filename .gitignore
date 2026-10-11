@@ -40,3 +40,11 @@ render_*.png.import
 # Signing keys — never commit
 *.keystore
 *.jks
+
+# Local build/test artifacts and VPN configs — never commit
+apk_test/
+*.conf
+!export_presets.cfg
+
+# Godot's own config dir — holds the debug signing keystore
+godot_root/
