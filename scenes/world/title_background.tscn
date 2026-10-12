@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://title_background_v2"]
+[gd_scene load_steps=32 format=3 uid="uid://title_background_v2"]
 
 [ext_resource type="Script" path="res://scripts/ui/TitleBackground.gd" id="1_tb"]
 
@@ -61,18 +61,18 @@ transparency = 0
 
 [sub_resource type="Environment" id="TitleEnv"]
 background_mode = 1
-background_color = Color(0.12, 0.13, 0.18, 1.0)
+background_color = Color(0.2, 0.25, 0.33, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.5, 0.52, 0.6, 1.0)
-ambient_light_energy = 0.18
+ambient_light_color = Color(0.48, 0.55, 0.68, 1)
+ambient_light_energy = 0.55
 fog_enabled = true
-fog_light_color = Color(0.24, 0.28, 0.38, 1.0)
-fog_density = 0.06
-fog_attenuation = 0.001
+fog_light_color = Color(0.28, 0.36, 0.46, 1)
+fog_density = 0.032
+fog_attenuation = 1.0
 glow_enabled = true
-glow_intensity = 1.0
-glow_bloom = 0.32
-glow_hdr_threshold = 0.8
+glow_intensity = 0.7
+glow_bloom = 0.18
+glow_hdr_threshold = 0.9
 tonemap_mode = 3
 adjustment_enabled = true
 adjustment_brightness = 1.02
@@ -86,8 +86,8 @@ no_depth_test = false
 transparency = 1
 
 [sub_resource type="SphereMesh" id="MoonMesh"]
-radius = 4.5
-height = 9.0
+radius = 3.2
+height = 6.4
 radial_segments = 32
 rings = 16
 
@@ -95,7 +95,7 @@ rings = 16
 albedo_color = Color(1, 0.99, 0.95, 1)
 emission_enabled = true
 emission = Color(1, 0.98, 0.92, 1)
-emission_energy_multiplier = 1.8
+emission_energy_multiplier = 1.4
 
 [sub_resource type="Gradient" id="GlowGrad"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
@@ -109,18 +109,19 @@ fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
 [sub_resource type="QuadMesh" id="GlowQuad"]
-size = Vector2(23, 23)
+size = Vector2(22, 22)
 
 [sub_resource type="StandardMaterial3D" id="GlowMat"]
+transparency = 1
 shading_mode = 0
 blend_mode = 1
 billboard_mode = 1
 albedo_texture = SubResource("GlowTex")
-albedo_color = Color(0.95, 0.97, 1, 1)
+albedo_color = Color(0.7, 0.8, 0.98, 0.4)
 
 [sub_resource type="Gradient" id="VignetteGrad"]
-offsets = PackedFloat32Array(0, 0.55, 1)
-colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.6)
+offsets = PackedFloat32Array(0, 0.6, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.35)
 
 [sub_resource type="GradientTexture2D" id="VignetteTex"]
 gradient = SubResource("VignetteGrad")
@@ -300,8 +301,8 @@ material_override = SubResource("FogMaterial")
 [node name="Moon" type="DirectionalLight3D" parent="."]
 shadow_enabled = true
 rotation_degrees = Vector3(-55, -35, 0)
-light_color = Color(0.7, 0.78, 0.92, 1.0)
-light_energy = 1.8
+light_color = Color(0.78, 0.84, 0.96, 1.0)
+light_energy = 3.2
 shadow_fade_range = 8.0
 shadow_fog_enable = true
 
@@ -320,19 +321,19 @@ material_override = SubResource("FogMaterial2")
 [node name="EnemyPositions" type="Node3D" parent="."]
 
 [node name="Moon" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 10.2, -32)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.8, -26)
 mesh = SubResource("MoonMesh")
 material_override = SubResource("MoonMat")
 
 [node name="MoonGlow" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 10.2, -32)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.8, -26)
 mesh = SubResource("GlowQuad")
 material_override = SubResource("GlowMat")
 
 [node name="RimLight" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.906, 0, 0.423, 0, 1, 0, -0.423, 0, 0.906, 0, 3, 0)
-light_color = Color(0.55, 0.62, 0.95, 1)
-light_energy = 0.4
+light_color = Color(0.65, 0.75, 0.95, 1)
+light_energy = 0.6
 
 [node name="VignetteLayer" type="CanvasLayer" parent="."]
 layer = -1
@@ -349,22 +350,22 @@ expand_mode = 1
 stretch_mode = 0
 
 [node name="MenuFill" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 2.4, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 1.2)
 light_color = Color(0.85, 0.88, 0.95, 1)
-light_energy = 0.2
+light_energy = 0.45
 omni_range = 10.0
 
 [node name="LeftFill" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 1.8, -1.2)
 light_color = Color(0.85, 0.88, 0.95, 1)
-light_energy = 0.05
+light_energy = 0.18
 omni_range = 9.0
 shadow_enabled = false
 
 [node name="RightFill" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 1.8, -1.2)
 light_color = Color(0.85, 0.88, 0.95, 1)
-light_energy = 0.05
+light_energy = 0.18
 omni_range = 9.0
 shadow_enabled = false
 

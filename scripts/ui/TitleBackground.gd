@@ -17,13 +17,13 @@ extends Node3D
 
 const DevMode := preload("res://scripts/core/DevMode.gd")
 
-const TITLE_CAM_FOV = 62.0
+const TITLE_CAM_FOV = 63.0
 const TITLE_CAM_NEAR = 0.1
 const TITLE_CAM_FAR = 120.0
-# Centered on the stage (x=0): the five character pedestals span x=-3.4..3.4,
-# so an off-center camera shifts the whole row to one side of the screen.
-const TITLE_CAM_POSITION = Vector3(0.0, 1.5, 2.6)
-const TITLE_CAM_TARGET = Vector3(0.0, 0.95, -5.3)
+# Centered on the stage (x=0): pulled back and widened so all 5 characters
+# have generous margin and the moon/spooky environment reads cleanly.
+const TITLE_CAM_POSITION = Vector3(0.0, 1.65, 4.10)
+const TITLE_CAM_TARGET = Vector3(0.0, 1.15, -2.2)
 
 const MODELS := "res://assets/models/cc0/"
 
@@ -161,11 +161,14 @@ func _place_fence(z: float) -> void:
 
 func _build_graveyard() -> void:
 	# Dead trees framing the shot (the cover art has no leaves anywhere).
-	_place("kaykit/tree_dead_large.gltf", Vector3(-4.2, 0, -9.5), 0.4, 5.6, 0.0)
-	_place("kaykit/tree_dead_large.gltf", Vector3(4.0, 0, -10.5), -0.6, 5.2, 0.0)
-	_place("kaykit/tree_dead_medium.gltf", Vector3(-7.0, 0, -11.5), 0.8, 4.4, 0.0)
-	_place("kaykit/tree_dead_small.gltf", Vector3(6.2, 0, -7.2), 0.2, 3.2, 0.0)
-	_place("kaykit/tree_dead_small.gltf", Vector3(-6.0, 0, -6.8), -0.3, 3.0, 0.0)
+	_place("kaykit/tree_dead_large.gltf", Vector3(-4.8, 0, -6.8), 0.5, 5.8, 0.0)
+	_place("kaykit/tree_dead_large.gltf", Vector3(4.8, 0, -6.8), -0.5, 5.6, 0.0)
+	_place("kaykit/tree_dead_medium.gltf", Vector3(-7.2, 0, -10.5), 0.8, 5.0, 0.0)
+	_place("kaykit/tree_dead_medium.gltf", Vector3(7.2, 0, -10.5), -0.8, 5.0, 0.0)
+	_place("kaykit/tree_dead_small.gltf", Vector3(-2.8, 0, -13.0), 0.2, 3.8, 0.0)
+	_place("kaykit/tree_dead_small.gltf", Vector3(2.8, 0, -13.0), -0.3, 3.8, 0.0)
+	_place("kaykit/tree_dead_small.gltf", Vector3(-8.5, 0, -6.0), 0.4, 3.2, 0.0)
+	_place("kaykit/tree_dead_small.gltf", Vector3(8.5, 0, -6.0), -0.4, 3.2, 0.0)
 	# Headstones, mixed shapes so the rows do not tile.
 	var stones := [
 		{"m": "kaykit/gravestone.gltf", "p": Vector3(-2.3, 0, -2.9), "h": 1.5, "y": 0.15},
@@ -249,28 +252,36 @@ func _build_animals() -> void:
 
 
 func _build_mist() -> void:
-	# Low ground mist: flattened translucent spheres drifting between the
-	# graves. Unshaded so they read as haze in every renderer (environment
-	# depth-fog alone was invisible on the phone).
-	for m: Dictionary in [
-		{"p": Vector3(-3.5, 0.8, -4.5), "s": Vector3(3.0, 0.55, 1.3)},
-		{"p": Vector3(3.2, 0.7, -5.0), "s": Vector3(2.8, 0.5, 1.1)},
-		{"p": Vector3(0.0, 0.9, -7.5), "s": Vector3(4.5, 0.7, 1.5)},
-		{"p": Vector3(-5.5, 0.6, -2.0), "s": Vector3(1.8, 0.4, 1.0)},
-		{"p": Vector3(5.8, 0.6, -1.5), "s": Vector3(1.8, 0.4, 1.0)},
-		{"p": Vector3(-2.5, 0.7, -0.8), "s": Vector3(2.4, 0.45, 1.1)},
-		{"p": Vector3(2.6, 0.6, -1.2), "s": Vector3(2.2, 0.4, 1.0)},
-		{"p": Vector3(0.0, 1.2, -9.5), "s": Vector3(6.5, 0.9, 1.4)},
-		{"p": Vector3(-4.0, 1.0, -8.5), "s": Vector3(3.5, 0.7, 1.2)},
-		{"p": Vector3(-7.6, 0.7, -4.0), "s": Vector3(2.2, 0.5, 1.2)},
-		{"p": Vector3(7.8, 0.7, -3.5), "s": Vector3(2.2, 0.5, 1.2)},
-	]:
-		var blob := _sphere(1.0, Color(0.62, 0.68, 0.80), m.p)
+	# Layered cemetery ground mist: unshaded translucent ellipsoids drifting between the
+	# graves and pedestals to create volumetric depth across near, mid, and far planes.
+	var mist_layers: Array[Dictionary] = [
+		# Deep background layer (soft low haze across the far graves)
+		{"p": Vector3(0.0, 0.75, -12.0), "s": Vector3(12.0, 0.7, 2.5), "a": 0.22},
+		{"p": Vector3(-4.5, 0.7, -10.0), "s": Vector3(7.0, 0.65, 2.2), "a": 0.20},
+		{"p": Vector3(4.5, 0.7, -10.5), "s": Vector3(7.0, 0.65, 2.2), "a": 0.20},
+		{"p": Vector3(0.0, 0.65, -8.0), "s": Vector3(8.0, 0.6, 2.0), "a": 0.18},
+
+		# Midground layer (drifting among headstones and trees)
+		{"p": Vector3(-3.8, 0.6, -5.5), "s": Vector3(4.5, 0.55, 1.6), "a": 0.18},
+		{"p": Vector3(3.6, 0.6, -5.8), "s": Vector3(4.2, 0.55, 1.6), "a": 0.18},
+		{"p": Vector3(-6.2, 0.55, -4.5), "s": Vector3(3.8, 0.5, 1.5), "a": 0.16},
+		{"p": Vector3(6.2, 0.55, -4.5), "s": Vector3(3.8, 0.5, 1.5), "a": 0.16},
+		{"p": Vector3(0.0, 0.55, -4.2), "s": Vector3(4.5, 0.5, 1.5), "a": 0.15},
+
+		# Near stage ground mist (hugging the pavement around pedestals)
+		{"p": Vector3(-3.2, 0.38, -1.8), "s": Vector3(3.2, 0.28, 1.3), "a": 0.15},
+		{"p": Vector3(3.2, 0.38, -1.8), "s": Vector3(3.2, 0.28, 1.3), "a": 0.15},
+		{"p": Vector3(0.0, 0.36, -1.5), "s": Vector3(3.8, 0.26, 1.3), "a": 0.14},
+		{"p": Vector3(-1.8, 0.36, -0.6), "s": Vector3(2.8, 0.24, 1.1), "a": 0.12},
+		{"p": Vector3(1.8, 0.36, -0.6), "s": Vector3(2.8, 0.24, 1.1), "a": 0.12},
+	]
+	for m: Dictionary in mist_layers:
+		var blob := _sphere(1.0, Color(0.42, 0.50, 0.62), m.p)
 		blob.scale = m.s
 		var mat := StandardMaterial3D.new()
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mat.albedo_color = Color(0.62, 0.68, 0.80, 0.20)
+		mat.albedo_color = Color(0.42, 0.50, 0.62, float(m.a))
 		blob.material_override = mat
 		add_child(blob)
 

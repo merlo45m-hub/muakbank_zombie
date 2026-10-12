@@ -7,8 +7,8 @@ extends Control
 const WOOD_TEX := preload("res://assets/textures/wood_planks.jpg")
 
 const PEDESTAL_Z := -1.6
-const PEDESTAL_TOP := 0.7
-const MODEL_ORIGIN_Y := PEDESTAL_TOP + 0.06
+const PEDESTAL_TOP := 0.34
+const MODEL_ORIGIN_Y := PEDESTAL_TOP + 0.02
 const SURVIVOR_HEIGHT := 1.8
 
 class Survivor extends RefCounted:
@@ -144,12 +144,6 @@ func _fit_title() -> void:
 	var title := get_node_or_null("UI/TitleLabel") as Label
 	if title != null:
 		_fit_label_font(title, 52, 0.94)
-		print("[FITDBG] _fit_title ran: label.size=", title.size,
-			" ui_scale=", _ui_scale,
-			" final_font=", title.get_theme_font_size("font_size"),
-			" text_w=", title.get_theme_font("font").get_string_size(
-				title.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
-				title.get_theme_font_size("font_size")).x)
 
 
 func _process(delta: float) -> void:
@@ -163,9 +157,9 @@ func _soften_bloom() -> void:
 	if we == null or we.environment == null:
 		return
 	var env := we.environment.duplicate() as Environment
-	env.glow_intensity = 0.55
-	env.glow_bloom = 0.12
-	env.glow_hdr_threshold = 1.0
+	env.glow_intensity = 0.65
+	env.glow_bloom = 0.16
+	env.glow_hdr_threshold = 0.95
 	we.environment = env
 
 
@@ -184,61 +178,78 @@ func _build_pedestals(bg: Node3D) -> void:
 		var x: float = s.pedestal_x
 		var col: Color = s.color
 
-		# Stone plinth
+		# Sleek beveled plinth (matches reference's low circular platform)
 		var base := MeshInstance3D.new()
 		var cyl := CylinderMesh.new()
-		cyl.top_radius = 0.64
+		cyl.top_radius = 0.70
 		cyl.bottom_radius = 0.74
-		cyl.height = 0.5
-		cyl.radial_segments = 14
+		cyl.height = 0.14
+		cyl.radial_segments = 24
 		base.mesh = cyl
-		base.position = Vector3(x, 0.45, PEDESTAL_Z)
+		base.position = Vector3(x, 0.20 + 0.07, PEDESTAL_Z)
 		var stone := StandardMaterial3D.new()
-		stone.albedo_color = Color(0.22, 0.22, 0.25)
-		stone.roughness = 0.95
+		stone.albedo_color = Color(0.40, 0.42, 0.48)
+		stone.roughness = 0.35
+		stone.metallic = 0.35
 		base.material_override = stone
 		bg.add_child(base)
 
-		# Neon ring on top of pedestal
+		# Inner subtle glow disc inside the neon ring
+		var inner_disc := MeshInstance3D.new()
+		var inner_cm := CylinderMesh.new()
+		inner_cm.top_radius = 0.52
+		inner_cm.bottom_radius = 0.52
+		inner_cm.height = 0.005
+		inner_cm.radial_segments = 24
+		inner_disc.mesh = inner_cm
+		inner_disc.position = Vector3(x, PEDESTAL_TOP + 0.008, PEDESTAL_Z)
+		var inner_mat := StandardMaterial3D.new()
+		inner_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		inner_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		inner_mat.albedo_color = Color(col.r, col.g, col.b, 0.32)
+		inner_disc.material_override = inner_mat
+		bg.add_child(inner_disc)
+
+		# Glowing neon ring on top of pedestal
 		var disc := MeshInstance3D.new()
 		var torus := TorusMesh.new()
 		torus.inner_radius = 0.50
-		torus.outer_radius = 0.60
+		torus.outer_radius = 0.62
 		torus.rings = 32
 		torus.ring_segments = 16
 		disc.mesh = torus
-		disc.position = Vector3(x, PEDESTAL_TOP + 0.02, PEDESTAL_Z)
+		disc.position = Vector3(x, PEDESTAL_TOP + 0.012, PEDESTAL_Z)
 		var dmat := StandardMaterial3D.new()
 		dmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		dmat.albedo_color = col * 1.3
+		dmat.albedo_color = col * 1.6
 		dmat.emission_enabled = true
 		dmat.emission = col
-		dmat.emission_energy_multiplier = 1.3
+		dmat.emission_energy_multiplier = 1.8
 		disc.material_override = dmat
 		bg.add_child(disc)
 		_disc_mats.append(dmat)
 
-		# Glow light (positioned low and slightly forward for dramatic under-light)
+		# Glow light (positioned low for dramatic under-light onto survivor)
 		var light := OmniLight3D.new()
-		light.position = Vector3(x, PEDESTAL_TOP + 0.25, PEDESTAL_Z + 0.22)
+		light.position = Vector3(x, PEDESTAL_TOP + 0.16, PEDESTAL_Z + 0.20)
 		light.light_color = col
-		light.light_energy = 1.4
-		light.omni_range = 7.0
+		light.light_energy = 1.8
+		light.omni_range = 6.0
 		bg.add_child(light)
 		_lights.append(light)
 
 		# Contact shadow
 		var shadow := MeshInstance3D.new()
 		var scyl := CylinderMesh.new()
-		scyl.top_radius = 0.78
-		scyl.bottom_radius = 0.78
+		scyl.top_radius = 0.82
+		scyl.bottom_radius = 0.82
 		scyl.height = 0.01
-		scyl.radial_segments = 18
+		scyl.radial_segments = 20
 		shadow.mesh = scyl
-		shadow.position = Vector3(x, 0.212, PEDESTAL_Z)
+		shadow.position = Vector3(x, 0.205, PEDESTAL_Z)
 		var smat := StandardMaterial3D.new()
 		smat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		smat.albedo_color = Color(0.02, 0.02, 0.025, 0.65)
+		smat.albedo_color = Color(0.01, 0.01, 0.02, 0.45)
 		shadow.material_override = smat
 		bg.add_child(shadow)
 
@@ -308,8 +319,9 @@ func _spawn_survivors(bg: Node3D) -> void:
 
 func _build_ui() -> void:
 	var bar: MarginContainer = $UI/BottomBar
+	bar.offset_top = -146.0
 	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 8)
+	vbox.add_theme_constant_override("separation", 6)
 	bar.add_child(vbox)
 
 	_build_name_buttons(vbox)
@@ -326,7 +338,7 @@ func _build_name_buttons(vbox: VBoxContainer) -> void:
 	for i in range(_survivors.size()):
 		var b := Button.new()
 		b.text = _survivors[i].display_name
-		b.custom_minimum_size = Vector2(0, 54)
+		b.custom_minimum_size = Vector2(0, 48)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.focus_mode = Control.FOCUS_NONE
 		_style_button(b, 22)
@@ -343,7 +355,7 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 
 	var back := Button.new()
 	back.text = "BACK"
-	back.custom_minimum_size = Vector2(150, 58)
+	back.custom_minimum_size = Vector2(140, 52)
 	back.focus_mode = Control.FOCUS_NONE
 	_style_button(back, 22)
 	back.pressed.connect(_on_back_pressed)
@@ -373,7 +385,7 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 
 	var play := Button.new()
 	play.text = "PLAY"
-	play.custom_minimum_size = Vector2(300, 92)
+	play.custom_minimum_size = Vector2(260, 80)
 	play.focus_mode = Control.FOCUS_NONE
 	var cta := StyleBoxFlat.new()
 	cta.bg_color = Color(0.62, 0.08, 0.08)
@@ -503,9 +515,9 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 	for i in range(_models.size()):
 		var sel := (i == index)
 		if i < _lights.size() and is_instance_valid(_lights[i]):
-			_lights[i].light_energy = 2.8 if sel else 1.4
+			_lights[i].light_energy = 3.2 if sel else 1.8
 		if i < _disc_mats.size():
-			var mult: float = 2.4 if sel else 1.3
+			var mult: float = 2.6 if sel else 1.5
 			_disc_mats[i].albedo_color = _survivors[i].color * mult
 			_disc_mats[i].emission_energy_multiplier = mult
 		if i < _col_buttons.size() and is_instance_valid(_col_buttons[i]):
