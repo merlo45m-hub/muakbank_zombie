@@ -14,7 +14,7 @@ const SAVE_VERSION: int = 1
 var save_data: Dictionary = {}
 
 var save_path: String = "user://savegame.save"
-var selected_character: String = "doctor"   # real geometry (1146 verts); "gamer" is a 64-vert blockout
+var selected_character: String = "nurse"   # default survivor per character select overhaul
 var pending_results: Dictionary = {}
 
 # SaveMadeEasy key prefix — all save_data fields stored under "game_" namespace
@@ -134,7 +134,7 @@ func _default_save_data() -> Dictionary:
 		"unlocked_achievements": [],
 		"current_level": 1,
 		"difficulty": 0,  # 0=normal, 1=hard, 2=insane
-		"selected_character": "doctor",  # drives which GLB Player._apply_character_model loads
+		"selected_character": "nurse",  # drives which GLB Player._apply_character_model loads
 		"tutorial_completed": false,
 		"haptics_enabled": true
 	}

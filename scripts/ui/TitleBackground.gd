@@ -73,17 +73,17 @@ func _hide_procedural() -> void:
 
 
 func _dress_floor() -> void:
-	# Poly Haven cobblestone (CC0) on the cemetery floor. Dimmed so the night
-	# grade stays intact instead of washing out to mid grey.
+	# Cracked paved stone/concrete plane on the cemetery floor (replaces cobblestone).
 	var fm := get_node_or_null("Floor/FloorMesh") as MeshInstance3D
-	var tex := load("res://assets/textures/cobblestone.jpg")
+	var tex := load("res://assets/textures/horror_stone/Horror_Stone_02-128x128.png")
 	if fm == null or tex == null:
 		return
 	var mat := StandardMaterial3D.new()
 	mat.albedo_texture = tex
-	mat.albedo_color = Color(0.62, 0.62, 0.68)
-	mat.uv1_scale = Vector3(7, 7, 7)
-	mat.roughness = 0.95
+	mat.albedo_color = Color(0.48, 0.50, 0.56)
+	mat.uv1_scale = Vector3(24, 24, 24)
+	mat.roughness = 0.82
+	mat.metallic = 0.08
 	fm.material_override = mat
 
 
@@ -212,10 +212,11 @@ func _build_props() -> void:
 	_place("kaykit/pumpkin_orange_jackolantern.gltf", Vector3(-5.6, 0, -3.1), 0.2, 0.55, 0.0)
 	_place("kaykit/skull.gltf", Vector3(-2.9, 0, -4.0), 0.7, 0.4, 0.0)
 	_place("kaykit/bone_A.gltf", Vector3(2.6, 0, -5.4), 1.2, 0.3, 0.0)
-	# Worn stone tiles lead the eye down the walkway.
-	for i in range(4):
-		var x := sin(float(i) * 1.7) * 0.35
-		_place("kaykit/path_A.gltf", Vector3(x, 0.212, -0.9 - float(i) * 1.25), float(i) * 0.5, 0.07, 0.0)
+	# Worn stone tiles lead the eye down the walkway (title screen only; omit in character select).
+	if build_animals:
+		for i in range(4):
+			var x := sin(float(i) * 1.7) * 0.35
+			_place("kaykit/path_A.gltf", Vector3(x, 0.212, -0.9 - float(i) * 1.25), float(i) * 0.5, 0.07, 0.0)
 
 
 func _build_animals() -> void:
@@ -252,36 +253,36 @@ func _build_animals() -> void:
 
 
 func _build_mist() -> void:
-	# Layered cemetery ground mist: unshaded translucent ellipsoids drifting between the
-	# graves and pedestals to create volumetric depth across near, mid, and far planes.
+	# Dense low-lying cemetery ground mist: unshaded translucent ellipsoids drifting between the
+	# graves and pedestals to soften background silhouettes and create deep atmospheric volume.
 	var mist_layers: Array[Dictionary] = [
-		# Deep background layer (soft low haze across the far graves)
-		{"p": Vector3(0.0, 0.75, -12.0), "s": Vector3(12.0, 0.7, 2.5), "a": 0.22},
-		{"p": Vector3(-4.5, 0.7, -10.0), "s": Vector3(7.0, 0.65, 2.2), "a": 0.20},
-		{"p": Vector3(4.5, 0.7, -10.5), "s": Vector3(7.0, 0.65, 2.2), "a": 0.20},
-		{"p": Vector3(0.0, 0.65, -8.0), "s": Vector3(8.0, 0.6, 2.0), "a": 0.18},
+		# Deep background layer (soft low haze across the far graves and trees)
+		{"p": Vector3(0.0, 0.75, -12.0), "s": Vector3(14.0, 0.85, 3.2), "a": 0.28},
+		{"p": Vector3(-5.0, 0.8, -10.0), "s": Vector3(9.0, 0.8, 2.8), "a": 0.26},
+		{"p": Vector3(5.0, 0.8, -10.5), "s": Vector3(9.0, 0.8, 2.8), "a": 0.26},
+		{"p": Vector3(0.0, 0.7, -8.5), "s": Vector3(11.0, 0.75, 2.6), "a": 0.25},
 
-		# Midground layer (drifting among headstones and trees)
-		{"p": Vector3(-3.8, 0.6, -5.5), "s": Vector3(4.5, 0.55, 1.6), "a": 0.18},
-		{"p": Vector3(3.6, 0.6, -5.8), "s": Vector3(4.2, 0.55, 1.6), "a": 0.18},
-		{"p": Vector3(-6.2, 0.55, -4.5), "s": Vector3(3.8, 0.5, 1.5), "a": 0.16},
-		{"p": Vector3(6.2, 0.55, -4.5), "s": Vector3(3.8, 0.5, 1.5), "a": 0.16},
-		{"p": Vector3(0.0, 0.55, -4.2), "s": Vector3(4.5, 0.5, 1.5), "a": 0.15},
+		# Dense midground mist (softening tombstones, crypt, fences, and dead tree bases)
+		{"p": Vector3(-4.0, 0.65, -6.0), "s": Vector3(6.5, 0.68, 2.2), "a": 0.25},
+		{"p": Vector3(4.0, 0.65, -6.0), "s": Vector3(6.5, 0.68, 2.2), "a": 0.25},
+		{"p": Vector3(-7.0, 0.6, -5.0), "s": Vector3(5.5, 0.62, 2.0), "a": 0.22},
+		{"p": Vector3(7.0, 0.6, -5.0), "s": Vector3(5.5, 0.62, 2.0), "a": 0.22},
+		{"p": Vector3(0.0, 0.58, -4.5), "s": Vector3(6.0, 0.6, 2.0), "a": 0.22},
 
 		# Near stage ground mist (hugging the pavement around pedestals)
-		{"p": Vector3(-3.2, 0.38, -1.8), "s": Vector3(3.2, 0.28, 1.3), "a": 0.15},
-		{"p": Vector3(3.2, 0.38, -1.8), "s": Vector3(3.2, 0.28, 1.3), "a": 0.15},
-		{"p": Vector3(0.0, 0.36, -1.5), "s": Vector3(3.8, 0.26, 1.3), "a": 0.14},
-		{"p": Vector3(-1.8, 0.36, -0.6), "s": Vector3(2.8, 0.24, 1.1), "a": 0.12},
-		{"p": Vector3(1.8, 0.36, -0.6), "s": Vector3(2.8, 0.24, 1.1), "a": 0.12},
+		{"p": Vector3(-3.2, 0.36, -2.0), "s": Vector3(3.6, 0.32, 1.4), "a": 0.16},
+		{"p": Vector3(3.2, 0.36, -2.0), "s": Vector3(3.6, 0.32, 1.4), "a": 0.16},
+		{"p": Vector3(0.0, 0.34, -1.8), "s": Vector3(4.2, 0.3, 1.4), "a": 0.16},
+		{"p": Vector3(-1.8, 0.32, -0.8), "s": Vector3(3.2, 0.26, 1.2), "a": 0.14},
+		{"p": Vector3(1.8, 0.32, -0.8), "s": Vector3(3.2, 0.26, 1.2), "a": 0.14},
 	]
 	for m: Dictionary in mist_layers:
-		var blob := _sphere(1.0, Color(0.42, 0.50, 0.62), m.p)
+		var blob := _sphere(1.0, Color(0.38, 0.46, 0.58), m.p)
 		blob.scale = m.s
 		var mat := StandardMaterial3D.new()
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mat.albedo_color = Color(0.42, 0.50, 0.62, float(m.a))
+		mat.albedo_color = Color(0.38, 0.46, 0.58, float(m.a))
 		blob.material_override = mat
 		add_child(blob)
 

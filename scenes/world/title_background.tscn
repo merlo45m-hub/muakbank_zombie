@@ -66,8 +66,8 @@ ambient_light_source = 2
 ambient_light_color = Color(0.48, 0.55, 0.68, 1)
 ambient_light_energy = 0.32
 fog_enabled = true
-fog_light_color = Color(0.28, 0.36, 0.46, 1)
-fog_density = 0.032
+fog_light_color = Color(0.32, 0.4, 0.52, 1)
+fog_density = 0.028
 fog_attenuation = 1.0
 glow_enabled = true
 glow_intensity = 0.7
@@ -331,9 +331,9 @@ mesh = SubResource("GlowQuad")
 material_override = SubResource("GlowMat")
 
 [node name="RimLight" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.906, 0, 0.423, 0, 1, 0, -0.423, 0, 0.906, 0, 3, 0)
-light_color = Color(0.65, 0.75, 0.95, 1)
-light_energy = 0.6
+transform = Transform3D(-1, 0, 0, 0, 0.9397, 0.342, 0, 0.342, -0.9397, 0, 8, -18)
+light_color = Color(0.8, 0.88, 1, 1)
+light_energy = 2.8
 
 [node name="VignetteLayer" type="CanvasLayer" parent="."]
 layer = -1
