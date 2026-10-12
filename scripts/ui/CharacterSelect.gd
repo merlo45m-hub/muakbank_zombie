@@ -398,7 +398,7 @@ func _build_pedestals(bg: Node3D) -> void:
 	var light := OmniLight3D.new()
 	light.position = Vector3(0.0, 0.44 + 0.18, PEDESTAL_Z + 0.15)
 	light.light_color = Color.WHITE
-	light.light_energy = 2.8
+	light.light_energy = 1.2
 	light.omni_range = 4.2
 	ped_root.add_child(light)
 	_pedestal_light = light
@@ -896,7 +896,7 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 	# 1. Update single Pedestal lighting and neon materials
 	if _pedestal_light != null and is_instance_valid(_pedestal_light):
 		_pedestal_light.light_color = s.color
-		_pedestal_light.light_energy = 2.8
+		_pedestal_light.light_energy = 1.2
 
 	if _pedestal_neon_mat != null:
 		_pedestal_neon_mat.albedo_color = s.color * 2.4
