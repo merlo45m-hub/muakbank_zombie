@@ -48,6 +48,26 @@ var _ui_scale: float = 1.0
 
 func _fs(px: float) -> int:
 	return maxi(int(round(px * _ui_scale)), 8)
+
+
+func _fit_label_font(label: Label, base_px: float, width_frac: float) -> void:
+	# Shrink the font until the rendered text fits within width_frac of the
+	# label's own width. Deterministic and aspect-proof: the stretched phone
+	# viewport crops differently than the 1600x900 design area, so a fixed
+	# size clips; measuring the real text width and stepping down cannot.
+	var target_w: float = label.size.x * width_frac
+	if target_w <= 0.0:
+		label.add_theme_font_size_override("font_size", _fs(base_px))
+		return
+	var font := label.get_theme_font("font")
+	var px := _fs(base_px)
+	while px > 10:
+		var line_w: float = font.get_string_size(
+			label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+		if line_w <= target_w:
+			break
+		px -= 1
+	label.add_theme_font_size_override("font_size", px)
 var _t := 0.0
 
 
@@ -85,17 +105,16 @@ func _ready() -> void:
 	if ResourceLoader.exists(font_path):
 		_btn_font = load(font_path)
 
-	# Scale the .tscn-authored title/subtitle labels to match the runtime scale
-	# so they stay proportional on the stretched phone viewport.
-	var title := get_node_or_null("UI/TitleLabel") as Label
-	if title != null:
-		title.add_theme_font_size_override("font_size", _fs(52))
+	# Scale the .tscn-authored subtitle label to match the runtime scale.
 	var subtitle := get_node_or_null("UI/SubtitleLabel") as Label
 	if subtitle != null:
 		subtitle.add_theme_font_size_override("font_size", _fs(22))
 
 	_build_stage()
 	_build_ui()
+
+	# Fit the title after layout so label.size is valid (0 during _ready).
+	call_deferred("_fit_title")
 
 	# Restore saved character selection without overwriting it on disk
 	var saved_id := ""
@@ -117,6 +136,14 @@ func _ready() -> void:
 	_update_tap_zones.call_deferred()
 
 	Audio.play_menu_music()
+
+
+func _fit_title() -> void:
+	# Deferred until after layout: label.size is 0 during _ready, so the width
+	# measurement has to happen once the Control has its real size.
+	var title := get_node_or_null("UI/TitleLabel") as Label
+	if title != null:
+		_fit_label_font(title, 52, 0.94)
 
 
 func _process(delta: float) -> void:
