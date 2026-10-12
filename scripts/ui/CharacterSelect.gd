@@ -142,35 +142,36 @@ func _build_pedestals(bg: Node3D) -> void:
 		base.mesh = cyl
 		base.position = Vector3(x, 0.45, PEDESTAL_Z)
 		var stone := StandardMaterial3D.new()
-		stone.albedo_color = Color(0.3, 0.29, 0.33)
-		stone.roughness = 0.9
+		stone.albedo_color = Color(0.22, 0.22, 0.25)
+		stone.roughness = 0.95
 		base.material_override = stone
 		bg.add_child(base)
 
-		# Neon top disc
+		# Neon ring on top of pedestal
 		var disc := MeshInstance3D.new()
-		var dcyl := CylinderMesh.new()
-		dcyl.top_radius = 0.62
-		dcyl.bottom_radius = 0.62
-		dcyl.height = 0.06
-		dcyl.radial_segments = 14
-		disc.mesh = dcyl
-		disc.position = Vector3(x, PEDESTAL_TOP + 0.03, PEDESTAL_Z)
+		var torus := TorusMesh.new()
+		torus.inner_radius = 0.50
+		torus.outer_radius = 0.60
+		torus.rings = 32
+		torus.ring_segments = 16
+		disc.mesh = torus
+		disc.position = Vector3(x, PEDESTAL_TOP + 0.02, PEDESTAL_Z)
 		var dmat := StandardMaterial3D.new()
-		dmat.albedo_color = col.darkened(0.4)
+		dmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		dmat.albedo_color = col * 1.3
 		dmat.emission_enabled = true
 		dmat.emission = col
-		dmat.emission_energy_multiplier = 0.9
+		dmat.emission_energy_multiplier = 1.3
 		disc.material_override = dmat
 		bg.add_child(disc)
 		_disc_mats.append(dmat)
 
-		# Glow light
+		# Glow light (positioned low and slightly forward for dramatic under-light)
 		var light := OmniLight3D.new()
-		light.position = Vector3(x, PEDESTAL_TOP + 0.5, PEDESTAL_Z + 0.3)
+		light.position = Vector3(x, PEDESTAL_TOP + 0.25, PEDESTAL_Z + 0.22)
 		light.light_color = col
-		light.light_energy = 0.12
-		light.omni_range = 4.5
+		light.light_energy = 1.4
+		light.omni_range = 7.0
 		bg.add_child(light)
 		_lights.append(light)
 
@@ -450,9 +451,11 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 	for i in range(_models.size()):
 		var sel := (i == index)
 		if i < _lights.size() and is_instance_valid(_lights[i]):
-			_lights[i].light_energy = 1.1 if sel else 0.12
+			_lights[i].light_energy = 2.8 if sel else 1.4
 		if i < _disc_mats.size():
-			_disc_mats[i].emission_energy_multiplier = 2.0 if sel else 0.9
+			var mult: float = 2.4 if sel else 1.3
+			_disc_mats[i].albedo_color = _survivors[i].color * mult
+			_disc_mats[i].emission_energy_multiplier = mult
 		if i < _col_buttons.size() and is_instance_valid(_col_buttons[i]):
 			_col_buttons[i].modulate = Color.WHITE if sel else Color(0.66, 0.66, 0.66)
 

@@ -64,10 +64,10 @@ background_mode = 1
 background_color = Color(0.12, 0.13, 0.18, 1.0)
 ambient_light_source = 2
 ambient_light_color = Color(0.5, 0.52, 0.6, 1.0)
-ambient_light_energy = 0.95
+ambient_light_energy = 0.18
 fog_enabled = true
-fog_light_color = Color(0.28, 0.31, 0.40, 1.0)
-fog_density = 0.03
+fog_light_color = Color(0.24, 0.28, 0.38, 1.0)
+fog_density = 0.06
 fog_attenuation = 0.001
 glow_enabled = true
 glow_intensity = 1.0
@@ -300,16 +300,15 @@ material_override = SubResource("FogMaterial")
 [node name="Moon" type="DirectionalLight3D" parent="."]
 shadow_enabled = true
 rotation_degrees = Vector3(-55, -35, 0)
-light_color = Color(0.75, 0.8, 0.9, 1.0)
-light_energy = 2.4
-shadow_enabled = true
+light_color = Color(0.7, 0.78, 0.92, 1.0)
+light_energy = 1.8
 shadow_fade_range = 8.0
 shadow_fog_enable = true
 
 [node name="Ambient" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
-light_color = Color(0.35, 0.3, 0.25, 1.0)
-light_energy = 0.9
+light_color = Color(0.25, 0.3, 0.4, 1.0)
+light_energy = 0.1
 omni_range = 50.0
 
 [node name="FogLayer2" type="MeshInstance3D" parent="."]
@@ -321,12 +320,12 @@ material_override = SubResource("FogMaterial2")
 [node name="EnemyPositions" type="Node3D" parent="."]
 
 [node name="Moon" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 7.5, -32)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 10.2, -32)
 mesh = SubResource("MoonMesh")
 material_override = SubResource("MoonMat")
 
 [node name="MoonGlow" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 7.5, -32)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 10.2, -32)
 mesh = SubResource("GlowQuad")
 material_override = SubResource("GlowMat")
 
@@ -351,21 +350,21 @@ stretch_mode = 0
 
 [node name="MenuFill" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 2.4, -1)
-light_color = Color(0.95, 0.82, 0.68, 1)
-light_energy = 1.8
-omni_range = 12.0
+light_color = Color(0.85, 0.88, 0.95, 1)
+light_energy = 0.2
+omni_range = 10.0
 
 [node name="LeftFill" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 1.8, -1.2)
-light_color = Color(0.95, 0.85, 0.7, 1)
-light_energy = 2.7
+light_color = Color(0.85, 0.88, 0.95, 1)
+light_energy = 0.05
 omni_range = 9.0
 shadow_enabled = false
 
 [node name="RightFill" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 1.8, -1.2)
-light_color = Color(0.95, 0.85, 0.7, 1)
-light_energy = 2.0
+light_color = Color(0.85, 0.88, 0.95, 1)
+light_energy = 0.05
 omni_range = 9.0
 shadow_enabled = false
-shadow_enabled = false
+
