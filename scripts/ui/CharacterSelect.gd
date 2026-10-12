@@ -39,6 +39,15 @@ var _hint_label: Label = null
 var _name_label: Label = null
 var _desc_label: Label = null
 var _btn_font: Font = null
+# UI scale: font sizes are authored for the 1600x900 design viewport; the game
+# stretches that to the phone's real resolution, so scale text proportionally
+# to the actual window height instead of shipping fixed pixel sizes.
+const UI_DESIGN_HEIGHT := 900.0
+var _ui_scale: float = 1.0
+
+
+func _fs(px: float) -> int:
+	return maxi(int(round(px * _ui_scale)), 8)
 var _t := 0.0
 
 
@@ -70,10 +79,20 @@ func _init_survivors() -> void:
 
 
 func _ready() -> void:
+	_ui_scale = get_viewport().get_visible_rect().size.y / UI_DESIGN_HEIGHT
 	_soften_bloom()
 	var font_path := "res://assets/fonts/SpecialElite-Regular.ttf"
 	if ResourceLoader.exists(font_path):
 		_btn_font = load(font_path)
+
+	# Scale the .tscn-authored title/subtitle labels to match the runtime scale
+	# so they stay proportional on the stretched phone viewport.
+	var title := get_node_or_null("UI/TitleLabel") as Label
+	if title != null:
+		title.add_theme_font_size_override("font_size", _fs(52))
+	var subtitle := get_node_or_null("UI/SubtitleLabel") as Label
+	if subtitle != null:
+		subtitle.add_theme_font_size_override("font_size", _fs(22))
 
 	_build_stage()
 	_build_ui()
@@ -304,18 +323,18 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 
 	_name_label = Label.new()
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_label.add_theme_font_size_override("font_size", 26)
+	_name_label.add_theme_font_size_override("font_size", _fs(26))
 	mid.add_child(_name_label)
 
 	_desc_label = Label.new()
 	_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_desc_label.add_theme_font_size_override("font_size", 15)
+	_desc_label.add_theme_font_size_override("font_size", _fs(15))
 	_desc_label.add_theme_color_override("font_color", Color(0.72, 0.70, 0.68))
 	mid.add_child(_desc_label)
 
 	_hint_label = Label.new()
 	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_hint_label.add_theme_font_size_override("font_size", 17)
+	_hint_label.add_theme_font_size_override("font_size", _fs(17))
 	_hint_label.add_theme_color_override("font_color", Color(1.0, 0.72, 0.25))
 	mid.add_child(_hint_label)
 
@@ -336,7 +355,7 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 	play.add_theme_color_override("font_color", Color(1.0, 0.97, 0.93))
 	play.add_theme_color_override("font_outline_color", Color(0.1, 0.01, 0.01, 0.9))
 	play.add_theme_constant_override("outline_size", 5)
-	play.add_theme_font_size_override("font_size", 34)
+	play.add_theme_font_size_override("font_size", _fs(34))
 	if _btn_font != null:
 		play.add_theme_font_override("font", _btn_font)
 	play.pressed.connect(_on_play_pressed)
@@ -348,7 +367,7 @@ func _build_step_hints(vbox: VBoxContainer) -> void:
 	var steps := Label.new()
 	steps.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	steps.text = "1  Pick a survivor     2  PLAY     3  Choose a level"
-	steps.add_theme_font_size_override("font_size", 18)
+	steps.add_theme_font_size_override("font_size", _fs(18))
 	steps.add_theme_color_override("font_color", Color(0.85, 0.83, 0.78))
 	steps.add_theme_color_override("font_outline_color", Color(0.03, 0.02, 0.04, 0.95))
 	steps.add_theme_constant_override("outline_size", 5)
@@ -419,7 +438,7 @@ func _style_button(b: Button, font_size: int) -> void:
 	b.add_theme_stylebox_override("hover", _wood_style(Color(0.66, 0.51, 0.4)))
 	b.add_theme_stylebox_override("pressed", _wood_style(Color(0.4, 0.3, 0.25)))
 	b.add_theme_stylebox_override("focus", _wood_style(Color(0.66, 0.51, 0.4)))
-	b.add_theme_font_size_override("font_size", font_size)
+	b.add_theme_font_size_override("font_size", _fs(font_size))
 	b.add_theme_color_override("font_color", Color(0.93, 0.88, 0.8))
 	b.add_theme_color_override("font_hover_color", Color(1.0, 0.96, 0.88))
 	b.add_theme_color_override("font_pressed_color", Color(0.85, 0.8, 0.72))
