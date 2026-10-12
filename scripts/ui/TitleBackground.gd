@@ -20,8 +20,10 @@ const DevMode := preload("res://scripts/core/DevMode.gd")
 const TITLE_CAM_FOV = 62.0
 const TITLE_CAM_NEAR = 0.1
 const TITLE_CAM_FAR = 120.0
-const TITLE_CAM_POSITION = Vector3(-0.3, 1.5, 2.6)
-const TITLE_CAM_TARGET = Vector3(-0.7, 0.95, -5.3)
+# Centered on the stage (x=0): the five character pedestals span x=-3.4..3.4,
+# so an off-center camera shifts the whole row to one side of the screen.
+const TITLE_CAM_POSITION = Vector3(0.0, 1.5, 2.6)
+const TITLE_CAM_TARGET = Vector3(0.0, 0.95, -5.3)
 
 const MODELS := "res://assets/models/cc0/"
 
