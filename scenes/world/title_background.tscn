@@ -64,7 +64,7 @@ background_mode = 1
 background_color = Color(0.2, 0.25, 0.33, 1)
 ambient_light_source = 2
 ambient_light_color = Color(0.48, 0.55, 0.68, 1)
-ambient_light_energy = 0.55
+ambient_light_energy = 0.32
 fog_enabled = true
 fog_light_color = Color(0.28, 0.36, 0.46, 1)
 fog_density = 0.032
@@ -302,7 +302,7 @@ material_override = SubResource("FogMaterial")
 shadow_enabled = true
 rotation_degrees = Vector3(-55, -35, 0)
 light_color = Color(0.78, 0.84, 0.96, 1.0)
-light_energy = 3.2
+light_energy = 2.2
 shadow_fade_range = 8.0
 shadow_fog_enable = true
 

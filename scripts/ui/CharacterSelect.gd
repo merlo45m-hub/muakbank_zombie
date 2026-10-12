@@ -373,20 +373,10 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 
 	_name_label = Label.new()
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_label.add_theme_font_size_override("font_size", _fs(26))
+	_name_label.add_theme_font_size_override("font_size", _fs(40))
+	if _btn_font_bold != null:
+		_name_label.add_theme_font_override("font", _btn_font_bold)
 	mid.add_child(_name_label)
-
-	_desc_label = Label.new()
-	_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_desc_label.add_theme_font_size_override("font_size", _fs(15))
-	_desc_label.add_theme_color_override("font_color", Color(0.72, 0.70, 0.68))
-	mid.add_child(_desc_label)
-
-	_hint_label = Label.new()
-	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_hint_label.add_theme_font_size_override("font_size", _fs(17))
-	_hint_label.add_theme_color_override("font_color", Color(1.0, 0.72, 0.25))
-	mid.add_child(_hint_label)
 
 	var play := Button.new()
 	play.text = "PLAY"
@@ -532,10 +522,8 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 	if _name_label != null:
 		_name_label.text = s.display_name
 		_name_label.add_theme_color_override("font_color", s.color)
-	if _desc_label != null:
-		_desc_label.text = s.description
-	if _hint_label != null:
-		_hint_label.text = s.display_name + " selected. Tap PLAY to continue"
+		_name_label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.03, 0.95))
+		_name_label.add_theme_constant_override("outline_size", _fs(10))
 
 	if play_sound:
 		Audio.play_click()
