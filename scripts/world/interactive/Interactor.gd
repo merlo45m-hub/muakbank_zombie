@@ -74,7 +74,7 @@ func _find_nearest_interactive_prop() -> Node3D:
 		var zone := prop.get_node_or_null("InteractionZone")
 		if zone and zone.has_method("has_overlapping_bodies"):
 			# Only interact if player is actually in the zone
-			var overlapping := zone.get_overlapping_bodies()
+			var overlapping: Array[Node3D] = zone.get_overlapping_bodies()
 			var player_in_zone := false
 			for body in overlapping:
 				if body.is_in_group("player"):
