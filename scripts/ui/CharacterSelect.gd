@@ -234,12 +234,13 @@ func _build_pedestals(bg: Node3D) -> void:
 		bg.add_child(disc)
 		_disc_mats.append(dmat)
 
-		# Glow light (positioned low for dramatic under-light onto survivor)
+		# Glow light (low, tight range so it rims the pedestal + feet without
+		# washing out a white coat from below)
 		var light := OmniLight3D.new()
-		light.position = Vector3(x, PEDESTAL_TOP + 0.16, PEDESTAL_Z + 0.20)
+		light.position = Vector3(x, PEDESTAL_TOP + 0.10, PEDESTAL_Z + 0.20)
 		light.light_color = col
-		light.light_energy = 1.8
-		light.omni_range = 6.0
+		light.light_energy = 0.9
+		light.omni_range = 3.2
 		bg.add_child(light)
 		_lights.append(light)
 
@@ -511,7 +512,7 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 	for i in range(_models.size()):
 		var sel := (i == index)
 		if i < _lights.size() and is_instance_valid(_lights[i]):
-			_lights[i].light_energy = 3.2 if sel else 1.8
+			_lights[i].light_energy = 1.8 if sel else 0.9
 		if i < _disc_mats.size():
 			var mult: float = 2.6 if sel else 1.5
 			_disc_mats[i].albedo_color = _survivors[i].color * mult
