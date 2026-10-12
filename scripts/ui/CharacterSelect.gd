@@ -318,6 +318,15 @@ func _spawn_survivors(bg: Node3D) -> void:
 		if sap != null:
 			sap.play("idle")
 
+		# Per-character material tweak for the select screen only: the doctor's
+		# coat reads pure-white/blown-out under the stage lights, so tint its
+		# (already-duplicated) material off-white. Does not touch the shared rig.
+		if s.id == "doctor":
+			for mi in vis.find_children("*", "MeshInstance3D", true, false):
+				var m := mi.get_active_material(0) as StandardMaterial3D
+				if m != null:
+					m.albedo_color = Color(0.82, 0.82, 0.84)
+
 		_models.append(vis)
 
 
