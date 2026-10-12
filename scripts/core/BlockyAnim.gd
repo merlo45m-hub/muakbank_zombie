@@ -321,7 +321,7 @@ static func apply_body_variant(visuals: Node3D, character_id: String, variant_in
 		for mi in visuals.find_children("*", "MeshInstance3D", true, false):
 			var m := (mi as MeshInstance3D).get_surface_override_material(0)
 			if m is StandardMaterial3D:
-				m.albedo_color = Color(0.82, 0.82, 0.84)
+				m.albedo_color = Color(0.72, 0.72, 0.75)
 
 	# 5. Locate AnimationPlayer, setup looping and aliases, play idle
 	var ap := find_animation_player(visuals)
@@ -388,8 +388,16 @@ static func apply_skin(visuals: Node3D, texture_path: String) -> void:
 		new_mat = StandardMaterial3D.new()
 
 	new_mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-	new_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	new_mat.roughness = 0.80
+	# Crisp atlas texels without distant bleed (values per Godot 4 docs).
+	new_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
+	# Toon-ish diffuse + specular for a stylized, less-plastic read.
+	new_mat.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+	new_mat.specular_mode = BaseMaterial3D.SPECULAR_TOON
+	# Gentle rim so silhouettes separate from the dark graveyard background.
+	new_mat.rim_enabled = true
+	new_mat.rim = 0.5
+	new_mat.rim_tint = 0.1
+	new_mat.roughness = 0.55
 	new_mat.metallic = 0.05
 	new_mat.albedo_texture = tex
 	new_mat.albedo_color = Color.WHITE
