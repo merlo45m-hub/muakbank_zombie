@@ -105,8 +105,10 @@ func _ready() -> void:
 	var font_path := "res://assets/fonts/SpecialElite-Regular.ttf"
 	if ResourceLoader.exists(font_path):
 		_btn_font = load(font_path)
-	# Heavy display font for the character-name buttons (bold, readable).
-	var bold_path := "res://assets/fonts/Bungee-Regular.ttf"
+	# Clean bold sans for the buttons + selected name (matches the modern UI).
+	var bold_path := "res://assets/fonts/LilitaOne-Regular.ttf"
+	if not ResourceLoader.exists(bold_path):
+		bold_path = "res://assets/fonts/Poppins-Bold.ttf"
 	if ResourceLoader.exists(bold_path):
 		_btn_font_bold = load(bold_path)
 

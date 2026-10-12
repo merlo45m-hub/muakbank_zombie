@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://scripts/ui/CharacterSelect.gd" id="1_cs"]
 [ext_resource type="PackedScene" path="res://scenes/world/title_background.tscn" id="2_bg"]
-[ext_resource type="FontFile" path="res://assets/fonts/NotoSans.ttf" id="4_font"]
-[ext_resource type="FontFile" path="res://assets/fonts/NotoSans.ttf" id="5_se"]
+[ext_resource type="FontFile" path="res://assets/fonts/LilitaOne-Regular.ttf" id="4_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/Poppins-Bold.ttf" id="5_se"]
 
 [node name="CharacterSelect" type="Control"]
 layout_mode = 3
