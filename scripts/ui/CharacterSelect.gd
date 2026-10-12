@@ -1,47 +1,34 @@
-## CharacterSelect.gd — Character Selection Screen (rebuilt, no card grid)
-## One continuous stage: the five survivors stand on glowing pedestals IN the
-## graveyard backdrop. Tapping a character on the stage selects it; the bottom
-## bar mirrors the selection. The old per-card SubViewports swallowed taps and
-## hid the cemetery behind five boxes — both are gone.
+## CharacterSelect.gd — Character Selection Screen
+## One continuous 3D stage: the five survivors stand on glowing pedestals in the graveyard.
+## Tap zones projected from the real Camera3D allow direct stage tapping, mirrored
+## by the bottom bar.
 extends Control
 
 const WOOD_TEX := preload("res://assets/textures/wood_planks.jpg")
 
-const CHARACTER_SCENES: Array[String] = [
-	"res://scenes/characters/character_gamer.tscn",
-	"res://scenes/characters/character_doctor.tscn",
-	"res://scenes/characters/character_nurse.tscn",
-	"res://scenes/characters/character_streamer.tscn",
-	"res://scenes/characters/character_hunter.tscn",
-]
-const CHARACTER_NAMES: Array[String] = ["GAMER", "DOCTOR", "NURSE", "STREAMER", "HUNTER"]
-const CHARACTER_COLORS: Array[Color] = [
-	Color(1.0, 0.32, 0.72),   # gamer — neon pink
-	Color(0.25, 0.45, 1.0),   # doctor — neon blue
-	Color(0.15, 0.95, 1.0),   # nurse — neon cyan
-	Color(0.72, 0.38, 1.0),   # streamer — neon purple
-	Color(0.95, 0.85, 0.25),  # hunter — neon yellow
-]
-const CHARACTER_DESCS: Array[String] = [
-	"Speed and snacks on demand",
-	"Tanky frame, medkits go further",
-	"Fast healer, fragile",
-	"Trades health for damage",
-	"Ranged specialist, steady aim",
-]
-
-# Stage layout (world units, matches the shared backdrop camera framing).
-const PEDESTAL_X: Array[float] = [-3.4, -1.7, 0.0, 1.7, 3.4]
 const PEDESTAL_Z := -1.6
 const PEDESTAL_TOP := 0.7
-const MODEL_ORIGIN_Y := PEDESTAL_TOP + 0.06  # rigged models carry feet at local 0 -> disc top (0.76)
-const BOB_AMPLITUDE := 0.03
-const BOB_SPEED := 1.2
-# Screen-space fraction of a pedestal's column on the shared camera: the stage
-# is 10.92 world units wide at the pedestal depth, so frac = 0.5 + x / 10.92.
-const STAGE_WORLD_WIDTH := 10.92
+const MODEL_ORIGIN_Y := PEDESTAL_TOP + 0.06
+const SURVIVOR_HEIGHT := 1.8
 
-var selected_character: int = 1  # doctor default, matches the old screen
+class Survivor extends RefCounted:
+	var id: String
+	var display_name: String
+	var description: String
+	var color: Color
+	var scene_path: String
+	var pedestal_x: float
+
+const SURVIVOR_CONFIGS: Array[Dictionary] = [
+	{"id": "gamer", "name": "GAMER", "x": -3.4, "scene": "res://scenes/characters/character_gamer.tscn"},
+	{"id": "doctor", "name": "DOCTOR", "x": -1.7, "scene": "res://scenes/characters/character_doctor.tscn"},
+	{"id": "nurse", "name": "NURSE", "x": 0.0, "scene": "res://scenes/characters/character_nurse.tscn"},
+	{"id": "streamer", "name": "STREAMER", "x": 1.7, "scene": "res://scenes/characters/character_streamer.tscn"},
+	{"id": "hunter", "name": "HUNTER", "x": 3.4, "scene": "res://scenes/characters/character_hunter.tscn"},
+]
+
+var selected_character: int = 1
+var _survivors: Array[Survivor] = []
 var _models: Array[Node3D] = []
 var _lights: Array[OmniLight3D] = []
 var _disc_mats: Array[StandardMaterial3D] = []
@@ -49,32 +36,77 @@ var _col_buttons: Array[Button] = []
 var _zone_buttons: Array[Button] = []
 var _play_btn: Button = null
 var _hint_label: Label = null
-var _name_label: Label
-var _desc_label: Label
+var _name_label: Label = null
+var _desc_label: Label = null
 var _btn_font: Font = null
 var _t := 0.0
 
 
-func _dim_model_materials(vis: Node3D) -> void:
-	# The survivor models import with KHR_materials_unlit: their albedo renders
-	# at full brightness no matter the scene light, so white outfits (doctor,
-	# nurse) read as featureless white against the dark graveyard. Dim a
-	# per-instance material copy; the source scenes keep their own values.
-	for mi in vis.find_children("*", "MeshInstance3D", true, false):
-		var m := mi as MeshInstance3D
-		if m.mesh == null:
-			continue
-		var src: Material = m.get_active_material(0)
-		if src is StandardMaterial3D:
-			var dim := (src as StandardMaterial3D).duplicate() as StandardMaterial3D
-			dim.albedo_color = Color(dim.albedo_color.r * 0.78, dim.albedo_color.g * 0.78, dim.albedo_color.b * 0.84, dim.albedo_color.a)
-			m.material_override = dim
+func _init() -> void:
+	_init_survivors()
+
+
+func _init_survivors() -> void:
+	_survivors.clear()
+	for cfg in SURVIVOR_CONFIGS:
+		var s := Survivor.new()
+		s.id = cfg["id"]
+		s.display_name = cfg["name"]
+		s.pedestal_x = cfg["x"]
+		s.scene_path = cfg["scene"]
+		s.description = ""
+		s.color = Color.WHITE
+
+		# Single source of truth: read description and color from stats_*.tres
+		var stats_path := "res://assets/materials/stats_%s.tres" % s.id
+		if ResourceLoader.exists(stats_path):
+			var res := load(stats_path) as CharacterStats
+			if res != null:
+				if not res.display_name.is_empty():
+					s.display_name = res.display_name.to_upper()
+				s.description = res.description
+				s.color = res.character_color
+		_survivors.append(s)
+
+
+func _ready() -> void:
+	_soften_bloom()
+	var font_path := "res://assets/fonts/SpecialElite-Regular.ttf"
+	if ResourceLoader.exists(font_path):
+		_btn_font = load(font_path)
+
+	_build_stage()
+	_build_ui()
+
+	# Restore saved character selection without overwriting it on disk
+	var saved_id := ""
+	if has_node("/root/Save"):
+		var save_mgr = get_node("/root/Save")
+		if save_mgr.get("selected_character") != null:
+			saved_id = String(save_mgr.get("selected_character")).to_lower()
+
+	var initial_index := 1
+	for i in range(_survivors.size()):
+		if _survivors[i].id == saved_id:
+			initial_index = i
+			break
+
+	_select_character(initial_index, false, false)
+
+	resized.connect(_update_tap_zones)
+	get_tree().root.size_changed.connect(_update_tap_zones)
+	_update_tap_zones.call_deferred()
+
+	Audio.play_menu_music()
+
+
+func _process(delta: float) -> void:
+	_t += delta
+	if _play_btn != null and is_instance_valid(_play_btn):
+		_play_btn.modulate = Color(1.0, 1.0, 1.0, 0.84 + 0.16 * (0.5 + 0.5 * sin(_t * 3.4)))
 
 
 func _soften_bloom() -> void:
-	# The survivor models import unlit (full-bright albedo). The title screen's
-	# bloom, tuned for the moon, blows the white outfits to featureless white.
-	# Soften a per-instance copy here so the title keeps its look.
 	var we := get_node_or_null("Background3D/WorldEnvironment") as WorldEnvironment
 	if we == null or we.environment == null:
 		return
@@ -85,36 +117,20 @@ func _soften_bloom() -> void:
 	we.environment = env
 
 
-func _ready() -> void:
-	_soften_bloom()
-	var f := "res://assets/fonts/SpecialElite-Regular.ttf"
-	if ResourceLoader.exists(f):
-		_btn_font = load(f)
-	_build_stage()
-	_build_ui()
-	_select_character(1, false)
-	print("[CharacterSelect] zones=", _zone_buttons.size(), " cols=", _col_buttons.size(), " models=", _models.size())
-	Audio.play_menu_music()
-
-
-func _process(delta: float) -> void:
-	_t += delta
-	for i in range(_models.size()):
-		var m := _models[i]
-		if is_instance_valid(m):
-			m.position.y = MODEL_ORIGIN_Y + sin(_t * BOB_SPEED + float(i) * 1.3) * BOB_AMPLITUDE
-	if _play_btn != null and is_instance_valid(_play_btn):
-		# The way forward should be the loudest thing on the screen.
-		_play_btn.modulate = Color(1, 1, 1, 0.84 + 0.16 * (0.5 + 0.5 * sin(_t * 3.4)))
-
-
-# ── STAGE (3D) ─────────────────────────────────────────────────
+# ── STAGE SETUP ────────────────────────────────────────────────
 
 func _build_stage() -> void:
 	var bg: Node3D = $Background3D
-	for i in range(PEDESTAL_X.size()):
-		var x: float = PEDESTAL_X[i]
-		var col: Color = CHARACTER_COLORS[i]
+	_build_pedestals(bg)
+	_build_ring_light(bg)
+	_spawn_survivors(bg)
+
+
+func _build_pedestals(bg: Node3D) -> void:
+	for i in range(_survivors.size()):
+		var s := _survivors[i]
+		var x: float = s.pedestal_x
+		var col: Color = s.color
 
 		# Stone plinth
 		var base := MeshInstance3D.new()
@@ -149,7 +165,7 @@ func _build_stage() -> void:
 		bg.add_child(disc)
 		_disc_mats.append(dmat)
 
-		# Glow light (dims/brightens with selection)
+		# Glow light
 		var light := OmniLight3D.new()
 		light.position = Vector3(x, PEDESTAL_TOP + 0.5, PEDESTAL_Z + 0.3)
 		light.light_color = col
@@ -158,7 +174,7 @@ func _build_stage() -> void:
 		bg.add_child(light)
 		_lights.append(light)
 
-		# Contact shadow so the plinth sits in the scene instead of floating.
+		# Contact shadow
 		var shadow := MeshInstance3D.new()
 		var scyl := CylinderMesh.new()
 		scyl.top_radius = 0.78
@@ -173,29 +189,69 @@ func _build_stage() -> void:
 		shadow.material_override = smat
 		bg.add_child(shadow)
 
-		# The survivor — display-only PlayerVisuals subtree, facing the camera.
-		var scene: PackedScene = load(CHARACTER_SCENES[i]) as PackedScene
+
+func _build_ring_light(bg: Node3D) -> void:
+	# Stage prop on the streamer's pedestal
+	var ring_root := Node3D.new()
+	ring_root.name = "StageRingLight"
+	ring_root.position = Vector3(1.7 + 0.42, PEDESTAL_TOP, PEDESTAL_Z + 0.2)
+
+	var stand := MeshInstance3D.new()
+	var pole := CylinderMesh.new()
+	pole.top_radius = 0.018
+	pole.bottom_radius = 0.018
+	pole.height = 1.45
+	stand.mesh = pole
+	stand.position = Vector3(0.0, 0.725, 0.0)
+	var stand_mat := StandardMaterial3D.new()
+	stand_mat.albedo_color = Color(0.12, 0.12, 0.14)
+	stand_mat.roughness = 0.6
+	stand_mat.metallic = 0.8
+	stand.material_override = stand_mat
+	ring_root.add_child(stand)
+
+	var ring := MeshInstance3D.new()
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.14
+	torus.outer_radius = 0.19
+	ring.mesh = torus
+	ring.position = Vector3(0.0, 1.45, 0.0)
+	ring.rotation_degrees = Vector3(90.0, 0.0, 0.0)
+	var ring_mat := StandardMaterial3D.new()
+	ring_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ring_mat.albedo_color = Color(1.0, 0.98, 0.92)
+	ring.material_override = ring_mat
+	ring_root.add_child(ring)
+
+	bg.add_child(ring_root)
+
+
+func _spawn_survivors(bg: Node3D) -> void:
+	for i in range(_survivors.size()):
+		var s := _survivors[i]
+		var scene := load(s.scene_path) as PackedScene
 		if scene == null:
-			push_warning("CharacterSelect: missing scene " + CHARACTER_SCENES[i])
+			push_warning("CharacterSelect: missing scene " + s.scene_path)
 			continue
 		var full := scene.instantiate()
-		var vis: Node3D = full.get_node_or_null("PlayerVisuals") as Node3D
+		var vis := full.get_node_or_null("PlayerVisuals") as Node3D
 		if vis == null:
 			vis = full
 		else:
 			full.remove_child(vis)
 			full.free()
-		vis.position = Vector3(x, MODEL_ORIGIN_Y, PEDESTAL_Z)
+
+		vis.position = Vector3(s.pedestal_x, MODEL_ORIGIN_Y, PEDESTAL_Z)
 		bg.add_child(vis)
-		_dim_model_materials(vis)
-		var cid := String(CHARACTER_SCENES[i]).get_file().trim_prefix("character_").trim_suffix(".tscn")
-		var sap := CharacterAnim.setup(vis, cid)
+
+		var sap := BlockyAnim.setup(vis, s.id)
 		if sap != null:
 			sap.play("idle")
+
 		_models.append(vis)
 
 
-# ── UI ─────────────────────────────────────────────────────────
+# ── UI SETUP ───────────────────────────────────────────────────
 
 func _build_ui() -> void:
 	var bar: MarginContainer = $UI/BottomBar
@@ -203,26 +259,35 @@ func _build_ui() -> void:
 	vbox.add_theme_constant_override("separation", 8)
 	bar.add_child(vbox)
 
-	# Character name buttons (also select, mirroring the stage zones)
+	_build_name_buttons(vbox)
+	_build_action_row(vbox)
+	_build_step_hints(vbox)
+	_build_tap_zones()
+
+
+func _build_name_buttons(vbox: VBoxContainer) -> void:
 	var cols := HBoxContainer.new()
 	cols.add_theme_constant_override("separation", 10)
 	vbox.add_child(cols)
-	for i in range(CHARACTER_NAMES.size()):
+
+	for i in range(_survivors.size()):
 		var b := Button.new()
-		b.text = CHARACTER_NAMES[i]
+		b.text = _survivors[i].display_name
 		b.custom_minimum_size = Vector2(0, 54)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.focus_mode = Control.FOCUS_NONE
 		_style_button(b, 22)
 		var idx := i
-		b.pressed.connect(func() -> void: _select_character(idx))
+		b.pressed.connect(func() -> void: _select_character(idx, true, true))
 		cols.add_child(b)
 		_col_buttons.append(b)
 
-	# Action row: BACK | selected name + desc | PLAY
+
+func _build_action_row(vbox: VBoxContainer) -> void:
 	var actions := HBoxContainer.new()
 	actions.add_theme_constant_override("separation", 14)
 	vbox.add_child(actions)
+
 	var back := Button.new()
 	back.text = "BACK"
 	back.custom_minimum_size = Vector2(150, 58)
@@ -235,15 +300,18 @@ func _build_ui() -> void:
 	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mid.add_theme_constant_override("separation", 0)
 	actions.add_child(mid)
+
 	_name_label = Label.new()
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name_label.add_theme_font_size_override("font_size", 26)
 	mid.add_child(_name_label)
+
 	_desc_label = Label.new()
 	_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_desc_label.add_theme_font_size_override("font_size", 15)
 	_desc_label.add_theme_color_override("font_color", Color(0.72, 0.70, 0.68))
 	mid.add_child(_desc_label)
+
 	_hint_label = Label.new()
 	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_hint_label.add_theme_font_size_override("font_size", 17)
@@ -251,20 +319,20 @@ func _build_ui() -> void:
 	mid.add_child(_hint_label)
 
 	var play := Button.new()
-	play.text = "PLAY  \u25b6"  # right-pointing triangle: obvious way forward
+	play.text = "PLAY"
 	play.custom_minimum_size = Vector2(300, 92)
 	play.focus_mode = Control.FOCUS_NONE
 	var cta := StyleBoxFlat.new()
 	cta.bg_color = Color(0.62, 0.08, 0.08)
 	cta.set_border_width_all(3)
-	cta.border_color = Color(1, 0.85, 0.8, 0.5)
+	cta.border_color = Color(1.0, 0.85, 0.8, 0.5)
 	cta.set_corner_radius_all(18)
 	play.add_theme_stylebox_override("normal", cta)
 	var cta_hover := cta.duplicate() as StyleBoxFlat
 	cta_hover.bg_color = Color(0.78, 0.12, 0.10)
 	play.add_theme_stylebox_override("hover", cta_hover)
 	play.add_theme_stylebox_override("pressed", cta_hover)
-	play.add_theme_color_override("font_color", Color(1, 0.97, 0.93))
+	play.add_theme_color_override("font_color", Color(1.0, 0.97, 0.93))
 	play.add_theme_color_override("font_outline_color", Color(0.1, 0.01, 0.01, 0.9))
 	play.add_theme_constant_override("outline_size", 5)
 	play.add_theme_font_size_override("font_size", 34)
@@ -274,8 +342,8 @@ func _build_ui() -> void:
 	actions.add_child(play)
 	_play_btn = play
 
-	# Step hint so the flow is never a dead end: what this screen is, and the
-	# exact next move. The user tapped a character and saw no direction forward.
+
+func _build_step_hints(vbox: VBoxContainer) -> void:
 	var steps := Label.new()
 	steps.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	steps.text = "1  Pick a survivor     2  PLAY     3  Choose a level"
@@ -287,17 +355,11 @@ func _build_ui() -> void:
 		steps.add_theme_font_override("font", _btn_font)
 	vbox.add_child(steps)
 
-	# Invisible tap zones over each pedestal: tapping the character itself
-	# selects it. The old screen only responded on the tiny SELECT buttons —
-	# this is the fix for "tapping a character does nothing".
+
+func _build_tap_zones() -> void:
 	var zones: Control = $UI/StageZones
-	for i in range(PEDESTAL_X.size()):
+	for i in range(_survivors.size()):
 		var z := Button.new()
-		var frac := 0.5 + PEDESTAL_X[i] / STAGE_WORLD_WIDTH
-		z.anchor_left = frac - 0.075
-		z.anchor_right = frac + 0.075
-		z.anchor_top = 0.10
-		z.anchor_bottom = 0.76
 		z.flat = true
 		z.focus_mode = Control.FOCUS_NONE
 		var empty := StyleBoxEmpty.new()
@@ -305,10 +367,50 @@ func _build_ui() -> void:
 		z.add_theme_stylebox_override("hover", empty)
 		z.add_theme_stylebox_override("pressed", empty)
 		z.add_theme_stylebox_override("focus", empty)
-		var idx2 := i
-		z.pressed.connect(func() -> void: _select_character(idx2))
+		var idx := i
+		z.pressed.connect(func() -> void: _select_character(idx, true, true))
 		zones.add_child(z)
 		_zone_buttons.append(z)
+
+
+func _update_tap_zones() -> void:
+	var cam: Camera3D = get_viewport().get_camera_3d()
+	if cam == null:
+		cam = get_node_or_null("Background3D/Camera3D") as Camera3D
+	if cam == null:
+		return
+
+	var vp_size := get_viewport_rect().size
+	if vp_size.x <= 0 or vp_size.y <= 0:
+		return
+
+	for i in range(_zone_buttons.size()):
+		if i >= _survivors.size():
+			break
+		var z := _zone_buttons[i]
+		var x: float = _survivors[i].pedestal_x
+		var feet_pos := Vector3(x, MODEL_ORIGIN_Y, PEDESTAL_Z)
+		var head_pos := Vector3(x, MODEL_ORIGIN_Y + SURVIVOR_HEIGHT, PEDESTAL_Z)
+
+		var screen_feet := cam.unproject_position(feet_pos)
+		var screen_head := cam.unproject_position(head_pos)
+
+		var char_h := absf(screen_feet.y - screen_head.y)
+		var half_w := maxf(char_h * 0.35, 44.0)
+
+		var min_x := screen_feet.x - half_w
+		var max_x := screen_feet.x + half_w
+		var min_y := screen_head.y - char_h * 0.1
+		var max_y := screen_feet.y + char_h * 0.1
+
+		z.anchor_left = clampf(min_x / vp_size.x, 0.0, 1.0)
+		z.anchor_right = clampf(max_x / vp_size.x, 0.0, 1.0)
+		z.anchor_top = clampf(min_y / vp_size.y, 0.0, 1.0)
+		z.anchor_bottom = clampf(max_y / vp_size.y, 0.0, 1.0)
+		z.offset_left = 0
+		z.offset_right = 0
+		z.offset_top = 0
+		z.offset_bottom = 0
 
 
 func _style_button(b: Button, font_size: int) -> void:
@@ -341,8 +443,10 @@ func _wood_style(mod: Color) -> StyleBoxTexture:
 
 # ── SELECTION ──────────────────────────────────────────────────
 
-func _select_character(index: int, play_sound: bool = true) -> void:
+func _select_character(index: int, play_sound: bool = true, persist: bool = true) -> void:
 	selected_character = index
+	var s: Survivor = _survivors[index]
+
 	for i in range(_models.size()):
 		var sel := (i == index)
 		if i < _lights.size() and is_instance_valid(_lights[i]):
@@ -350,25 +454,22 @@ func _select_character(index: int, play_sound: bool = true) -> void:
 		if i < _disc_mats.size():
 			_disc_mats[i].emission_energy_multiplier = 2.0 if sel else 0.9
 		if i < _col_buttons.size() and is_instance_valid(_col_buttons[i]):
-			_col_buttons[i].modulate = Color(1, 1, 1) if sel else Color(0.66, 0.66, 0.66)
+			_col_buttons[i].modulate = Color.WHITE if sel else Color(0.66, 0.66, 0.66)
+
 	if _name_label != null:
-		_name_label.text = CHARACTER_NAMES[index]
-		_name_label.add_theme_color_override("font_color", CHARACTER_COLORS[index])
+		_name_label.text = s.display_name
+		_name_label.add_theme_color_override("font_color", s.color)
 	if _desc_label != null:
-		_desc_label.text = CHARACTER_DESCS[index]
+		_desc_label.text = s.description
 	if _hint_label != null:
-		# Explicit next move; tapping the survivor should never be a dead end.
-		_hint_label.text = CHARACTER_NAMES[index] + " selected. Tap PLAY to continue"
-	_confirm_selection(index, play_sound)
+		_hint_label.text = s.display_name + " selected. Tap PLAY to continue"
 
-
-func _confirm_selection(index: int, play_sound: bool) -> void:
 	if play_sound:
 		Audio.play_click()
-	print("[CharacterSelect] Selected: ", CHARACTER_NAMES[index])
-	# Persist immediately — the member var alone is lost if the app dies before
-	# the next gameplay save.
-	Save.set_selected_character(CHARACTER_NAMES[index].to_lower())
+
+	if persist and has_node("/root/Save"):
+		var save_mgr = get_node("/root/Save")
+		save_mgr.set_selected_character(s.id)
 
 
 func _on_play_pressed() -> void:

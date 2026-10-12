@@ -35,7 +35,7 @@
 | character (player) | 5 | 2.1–2.75 | 1.8m human | **0.7** | Scale 0.7 → ~1.6m character. |
 | zombie | 5 | 0.5–1.4 | 0.5–1.5m creature | **1.0–1.5** | Smaller than player. Scale 1.0 → cat 0.6m, bear 1.4m. |
 | character-rig | 4 | 2.0–100.8 | 1.8m human | **0.00425** | Base rig `model.glb` ≈2 units. Animation clips are ~100 units (world-space keyframes). |
-| block-character | 18 | 9.0 | 1.8m human | **0.2** | Voxel/blocky style, 9×9×9. Scale 0.2 → 1.8m. |
+| block-character | 18 | 2.7 | 1.8m human | **0.6667** | Kenney Blocky style. Composed height 2.7 units (bbox 1.6×2.7×0.8). Scale 0.6667 (2/3) → 1.8m. |
 | mini-character | 12 | 2.0 | 1.8m human | **0.9** | Scale 0.9 → 1.8m. |
 | mini-prop | 9 | 0.1–2.0 | 0.3–1.5m item | **0.5–1.0** | Glasses (0.1 tall) need 5×; canes (2.0) need 0.75. Per-item tuning needed. |
 | weapon | 3 | 0.6–0.7 | 0.5–0.8m weapon | **1.0** | Already roughly 1:1. Scale 1.0 → axe 0.6m, bat 0.7m. |
@@ -52,7 +52,7 @@ These models have unusual bounding boxes that may need special handling:
 | `cc0/kenney_anim/idle.glb` | [100.6, 100.6, 100.0] | Animation clip — bbox reflects world-space keyframe extents, not mesh size. Use base `model.glb` for scale. |
 | `cc0/kenney_anim/jump.glb` | [100.6, 100.6, 100.0] | Same as idle — animation data in world space. |
 | `cc0/kenney_anim/run.glb` | [100.6, 100.8, 100.3] | Same as idle — animation data in world space. |
-| `cc0/blocks/character-*.glb` (all 18) | [8.0, 9.0, 8.0] | Non-standard 9-unit scale (not 2×2×2 Kenney grid). Voxel/blocky style. |
+| `cc0/blocks/character-*.glb` (all 18) | [1.6, 2.7, 0.8] | Composed node transforms yield 2.7 units tall (raw accessors [8.0, 9.0, 8.0] omit head scale 0.1 and torso offset). Scale 0.6667 → 1.8m. |
 | `cc0/minis/aid-glasses.glb` | [2.0, 0.096, 2.0] | Extremely flat (0.096 tall) — likely a flat accessory, not a 3D prop. |
 | `cc0/minis/aid-sunglasses.glb` | [2.0, 0.096, 2.0] | Same as glasses — flat accessory. |
 

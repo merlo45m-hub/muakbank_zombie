@@ -97,7 +97,10 @@ var _applied_visual: Node3D = null
 
 
 func _ready() -> void:
-	# Load character stats if assigned
+	var char_id := _selected_character_id()
+	var stats_path := "res://assets/materials/stats_%s.tres" % char_id
+	if ResourceLoader.exists(stats_path):
+		character_stats = load(stats_path) as CharacterStats
 	if character_stats:
 		_apply_character_stats()
 
@@ -350,7 +353,7 @@ func _rotate_toward_direction(direction: Vector3, delta: float) -> void:
 		return
 	if direction.length() < 0.01:
 		return
-	var target_rot: float = atan2(direction.x, direction.z)
+	var target_rot: float = atan2(direction.x, direction.z) + PI
 	var rot_speed: float = 10.0
 	vis.rotation.y = lerp_angle(vis.rotation.y, target_rot, rot_speed * delta)
 
@@ -474,12 +477,12 @@ func _pickup_nearby() -> void:
 		return
 	# Check each result for food or weapon pickup areas
 	for result in results:
-		var body := result["collider"] if result.has("collider") else null
+		var body: Object = result["collider"] if result.has("collider") else null
 		if body == null:
 			continue
 		# Food pickup
 		if body.has_method("collect") and not (body.get("is_collected") == true):
-			var food_type := body.get("food_type") if body.has("food_type") else ""
+			var food_type: Variant = body.get("food_type") if body.has("food_type") else ""
 			var heal := int(body.get("health_amount")) if body.has("health_amount") else 0
 			if food_type != "":
 				body.collect(self)
@@ -489,7 +492,7 @@ func _pickup_nearby() -> void:
 				return
 		# Weapon pickup
 		if body.has_method("take") and not (body.get("taken") == true):
-			var weapon_id := body.get("weapon_id") if body.has("weapon_id") else ""
+			var weapon_id: Variant = body.get("weapon_id") if body.has("weapon_id") else ""
 			if weapon_id != "":
 				body.take()
 				equip_weapon(weapon_id)
@@ -877,7 +880,7 @@ func _try_prop_interaction() -> bool:
 		# Check player is in the prop's interaction zone
 		var zone := prop.get_node_or_null("InteractionZone")
 		if zone:
-			var overlapping := zone.get_overlapping_bodies()
+			var overlapping: Array = zone.get_overlapping_bodies()
 			var player_in_zone := false
 			for body in overlapping:
 				if body.is_in_group("player"):
@@ -962,7 +965,7 @@ func _apply_character_model() -> void:
 				var aabb := _model_aabb(vis)
 				if aabb.size.y > 0.01:
 					vis.position.y = -aabb.position.y
-				_skeletal = CharacterAnim.setup(vis, id)
+				_skeletal = BlockyAnim.setup(vis, id)
 				if _skeletal != null:
 					_skeletal.play("idle")
 					_anim_state = "idle"
