@@ -86,10 +86,10 @@ no_depth_test = false
 transparency = 1
 
 [sub_resource type="SphereMesh" id="MoonMesh"]
-radius = 3.2
-height = 6.4
-radial_segments = 32
-rings = 16
+radius = 7.5
+height = 15.0
+radial_segments = 48
+rings = 24
 
 [sub_resource type="StandardMaterial3D" id="MoonMat"]
 albedo_color = Color(1, 0.99, 0.95, 1)
@@ -321,12 +321,12 @@ material_override = SubResource("FogMaterial2")
 [node name="EnemyPositions" type="Node3D" parent="."]
 
 [node name="Moon" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.8, -26)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, -18)
 mesh = SubResource("MoonMesh")
 material_override = SubResource("MoonMat")
 
 [node name="MoonGlow" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.8, -26)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, -18)
 mesh = SubResource("GlowQuad")
 material_override = SubResource("GlowMat")
 
