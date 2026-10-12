@@ -39,6 +39,7 @@ var _hint_label: Label = null
 var _name_label: Label = null
 var _desc_label: Label = null
 var _btn_font: Font = null
+var _btn_font_bold: Font = null
 # UI scale: font sizes are authored for the 1600x900 design viewport; the game
 # stretches that to the phone's real resolution, so scale text proportionally
 # to the actual window height instead of shipping fixed pixel sizes.
@@ -104,6 +105,10 @@ func _ready() -> void:
 	var font_path := "res://assets/fonts/SpecialElite-Regular.ttf"
 	if ResourceLoader.exists(font_path):
 		_btn_font = load(font_path)
+	# Heavy display font for the character-name buttons (bold, readable).
+	var bold_path := "res://assets/fonts/Bungee-Regular.ttf"
+	if ResourceLoader.exists(bold_path):
+		_btn_font_bold = load(bold_path)
 
 	# Scale the .tscn-authored subtitle label to match the runtime scale.
 	var subtitle := get_node_or_null("UI/SubtitleLabel") as Label
@@ -341,7 +346,7 @@ func _build_name_buttons(vbox: VBoxContainer) -> void:
 		b.custom_minimum_size = Vector2(0, 48)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.focus_mode = Control.FOCUS_NONE
-		_style_button(b, 22)
+		_style_button(b, 30, true)
 		var idx := i
 		b.pressed.connect(func() -> void: _select_character(idx, true, true))
 		cols.add_child(b)
@@ -478,17 +483,18 @@ func _update_tap_zones() -> void:
 		z.offset_bottom = 0
 
 
-func _style_button(b: Button, font_size: int) -> void:
+func _style_button(b: Button, font_size: int, bold: bool = false) -> void:
 	b.add_theme_stylebox_override("normal", _wood_style(Color(0.52, 0.4, 0.32)))
 	b.add_theme_stylebox_override("hover", _wood_style(Color(0.66, 0.51, 0.4)))
 	b.add_theme_stylebox_override("pressed", _wood_style(Color(0.4, 0.3, 0.25)))
 	b.add_theme_stylebox_override("focus", _wood_style(Color(0.66, 0.51, 0.4)))
 	b.add_theme_font_size_override("font_size", _fs(font_size))
-	b.add_theme_color_override("font_color", Color(0.93, 0.88, 0.8))
-	b.add_theme_color_override("font_hover_color", Color(1.0, 0.96, 0.88))
-	b.add_theme_color_override("font_pressed_color", Color(0.85, 0.8, 0.72))
-	if _btn_font != null:
-		b.add_theme_font_override("font", _btn_font)
+	b.add_theme_color_override("font_color", Color(0.96, 0.93, 0.86))
+	b.add_theme_color_override("font_hover_color", Color(1.0, 0.98, 0.92))
+	b.add_theme_color_override("font_pressed_color", Color(0.9, 0.86, 0.78))
+	var f := _btn_font_bold if bold and _btn_font_bold != null else _btn_font
+	if f != null:
+		b.add_theme_font_override("font", f)
 
 
 func _wood_style(mod: Color) -> StyleBoxTexture:
