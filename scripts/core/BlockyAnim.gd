@@ -34,6 +34,18 @@ const STATE_TO_CLIP: Dictionary = {
 	"die": "die",
 }
 
+
+## Which rig letter each survivor uses. Verified by rendering all 18 rigs:
+## b=red hoodie (gamer), i=white coat+glasses (doctor), f=female teal (nurse),
+## q=hooded dark (streamer), a=bearded jacket (hunter).
+const RIG_LETTER_TO_SURVIVOR: Dictionary = {
+	"b": "gamer",
+	"i": "doctor",
+	"f": "nurse",
+	"q": "streamer",
+	"a": "hunter",
+}
+
 const SURVIVOR_TEXTURE_MAP: Dictionary = {
 	"gamer": "res://assets/textures/survivors/gamer.png",
 	"doctor": "res://assets/textures/survivors/doctor.png",
@@ -58,13 +70,14 @@ static func setup(visuals: Node3D, character_id: String = "") -> AnimationPlayer
 
 	_setup_looping_and_aliases(ap)
 
+	# Resolve the survivor id. The wrapper node is always named PlayerVisuals
+	# in the character scenes (and renamed CharacterVisuals by Player.gd in
+	# gameplay), so a name match on the WRAPPER never succeeds and the skin
+	# silently never applied. Match on the rig node instead: the imported glb
+	# root is named character-<x>, which is the only reliable key.
 	var resolved_id := character_id
 	if resolved_id.is_empty():
-		var vname := visuals.name.to_lower()
-		for cid in SURVIVOR_TEXTURE_MAP.keys():
-			if cid in vname:
-				resolved_id = cid
-				break
+		resolved_id = _resolve_id_from_rig(visuals)
 
 	if not resolved_id.is_empty():
 		apply_skin_for_character(visuals, resolved_id)
@@ -86,6 +99,34 @@ static func find_animation_player(node: Node) -> AnimationPlayer:
 		ap = parent.find_child("AnimationPlayer", true, false) as AnimationPlayer
 		if ap != null:
 			return ap
+	return null
+
+
+## Map a rig's glb node name (character-<x>) to a survivor id via the
+## character<->texture correspondence. Falls back to an empty string.
+static func _resolve_id_from_rig(visuals: Node3D) -> String:
+	var rig_root := _find_rig_root(visuals)
+	if rig_root == null:
+		return ""
+	# glb roots are "character-a" .. "character-r"
+	var rn: String = rig_root.name.to_lower()
+	if not rn.begins_with("character-"):
+		return ""
+	var letter := rn.substr("character-".length(), 1)
+	if letter.is_empty():
+		return ""
+	# the design maps a letter to a survivor; keep that table in one place
+	return RIG_LETTER_TO_SURVIVOR.get(letter, "")
+
+
+## The imported glb root is named character-<x>. It is NOT a direct child of
+## the wrapper: the scene is PlayerVisuals > Model > character-<x>, because
+## Model is the instance of the .glb. Search the whole subtree.
+static func _find_rig_root(visuals: Node3D) -> Node3D:
+	for n in visuals.find_children("character-*", "Node3D", true, false):
+		var nd := n as Node3D
+		if nd != null:
+			return nd
 	return null
 
 
