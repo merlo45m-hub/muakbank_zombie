@@ -46,6 +46,34 @@ const RIG_LETTER_TO_SURVIVOR: Dictionary = {
 	"a": "hunter",
 }
 
+const SKIN_VARIANTS: Dictionary = {
+	"gamer": [
+		{"name": "Cyber Purple", "blocky": "res://assets/textures/survivors/gamer.png", "mini": "res://assets/textures/survivors/mini_gamer.png"},
+		{"name": "Crimson", "blocky": "res://assets/textures/survivors/gamer_v1.png", "mini": "res://assets/textures/survivors/mini_gamer_v1.png"},
+		{"name": "Teal", "blocky": "res://assets/textures/survivors/gamer_v2.png", "mini": "res://assets/textures/survivors/mini_gamer_v2.png"},
+	],
+	"doctor": [
+		{"name": "Clinical White", "blocky": "res://assets/textures/survivors/doctor.png", "mini": "res://assets/textures/survivors/mini_doctor.png"},
+		{"name": "Navy Scrubs", "blocky": "res://assets/textures/survivors/doctor_v1.png", "mini": "res://assets/textures/survivors/mini_doctor_v1.png"},
+		{"name": "Emerald Green", "blocky": "res://assets/textures/survivors/doctor_v2.png", "mini": "res://assets/textures/survivors/mini_doctor_v2.png"},
+	],
+	"nurse": [
+		{"name": "Mint Teal", "blocky": "res://assets/textures/survivors/nurse.png", "mini": "res://assets/textures/survivors/mini_nurse.png"},
+		{"name": "Rose Pink", "blocky": "res://assets/textures/survivors/nurse_v1.png", "mini": "res://assets/textures/survivors/mini_nurse_v1.png"},
+		{"name": "Cobalt Blue", "blocky": "res://assets/textures/survivors/nurse_v2.png", "mini": "res://assets/textures/survivors/mini_nurse_v2.png"},
+	],
+	"streamer": [
+		{"name": "Shadow Black", "blocky": "res://assets/textures/survivors/streamer.png", "mini": "res://assets/textures/survivors/mini_streamer.png"},
+		{"name": "Neon Amber", "blocky": "res://assets/textures/survivors/streamer_v1.png", "mini": "res://assets/textures/survivors/mini_streamer_v1.png"},
+		{"name": "Acid Lime", "blocky": "res://assets/textures/survivors/streamer_v2.png", "mini": "res://assets/textures/survivors/mini_streamer_v2.png"},
+	],
+	"hunter": [
+		{"name": "Camo Olive", "blocky": "res://assets/textures/survivors/hunter.png", "mini": "res://assets/textures/survivors/mini_hunter.png"},
+		{"name": "Arctic Frost", "blocky": "res://assets/textures/survivors/hunter_v1.png", "mini": "res://assets/textures/survivors/mini_hunter_v1.png"},
+		{"name": "Blaze Orange", "blocky": "res://assets/textures/survivors/hunter_v2.png", "mini": "res://assets/textures/survivors/mini_hunter_v2.png"},
+	],
+}
+
 const SURVIVOR_TEXTURE_MAP: Dictionary = {
 	"gamer": "res://assets/textures/survivors/gamer.png",
 	"doctor": "res://assets/textures/survivors/doctor.png",
@@ -59,7 +87,7 @@ const SURVIVOR_TEXTURE_MAP: Dictionary = {
 ## Sets up looping on looping clips (on duplicated Animation resources),
 ## registers a "run" -> "sprint" alias so callers asking for "run" succeed,
 ## and applies the survivor skin texture if character_id is provided or detected.
-static func setup(visuals: Node3D, character_id: String = "") -> AnimationPlayer:
+static func setup(visuals: Node3D, character_id: String = "", variant_index: int = 0) -> AnimationPlayer:
 	if visuals == null:
 		return null
 
@@ -80,7 +108,7 @@ static func setup(visuals: Node3D, character_id: String = "") -> AnimationPlayer
 		resolved_id = _resolve_id_from_rig(visuals)
 
 	if not resolved_id.is_empty():
-		apply_skin_for_character(visuals, resolved_id)
+		apply_skin_for_character(visuals, resolved_id, variant_index)
 
 	return ap
 
@@ -187,11 +215,70 @@ static func play_state(ap: AnimationPlayer, state: String, blend_time: float = -
 		ap.play(clip)
 
 
-## Apply survivor skin texture by character ID.
-static func apply_skin_for_character(visuals: Node3D, character_id: String) -> void:
-	var tex_path: String = SURVIVOR_TEXTURE_MAP.get(character_id, "")
-	if not tex_path.is_empty():
-		apply_skin(visuals, tex_path)
+## Return list of skin variants for character_id.
+static func get_skin_variants(character_id: String) -> Array:
+	return SKIN_VARIANTS.get(character_id, [])
+
+
+## Return number of skin variants for character_id.
+static func get_variant_count(character_id: String) -> int:
+	var variants: Array = SKIN_VARIANTS.get(character_id, [])
+	return variants.size()
+
+
+## Return variant info dictionary for (character_id, variant_index).
+static func get_variant_info(character_id: String, variant_index: int) -> Dictionary:
+	var variants: Array = SKIN_VARIANTS.get(character_id, [])
+	if variants.is_empty():
+		return {}
+	var idx := clampi(variant_index, 0, variants.size() - 1)
+	return variants[idx]
+
+
+## Apply chosen skin variant to whatever model is present under `visuals`:
+## smooth mini model (body-*/head-* meshes) or blocky gameplay rig parts.
+static func apply_skin_variant(visuals: Node3D, character_id: String, variant_index: int = 0) -> void:
+	if visuals == null:
+		return
+	var resolved_id := character_id
+	if resolved_id.is_empty():
+		resolved_id = _resolve_id_from_rig(visuals)
+	if resolved_id.is_empty():
+		return
+
+	var var_info := get_variant_info(resolved_id, variant_index)
+	if var_info.is_empty():
+		return
+
+	# 1. Check if mini model meshes are present (character select smooth mini models)
+	var mini_parts: Array[MeshInstance3D] = []
+	for child in visuals.find_children("*", "MeshInstance3D", true, false):
+		var mi := child as MeshInstance3D
+		if mi != null and (mi.name.begins_with("body-") or mi.name.begins_with("head-")):
+			mini_parts.append(mi)
+
+	if not mini_parts.is_empty():
+		var mini_tex_path: String = var_info.get("mini", "")
+		if not mini_tex_path.is_empty() and ResourceLoader.exists(mini_tex_path):
+			var tex := load(mini_tex_path) as Texture2D
+			if tex != null:
+				var mat := StandardMaterial3D.new()
+				mat.albedo_texture = tex
+				mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+				mat.roughness = 0.75
+				for mi in mini_parts:
+					mi.material_override = mat
+		return
+
+	# 2. Blocky rig parts (gameplay character_<id>.tscn)
+	var blocky_tex_path: String = var_info.get("blocky", "")
+	if not blocky_tex_path.is_empty():
+		apply_skin(visuals, blocky_tex_path)
+
+
+## Apply survivor skin texture by character ID, supporting optional variant index.
+static func apply_skin_for_character(visuals: Node3D, character_id: String, variant_index: int = 0) -> void:
+	apply_skin_variant(visuals, character_id, variant_index)
 
 
 ## Apply a skin texture at runtime: duplicate the rig's shared material,

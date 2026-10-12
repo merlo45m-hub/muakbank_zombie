@@ -965,7 +965,9 @@ func _apply_character_model() -> void:
 				var aabb := _model_aabb(vis)
 				if aabb.size.y > 0.01:
 					vis.position.y = -aabb.position.y
-				_skeletal = BlockyAnim.setup(vis, id)
+				var skin_idx := _selected_skin_index(id)
+				_skeletal = BlockyAnim.setup(vis, id, skin_idx)
+				BlockyAnim.apply_skin_variant(vis, id, skin_idx)
 				if _skeletal != null:
 					_skeletal.play("idle")
 					_anim_state = "idle"
@@ -1005,10 +1007,13 @@ func _selected_character_id() -> String:
 	var save := get_node_or_null("/root/Save")
 	if save and save.get("selected_character") != null:
 		return String(save.get("selected_character"))
-	# Must match SaveManager.selected_character's default ("doctor"); when /root/Save
-	# is absent the menu restores nothing, so gameplay must not load a different
-	# character than the menu highlights.
-	return "doctor"
+	return "nurse"
+
+func _selected_skin_index(id: String) -> int:
+	var save := get_node_or_null("/root/Save")
+	if save and save.has_method("get_selected_skin"):
+		return save.get_selected_skin(id)
+	return 0
 
 func _normalise_model_transform(mdl: Node3D, aabb: AABB) -> void:
 	# The exported GLBs come at wildly different scales, so measure the real

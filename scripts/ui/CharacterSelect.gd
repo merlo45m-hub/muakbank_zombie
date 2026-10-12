@@ -51,6 +51,9 @@ var _play_btn: Button = null
 var _name_label: Label = null
 var _btn_font: Font = null
 var _btn_font_bold: Font = null
+var _skin_buttons: Array[Button] = []
+var _skin_prev_btn: Button = null
+var _skin_next_btn: Button = null
 
 # Camera tween state
 var _cam_tween: Tween = null
@@ -132,9 +135,22 @@ func _ready() -> void:
 	_build_stage()
 	_build_ui()
 
-	# Default state: central character (Nurse, index 2) selected on load
+	# Default state: central character (Nurse, index 2) selected on load, or restore saved choice
 	var initial_index := 2
+	if OS.has_environment("DIAG_SURVIVOR"):
+		initial_index = int(OS.get_environment("DIAG_SURVIVOR"))
+	elif has_node("/root/Save"):
+		var save_mgr = get_node("/root/Save")
+		var saved_id: String = String(save_mgr.get("selected_character"))
+		for i in range(_survivors.size()):
+			if _survivors[i].id == saved_id:
+				initial_index = i
+				break
 	_select_character(initial_index, false, false)
+
+	if OS.has_environment("DIAG_SKIN"):
+		var diag_skin := int(OS.get_environment("DIAG_SKIN"))
+		_select_skin(diag_skin, false, false)
 
 	resized.connect(_update_tap_zones)
 	get_tree().root.size_changed.connect(_update_tap_zones)
@@ -181,6 +197,14 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		elif event.keycode == KEY_RIGHT or event.keycode == KEY_D:
 			_cycle_selection(1)
+			get_viewport().set_input_as_handled()
+			return
+		elif event.keycode == KEY_UP or event.keycode == KEY_W:
+			_cycle_skin(1)
+			get_viewport().set_input_as_handled()
+			return
+		elif event.keycode == KEY_DOWN or event.keycode == KEY_S:
+			_cycle_skin(-1)
 			get_viewport().set_input_as_handled()
 			return
 
@@ -431,18 +455,9 @@ func _spawn_survivors(bg: Node3D) -> void:
 		_models.append(vis)
 		_anim_players.append(ap)
 
-		# Apply tailored archetype material texture
-		var tex_path := "res://assets/textures/survivors/mini_%s.png" % s.id
-		if ResourceLoader.exists(tex_path):
-			var tex := load(tex_path) as Texture2D
-			if tex != null:
-				var mat := StandardMaterial3D.new()
-				mat.albedo_texture = tex
-				mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-				mat.roughness = 0.75
-				for mi in vis.find_children("*", "MeshInstance3D", true, false):
-					if mi.name.begins_with("body-") or mi.name.begins_with("head-"):
-						mi.material_override = mat
+		# Apply tailored archetype material texture with saved skin variant
+		var saved_skin := _get_current_skin(s.id)
+		BlockyAnim.apply_skin_variant(vis, s.id, saved_skin)
 
 		if ap != null and ap.has_animation("idle"):
 			ap.play("idle")
@@ -1084,7 +1099,7 @@ func _create_boot() -> MeshInstance3D:
 
 func _build_ui() -> void:
 	var bar: MarginContainer = $UI/BottomBar
-	bar.offset_top = -150.0
+	bar.offset_top = -162.0
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 8)
 	bar.add_child(vbox)
@@ -1175,12 +1190,14 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 
 	_name_label = Label.new()
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_label.add_theme_font_size_override("font_size", _fs(40))
+	_name_label.add_theme_font_size_override("font_size", _fs(34))
 	_name_label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.03, 0.95))
-	_name_label.add_theme_constant_override("outline_size", _fs(10))
+	_name_label.add_theme_constant_override("outline_size", _fs(8))
 	if _btn_font_bold != null:
 		_name_label.add_theme_font_override("font", _btn_font_bold)
 	mid.add_child(_name_label)
+
+	_build_skin_selector(mid)
 
 	# PLAY
 	var play := Button.new()
@@ -1209,6 +1226,164 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 	play.pressed.connect(_on_play_pressed)
 	actions.add_child(play)
 	_play_btn = play
+
+
+func _build_skin_selector(parent: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 6)
+	parent.add_child(row)
+
+	# Previous skin arrow
+	var prev_btn := Button.new()
+	prev_btn.text = "◀"
+	prev_btn.custom_minimum_size = Vector2(34, 28)
+	prev_btn.focus_mode = Control.FOCUS_NONE
+	_style_skin_arrow(prev_btn)
+	prev_btn.pressed.connect(func() -> void: _cycle_skin(-1))
+	row.add_child(prev_btn)
+	_skin_prev_btn = prev_btn
+
+	# 3 Swatch / Variant buttons
+	_skin_buttons.clear()
+	for i in range(3):
+		var b := Button.new()
+		b.custom_minimum_size = Vector2(125, 28)
+		b.focus_mode = Control.FOCUS_NONE
+		var idx := i
+		b.pressed.connect(func() -> void: _select_skin(idx, true, true))
+		row.add_child(b)
+		_skin_buttons.append(b)
+
+	# Next skin arrow
+	var next_btn := Button.new()
+	next_btn.text = "▶"
+	next_btn.custom_minimum_size = Vector2(34, 28)
+	next_btn.focus_mode = Control.FOCUS_NONE
+	_style_skin_arrow(next_btn)
+	next_btn.pressed.connect(func() -> void: _cycle_skin(1))
+	row.add_child(next_btn)
+	_skin_next_btn = next_btn
+
+
+func _style_skin_arrow(b: Button) -> void:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.10, 0.11, 0.15, 0.70)
+	sb.set_corner_radius_all(14)
+	sb.border_color = Color(1, 1, 1, 0.18)
+	sb.set_border_width_all(1)
+	sb.set_content_margin_all(4)
+	b.add_theme_stylebox_override("normal", sb)
+	var hover := sb.duplicate() as StyleBoxFlat
+	hover.bg_color = Color(0.20, 0.22, 0.30, 0.90)
+	hover.border_color = Color(1, 1, 1, 0.40)
+	b.add_theme_stylebox_override("hover", hover)
+	b.add_theme_stylebox_override("pressed", hover)
+	b.add_theme_stylebox_override("focus", sb)
+	b.add_theme_font_size_override("font_size", _fs(15))
+	b.add_theme_color_override("font_color", Color(0.9, 0.92, 0.96))
+	if _btn_font_bold != null:
+		b.add_theme_font_override("font", _btn_font_bold)
+
+
+func _style_skin_button(b: Button, accent: Color, active: bool) -> void:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.12, 0.14, 0.20, 0.90) if active else Color(0.06, 0.08, 0.11, 0.55)
+	sb.set_corner_radius_all(14)
+	sb.set_content_margin_all(4)
+	if active:
+		sb.border_color = accent
+		sb.set_border_width_all(2)
+	else:
+		sb.border_color = Color(1, 1, 1, 0.12)
+		sb.set_border_width_all(1)
+	b.add_theme_stylebox_override("normal", sb)
+	var hover := sb.duplicate() as StyleBoxFlat
+	hover.border_color = accent if active else Color(1, 1, 1, 0.35)
+	hover.bg_color = Color(0.16, 0.18, 0.26, 0.92)
+	b.add_theme_stylebox_override("hover", hover)
+	b.add_theme_stylebox_override("pressed", hover)
+	b.add_theme_stylebox_override("focus", sb)
+	b.add_theme_font_size_override("font_size", _fs(14))
+	b.add_theme_color_override("font_color", Color(1, 1, 1) if active else Color(0.72, 0.75, 0.80))
+	if _btn_font_bold != null:
+		b.add_theme_font_override("font", _btn_font_bold if active else _btn_font)
+
+
+func _update_skin_ui(s: Survivor, active_idx: int) -> void:
+	var variants: Array = BlockyAnim.get_skin_variants(s.id)
+	for i in range(_skin_buttons.size()):
+		var b := _skin_buttons[i]
+		if i < variants.size():
+			b.visible = true
+			var vname: String = variants[i].get("name", "Skin %d" % (i + 1))
+			b.text = vname
+			var is_active := (i == active_idx)
+			_style_skin_button(b, s.color, is_active)
+		else:
+			b.visible = false
+
+
+func _get_current_skin(char_id: String) -> int:
+	if has_node("/root/Save"):
+		var save_mgr = get_node("/root/Save")
+		if save_mgr.has_method("get_selected_skin"):
+			return save_mgr.get_selected_skin(char_id)
+	return 0
+
+
+func _select_skin(variant_index: int, play_sound: bool = true, persist: bool = true) -> void:
+	if selected_character < 0 or selected_character >= _survivors.size():
+		return
+	var s: Survivor = _survivors[selected_character]
+	var count: int = BlockyAnim.get_variant_count(s.id)
+	if count <= 0:
+		return
+	var idx := clampi(variant_index, 0, count - 1)
+
+	# 1. Live-update on-screen 3D model
+	if selected_character < _models.size() and is_instance_valid(_models[selected_character]):
+		BlockyAnim.apply_skin_variant(_models[selected_character], s.id, idx)
+
+	# 2. Update skin UI
+	_update_skin_ui(s, idx)
+
+	# 3. Audio chime
+	if play_sound:
+		_play_skin_audio(idx)
+
+	# 4. Persist to SaveManager
+	if persist and has_node("/root/Save"):
+		var save_mgr = get_node("/root/Save")
+		if save_mgr.has_method("set_selected_skin"):
+			save_mgr.set_selected_skin(idx, s.id)
+
+
+func _cycle_skin(delta: int) -> void:
+	if selected_character < 0 or selected_character >= _survivors.size():
+		return
+	var s: Survivor = _survivors[selected_character]
+	var count: int = BlockyAnim.get_variant_count(s.id)
+	if count <= 0:
+		return
+	var current := _get_current_skin(s.id)
+	var next_idx := posmod(current + delta, count)
+	_select_skin(next_idx, true, true)
+
+
+func _play_skin_audio(variant_index: int) -> void:
+	Audio.play_click()
+	if _chime_player == null:
+		_chime_player = AudioStreamPlayer.new()
+		var sfx_bus := AudioServer.get_bus_index("SFX")
+		_chime_player.bus = "SFX" if sfx_bus >= 0 else "Master"
+		add_child(_chime_player)
+
+	var skin_freqs := [587.33, 739.99, 880.00]
+	var freq: float = skin_freqs[clampi(variant_index, 0, skin_freqs.size() - 1)]
+	_chime_player.stream = _generate_chime_stream(freq)
+	_chime_player.volume_db = -5.0
+	_chime_player.play()
 
 
 func _build_tap_zones() -> void:
@@ -1339,12 +1514,17 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 			if ap.has_animation("idle"):
 				ap.play("idle")
 
-	# 4. Update UI label
+	# 4. Update UI label and skin selector
 	if _name_label != null:
 		_name_label.text = s.display_name
 		_name_label.add_theme_color_override("font_color", s.color)
 		_name_label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.03, 0.95))
-		_name_label.add_theme_constant_override("outline_size", _fs(10))
+		_name_label.add_theme_constant_override("outline_size", _fs(8))
+
+	var active_skin := _get_current_skin(s.id)
+	_update_skin_ui(s, active_skin)
+	if index < _models.size() and is_instance_valid(_models[index]):
+		BlockyAnim.apply_skin_variant(_models[index], s.id, active_skin)
 
 	# 5. Dynamic Camera Tween: adjust angle/focal distance toward selected survivor smoothly
 	_tween_camera_to_survivor(index)
