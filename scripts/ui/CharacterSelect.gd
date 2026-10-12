@@ -1,7 +1,7 @@
 ## CharacterSelect.gd — Character Selection Screen
-## One continuous 3D stage: five survivors stand on glowing pedestals in the graveyard.
-## Direct 3D raycast / tap on podiums and survivors, horizontal cards, swipe / arrow navigation,
-## dynamic camera focus, active idle animations, and atmospheric neon lighting.
+## Single hero 3D stage: one centered survivor on glowing pedestal in the graveyard.
+## Direct 3D raycast / tap, touch swipe left/right, on-screen ◀ ▶ arrows, keyboard navigation,
+## skin variant selector, dynamic pedestal neon lighting, and high-detail hero camera framing.
 extends Control
 
 const WOOD_TEX := preload("res://assets/textures/wood_planks.jpg")
@@ -18,14 +18,14 @@ class Survivor extends RefCounted:
 	var color: Color
 	var scene_path: String
 	var mini_model_path: String
-	var pedestal_x: float
+	var pedestal_x: float = 0.0
 
 const SURVIVOR_CONFIGS: Array[Dictionary] = [
-	{"id": "gamer", "name": "GAMER", "x": -3.4, "scene": "res://scenes/characters/character_gamer.tscn"},
-	{"id": "doctor", "name": "DOCTOR", "x": -1.7, "scene": "res://scenes/characters/character_doctor.tscn"},
-	{"id": "nurse", "name": "NURSE", "x": 0.0, "scene": "res://scenes/characters/character_nurse.tscn"},
-	{"id": "streamer", "name": "STREAMER", "x": 1.7, "scene": "res://scenes/characters/character_streamer.tscn"},
-	{"id": "hunter", "name": "HUNTER", "x": 3.4, "scene": "res://scenes/characters/character_hunter.tscn"},
+	{"id": "gamer", "name": "GAMER", "scene": "res://scenes/characters/character_gamer.tscn"},
+	{"id": "doctor", "name": "DOCTOR", "scene": "res://scenes/characters/character_doctor.tscn"},
+	{"id": "nurse", "name": "NURSE", "scene": "res://scenes/characters/character_nurse.tscn"},
+	{"id": "streamer", "name": "STREAMER", "scene": "res://scenes/characters/character_streamer.tscn"},
+	{"id": "hunter", "name": "HUNTER", "scene": "res://scenes/characters/character_hunter.tscn"},
 ]
 
 const PEDESTAL_COLORS: Dictionary = {
@@ -40,17 +40,28 @@ var selected_character: int = 2
 var _survivors: Array[Survivor] = []
 var _models: Array[Node3D] = []
 var _anim_players: Array[AnimationPlayer] = []
-var _lights: Array[OmniLight3D] = []
-var _disc_mats: Array[StandardMaterial3D] = []
-var _inner_mats: Array[StandardMaterial3D] = []
-var _prop_lights: Array[OmniLight3D] = []
-var _survivor_areas: Array[Area3D] = []
-var _col_buttons: Array[Button] = []
-var _zone_buttons: Array[Button] = []
+
+# Single pedestal stage references
+var _pedestal_light: OmniLight3D = null
+var _pedestal_neon_mat: StandardMaterial3D = null
+var _pedestal_inner_mat: StandardMaterial3D = null
+var _pedestal_area: Area3D = null
+
+# UI references
 var _play_btn: Button = null
 var _name_label: Label = null
+var _desc_label: Label = null
+var _pips_container: HBoxContainer = null
+var _pip_labels: Array[Label] = []
+var _stage_tap_btn: Button = null
 var _btn_font: Font = null
 var _btn_font_bold: Font = null
+
+# On-screen floating cycle arrows
+var _char_prev_btn: Button = null
+var _char_next_btn: Button = null
+
+# Skin variant selector
 var _skin_buttons: Array[Button] = []
 var _skin_prev_btn: Button = null
 var _skin_next_btn: Button = null
@@ -102,7 +113,7 @@ func _init_survivors() -> void:
 		var s := Survivor.new()
 		s.id = cfg["id"]
 		s.display_name = cfg["name"]
-		s.pedestal_x = cfg["x"]
+		s.pedestal_x = 0.0
 		s.scene_path = cfg["scene"]
 		s.mini_model_path = cfg.get("mini", "")
 		s.description = ""
@@ -135,6 +146,17 @@ func _ready() -> void:
 	_build_stage()
 	_build_ui()
 
+	# Snap camera immediately to hero position
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		cam = get_node_or_null("Background3D/Camera") as Camera3D
+	if cam != null:
+		cam.fov = 74.0
+		var initial_pos := Vector3(0.0, 1.25, 1.10)
+		var initial_look := Vector3(0.0, 1.12, -1.60)
+		cam.global_position = initial_pos
+		cam.look_at(initial_look, Vector3.UP)
+
 	# Default state: central character (Nurse, index 2) selected on load, or restore saved choice
 	var initial_index := 2
 	if OS.has_environment("DIAG_SURVIVOR"):
@@ -162,17 +184,17 @@ func _ready() -> void:
 func _fit_title() -> void:
 	var title := get_node_or_null("UI/TitleLabel") as Label
 	if title != null:
-		title.add_theme_font_size_override("font_size", _fs(46))
-		_fit_label_font(title, 46, 0.94)
+		title.add_theme_font_size_override("font_size", _fs(44))
+		_fit_label_font(title, 44, 0.94)
 	var subtitle := get_node_or_null("UI/SubtitleLabel") as Label
 	if subtitle != null:
-		subtitle.add_theme_font_size_override("font_size", _fs(20))
+		subtitle.add_theme_font_size_override("font_size", _fs(18))
 
 
 func _process(delta: float) -> void:
 	_t += delta
 	if _play_btn != null and is_instance_valid(_play_btn) and not _is_camera_tweening:
-		_play_btn.modulate = Color(1.0, 1.0, 1.0, 0.84 + 0.16 * (0.5 + 0.5 * sin(_t * 3.4)))
+		_play_btn.modulate = Color(1.0, 1.0, 1.0, 0.86 + 0.14 * (0.5 + 0.5 * sin(_t * 3.4)))
 
 
 func _soften_bloom() -> void:
@@ -254,11 +276,10 @@ func _handle_3d_tap(screen_pos: Vector2) -> void:
 
 	if result.has("collider"):
 		var col: Object = result["collider"]
-		for i in range(_survivor_areas.size()):
-			if _survivor_areas[i] == col:
-				_select_character(i, true, true)
-				get_viewport().set_input_as_handled()
-				return
+		if col == _pedestal_area:
+			_cycle_selection(1)
+			get_viewport().set_input_as_handled()
+			return
 
 
 # ── STAGE SETUP ────────────────────────────────────────────────
@@ -270,157 +291,146 @@ func _build_stage() -> void:
 
 
 func _build_pedestals(bg: Node3D) -> void:
-	_lights.clear()
-	_disc_mats.clear()
-	_inner_mats.clear()
-	_survivor_areas.clear()
+	var ped_root := Node3D.new()
+	ped_root.name = "Pedestal_Stage"
+	bg.add_child(ped_root)
 
-	for i in range(_survivors.size()):
-		var s := _survivors[i]
-		var x: float = s.pedestal_x
-		var col: Color = s.color
+	# Tier 1: Base Plinth (Bottom Bevel, 48 segments for smooth circular curvature)
+	var base := MeshInstance3D.new()
+	var base_cyl := CylinderMesh.new()
+	base_cyl.top_radius = 0.82
+	base_cyl.bottom_radius = 0.90
+	base_cyl.height = 0.12
+	base_cyl.radial_segments = 48
+	base.mesh = base_cyl
+	base.position = Vector3(0.0, 0.20 + 0.06, PEDESTAL_Z)
+	var base_mat := StandardMaterial3D.new()
+	base_mat.albedo_color = Color(0.14, 0.15, 0.18)
+	base_mat.roughness = 0.35
+	base_mat.metallic = 0.45
+	base.material_override = base_mat
+	ped_root.add_child(base)
 
-		var ped_root := Node3D.new()
-		ped_root.name = "Pedestal_%s" % s.id
-		bg.add_child(ped_root)
+	# Tier 2: Bevel Collar (Recessed middle step)
+	var collar := MeshInstance3D.new()
+	var col_cyl := CylinderMesh.new()
+	col_cyl.top_radius = 0.72
+	col_cyl.bottom_radius = 0.80
+	col_cyl.height = 0.08
+	col_cyl.radial_segments = 48
+	collar.mesh = col_cyl
+	collar.position = Vector3(0.0, 0.20 + 0.12 + 0.04, PEDESTAL_Z)
+	var collar_mat := StandardMaterial3D.new()
+	collar_mat.albedo_color = Color(0.18, 0.20, 0.24)
+	collar_mat.roughness = 0.30
+	collar_mat.metallic = 0.35
+	collar.material_override = collar_mat
+	ped_root.add_child(collar)
 
-		# Tier 1: Base Plinth (Bottom Bevel, 48 segments for smooth circular curvature)
-		var base := MeshInstance3D.new()
-		var base_cyl := CylinderMesh.new()
-		base_cyl.top_radius = 0.74
-		base_cyl.bottom_radius = 0.80
-		base_cyl.height = 0.12
-		base_cyl.radial_segments = 48
-		base.mesh = base_cyl
-		base.position = Vector3(x, 0.20 + 0.06, PEDESTAL_Z)
-		var base_mat := StandardMaterial3D.new()
-		base_mat.albedo_color = Color(0.15, 0.16, 0.19)
-		base_mat.roughness = 0.35
-		base_mat.metallic = 0.4
-		base.material_override = base_mat
-		ped_root.add_child(base)
+	# Tier 3: Top Standing Platform (Charcoal matte platform, top at Y = 0.44)
+	var top_disc := MeshInstance3D.new()
+	var top_cyl := CylinderMesh.new()
+	top_cyl.top_radius = 0.62
+	top_cyl.bottom_radius = 0.65
+	top_cyl.height = 0.04
+	top_cyl.radial_segments = 48
+	top_disc.mesh = top_cyl
+	top_disc.position = Vector3(0.0, 0.20 + 0.12 + 0.08 + 0.02, PEDESTAL_Z)
+	var top_mat := StandardMaterial3D.new()
+	top_mat.albedo_color = Color(0.10, 0.11, 0.14)
+	top_mat.roughness = 0.55
+	top_mat.metallic = 0.15
+	top_disc.material_override = top_mat
+	ped_root.add_child(top_disc)
 
-		# Tier 2: Bevel Collar (Recessed middle step)
-		var collar := MeshInstance3D.new()
-		var col_cyl := CylinderMesh.new()
-		col_cyl.top_radius = 0.65
-		col_cyl.bottom_radius = 0.72
-		col_cyl.height = 0.08
-		col_cyl.radial_segments = 48
-		collar.mesh = col_cyl
-		collar.position = Vector3(x, 0.20 + 0.12 + 0.04, PEDESTAL_Z)
-		var collar_mat := StandardMaterial3D.new()
-		collar_mat.albedo_color = Color(0.18, 0.20, 0.24)
-		collar_mat.roughness = 0.25
-		collar_mat.metallic = 0.3
-		collar.material_override = collar_mat
-		ped_root.add_child(collar)
+	# Recessed circular neon light strip (nestled in the bevel trench at Y = 0.405)
+	var neon_ring := MeshInstance3D.new()
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.63
+	torus.outer_radius = 0.70
+	torus.rings = 48
+	torus.ring_segments = 16
+	neon_ring.mesh = torus
+	neon_ring.position = Vector3(0.0, 0.405, PEDESTAL_Z)
+	var nmat := StandardMaterial3D.new()
+	nmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	nmat.albedo_color = Color.WHITE * 2.2
+	nmat.emission_enabled = true
+	nmat.emission = Color.WHITE
+	nmat.emission_energy_multiplier = 3.6
+	neon_ring.material_override = nmat
+	ped_root.add_child(neon_ring)
+	_pedestal_neon_mat = nmat
 
-		# Tier 3: Top Standing Platform (Charcoal matte platform, top at Y = 0.44)
-		var top_disc := MeshInstance3D.new()
-		var top_cyl := CylinderMesh.new()
-		top_cyl.top_radius = 0.55
-		top_cyl.bottom_radius = 0.57
-		top_cyl.height = 0.04
-		top_cyl.radial_segments = 48
-		top_disc.mesh = top_cyl
-		top_disc.position = Vector3(x, 0.20 + 0.12 + 0.08 + 0.02, PEDESTAL_Z)
-		var top_mat := StandardMaterial3D.new()
-		top_mat.albedo_color = Color(0.11, 0.12, 0.15)
-		top_mat.roughness = 0.6
-		top_mat.metallic = 0.1
-		top_disc.material_override = top_mat
-		ped_root.add_child(top_disc)
+	# Inner subtle glow disc on top platform surface
+	var inner_glow := MeshInstance3D.new()
+	var inner_cm := CylinderMesh.new()
+	inner_cm.top_radius = 0.58
+	inner_cm.bottom_radius = 0.58
+	inner_cm.height = 0.005
+	inner_cm.radial_segments = 36
+	inner_glow.mesh = inner_cm
+	inner_glow.position = Vector3(0.0, 0.443, PEDESTAL_Z)
+	var inner_mat := StandardMaterial3D.new()
+	inner_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	inner_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	inner_mat.albedo_color = Color(1.0, 1.0, 1.0, 0.35)
+	inner_glow.material_override = inner_mat
+	ped_root.add_child(inner_glow)
+	_pedestal_inner_mat = inner_mat
 
-		# Recessed circular neon light strip (nestled in the bevel trench at Y = 0.405)
-		var neon_ring := MeshInstance3D.new()
-		var torus := TorusMesh.new()
-		torus.inner_radius = 0.56
-		torus.outer_radius = 0.63
-		torus.rings = 48
-		torus.ring_segments = 16
-		neon_ring.mesh = torus
-		neon_ring.position = Vector3(x, 0.405, PEDESTAL_Z)
-		var nmat := StandardMaterial3D.new()
-		nmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		nmat.albedo_color = col * 2.2
-		nmat.emission_enabled = true
-		nmat.emission = col
-		nmat.emission_energy_multiplier = 3.2
-		neon_ring.material_override = nmat
-		ped_root.add_child(neon_ring)
-		_disc_mats.append(nmat)
+	# Contact shadow on pavement plane
+	var shadow := MeshInstance3D.new()
+	var scyl := CylinderMesh.new()
+	scyl.top_radius = 0.95
+	scyl.bottom_radius = 0.95
+	scyl.height = 0.01
+	scyl.radial_segments = 32
+	shadow.mesh = scyl
+	shadow.position = Vector3(0.0, 0.205, PEDESTAL_Z)
+	var smat := StandardMaterial3D.new()
+	smat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	smat.albedo_color = Color(0.01, 0.01, 0.02, 0.6)
+	shadow.material_override = smat
+	ped_root.add_child(shadow)
 
-		# Inner subtle glow disc on top platform surface
-		var inner_glow := MeshInstance3D.new()
-		var inner_cm := CylinderMesh.new()
-		inner_cm.top_radius = 0.52
-		inner_cm.bottom_radius = 0.52
-		inner_cm.height = 0.005
-		inner_cm.radial_segments = 36
-		inner_glow.mesh = inner_cm
-		inner_glow.position = Vector3(x, 0.443, PEDESTAL_Z)
-		var inner_mat := StandardMaterial3D.new()
-		inner_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		inner_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		inner_mat.albedo_color = Color(col.r, col.g, col.b, 0.32)
-		inner_glow.material_override = inner_mat
-		ped_root.add_child(inner_glow)
-		_inner_mats.append(inner_mat)
+	# Recessed OmniLight casting colored glow upward onto survivor + floor
+	var light := OmniLight3D.new()
+	light.position = Vector3(0.0, 0.44 + 0.18, PEDESTAL_Z + 0.15)
+	light.light_color = Color.WHITE
+	light.light_energy = 2.8
+	light.omni_range = 4.2
+	ped_root.add_child(light)
+	_pedestal_light = light
 
-		# Contact shadow on pavement plane
-		var shadow := MeshInstance3D.new()
-		var scyl := CylinderMesh.new()
-		scyl.top_radius = 0.86
-		scyl.bottom_radius = 0.86
-		scyl.height = 0.01
-		scyl.radial_segments = 32
-		shadow.mesh = scyl
-		shadow.position = Vector3(x, 0.205, PEDESTAL_Z)
-		var smat := StandardMaterial3D.new()
-		smat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		smat.albedo_color = Color(0.01, 0.01, 0.02, 0.5)
-		shadow.material_override = smat
-		ped_root.add_child(shadow)
-
-		# Recessed OmniLight casting colored glow upward onto survivor + floor
-		var light := OmniLight3D.new()
-		light.position = Vector3(x, 0.44 + 0.15, PEDESTAL_Z + 0.15)
-		light.light_color = col
-		light.light_energy = 2.4
-		light.omni_range = 3.4
-		ped_root.add_child(light)
-		_lights.append(light)
-
-		# 3D selection Area3D collider for direct raycast tap
-		var area := Area3D.new()
-		area.name = "Area3D"
-		var cshape := CollisionShape3D.new()
-		var cyl_col := CylinderShape3D.new()
-		cyl_col.radius = 0.78
-		cyl_col.height = 2.4
-		cshape.shape = cyl_col
-		cshape.position = Vector3(x, 0.44 + 1.1, PEDESTAL_Z)
-		area.add_child(cshape)
-		var idx := i
-		area.input_event.connect(func(_cam: Node, ev: InputEvent, _pos: Vector3, _n: Vector3, _s: int) -> void:
-			if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
-				_select_character(idx, true, true)
-		)
-		ped_root.add_child(area)
-		_survivor_areas.append(area)
+	# 3D selection Area3D collider for direct raycast tap
+	var area := Area3D.new()
+	area.name = "StageArea3D"
+	var cshape := CollisionShape3D.new()
+	var cyl_col := CylinderShape3D.new()
+	cyl_col.radius = 0.88
+	cyl_col.height = 2.6
+	cshape.shape = cyl_col
+	cshape.position = Vector3(0.0, 0.44 + 1.1, PEDESTAL_Z)
+	area.add_child(cshape)
+	area.input_event.connect(func(_cam: Node, ev: InputEvent, _pos: Vector3, _n: Vector3, _s: int) -> void:
+		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+			_cycle_selection(1)
+	)
+	ped_root.add_child(area)
+	_pedestal_area = area
 
 
 func _spawn_survivors(bg: Node3D) -> void:
 	_models.clear()
 	_anim_players.clear()
-	_prop_lights.clear()
 
 	for i in range(_survivors.size()):
 		var s := _survivors[i]
 		var vis := Node3D.new()
 		vis.name = "Survivor_%s" % s.id
-		vis.position = Vector3(s.pedestal_x, MODEL_ORIGIN_Y, PEDESTAL_Z)
+		vis.position = Vector3(0.0, MODEL_ORIGIN_Y, PEDESTAL_Z)
+		vis.visible = false
 		bg.add_child(vis)
 		_models.append(vis)
 
@@ -428,696 +438,156 @@ func _spawn_survivors(bg: Node3D) -> void:
 		var ap := BlockyAnim.apply_body_variant(vis, s.id, saved_skin)
 		_anim_players.append(ap)
 
-		if ap != null and ap.has_animation("idle"):
-			ap.play("idle")
-
-
-func _setup_character_props(vis: Node3D, char_id: String, _x: float, _bg: Node3D) -> void:
-	match char_id:
-		"gamer":
-			# Purple hoodie + RGB headphones + glowing controller
-			var head_node := vis.find_child("head", true, false) as Node3D
-			if head_node != null:
-				var hp := Node3D.new()
-				hp.name = "RGBHeadphones"
-				# Headband arc over top of mini head
-				var arc := MeshInstance3D.new()
-				var tm := TorusMesh.new()
-				tm.inner_radius = 0.24
-				tm.outer_radius = 0.27
-				tm.rings = 24
-				tm.ring_segments = 12
-				arc.mesh = tm
-				arc.rotation_degrees = Vector3(90, 0, 0)
-				arc.position = Vector3(0, 0.26, 0)
-				var arc_mat := StandardMaterial3D.new()
-				arc_mat.albedo_color = Color(0.12, 0.12, 0.15)
-				arc_mat.metallic = 0.8
-				arc.material_override = arc_mat
-				hp.add_child(arc)
-				# Left cup with cyan glowing ring
-				var left_cup := _create_earcup(Color(0.1, 0.9, 1.0))
-				left_cup.position = Vector3(-0.25, 0.18, 0)
-				hp.add_child(left_cup)
-				# Right cup with magenta glowing ring
-				var right_cup := _create_earcup(Color(1.0, 0.1, 0.7))
-				right_cup.position = Vector3(0.25, 0.18, 0)
-				hp.add_child(right_cup)
-
-				# Modeled purple hoodie cowl around neck/head base
-				var cowl := MeshInstance3D.new()
-				var ctor := TorusMesh.new()
-				ctor.inner_radius = 0.20
-				ctor.outer_radius = 0.28
-				ctor.rings = 24
-				ctor.ring_segments = 12
-				cowl.mesh = ctor
-				cowl.position = Vector3(0, 0.04, 0)
-				cowl.rotation_degrees = Vector3(90, 0, 0)
-				var cmat := StandardMaterial3D.new()
-				cmat.albedo_color = Color(0.55, 0.18, 0.85)
-				cmat.roughness = 0.8
-				cowl.material_override = cmat
-				hp.add_child(cowl)
-
-				# Draped hood mesh on back of head
-				var dhood := MeshInstance3D.new()
-				var dbox := BoxMesh.new()
-				dbox.size = Vector3(0.38, 0.32, 0.16)
-				dhood.mesh = dbox
-				dhood.position = Vector3(0, 0.14, -0.16)
-				dhood.material_override = cmat
-				hp.add_child(dhood)
-
-				head_node.add_child(hp)
-
-			# Glowing Game Controller held in right arm
-			var arm_r := vis.find_child("arm-right", true, false) as Node3D
-			if arm_r != null:
-				var ctrl := Node3D.new()
-				ctrl.name = "ControllerProp"
-				var cbody := MeshInstance3D.new()
-				var bmesh := BoxMesh.new()
-				bmesh.size = Vector3(0.24, 0.08, 0.14)
-				cbody.mesh = bmesh
-				var cmat := StandardMaterial3D.new()
-				cmat.albedo_color = Color(0.10, 0.10, 0.12)
-				cmat.roughness = 0.35
-				cbody.material_override = cmat
-				ctrl.add_child(cbody)
-
-				# Left & right grip handles
-				for sx in [-0.10, 0.10]:
-					var grip := MeshInstance3D.new()
-					var gcyl := CylinderMesh.new()
-					gcyl.top_radius = 0.035
-					gcyl.bottom_radius = 0.04
-					gcyl.height = 0.12
-					grip.mesh = gcyl
-					grip.position = Vector3(sx, -0.06, 0.02)
-					grip.rotation_degrees = Vector3(-20, 0, 15 if sx < 0 else -15)
-					grip.material_override = cmat
-					ctrl.add_child(grip)
-
-				# LED glowing strip on top edge
-				var led := MeshInstance3D.new()
-				var lmesh := BoxMesh.new()
-				lmesh.size = Vector3(0.16, 0.015, 0.03)
-				led.mesh = lmesh
-				led.position = Vector3(0, 0.042, -0.055)
-				var lmat := StandardMaterial3D.new()
-				lmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-				lmat.albedo_color = Color(1.0, 0.1, 0.8) * 3.5
-				led.material_override = lmat
-				ctrl.add_child(led)
-
-				# Glowing cyan and magenta thumbsticks
-				for side in [-1.0, 1.0]:
-					var stick := MeshInstance3D.new()
-					var scyl := CylinderMesh.new()
-					scyl.top_radius = 0.022
-					scyl.bottom_radius = 0.018
-					scyl.height = 0.025
-					stick.mesh = scyl
-					stick.position = Vector3(side * 0.06, 0.045, 0.01)
-					var smat := StandardMaterial3D.new()
-					smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-					smat.albedo_color = (Color(0.1, 0.9, 1.0) if side < 0 else Color(1.0, 0.15, 0.8)) * 3.0
-					stick.material_override = smat
-					ctrl.add_child(stick)
-
-				# Controller Point Light
-				var clight := OmniLight3D.new()
-				clight.name = "PropOmniLight_gamer"
-				clight.light_color = Color(1.0, 0.15, 0.8)
-				clight.light_energy = 2.2
-				clight.omni_range = 1.8
-				ctrl.add_child(clight)
-				_prop_lights.append(clight)
-
-				ctrl.position = Vector3(0.04, -0.28, 0.16)
-				ctrl.rotation_degrees = Vector3(45, -10, 0)
-				arm_r.add_child(ctrl)
-
-		"doctor":
-			# White lab coat over blue scrubs + modeled stethoscope
-			var torso := vis.find_child("torso", true, false) as Node3D
-			if torso != null:
-				var coat := Node3D.new()
-				coat.name = "LabCoat"
-				var coat_mat := StandardMaterial3D.new()
-				coat_mat.albedo_color = Color(0.96, 0.97, 1.0)
-				coat_mat.roughness = 0.45
-
-				# Left lapel
-				var lapel_l := MeshInstance3D.new()
-				var ll_box := BoxMesh.new()
-				ll_box.size = Vector3(0.14, 0.36, 0.08)
-				lapel_l.mesh = ll_box
-				lapel_l.position = Vector3(-0.16, 0.02, 0.14)
-				lapel_l.material_override = coat_mat
-				coat.add_child(lapel_l)
-
-				# Right lapel
-				var lapel_r := MeshInstance3D.new()
-				var lr_box := BoxMesh.new()
-				lr_box.size = Vector3(0.14, 0.36, 0.08)
-				lapel_r.mesh = lr_box
-				lapel_r.position = Vector3(0.16, 0.02, 0.14)
-				lapel_r.material_override = coat_mat
-				coat.add_child(lapel_r)
-
-				# Back of coat
-				var coat_back := MeshInstance3D.new()
-				var cb_box := BoxMesh.new()
-				cb_box.size = Vector3(0.48, 0.40, 0.08)
-				coat_back.mesh = cb_box
-				coat_back.position = Vector3(0, 0.0, -0.14)
-				coat_back.material_override = coat_mat
-				coat.add_child(coat_back)
-
-				# Lower coat skirt flaps
-				var skirt := MeshInstance3D.new()
-				var s_box := BoxMesh.new()
-				s_box.size = Vector3(0.50, 0.22, 0.36)
-				skirt.mesh = s_box
-				skirt.position = Vector3(0, -0.24, 0)
-				skirt.material_override = coat_mat
-				coat.add_child(skirt)
-
-				# Stethoscope
-				var steth := Node3D.new()
-				steth.name = "Stethoscope"
-				var disc := MeshInstance3D.new()
-				var cm := CylinderMesh.new()
-				cm.top_radius = 0.055
-				cm.bottom_radius = 0.055
-				cm.height = 0.02
-				cm.radial_segments = 20
-				disc.mesh = cm
-				disc.rotation_degrees = Vector3(85, 0, 0)
-				disc.position = Vector3(0.04, 0.06, 0.20)
-				var dmat := StandardMaterial3D.new()
-				dmat.albedo_color = Color(0.92, 0.94, 0.98)
-				dmat.metallic = 0.95
-				dmat.roughness = 0.15
-				disc.material_override = dmat
-				steth.add_child(disc)
-
-				# Tubing around neck
-				var tube := MeshInstance3D.new()
-				var tor := TorusMesh.new()
-				tor.inner_radius = 0.11
-				tor.outer_radius = 0.14
-				tube.mesh = tor
-				tube.position = Vector3(0, 0.17, 0.04)
-				var tmat := StandardMaterial3D.new()
-				tmat.albedo_color = Color(0.18, 0.22, 0.28)
-				tmat.roughness = 0.5
-				tube.material_override = tmat
-				steth.add_child(tube)
-
-				coat.add_child(steth)
-				torso.add_child(coat)
-
-			# Doctor glasses accessory
-			var head_d := vis.find_child("head", true, false) as Node3D
-			if head_d != null and ResourceLoader.exists("res://assets/models/cc0/minis/aid-glasses.glb"):
-				var gl_ps := load("res://assets/models/cc0/minis/aid-glasses.glb") as PackedScene
-				if gl_ps != null:
-					var gl := gl_ps.instantiate() as Node3D
-					gl.scale = Vector3(1.2, 1.2, 1.2)
-					gl.position = Vector3(0, 0.14, 0.19)
-					head_d.add_child(gl)
-
-		"nurse":
-			# Teal scrubs + face mask + scrub cap + glowing pink syringe
-			var head_n := vis.find_child("head", true, false) as Node3D
-			if head_n != null:
-				# Surgical face mask
-				if ResourceLoader.exists("res://assets/models/cc0/minis/aid-mask.glb"):
-					var mask_ps := load("res://assets/models/cc0/minis/aid-mask.glb") as PackedScene
-					if mask_ps != null:
-						var mask := mask_ps.instantiate() as Node3D
-						mask.scale = Vector3(1.2, 1.2, 1.2)
-						mask.position = Vector3(0, 0.08, 0.19)
-						head_n.add_child(mask)
-
-				# Modeled scrub cap in mint teal
-				var cap := MeshInstance3D.new()
-				var ccyl := CylinderMesh.new()
-				ccyl.top_radius = 0.26
-				ccyl.bottom_radius = 0.28
-				ccyl.height = 0.22
-				cap.mesh = ccyl
-				cap.position = Vector3(0, 0.30, 0.0)
-				var cap_mat := StandardMaterial3D.new()
-				cap_mat.albedo_color = Color(0.15, 0.78, 0.68)
-				cap_mat.roughness = 0.7
-				cap.material_override = cap_mat
-				head_n.add_child(cap)
-
-				# Scrub cap rim/brim
-				var brim := MeshInstance3D.new()
-				var btor := TorusMesh.new()
-				btor.inner_radius = 0.26
-				btor.outer_radius = 0.29
-				brim.mesh = btor
-				brim.position = Vector3(0, 0.20, 0.0)
-				brim.rotation_degrees = Vector3(90, 0, 0)
-				var brim_mat := StandardMaterial3D.new()
-				brim_mat.albedo_color = Color(0.12, 0.68, 0.60)
-				brim_mat.roughness = 0.75
-				brim.material_override = brim_mat
-				head_n.add_child(brim)
-
-			# Glowing pink syringe in right hand
-			var arm_nr := vis.find_child("arm-right", true, false) as Node3D
-			if arm_nr != null:
-				var syr := Node3D.new()
-				syr.name = "GlowingSyringe"
-				# Clear glass/plastic barrel
-				var barrel := MeshInstance3D.new()
-				var bcyl := CylinderMesh.new()
-				bcyl.top_radius = 0.05
-				bcyl.bottom_radius = 0.05
-				bcyl.height = 0.30
-				barrel.mesh = bcyl
-				var bmat := StandardMaterial3D.new()
-				bmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-				bmat.albedo_color = Color(0.85, 0.95, 1.0, 0.5)
-				barrel.material_override = bmat
-				syr.add_child(barrel)
-
-				# Glowing pink medicine core
-				var core := MeshInstance3D.new()
-				var ccyl := CylinderMesh.new()
-				ccyl.top_radius = 0.04
-				ccyl.bottom_radius = 0.04
-				ccyl.height = 0.22
-				core.mesh = ccyl
-				core.position = Vector3(0, -0.02, 0)
-				var cormat := StandardMaterial3D.new()
-				cormat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-				cormat.albedo_color = Color(1.0, 0.12, 0.72) * 4.0
-				core.material_override = cormat
-				syr.add_child(core)
-
-				# Plunger & top finger flange
-				var flange := MeshInstance3D.new()
-				var fcyl := CylinderMesh.new()
-				fcyl.top_radius = 0.065
-				fcyl.bottom_radius = 0.065
-				fcyl.height = 0.02
-				flange.mesh = fcyl
-				flange.position = Vector3(0, 0.15, 0)
-				var fmat := StandardMaterial3D.new()
-				fmat.albedo_color = Color(0.9, 0.9, 0.95)
-				fmat.metallic = 0.8
-				flange.material_override = fmat
-				syr.add_child(flange)
-
-				# Chrome needle
-				var needle := MeshInstance3D.new()
-				var ncyl := CylinderMesh.new()
-				ncyl.top_radius = 0.006
-				ncyl.bottom_radius = 0.003
-				ncyl.height = 0.16
-				needle.mesh = ncyl
-				needle.position = Vector3(0, -0.23, 0)
-				var nmat := StandardMaterial3D.new()
-				nmat.albedo_color = Color(0.95, 0.95, 0.98)
-				nmat.metallic = 0.95
-				needle.material_override = nmat
-				syr.add_child(needle)
-
-				# Syringe Point Light
-				var slight := OmniLight3D.new()
-				slight.name = "PropOmniLight_nurse"
-				slight.light_color = Color(1.0, 0.15, 0.72)
-				slight.light_energy = 2.6
-				slight.omni_range = 1.8
-				syr.add_child(slight)
-				_prop_lights.append(slight)
-
-				syr.position = Vector3(0.04, -0.28, 0.18)
-				syr.rotation_degrees = Vector3(-55, 10, 10)
-				arm_nr.add_child(syr)
-
-		"streamer":
-			# Black hoodie hood-up + beard + phone on glowing magenta ring light
-			var head_s := vis.find_child("head", true, false) as Node3D
-			if head_s != null:
-				var hood := Node3D.new()
-				hood.name = "HoodUp"
-				var hmat := StandardMaterial3D.new()
-				hmat.albedo_color = Color(0.08, 0.08, 0.09)
-				hmat.roughness = 0.85
-
-				# Back of hood
-				var h_back := MeshInstance3D.new()
-				var hb_box := BoxMesh.new()
-				hb_box.size = Vector3(0.52, 0.52, 0.16)
-				h_back.mesh = hb_box
-				h_back.position = Vector3(0, 0.24, -0.16)
-				h_back.material_override = hmat
-				hood.add_child(h_back)
-
-				# Top of hood
-				var h_top := MeshInstance3D.new()
-				var ht_box := BoxMesh.new()
-				ht_box.size = Vector3(0.52, 0.14, 0.44)
-				h_top.mesh = ht_box
-				h_top.position = Vector3(0, 0.46, 0.02)
-				h_top.material_override = hmat
-				hood.add_child(h_top)
-
-				# Left side flap
-				var h_left := MeshInstance3D.new()
-				var hl_box := BoxMesh.new()
-				hl_box.size = Vector3(0.12, 0.46, 0.42)
-				h_left.mesh = hl_box
-				h_left.position = Vector3(-0.25, 0.24, 0.02)
-				h_left.material_override = hmat
-				hood.add_child(h_left)
-
-				# Right side flap
-				var h_right := MeshInstance3D.new()
-				var hr_box := BoxMesh.new()
-				hr_box.size = Vector3(0.12, 0.46, 0.42)
-				h_right.mesh = hr_box
-				h_right.position = Vector3(0.25, 0.24, 0.02)
-				h_right.material_override = hmat
-				hood.add_child(h_right)
-
-				# Hood collar around neck
-				var collar := MeshInstance3D.new()
-				var ctor := TorusMesh.new()
-				ctor.inner_radius = 0.22
-				ctor.outer_radius = 0.28
-				collar.mesh = ctor
-				collar.position = Vector3(0, 0.02, 0.0)
-				collar.rotation_degrees = Vector3(90, 0, 0)
-				collar.material_override = hmat
-				hood.add_child(collar)
-
-				head_s.add_child(hood)
-
-			# Handheld vlogging stick with phone on glowing magenta ring light
-			var arm_sr := vis.find_child("arm-right", true, false) as Node3D
-			if arm_sr != null:
-				var ring_prop := Node3D.new()
-				ring_prop.name = "StreamerRingLightProp"
-
-				# Handle stick
-				var stick := MeshInstance3D.new()
-				var smesh := CylinderMesh.new()
-				smesh.top_radius = 0.02
-				smesh.bottom_radius = 0.02
-				smesh.height = 0.35
-				stick.mesh = smesh
-				stick.position = Vector3(0, 0.05, 0)
-				var smat := StandardMaterial3D.new()
-				smat.albedo_color = Color(0.15, 0.15, 0.18)
-				smat.roughness = 0.5
-				stick.material_override = smat
-				ring_prop.add_child(stick)
-
-				# Ring light torus
-				var ring := MeshInstance3D.new()
-				var torus := TorusMesh.new()
-				torus.inner_radius = 0.15
-				torus.outer_radius = 0.21
-				torus.rings = 36
-				torus.ring_segments = 16
-				ring.mesh = torus
-				ring.position = Vector3(0.0, 0.26, 0.02)
-				ring.rotation_degrees = Vector3(85.0, 0.0, 0.0)
-				var ring_mat := StandardMaterial3D.new()
-				ring_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-				ring_mat.albedo_color = Color(1.0, 0.12, 0.95) * 4.5
-				ring.material_override = ring_mat
-				ring_prop.add_child(ring)
-
-				# Smartphone mounted inside ring light
-				var phone := MeshInstance3D.new()
-				var pbox := BoxMesh.new()
-				pbox.size = Vector3(0.10, 0.18, 0.015)
-				phone.mesh = pbox
-				phone.position = Vector3(0.0, 0.26, 0.02)
-				var phonemat := StandardMaterial3D.new()
-				phonemat.albedo_color = Color(0.06, 0.06, 0.08)
-				phonemat.roughness = 0.2
-				phone.material_override = phonemat
-				ring_prop.add_child(phone)
-
-				# Phone screen glowing display
-				var screen := MeshInstance3D.new()
-				var sbox := BoxMesh.new()
-				sbox.size = Vector3(0.085, 0.16, 0.005)
-				screen.mesh = sbox
-				screen.position = Vector3(0.0, 0.26, 0.01)
-				var screenmat := StandardMaterial3D.new()
-				screenmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-				screenmat.albedo_color = Color(0.9, 0.95, 1.0) * 2.0
-				screen.material_override = screenmat
-				ring_prop.add_child(screen)
-
-				# Ring Light OmniLight casting magenta glow onto streamer
-				var rlight := OmniLight3D.new()
-				rlight.name = "PropOmniLight_streamer"
-				rlight.position = Vector3(0.0, 0.26, 0.08)
-				rlight.light_color = Color(1.0, 0.15, 0.95)
-				rlight.light_energy = 2.8
-				rlight.omni_range = 2.0
-				ring_prop.add_child(rlight)
-				_prop_lights.append(rlight)
-
-				ring_prop.position = Vector3(0.06, -0.28, 0.20)
-				ring_prop.rotation_degrees = Vector3(25, -20, 15)
-				arm_sr.add_child(ring_prop)
-
-		"hunter":
-			# Quilted brown vest + green shirt + knee pads + boots + wooden bat
-			var torso_h := vis.find_child("torso", true, false) as Node3D
-			if torso_h != null:
-				var vest := Node3D.new()
-				vest.name = "QuiltedVest"
-				var vmat := StandardMaterial3D.new()
-				vmat.albedo_color = Color(0.42, 0.26, 0.14)
-				vmat.roughness = 0.65
-
-				# Left vest panel
-				var vl := MeshInstance3D.new()
-				var vl_box := BoxMesh.new()
-				vl_box.size = Vector3(0.20, 0.38, 0.06)
-				vl.mesh = vl_box
-				vl.position = Vector3(-0.13, 0.0, 0.16)
-				vl.material_override = vmat
-				vest.add_child(vl)
-
-				# Right vest panel
-				var vr := MeshInstance3D.new()
-				var vr_box := BoxMesh.new()
-				vr_box.size = Vector3(0.20, 0.38, 0.06)
-				vr.mesh = vr_box
-				vr.position = Vector3(0.13, 0.0, 0.16)
-				vr.material_override = vmat
-				vest.add_child(vr)
-
-				# Back vest panel
-				var vb := MeshInstance3D.new()
-				var vb_box := BoxMesh.new()
-				vb_box.size = Vector3(0.48, 0.38, 0.06)
-				vb.mesh = vb_box
-				vb.position = Vector3(0, 0.0, -0.15)
-				vb.material_override = vmat
-				vest.add_child(vb)
-
-				# Waist belt
-				var belt := MeshInstance3D.new()
-				var b_box := BoxMesh.new()
-				b_box.size = Vector3(0.50, 0.08, 0.36)
-				belt.mesh = b_box
-				belt.position = Vector3(0, -0.18, 0)
-				var bmat := StandardMaterial3D.new()
-				bmat.albedo_color = Color(0.22, 0.14, 0.08)
-				bmat.roughness = 0.5
-				belt.material_override = bmat
-				vest.add_child(belt)
-
-				torso_h.add_child(vest)
-
-			# Knee pads and boots on legs
-			var leg_l := vis.find_child("leg-left", true, false) as Node3D
-			if leg_l != null:
-				var kpad_l := _create_kneepad()
-				kpad_l.position = Vector3(0, -0.16, 0.08)
-				leg_l.add_child(kpad_l)
-				var boot_l := _create_boot()
-				boot_l.position = Vector3(0, -0.34, 0.02)
-				leg_l.add_child(boot_l)
-
-			var leg_r := vis.find_child("leg-right", true, false) as Node3D
-			if leg_r != null:
-				var kpad_r := _create_kneepad()
-				kpad_r.position = Vector3(0, -0.16, 0.08)
-				leg_r.add_child(kpad_r)
-				var boot_r := _create_boot()
-				boot_r.position = Vector3(0, -0.34, 0.02)
-				leg_r.add_child(boot_r)
-
-			# Wooden baseball bat held in right hand and resting over shoulder
-			var arm_hr := vis.find_child("arm-right", true, false) as Node3D
-			if arm_hr != null:
-				var bat := Node3D.new()
-				bat.name = "WoodenBatProp"
-
-				# Bat barrel
-				var bmesh_inst := MeshInstance3D.new()
-				var bmesh := CylinderMesh.new()
-				bmesh.top_radius = 0.06
-				bmesh.bottom_radius = 0.025
-				bmesh.height = 0.75
-				bmesh.radial_segments = 16
-				bmesh_inst.mesh = bmesh
-				var bat_mat := StandardMaterial3D.new()
-				bat_mat.albedo_color = Color(0.74, 0.56, 0.36)
-				bat_mat.roughness = 0.6
-				bat_mat.metallic = 0.05
-				bmesh_inst.material_override = bat_mat
-				bat.add_child(bmesh_inst)
-
-				# Grip tape
-				var grip := MeshInstance3D.new()
-				var gmesh := CylinderMesh.new()
-				gmesh.top_radius = 0.026
-				gmesh.bottom_radius = 0.026
-				gmesh.height = 0.22
-				grip.mesh = gmesh
-				grip.position = Vector3(0, -0.24, 0)
-				var gmat := StandardMaterial3D.new()
-				gmat.albedo_color = Color(0.92, 0.90, 0.86)
-				gmat.roughness = 0.8
-				grip.material_override = gmat
-				bat.add_child(grip)
-
-				bat.position = Vector3(0.06, -0.22, 0.10)
-				bat.rotation_degrees = Vector3(-50, 15, 30)
-				arm_hr.add_child(bat)
-
-
-func _create_earcup(glow_col: Color) -> Node3D:
-	var cup_root := Node3D.new()
-	var cup := MeshInstance3D.new()
-	var cm := CylinderMesh.new()
-	cm.top_radius = 0.08
-	cm.bottom_radius = 0.08
-	cm.height = 0.05
-	cm.radial_segments = 16
-	cup.mesh = cm
-	cup.rotation_degrees = Vector3(0, 0, 90)
-	var cup_mat := StandardMaterial3D.new()
-	cup_mat.albedo_color = Color(0.12, 0.12, 0.15)
-	cup.material_override = cup_mat
-	cup_root.add_child(cup)
-
-	var ring := MeshInstance3D.new()
-	var rtor := TorusMesh.new()
-	rtor.inner_radius = 0.065
-	rtor.outer_radius = 0.082
-	ring.mesh = rtor
-	ring.rotation_degrees = Vector3(0, 0, 90)
-	ring.position = Vector3(0.026, 0, 0)
-	var rmat := StandardMaterial3D.new()
-	rmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	rmat.albedo_color = glow_col * 3.5
-	ring.material_override = rmat
-	cup_root.add_child(ring)
-	return cup_root
-
-
-func _create_kneepad() -> MeshInstance3D:
-	var kp := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3(0.14, 0.12, 0.06)
-	kp.mesh = box
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.15, 0.14, 0.13)
-	mat.roughness = 0.65
-	kp.material_override = mat
-	return kp
-
-
-func _create_boot() -> MeshInstance3D:
-	var boot := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3(0.18, 0.14, 0.20)
-	boot.mesh = box
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.22, 0.14, 0.08)
-	mat.roughness = 0.7
-	boot.material_override = mat
-	return boot
-
 
 # ── UI SETUP ───────────────────────────────────────────────────
 
 func _build_ui() -> void:
+	_build_side_nav_arrows()
+
 	var bar: MarginContainer = $UI/BottomBar
-	bar.offset_top = -162.0
+	bar.offset_top = -180.0
+	bar.offset_bottom = -16.0
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 8)
 	bar.add_child(vbox)
 
-	_build_name_buttons(vbox)
+	_build_survivor_header(vbox)
 	_build_action_row(vbox)
-	_build_tap_zones()
+	_build_stage_tap_zone()
 
 
-func _card_style(accent: Color, active: bool) -> StyleBoxFlat:
+func _build_side_nav_arrows() -> void:
+	var ui: Control = $UI
+
+	# Left on-screen arrow button
+	var left_btn := Button.new()
+	left_btn.text = "◀"
+	left_btn.custom_minimum_size = Vector2(62, 70)
+	left_btn.anchor_left = 0.0
+	left_btn.anchor_top = 0.48
+	left_btn.anchor_right = 0.0
+	left_btn.anchor_bottom = 0.48
+	left_btn.offset_left = 36.0
+	left_btn.offset_top = -35.0
+	left_btn.offset_right = 98.0
+	left_btn.offset_bottom = 35.0
+	left_btn.focus_mode = Control.FOCUS_NONE
+	_style_nav_arrow(left_btn)
+	left_btn.pressed.connect(func() -> void: _cycle_selection(-1))
+	ui.add_child(left_btn)
+	_char_prev_btn = left_btn
+
+	# Right on-screen arrow button
+	var right_btn := Button.new()
+	right_btn.text = "▶"
+	right_btn.custom_minimum_size = Vector2(62, 70)
+	right_btn.anchor_left = 1.0
+	right_btn.anchor_top = 0.48
+	right_btn.anchor_right = 1.0
+	right_btn.anchor_bottom = 0.48
+	right_btn.offset_left = -98.0
+	right_btn.offset_top = -35.0
+	right_btn.offset_right = -36.0
+	right_btn.offset_bottom = 35.0
+	right_btn.focus_mode = Control.FOCUS_NONE
+	_style_nav_arrow(right_btn)
+	right_btn.pressed.connect(func() -> void: _cycle_selection(1))
+	ui.add_child(right_btn)
+	_char_next_btn = right_btn
+
+
+func _style_nav_arrow(b: Button) -> void:
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.06, 0.07, 0.10, 0.72 if active else 0.5)
-	sb.set_corner_radius_all(14)
-	sb.set_content_margin_all(10)
-	if active:
-		sb.border_color = accent
-		sb.set_border_width_all(3)
-	else:
-		sb.border_color = Color(1, 1, 1, 0.10)
-		sb.set_border_width_all(2)
-	return sb
+	sb.bg_color = Color(0.08, 0.10, 0.14, 0.72)
+	sb.set_corner_radius_all(18)
+	sb.border_color = Color(1, 1, 1, 0.25)
+	sb.set_border_width_all(2)
+	b.add_theme_stylebox_override("normal", sb)
 
-
-func _build_name_buttons(vbox: VBoxContainer) -> void:
-	var cols := HBoxContainer.new()
-	cols.add_theme_constant_override("separation", 10)
-	vbox.add_child(cols)
-
-	for i in range(_survivors.size()):
-		var b := Button.new()
-		b.text = _survivors[i].display_name
-		b.custom_minimum_size = Vector2(0, 54)
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.focus_mode = Control.FOCUS_NONE
-		_style_card(b, _survivors[i].color, false)
-		var idx := i
-		b.pressed.connect(func() -> void: _select_character(idx, true, true))
-		cols.add_child(b)
-		_col_buttons.append(b)
-
-
-func _style_card(b: Button, accent: Color, active: bool) -> void:
-	b.add_theme_stylebox_override("normal", _card_style(accent, active))
-	b.add_theme_stylebox_override("hover", _card_style(accent, true))
-	b.add_theme_stylebox_override("pressed", _card_style(accent, true))
-	b.add_theme_stylebox_override("focus", _card_style(accent, active))
-	b.add_theme_font_size_override("font_size", _fs(26))
-	b.add_theme_color_override("font_color", Color(0.96, 0.97, 0.99))
-	b.add_theme_color_override("font_hover_color", Color(1, 1, 1))
-	b.add_theme_color_override("font_pressed_color", Color(0.9, 0.92, 0.96))
+	var hover := sb.duplicate() as StyleBoxFlat
+	hover.bg_color = Color(0.16, 0.20, 0.28, 0.90)
+	hover.border_color = Color(1, 1, 1, 0.85)
+	b.add_theme_stylebox_override("hover", hover)
+	b.add_theme_stylebox_override("pressed", hover)
+	b.add_theme_stylebox_override("focus", sb)
+	b.add_theme_font_size_override("font_size", _fs(30))
+	b.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
 	if _btn_font_bold != null:
 		b.add_theme_font_override("font", _btn_font_bold)
+
+
+func _build_survivor_header(vbox: VBoxContainer) -> void:
+	var panel := PanelContainer.new()
+	var psb := StyleBoxFlat.new()
+	psb.bg_color = Color(0.06, 0.07, 0.10, 0.75)
+	psb.set_corner_radius_all(16)
+	psb.border_color = Color(1, 1, 1, 0.14)
+	psb.set_border_width_all(2)
+	psb.set_content_margin_all(8)
+	panel.add_theme_stylebox_override("panel", psb)
+	vbox.add_child(panel)
+
+	var htop := HBoxContainer.new()
+	htop.alignment = BoxContainer.ALIGNMENT_CENTER
+	htop.add_theme_constant_override("separation", 16)
+	panel.add_child(htop)
+
+	# Left switcher button
+	var prev := Button.new()
+	prev.text = "◀"
+	prev.custom_minimum_size = Vector2(40, 36)
+	prev.focus_mode = Control.FOCUS_NONE
+	_style_skin_arrow(prev)
+	prev.pressed.connect(func() -> void: _cycle_selection(-1))
+	htop.add_child(prev)
+
+	# Middle column: Name, Description, Indicator Pips
+	var mid := VBoxContainer.new()
+	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mid.alignment = BoxContainer.ALIGNMENT_CENTER
+	mid.add_theme_constant_override("separation", 2)
+	htop.add_child(mid)
+
+	_name_label = Label.new()
+	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_name_label.add_theme_font_size_override("font_size", _fs(30))
+	_name_label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.03, 0.95))
+	_name_label.add_theme_constant_override("outline_size", _fs(8))
+	if _btn_font_bold != null:
+		_name_label.add_theme_font_override("font", _btn_font_bold)
+	mid.add_child(_name_label)
+
+	_desc_label = Label.new()
+	_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_desc_label.add_theme_font_size_override("font_size", _fs(14))
+	_desc_label.add_theme_color_override("font_color", Color(0.78, 0.84, 0.92, 0.9))
+	if _btn_font != null:
+		_desc_label.add_theme_font_override("font", _btn_font)
+	mid.add_child(_desc_label)
+
+	# Indicator pips row
+	_pips_container = HBoxContainer.new()
+	_pips_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	_pips_container.add_theme_constant_override("separation", 10)
+	mid.add_child(_pips_container)
+
+	_pip_labels.clear()
+	for i in range(_survivors.size()):
+		var pip := Label.new()
+		pip.text = "○"
+		pip.add_theme_font_size_override("font_size", _fs(16))
+		pip.add_theme_color_override("font_color", Color(1, 1, 1, 0.35))
+		_pips_container.add_child(pip)
+		_pip_labels.append(pip)
+
+	# Right switcher button
+	var next := Button.new()
+	next.text = "▶"
+	next.custom_minimum_size = Vector2(40, 36)
+	next.focus_mode = Control.FOCUS_NONE
+	_style_skin_arrow(next)
+	next.pressed.connect(func() -> void: _cycle_selection(1))
+	htop.add_child(next)
 
 
 func _build_action_row(vbox: VBoxContainer) -> void:
@@ -1129,50 +599,40 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 	# BACK
 	var back := Button.new()
 	back.text = "BACK"
-	back.custom_minimum_size = Vector2(120, 50)
+	back.custom_minimum_size = Vector2(130, 52)
 	back.focus_mode = Control.FOCUS_NONE
 	var back_sb := StyleBoxFlat.new()
-	back_sb.bg_color = Color(0.1, 0.11, 0.14, 0.55)
-	back_sb.set_corner_radius_all(25)
-	back_sb.border_color = Color(1, 1, 1, 0.18)
+	back_sb.bg_color = Color(0.1, 0.11, 0.14, 0.65)
+	back_sb.set_corner_radius_all(26)
+	back_sb.border_color = Color(1, 1, 1, 0.22)
 	back_sb.set_border_width_all(2)
 	back.add_theme_stylebox_override("normal", back_sb)
 	var back_hover := back_sb.duplicate() as StyleBoxFlat
-	back_hover.bg_color = Color(0.16, 0.17, 0.21, 0.7)
+	back_hover.bg_color = Color(0.18, 0.20, 0.26, 0.85)
 	back.add_theme_stylebox_override("hover", back_hover)
 	back.add_theme_stylebox_override("pressed", back_hover)
-	back.add_theme_color_override("font_color", Color(0.8, 0.82, 0.86))
+	back.add_theme_color_override("font_color", Color(0.85, 0.88, 0.92))
 	back.add_theme_font_size_override("font_size", _fs(22))
 	if _btn_font_bold != null:
 		back.add_theme_font_override("font", _btn_font_bold)
 	back.pressed.connect(_on_back_pressed)
 	actions.add_child(back)
 
-	# Selected character name
-	var mid := VBoxContainer.new()
-	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	mid.alignment = BoxContainer.ALIGNMENT_CENTER
-	actions.add_child(mid)
-
-	_name_label = Label.new()
-	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_label.add_theme_font_size_override("font_size", _fs(34))
-	_name_label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.03, 0.95))
-	_name_label.add_theme_constant_override("outline_size", _fs(8))
-	if _btn_font_bold != null:
-		_name_label.add_theme_font_override("font", _btn_font_bold)
-	mid.add_child(_name_label)
-
-	_build_skin_selector(mid)
+	# Center: Skin selector
+	var skin_mid := VBoxContainer.new()
+	skin_mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	skin_mid.alignment = BoxContainer.ALIGNMENT_CENTER
+	actions.add_child(skin_mid)
+	_build_skin_selector(skin_mid)
 
 	# PLAY
 	var play := Button.new()
 	play.text = "PLAY"
-	play.custom_minimum_size = Vector2(240, 62)
+	play.custom_minimum_size = Vector2(240, 56)
 	play.focus_mode = Control.FOCUS_NONE
 	var cta := StyleBoxFlat.new()
 	cta.bg_color = Color(0.85, 0.12, 0.16)
-	cta.set_corner_radius_all(31)
+	cta.set_corner_radius_all(28)
 	cta.border_color = Color(1.0, 0.6, 0.6, 0.6)
 	cta.set_border_width_all(2)
 	play.add_theme_stylebox_override("normal", cta)
@@ -1186,7 +646,7 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 	play.add_theme_color_override("font_hover_color", Color(0.05, 0.1, 0.05))
 	play.add_theme_color_override("font_outline_color", Color(0.1, 0.01, 0.01, 0.6))
 	play.add_theme_constant_override("outline_size", 4)
-	play.add_theme_font_size_override("font_size", _fs(32))
+	play.add_theme_font_size_override("font_size", _fs(30))
 	if _btn_font_bold != null:
 		play.add_theme_font_override("font", _btn_font_bold)
 	play.pressed.connect(_on_play_pressed)
@@ -1355,61 +815,28 @@ func _play_skin_audio(variant_index: int) -> void:
 	_chime_player.play()
 
 
-func _build_tap_zones() -> void:
+func _build_stage_tap_zone() -> void:
 	var zones: Control = $UI/StageZones
-	for i in range(_survivors.size()):
-		var z := Button.new()
-		z.flat = true
-		z.focus_mode = Control.FOCUS_NONE
-		var empty := StyleBoxEmpty.new()
-		z.add_theme_stylebox_override("normal", empty)
-		z.add_theme_stylebox_override("hover", empty)
-		z.add_theme_stylebox_override("pressed", empty)
-		z.add_theme_stylebox_override("focus", empty)
-		var idx := i
-		z.pressed.connect(func() -> void: _select_character(idx, true, true))
-		zones.add_child(z)
-		_zone_buttons.append(z)
+	var z := Button.new()
+	z.flat = true
+	z.focus_mode = Control.FOCUS_NONE
+	z.anchor_left = 0.20
+	z.anchor_right = 0.80
+	z.anchor_top = 0.15
+	z.anchor_bottom = 0.78
+	var empty := StyleBoxEmpty.new()
+	z.add_theme_stylebox_override("normal", empty)
+	z.add_theme_stylebox_override("hover", empty)
+	z.add_theme_stylebox_override("pressed", empty)
+	z.add_theme_stylebox_override("focus", empty)
+	z.pressed.connect(func() -> void: _cycle_selection(1))
+	zones.add_child(z)
+	_stage_tap_btn = z
 
 
 func _update_tap_zones() -> void:
-	var cam: Camera3D = get_viewport().get_camera_3d()
-	if cam == null:
-		cam = get_node_or_null("Background3D/Camera") as Camera3D
-	if cam == null:
-		return
-
-	var vp_size := get_viewport_rect().size
-	if vp_size.x <= 0 or vp_size.y <= 0:
-		return
-
-	for i in range(_zone_buttons.size()):
-		if i >= _survivors.size():
-			break
-		var z := _zone_buttons[i]
-		var x: float = _survivors[i].pedestal_x
-		var feet_pos := Vector3(x, MODEL_ORIGIN_Y, PEDESTAL_Z)
-		var head_pos := Vector3(x, MODEL_ORIGIN_Y + SURVIVOR_HEIGHT, PEDESTAL_Z)
-
-		var screen_feet := cam.unproject_position(feet_pos)
-		var screen_head := cam.unproject_position(head_pos)
-
-		var char_h := absf(screen_feet.y - screen_head.y)
-		var half_w := maxf(char_h * 0.35, 44.0)
-
-		var min_x := screen_feet.x - half_w
-		var max_x := screen_feet.x + half_w
-		var min_y := screen_head.y - char_h * 0.1
-		var max_y := screen_feet.y + char_h * 0.1
-
-		z.anchor_left = clampf(min_x / vp_size.x, 0.0, 1.0)
-		z.anchor_right = clampf(max_x / vp_size.x, 0.0, 1.0)
-		z.anchor_top = clampf(min_y / vp_size.y, 0.0, 1.0)
-		z.anchor_bottom = clampf(max_y / vp_size.y, 0.0, 1.0)
-		z.offset_left = 0
-		z.offset_right = 0
-		z.offset_top = 0
-		z.offset_bottom = 0
+	# Center stage tap zone remains anchored relative to viewport
+	pass
 
 
 func _play_active_idle(char_idx: int) -> void:
@@ -1456,63 +883,57 @@ func _play_active_idle(char_idx: int) -> void:
 # ── SELECTION & FEEDBACK ───────────────────────────────────────
 
 func _select_character(index: int, play_sound: bool = true, persist: bool = true) -> void:
-	selected_character = index
-	var s: Survivor = _survivors[index]
+	selected_character = posmod(index, _survivors.size())
+	var s: Survivor = _survivors[selected_character]
 
-	# 1. Update Pedestal lights, neon ring emission, and inner glow discs
-	for i in range(_survivors.size()):
-		var sel := (i == index)
-		if i < _lights.size() and is_instance_valid(_lights[i]):
-			_lights[i].light_energy = 2.4 if sel else 0.5
-		if i < _disc_mats.size():
-			var mult: float = 3.4 if sel else 0.85
-			_disc_mats[i].albedo_color = _survivors[i].color * (2.4 if sel else 1.2)
-			_disc_mats[i].emission_energy_multiplier = mult
-		if i < _inner_mats.size():
-			_inner_mats[i].albedo_color = Color(
-				_survivors[i].color.r,
-				_survivors[i].color.g,
-				_survivors[i].color.b,
-				0.38 if sel else 0.10
-			)
-		if i < _col_buttons.size() and is_instance_valid(_col_buttons[i]):
-			_style_card(_col_buttons[i], _survivors[i].color, sel)
+	# 1. Update single Pedestal lighting and neon materials
+	if _pedestal_light != null and is_instance_valid(_pedestal_light):
+		_pedestal_light.light_color = s.color
+		_pedestal_light.light_energy = 2.8
 
-	# 2. Boost active prop lights (controller, syringe, ring light)
-	for pl in _prop_lights:
-		if is_instance_valid(pl):
-			var active_prop := pl.name.ends_with(s.id)
-			pl.light_energy = 2.2 if active_prop else 0.5
+	if _pedestal_neon_mat != null:
+		_pedestal_neon_mat.albedo_color = s.color * 2.4
+		_pedestal_neon_mat.emission = s.color
+		_pedestal_neon_mat.emission_energy_multiplier = 3.6
 
-	# 3. Idle animations: selected survivor gets unique active idle, unselected stay in neutral idle
-	for i in range(_anim_players.size()):
-		var ap: AnimationPlayer = _anim_players[i]
-		if ap == null or not is_instance_valid(ap):
-			continue
-		if i == index:
-			_play_active_idle(i)
-		else:
-			if ap.has_animation("idle"):
-				ap.play("idle")
+	if _pedestal_inner_mat != null:
+		_pedestal_inner_mat.albedo_color = Color(s.color.r, s.color.g, s.color.b, 0.42)
 
-	# 4. Update UI label and skin selector
+	# 2. Show only the selected survivor model, hide others
+	for i in range(_models.size()):
+		var is_active := (i == selected_character)
+		if is_instance_valid(_models[i]):
+			_models[i].visible = is_active
+		if i < _anim_players.size() and is_instance_valid(_anim_players[i]):
+			if is_active:
+				_play_active_idle(i)
+			else:
+				if _anim_players[i].has_animation("idle"):
+					_anim_players[i].play("idle")
+
+	# 3. Update UI: Name, Description, Indicator Pips
 	if _name_label != null:
 		_name_label.text = s.display_name
 		_name_label.add_theme_color_override("font_color", s.color)
-		_name_label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.03, 0.95))
-		_name_label.add_theme_constant_override("outline_size", _fs(8))
 
+	if _desc_label != null:
+		_desc_label.text = s.description.to_upper() if not s.description.is_empty() else ""
+
+	for i in range(_pip_labels.size()):
+		var is_active := (i == selected_character)
+		_pip_labels[i].add_theme_color_override("font_color", s.color if is_active else Color(1, 1, 1, 0.35))
+		_pip_labels[i].text = "●" if is_active else "○"
+
+	# 4. Update skin selector UI
 	var active_skin := _get_current_skin(s.id)
 	_update_skin_ui(s, active_skin)
-	if index < _models.size() and is_instance_valid(_models[index]):
-		BlockyAnim.apply_skin_variant(_models[index], s.id, active_skin)
 
-	# 5. Dynamic Camera Tween: adjust angle/focal distance toward selected survivor smoothly
-	_tween_camera_to_survivor(index)
+	# 5. Camera framing
+	_tween_camera_to_survivor(selected_character)
 
 	# 6. Audio: clean selection chime + click
 	if play_sound:
-		_play_selection_audio(index)
+		_play_selection_audio(selected_character)
 
 	# 7. Persist selection to SaveManager
 	if persist and has_node("/root/Save"):
@@ -1520,19 +941,16 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 		save_mgr.set_selected_character(s.id)
 
 
-func _tween_camera_to_survivor(index: int) -> void:
+func _tween_camera_to_survivor(_index: int) -> void:
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
 		cam = get_node_or_null("Background3D/Camera") as Camera3D
 	if cam == null:
 		return
 
-	var s: Survivor = _survivors[index]
-	# Keep the camera centered on the whole 5-character group — no horizontal
-	# drift toward the selected survivor, or the row looks off-center. Only a
-	# whisper of depth change for focus.
-	var target_cam_pos := Vector3(0.0, 1.40, 2.05)
-	var target_look := Vector3(0.0, 0.92, -2.2)
+	# Single hero character framing: pulled in close, centered at x=0
+	var target_cam_pos := Vector3(0.0, 1.25, 1.10)
+	var target_look := Vector3(0.0, 1.12, -1.60)
 
 	if _cam_tween != null and _cam_tween.is_valid():
 		_cam_tween.kill()
@@ -1542,7 +960,7 @@ func _tween_camera_to_survivor(index: int) -> void:
 		_play_btn.disabled = true
 
 	_cam_tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	_cam_tween.tween_property(cam, "global_position", target_cam_pos, 0.42)
+	_cam_tween.tween_property(cam, "global_position", target_cam_pos, 0.35)
 
 	# Smooth camera angle slerp
 	var start_rot := cam.quaternion
@@ -1553,7 +971,7 @@ func _tween_camera_to_survivor(index: int) -> void:
 	_cam_tween.tween_method(func(w: float) -> void:
 		if cam != null and is_instance_valid(cam):
 			cam.quaternion = start_rot.slerp(end_rot, w)
-	, 0.0, 1.0, 0.42)
+	, 0.0, 1.0, 0.35)
 
 	_cam_tween.chain().tween_callback(func() -> void:
 		_is_camera_tweening = false

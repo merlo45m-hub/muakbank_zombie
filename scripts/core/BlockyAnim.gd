@@ -330,6 +330,9 @@ static func apply_body_variant(visuals: Node3D, character_id: String, variant_in
 		if ap.has_animation("idle"):
 			ap.play("idle")
 
+	# 6. Attach archetype 3D accessory props
+	attach_archetype_props(visuals, resolved_id)
+
 	return ap
 
 
@@ -383,11 +386,355 @@ static func apply_skin(visuals: Node3D, texture_path: String) -> void:
 		new_mat = base_mat.duplicate() as StandardMaterial3D
 	else:
 		new_mat = StandardMaterial3D.new()
-		new_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 
+	new_mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	new_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	new_mat.roughness = 0.80
+	new_mat.metallic = 0.05
 	new_mat.albedo_texture = tex
 	new_mat.albedo_color = Color.WHITE
 
 	# Assign to all rig parts using surface override so mesh resources are untouched
 	for mi in rig_parts:
 		mi.set_surface_override_material(0, new_mat)
+
+
+## Attach archetype-specific 3D accessory props to the rig under visuals.
+## Accounts for blocky rig hierarchy (head scale 0.1, arm-right hand position ~-1.0).
+static func attach_archetype_props(visuals: Node3D, character_id: String) -> void:
+	if visuals == null or character_id.is_empty():
+		return
+
+	# Remove any previously attached archetype props
+	for child in visuals.find_children("ArchetypeProp_*", "Node3D", true, false):
+		child.queue_free()
+
+	# Remove legacy placeholder props if present from authored scenes
+	for mi in visuals.find_children("*", "MeshInstance3D", true, false):
+		if mi.name in ["Headset", "Mask", "Prop"]:
+			mi.queue_free()
+
+	match character_id:
+		"gamer":
+			# Headphones on head (head node scale is 0.1, so head local space is 10x)
+			var head := visuals.find_child("head", true, false) as Node3D
+			if head != null:
+				var hp_root := Node3D.new()
+				hp_root.name = "ArchetypeProp_Headphones"
+
+				# Headband over top of head
+				var arc := MeshInstance3D.new()
+				var tm := TorusMesh.new()
+				tm.inner_radius = 3.9
+				tm.outer_radius = 4.5
+				tm.rings = 24
+				tm.ring_segments = 12
+				arc.mesh = tm
+				arc.rotation_degrees = Vector3(90, 0, 0)
+				arc.position = Vector3(0.0, 7.8, 0.0)
+				var arc_mat := StandardMaterial3D.new()
+				arc_mat.albedo_color = Color(0.14, 0.14, 0.18)
+				arc_mat.metallic = 0.8
+				arc_mat.roughness = 0.3
+				arc.material_override = arc_mat
+				hp_root.add_child(arc)
+
+				# Left earcup with cyan glow
+				var cup_l := MeshInstance3D.new()
+				var cm := CylinderMesh.new()
+				cm.top_radius = 1.1
+				cm.bottom_radius = 1.1
+				cm.height = 0.8
+				cm.radial_segments = 16
+				cup_l.mesh = cm
+				cup_l.rotation_degrees = Vector3(0, 0, 90)
+				cup_l.position = Vector3(-4.2, 4.2, 0.0)
+				var lmat := StandardMaterial3D.new()
+				lmat.albedo_color = Color(0.1, 0.85, 1.0)
+				lmat.emission_enabled = true
+				lmat.emission = Color(0.1, 0.85, 1.0)
+				lmat.emission_energy_multiplier = 3.0
+				cup_l.material_override = lmat
+				hp_root.add_child(cup_l)
+
+				# Right earcup with magenta glow
+				var cup_r := MeshInstance3D.new()
+				cup_r.mesh = cm
+				cup_r.rotation_degrees = Vector3(0, 0, 90)
+				cup_r.position = Vector3(4.2, 4.2, 0.0)
+				var rmat := StandardMaterial3D.new()
+				rmat.albedo_color = Color(1.0, 0.15, 0.75)
+				rmat.emission_enabled = true
+				rmat.emission = Color(1.0, 0.15, 0.75)
+				rmat.emission_energy_multiplier = 3.0
+				cup_r.material_override = rmat
+				hp_root.add_child(cup_r)
+
+				head.add_child(hp_root)
+
+			# Controller in right arm
+			var arm_r := visuals.find_child("arm-right", true, false) as Node3D
+			if arm_r != null:
+				var ctrl := Node3D.new()
+				ctrl.name = "ArchetypeProp_Controller"
+				ctrl.position = Vector3(-0.20, -1.0, 0.15)
+				ctrl.rotation_degrees = Vector3(32, -12, 0)
+
+				var cbody := MeshInstance3D.new()
+				var bm := BoxMesh.new()
+				bm.size = Vector3(0.24, 0.07, 0.13)
+				cbody.mesh = bm
+				var cmat := StandardMaterial3D.new()
+				cmat.albedo_color = Color(0.10, 0.10, 0.14)
+				cmat.roughness = 0.4
+				cbody.material_override = cmat
+				ctrl.add_child(cbody)
+
+				# Glowing LED strip
+				var led := MeshInstance3D.new()
+				var lm := BoxMesh.new()
+				lm.size = Vector3(0.15, 0.015, 0.02)
+				led.mesh = lm
+				led.position = Vector3(0.0, 0.038, -0.055)
+				var led_mat := StandardMaterial3D.new()
+				led_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				led_mat.albedo_color = Color(1.0, 0.1, 0.8) * 3.5
+				led.material_override = led_mat
+				ctrl.add_child(led)
+
+				# Glowing sticks
+				for sx in [-0.06, 0.06]:
+					var stick := MeshInstance3D.new()
+					var sm := CylinderMesh.new()
+					sm.top_radius = 0.02
+					sm.bottom_radius = 0.018
+					sm.height = 0.02
+					stick.mesh = sm
+					stick.position = Vector3(sx, 0.04, 0.01)
+					var smat := StandardMaterial3D.new()
+					smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+					smat.albedo_color = (Color(0.1, 0.85, 1.0) if sx < 0 else Color(1.0, 0.15, 0.8)) * 3.0
+					stick.material_override = smat
+					ctrl.add_child(stick)
+
+				arm_r.add_child(ctrl)
+
+		"doctor":
+			# Stethoscope on torso
+			var torso := visuals.find_child("torso", true, false) as Node3D
+			if torso != null:
+				var steth := Node3D.new()
+				steth.name = "ArchetypeProp_Stethoscope"
+
+				# Neck loop
+				var tube := MeshInstance3D.new()
+				var tm := TorusMesh.new()
+				tm.inner_radius = 0.16
+				tm.outer_radius = 0.20
+				tm.rings = 24
+				tm.ring_segments = 12
+				tube.mesh = tm
+				tube.position = Vector3(0.0, 0.84, 0.08)
+				tube.rotation_degrees = Vector3(25, 0, 0)
+				var tmat := StandardMaterial3D.new()
+				tmat.albedo_color = Color(0.18, 0.22, 0.26)
+				tmat.roughness = 0.5
+				tube.material_override = tmat
+				steth.add_child(tube)
+
+				# Chrome chest disc
+				var disc := MeshInstance3D.new()
+				var cm := CylinderMesh.new()
+				cm.top_radius = 0.055
+				cm.bottom_radius = 0.055
+				cm.height = 0.018
+				cm.radial_segments = 20
+				disc.mesh = cm
+				disc.rotation_degrees = Vector3(85, 0, 0)
+				disc.position = Vector3(0.04, 0.65, 0.28)
+				var dmat := StandardMaterial3D.new()
+				dmat.albedo_color = Color(0.92, 0.94, 0.98)
+				dmat.metallic = 0.95
+				dmat.roughness = 0.15
+				disc.material_override = dmat
+				steth.add_child(disc)
+
+				torso.add_child(steth)
+
+		"nurse":
+			# Surgical mask on face (in head local units, front of face is Z=4.0)
+			var head_n := visuals.find_child("head", true, false) as Node3D
+			if head_n != null:
+				var mask_root := Node3D.new()
+				mask_root.name = "ArchetypeProp_NurseMask"
+
+				var mask := MeshInstance3D.new()
+				var mm := BoxMesh.new()
+				mm.size = Vector3(5.2, 3.2, 0.6)
+				mask.mesh = mm
+				mask.position = Vector3(0.0, 3.6, 4.2)
+				var mmat := StandardMaterial3D.new()
+				mmat.albedo_color = Color(0.12, 0.72, 0.78)
+				mmat.roughness = 0.65
+				mask.material_override = mmat
+				mask_root.add_child(mask)
+
+				head_n.add_child(mask_root)
+
+			# Glowing pink syringe in right arm
+			var arm_nr := visuals.find_child("arm-right", true, false) as Node3D
+			if arm_nr != null:
+				var syr := Node3D.new()
+				syr.name = "ArchetypeProp_Syringe"
+				syr.position = Vector3(-0.20, -1.0, 0.18)
+				syr.rotation_degrees = Vector3(20, 0, 0)
+
+				# Translucent barrel
+				var barrel := MeshInstance3D.new()
+				var bc := CylinderMesh.new()
+				bc.top_radius = 0.035
+				bc.bottom_radius = 0.035
+				bc.height = 0.24
+				barrel.mesh = bc
+				var bmat := StandardMaterial3D.new()
+				bmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				bmat.albedo_color = Color(0.85, 0.95, 1.0, 0.55)
+				barrel.material_override = bmat
+				syr.add_child(barrel)
+
+				# Glowing pink medicine core
+				var core := MeshInstance3D.new()
+				var cc := CylinderMesh.new()
+				cc.top_radius = 0.026
+				cc.bottom_radius = 0.026
+				cc.height = 0.16
+				core.mesh = cc
+				core.position = Vector3(0.0, -0.02, 0.0)
+				var cmat := StandardMaterial3D.new()
+				cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				cmat.albedo_color = Color(1.0, 0.15, 0.75) * 3.6
+				core.material_override = cmat
+				syr.add_child(core)
+
+				# Chrome needle
+				var needle := MeshInstance3D.new()
+				var nc := CylinderMesh.new()
+				nc.top_radius = 0.005
+				nc.bottom_radius = 0.002
+				nc.height = 0.12
+				needle.mesh = nc
+				needle.position = Vector3(0.0, -0.17, 0.0)
+				var nmat := StandardMaterial3D.new()
+				nmat.albedo_color = Color(0.95, 0.95, 0.98)
+				nmat.metallic = 0.95
+				needle.material_override = nmat
+				syr.add_child(needle)
+
+				arm_nr.add_child(syr)
+
+		"streamer":
+			# Handheld stick with glowing ring light & phone
+			var arm_sr := visuals.find_child("arm-right", true, false) as Node3D
+			if arm_sr != null:
+				var vlogger := Node3D.new()
+				vlogger.name = "ArchetypeProp_RingLight"
+				vlogger.position = Vector3(-0.20, -0.95, 0.18)
+				vlogger.rotation_degrees = Vector3(25, -20, 15)
+
+				# Handle stick
+				var stick := MeshInstance3D.new()
+				var sc := CylinderMesh.new()
+				sc.top_radius = 0.018
+				sc.bottom_radius = 0.018
+				sc.height = 0.28
+				stick.mesh = sc
+				var smat := StandardMaterial3D.new()
+				smat.albedo_color = Color(0.15, 0.15, 0.18)
+				smat.metallic = 0.6
+				smat.roughness = 0.4
+				stick.material_override = smat
+				vlogger.add_child(stick)
+
+				# Glowing ring light
+				var ring := MeshInstance3D.new()
+				var tm := TorusMesh.new()
+				tm.inner_radius = 0.11
+				tm.outer_radius = 0.15
+				tm.rings = 24
+				tm.ring_segments = 14
+				ring.mesh = tm
+				ring.position = Vector3(0.0, 0.19, 0.02)
+				ring.rotation_degrees = Vector3(85, 0, 0)
+				var rmat := StandardMaterial3D.new()
+				rmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				rmat.albedo_color = Color(1.0, 0.15, 0.92) * 4.2
+				ring.material_override = rmat
+				vlogger.add_child(ring)
+
+				# Smartphone
+				var phone := MeshInstance3D.new()
+				var pm := BoxMesh.new()
+				pm.size = Vector3(0.08, 0.14, 0.012)
+				phone.mesh = pm
+				phone.position = Vector3(0.0, 0.19, 0.02)
+				var pmat := StandardMaterial3D.new()
+				pmat.albedo_color = Color(0.08, 0.08, 0.10)
+				pmat.roughness = 0.2
+				phone.material_override = pmat
+				vlogger.add_child(phone)
+
+				# Glowing screen
+				var screen := MeshInstance3D.new()
+				var scm := BoxMesh.new()
+				scm.size = Vector3(0.068, 0.125, 0.005)
+				screen.mesh = scm
+				screen.position = Vector3(0.0, 0.19, 0.014)
+				var scr_mat := StandardMaterial3D.new()
+				scr_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				scr_mat.albedo_color = Color(0.85, 0.95, 1.0) * 2.5
+				screen.material_override = scr_mat
+				vlogger.add_child(screen)
+
+				arm_sr.add_child(vlogger)
+
+		"hunter":
+			# Wooden baseball bat in right arm
+			var arm_hr := visuals.find_child("arm-right", true, false) as Node3D
+			if arm_hr != null:
+				var bat := Node3D.new()
+				bat.name = "ArchetypeProp_Bat"
+				bat.position = Vector3(-0.20, -0.90, 0.15)
+				bat.rotation_degrees = Vector3(-45, 15, 25)
+
+				# Bat barrel
+				var barrel := MeshInstance3D.new()
+				var bm := CylinderMesh.new()
+				bm.top_radius = 0.055
+				bm.bottom_radius = 0.024
+				bm.height = 0.70
+				bm.radial_segments = 16
+				barrel.mesh = bm
+				var bmat := StandardMaterial3D.new()
+				bmat.albedo_color = Color(0.72, 0.54, 0.35)
+				bmat.roughness = 0.65
+				barrel.material_override = bmat
+				bat.add_child(barrel)
+
+				# Grip tape
+				var grip := MeshInstance3D.new()
+				var gm := CylinderMesh.new()
+				gm.top_radius = 0.026
+				gm.bottom_radius = 0.026
+				gm.height = 0.20
+				gm.radial_segments = 16
+				grip.mesh = gm
+				grip.position = Vector3(0.0, -0.22, 0.0)
+				var gmat := StandardMaterial3D.new()
+				gmat.albedo_color = Color(0.92, 0.90, 0.86)
+				gmat.roughness = 0.85
+				grip.material_override = gmat
+				bat.add_child(grip)
+
+				arm_hr.add_child(bat)
+
+
