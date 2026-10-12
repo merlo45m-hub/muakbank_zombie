@@ -144,6 +144,12 @@ func _fit_title() -> void:
 	var title := get_node_or_null("UI/TitleLabel") as Label
 	if title != null:
 		_fit_label_font(title, 52, 0.94)
+		print("[FITDBG] _fit_title ran: label.size=", title.size,
+			" ui_scale=", _ui_scale,
+			" final_font=", title.get_theme_font_size("font_size"),
+			" text_w=", title.get_theme_font("font").get_string_size(
+				title.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				title.get_theme_font_size("font_size")).x)
 
 
 func _process(delta: float) -> void:
