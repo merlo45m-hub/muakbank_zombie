@@ -302,7 +302,7 @@ material_override = SubResource("FogMaterial")
 shadow_enabled = true
 rotation_degrees = Vector3(-55, -35, 0)
 light_color = Color(0.78, 0.84, 0.96, 1.0)
-light_energy = 2.2
+light_energy = 1.5
 shadow_fade_range = 8.0
 shadow_fog_enable = true
 

@@ -395,8 +395,8 @@ static func apply_skin(visuals: Node3D, texture_path: String) -> void:
 	new_mat.specular_mode = BaseMaterial3D.SPECULAR_TOON
 	# Gentle rim so silhouettes separate from the dark graveyard background.
 	new_mat.rim_enabled = true
-	new_mat.rim = 0.5
-	new_mat.rim_tint = 0.1
+	new_mat.rim = 0.15
+	new_mat.rim_tint = 0.05
 	new_mat.roughness = 0.55
 	new_mat.metallic = 0.05
 	new_mat.albedo_texture = tex
