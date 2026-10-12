@@ -1547,8 +1547,11 @@ func _tween_camera_to_survivor(index: int) -> void:
 		return
 
 	var s: Survivor = _survivors[index]
-	var target_cam_pos := Vector3(s.pedestal_x * 0.16, 1.40, 2.05 - absf(s.pedestal_x) * 0.02)
-	var target_look := Vector3(s.pedestal_x * 0.28, 0.92, -2.2)
+	# Keep the camera centered on the whole 5-character group — no horizontal
+	# drift toward the selected survivor, or the row looks off-center. Only a
+	# whisper of depth change for focus.
+	var target_cam_pos := Vector3(0.0, 1.40, 2.05)
+	var target_look := Vector3(0.0, 0.92, -2.2)
 
 	if _cam_tween != null and _cam_tween.is_valid():
 		_cam_tween.kill()
