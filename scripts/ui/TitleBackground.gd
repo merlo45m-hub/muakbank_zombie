@@ -17,13 +17,13 @@ extends Node3D
 
 const DevMode := preload("res://scripts/core/DevMode.gd")
 
-const TITLE_CAM_FOV = 68.0
+const TITLE_CAM_FOV = 72.0
 const TITLE_CAM_NEAR = 0.1
 const TITLE_CAM_FAR = 120.0
 # Centered on the stage (x=0): pulled in close so the five characters fill
 # more of the frame (user wants them more zoomed in / close up).
-const TITLE_CAM_POSITION = Vector3(0.0, 1.55, 3.05)
-const TITLE_CAM_TARGET = Vector3(0.0, 1.05, -2.2)
+const TITLE_CAM_POSITION = Vector3(0.0, 1.45, 2.35)
+const TITLE_CAM_TARGET = Vector3(0.0, 0.95, -2.2)
 
 const MODELS := "res://assets/models/cc0/"
 
