@@ -22,6 +22,10 @@ const LOOPING_CLIPS: Array[String] = [
 	"idle",
 	"walk",
 	"sprint",
+	"holding-both",
+	"holding-left",
+	"holding-right",
+	"interact-right",
 ]
 
 const STATE_TO_CLIP: Dictionary = {
@@ -46,31 +50,38 @@ const RIG_LETTER_TO_SURVIVOR: Dictionary = {
 	"a": "hunter",
 }
 
+## 15 distinct Kenney Blocky Character bodies assigned across survivors:
+## gamer: b (default), e, h
+## doctor: i (default), j, l
+## nurse: f (default), c, k
+## streamer: q (default), p, m
+## hunter: a (default), d, n
+## Unused left over: o, g, r
 const SKIN_VARIANTS: Dictionary = {
 	"gamer": [
-		{"name": "Cyber Purple", "blocky": "res://assets/textures/survivors/gamer.png", "mini": "res://assets/textures/survivors/mini_gamer.png"},
-		{"name": "Crimson", "blocky": "res://assets/textures/survivors/gamer_v1.png", "mini": "res://assets/textures/survivors/mini_gamer_v1.png"},
-		{"name": "Teal", "blocky": "res://assets/textures/survivors/gamer_v2.png", "mini": "res://assets/textures/survivors/mini_gamer_v2.png"},
+		{"name": "Cyber Purple", "rig": "res://assets/models/cc0/blocks/character-b.glb", "atlas": "res://assets/textures/survivors/gamer.png", "blocky": "res://assets/textures/survivors/gamer.png"},
+		{"name": "Arcade Gold", "rig": "res://assets/models/cc0/blocks/character-e.glb", "atlas": "res://assets/models/cc0/blocks/Textures/texture-e.png", "blocky": "res://assets/models/cc0/blocks/Textures/texture-e.png"},
+		{"name": "Street Cap", "rig": "res://assets/models/cc0/blocks/character-h.glb", "atlas": "res://assets/models/cc0/blocks/Textures/texture-h.png", "blocky": "res://assets/models/cc0/blocks/Textures/texture-h.png"},
 	],
 	"doctor": [
-		{"name": "Clinical White", "blocky": "res://assets/textures/survivors/doctor.png", "mini": "res://assets/textures/survivors/mini_doctor.png"},
-		{"name": "Navy Scrubs", "blocky": "res://assets/textures/survivors/doctor_v1.png", "mini": "res://assets/textures/survivors/mini_doctor_v1.png"},
-		{"name": "Emerald Green", "blocky": "res://assets/textures/survivors/doctor_v2.png", "mini": "res://assets/textures/survivors/mini_doctor_v2.png"},
+		{"name": "Clinical White", "rig": "res://assets/models/cc0/blocks/character-i.glb", "atlas": "res://assets/textures/survivors/doctor.png", "blocky": "res://assets/textures/survivors/doctor.png"},
+		{"name": "Field Officer", "rig": "res://assets/models/cc0/blocks/character-j.glb", "atlas": "res://assets/models/cc0/blocks/Textures/texture-j.png", "blocky": "res://assets/models/cc0/blocks/Textures/texture-j.png"},
+		{"name": "Head Surgeon", "rig": "res://assets/models/cc0/blocks/character-l.glb", "atlas": "res://assets/models/cc0/blocks/Textures/texture-l.png", "blocky": "res://assets/models/cc0/blocks/Textures/texture-l.png"},
 	],
 	"nurse": [
-		{"name": "Mint Teal", "blocky": "res://assets/textures/survivors/nurse.png", "mini": "res://assets/textures/survivors/mini_nurse.png"},
-		{"name": "Rose Pink", "blocky": "res://assets/textures/survivors/nurse_v1.png", "mini": "res://assets/textures/survivors/mini_nurse_v1.png"},
-		{"name": "Cobalt Blue", "blocky": "res://assets/textures/survivors/nurse_v2.png", "mini": "res://assets/textures/survivors/mini_nurse_v2.png"},
+		{"name": "Mint Teal", "rig": "res://assets/models/cc0/blocks/character-f.glb", "atlas": "res://assets/textures/survivors/nurse.png", "blocky": "res://assets/textures/survivors/nurse.png"},
+		{"name": "Pastel Mint", "rig": "res://assets/models/cc0/blocks/character-c.glb", "atlas": "res://assets/models/cc0/blocks/Textures/texture-c.png", "blocky": "res://assets/models/cc0/blocks/Textures/texture-c.png"},
+		{"name": "Formal Blue", "rig": "res://assets/models/cc0/blocks/character-k.glb", "atlas": "res://assets/models/cc0/blocks/Textures/texture-k.png", "blocky": "res://assets/models/cc0/blocks/Textures/texture-k.png"},
 	],
 	"streamer": [
-		{"name": "Shadow Black", "blocky": "res://assets/textures/survivors/streamer.png", "mini": "res://assets/textures/survivors/mini_streamer.png"},
-		{"name": "Neon Amber", "blocky": "res://assets/textures/survivors/streamer_v1.png", "mini": "res://assets/textures/survivors/mini_streamer_v1.png"},
-		{"name": "Acid Lime", "blocky": "res://assets/textures/survivors/streamer_v2.png", "mini": "res://assets/textures/survivors/mini_streamer_v2.png"},
+		{"name": "Shadow Black", "rig": "res://assets/models/cc0/blocks/character-q.glb", "atlas": "res://assets/textures/survivors/streamer.png", "blocky": "res://assets/textures/survivors/streamer.png"},
+		{"name": "Urban Neon", "rig": "res://assets/models/cc0/blocks/character-p.glb", "atlas": "res://assets/models/cc0/blocks/Textures/texture-p.png", "blocky": "res://assets/models/cc0/blocks/Textures/texture-p.png"},
+		{"name": "Tactical Camo", "rig": "res://assets/models/cc0/blocks/character-m.glb", "atlas": "res://assets/models/cc0/blocks/Textures/texture-m.png", "blocky": "res://assets/models/cc0/blocks/Textures/texture-m.png"},
 	],
 	"hunter": [
-		{"name": "Camo Olive", "blocky": "res://assets/textures/survivors/hunter.png", "mini": "res://assets/textures/survivors/mini_hunter.png"},
-		{"name": "Arctic Frost", "blocky": "res://assets/textures/survivors/hunter_v1.png", "mini": "res://assets/textures/survivors/mini_hunter_v1.png"},
-		{"name": "Blaze Orange", "blocky": "res://assets/textures/survivors/hunter_v2.png", "mini": "res://assets/textures/survivors/mini_hunter_v2.png"},
+		{"name": "Camo Olive", "rig": "res://assets/models/cc0/blocks/character-a.glb", "atlas": "res://assets/textures/survivors/hunter.png", "blocky": "res://assets/textures/survivors/hunter.png"},
+		{"name": "Forest Ranger", "rig": "res://assets/models/cc0/blocks/character-d.glb", "atlas": "res://assets/models/cc0/blocks/Textures/texture-d.png", "blocky": "res://assets/models/cc0/blocks/Textures/texture-d.png"},
+		{"name": "Wild Scout", "rig": "res://assets/models/cc0/blocks/character-n.glb", "atlas": "res://assets/models/cc0/blocks/Textures/texture-n.png", "blocky": "res://assets/models/cc0/blocks/Textures/texture-n.png"},
 	],
 }
 
@@ -91,21 +102,19 @@ static func setup(visuals: Node3D, character_id: String = "", variant_index: int
 	if visuals == null:
 		return null
 
+	var resolved_id := character_id
+	if resolved_id.is_empty():
+		resolved_id = _resolve_id_from_rig(visuals)
+
+	if variant_index > 0 and not resolved_id.is_empty():
+		return apply_body_variant(visuals, resolved_id, variant_index)
+
 	var ap := find_animation_player(visuals)
 	if ap == null:
 		push_warning("[BlockyAnim] AnimationPlayer not found under %s" % visuals.name)
 		return null
 
 	_setup_looping_and_aliases(ap)
-
-	# Resolve the survivor id. The wrapper node is always named PlayerVisuals
-	# in the character scenes (and renamed CharacterVisuals by Player.gd in
-	# gameplay), so a name match on the WRAPPER never succeeds and the skin
-	# silently never applied. Match on the rig node instead: the imported glb
-	# root is named character-<x>, which is the only reliable key.
-	var resolved_id := character_id
-	if resolved_id.is_empty():
-		resolved_id = _resolve_id_from_rig(visuals)
 
 	if not resolved_id.is_empty():
 		apply_skin_for_character(visuals, resolved_id, variant_index)
@@ -235,50 +244,104 @@ static func get_variant_info(character_id: String, variant_index: int) -> Dictio
 	return variants[idx]
 
 
-## Apply chosen skin variant to whatever model is present under `visuals`:
-## smooth mini model (body-*/head-* meshes) or blocky gameplay rig parts.
-static func apply_skin_variant(visuals: Node3D, character_id: String, variant_index: int = 0) -> void:
+## Swaps or sets the model body for (character_id, variant_index).
+## Frees the current rig instance under visuals, instantiates the variant's character-<letter>.glb
+## (or authored character scene for variant 0 if available), scales to 0.6667, positions at Vector3.ZERO
+## so feet rest correctly on the ground/pedestal, duplicates material and sets albedo_texture to
+## the variant atlas, configures animation looping, and plays idle.
+static func apply_body_variant(visuals: Node3D, character_id: String, variant_index: int = 0) -> AnimationPlayer:
 	if visuals == null:
-		return
+		return null
 	var resolved_id := character_id
 	if resolved_id.is_empty():
 		resolved_id = _resolve_id_from_rig(visuals)
 	if resolved_id.is_empty():
-		return
+		return null
 
 	var var_info := get_variant_info(resolved_id, variant_index)
 	if var_info.is_empty():
-		return
+		return null
 
-	# 1. Check if mini model meshes are present (character select smooth mini models)
-	var mini_parts: Array[MeshInstance3D] = []
-	for child in visuals.find_children("*", "MeshInstance3D", true, false):
-		var mi := child as MeshInstance3D
-		if mi != null and (mi.name.begins_with("body-") or mi.name.begins_with("head-")):
-			mini_parts.append(mi)
+	var rig_path: String = var_info.get("rig", "")
+	var atlas_path: String = var_info.get("atlas", var_info.get("blocky", ""))
 
-	if not mini_parts.is_empty():
-		var mini_tex_path: String = var_info.get("mini", "")
-		if not mini_tex_path.is_empty() and ResourceLoader.exists(mini_tex_path):
-			var tex := load(mini_tex_path) as Texture2D
-			if tex != null:
-				var mat := StandardMaterial3D.new()
-				mat.albedo_texture = tex
-				mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-				mat.roughness = 0.75
-				for mi in mini_parts:
-					mi.material_override = mat
-		return
+	# 1. Locate and free existing rig instance(s) under visuals
+	var to_free: Array[Node] = []
+	for child in visuals.get_children():
+		var cn: String = child.name.to_lower()
+		if cn == "rig" or cn == "model" or cn.begins_with("character-") or (child is Node3D and child.find_child("AnimationPlayer", true, false) != null):
+			to_free.append(child)
+	for old_node in to_free:
+		visuals.remove_child(old_node)
+		old_node.free()
 
-	# 2. Blocky rig parts (gameplay character_<id>.tscn)
-	var blocky_tex_path: String = var_info.get("blocky", "")
-	if not blocky_tex_path.is_empty():
-		apply_skin(visuals, blocky_tex_path)
+	# 2. Instantiate rig: for variant 0, prefer authored character scene if available; otherwise load variant GLB
+	var new_rig: Node3D = null
+	if variant_index == 0:
+		var scene_path := "res://scenes/characters/character_%s.tscn" % resolved_id
+		if ResourceLoader.exists(scene_path):
+			var packed_sc := load(scene_path) as PackedScene
+			if packed_sc != null:
+				var full := packed_sc.instantiate()
+				var pvis := full.get_node_or_null("PlayerVisuals") as Node3D
+				if pvis != null:
+					var m := pvis.get_node_or_null("Model") as Node3D
+					if m != null:
+						pvis.remove_child(m)
+						new_rig = m
+					else:
+						full.remove_child(pvis)
+						new_rig = pvis
+				full.free()
+
+	if new_rig == null:
+		if rig_path.is_empty() or not ResourceLoader.exists(rig_path):
+			push_warning("[BlockyAnim] Variant rig does not exist: %s" % rig_path)
+			return null
+		var rig_scene := load(rig_path) as PackedScene
+		if rig_scene == null:
+			push_warning("[BlockyAnim] Failed to load rig scene: %s" % rig_path)
+			return null
+		new_rig = rig_scene.instantiate() as Node3D
+		if new_rig == null:
+			push_warning("[BlockyAnim] Failed to instantiate rig: %s" % rig_path)
+			return null
+
+	new_rig.name = "Model"
+	new_rig.scale = Vector3(0.6667, 0.6667, 0.6667)
+	new_rig.position = Vector3.ZERO
+	visuals.add_child(new_rig)
+
+	# 3. Duplicate material and apply variant atlas
+	if not atlas_path.is_empty():
+		apply_skin(visuals, atlas_path)
+
+	# 4. Doctor select-screen stage lighting tint if needed
+	if resolved_id == "doctor" and variant_index == 0:
+		for mi in visuals.find_children("*", "MeshInstance3D", true, false):
+			var m := (mi as MeshInstance3D).get_surface_override_material(0)
+			if m is StandardMaterial3D:
+				m.albedo_color = Color(0.82, 0.82, 0.84)
+
+	# 5. Locate AnimationPlayer, setup looping and aliases, play idle
+	var ap := find_animation_player(visuals)
+	if ap != null:
+		_setup_looping_and_aliases(ap)
+		if ap.has_animation("idle"):
+			ap.play("idle")
+
+	return ap
+
+
+## Apply chosen skin variant to whatever model is present under `visuals`.
+## Swaps body if necessary or reapplies skin texture.
+static func apply_skin_variant(visuals: Node3D, character_id: String, variant_index: int = 0) -> void:
+	apply_body_variant(visuals, character_id, variant_index)
 
 
 ## Apply survivor skin texture by character ID, supporting optional variant index.
 static func apply_skin_for_character(visuals: Node3D, character_id: String, variant_index: int = 0) -> void:
-	apply_skin_variant(visuals, character_id, variant_index)
+	apply_body_variant(visuals, character_id, variant_index)
 
 
 ## Apply a skin texture at runtime: duplicate the rig's shared material,

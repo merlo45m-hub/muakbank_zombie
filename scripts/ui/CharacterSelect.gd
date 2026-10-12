@@ -21,11 +21,11 @@ class Survivor extends RefCounted:
 	var pedestal_x: float
 
 const SURVIVOR_CONFIGS: Array[Dictionary] = [
-	{"id": "gamer", "name": "GAMER", "x": -3.4, "scene": "res://scenes/characters/character_gamer.tscn", "mini": "res://assets/models/cc0/minis/character-male-d.glb"},
-	{"id": "doctor", "name": "DOCTOR", "x": -1.7, "scene": "res://scenes/characters/character_doctor.tscn", "mini": "res://assets/models/cc0/minis/character-male-e.glb"},
-	{"id": "nurse", "name": "NURSE", "x": 0.0, "scene": "res://scenes/characters/character_nurse.tscn", "mini": "res://assets/models/cc0/minis/character-female-d.glb"},
-	{"id": "streamer", "name": "STREAMER", "x": 1.7, "scene": "res://scenes/characters/character_streamer.tscn", "mini": "res://assets/models/cc0/minis/character-male-a.glb"},
-	{"id": "hunter", "name": "HUNTER", "x": 3.4, "scene": "res://scenes/characters/character_hunter.tscn", "mini": "res://assets/models/cc0/minis/character-male-c.glb"},
+	{"id": "gamer", "name": "GAMER", "x": -3.4, "scene": "res://scenes/characters/character_gamer.tscn"},
+	{"id": "doctor", "name": "DOCTOR", "x": -1.7, "scene": "res://scenes/characters/character_doctor.tscn"},
+	{"id": "nurse", "name": "NURSE", "x": 0.0, "scene": "res://scenes/characters/character_nurse.tscn"},
+	{"id": "streamer", "name": "STREAMER", "x": 1.7, "scene": "res://scenes/characters/character_streamer.tscn"},
+	{"id": "hunter", "name": "HUNTER", "x": 3.4, "scene": "res://scenes/characters/character_hunter.tscn"},
 ]
 
 const PEDESTAL_COLORS: Dictionary = {
@@ -418,52 +418,18 @@ func _spawn_survivors(bg: Node3D) -> void:
 
 	for i in range(_survivors.size()):
 		var s := _survivors[i]
-		var vis: Node3D = null
-		var ap: AnimationPlayer = null
-
-		var use_mini := not s.mini_model_path.is_empty() and ResourceLoader.exists(s.mini_model_path)
-		if use_mini:
-			var mini_ps := load(s.mini_model_path) as PackedScene
-			if mini_ps != null:
-				var m_inst := mini_ps.instantiate() as Node3D
-				vis = Node3D.new()
-				vis.name = "Survivor_%s" % s.id
-				vis.add_child(m_inst)
-				m_inst.scale = Vector3(2.1, 2.1, 2.1)
-				ap = BlockyAnim.find_animation_player(m_inst)
-				if ap != null:
-					BlockyAnim._setup_looping_and_aliases(ap)
-
-		if vis == null:
-			var scene := load(s.scene_path) as PackedScene
-			if scene != null:
-				var full := scene.instantiate()
-				var pvis := full.get_node_or_null("PlayerVisuals") as Node3D
-				if pvis != null:
-					full.remove_child(pvis)
-					vis = pvis
-					full.free()
-				else:
-					vis = full
-				ap = BlockyAnim.setup(vis, s.id)
-
-		if vis == null:
-			continue
-
+		var vis := Node3D.new()
+		vis.name = "Survivor_%s" % s.id
 		vis.position = Vector3(s.pedestal_x, MODEL_ORIGIN_Y, PEDESTAL_Z)
 		bg.add_child(vis)
 		_models.append(vis)
-		_anim_players.append(ap)
 
-		# Apply tailored archetype material texture with saved skin variant
 		var saved_skin := _get_current_skin(s.id)
-		BlockyAnim.apply_skin_variant(vis, s.id, saved_skin)
+		var ap := BlockyAnim.apply_body_variant(vis, s.id, saved_skin)
+		_anim_players.append(ap)
 
 		if ap != null and ap.has_animation("idle"):
 			ap.play("idle")
-
-		# Attach polished per-character archetypes and props
-		_setup_character_props(vis, s.id, s.pedestal_x, bg)
 
 
 func _setup_character_props(vis: Node3D, char_id: String, _x: float, _bg: Node3D) -> void:
@@ -1343,7 +1309,10 @@ func _select_skin(variant_index: int, play_sound: bool = true, persist: bool = t
 
 	# 1. Live-update on-screen 3D model
 	if selected_character < _models.size() and is_instance_valid(_models[selected_character]):
-		BlockyAnim.apply_skin_variant(_models[selected_character], s.id, idx)
+		var new_ap := BlockyAnim.apply_body_variant(_models[selected_character], s.id, idx)
+		if selected_character < _anim_players.size():
+			_anim_players[selected_character] = new_ap
+		_play_active_idle(selected_character)
 
 	# 2. Update skin UI
 	_update_skin_ui(s, idx)
@@ -1443,6 +1412,47 @@ func _update_tap_zones() -> void:
 		z.offset_bottom = 0
 
 
+func _play_active_idle(char_idx: int) -> void:
+	if char_idx < 0 or char_idx >= _anim_players.size() or char_idx >= _survivors.size():
+		return
+	var ap: AnimationPlayer = _anim_players[char_idx]
+	if ap == null or not is_instance_valid(ap):
+		return
+	match _survivors[char_idx].id:
+		"gamer":
+			if ap.has_animation("holding-both"):
+				ap.play("holding-both")
+			elif ap.has_animation("idle"):
+				ap.play("idle")
+		"doctor":
+			if ap.has_animation("holding-left"):
+				ap.play("holding-left")
+			elif ap.has_animation("idle"):
+				ap.play("idle")
+		"nurse":
+			if ap.has_animation("holding-right"):
+				ap.play("holding-right")
+			elif ap.has_animation("idle"):
+				ap.play("idle")
+		"streamer":
+			if ap.has_animation("interact-right"):
+				ap.play("interact-right")
+			elif ap.has_animation("holding-both"):
+				ap.play("holding-both")
+			elif ap.has_animation("idle"):
+				ap.play("idle")
+		"hunter":
+			if ap.has_animation("holding-right"):
+				ap.play("holding-right")
+			elif ap.has_animation("attack-melee-right"):
+				ap.play("attack-melee-right")
+			elif ap.has_animation("idle"):
+				ap.play("idle")
+		_:
+			if ap.has_animation("idle"):
+				ap.play("idle")
+
+
 # ── SELECTION & FEEDBACK ───────────────────────────────────────
 
 func _select_character(index: int, play_sound: bool = true, persist: bool = true) -> void:
@@ -1480,36 +1490,7 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 		if ap == null or not is_instance_valid(ap):
 			continue
 		if i == index:
-			match _survivors[i].id:
-				"gamer":
-					if ap.has_animation("holding-both"):
-						ap.play("holding-both")
-					elif ap.has_animation("idle"):
-						ap.play("idle")
-				"doctor":
-					if ap.has_animation("holding-left"):
-						ap.play("holding-left")
-					elif ap.has_animation("idle"):
-						ap.play("idle")
-				"nurse":
-					if ap.has_animation("holding-right"):
-						ap.play("holding-right")
-					elif ap.has_animation("idle"):
-						ap.play("idle")
-				"streamer":
-					if ap.has_animation("interact-right"):
-						ap.play("interact-right")
-					elif ap.has_animation("holding-both"):
-						ap.play("holding-both")
-					elif ap.has_animation("idle"):
-						ap.play("idle")
-				"hunter":
-					if ap.has_animation("holding-right"):
-						ap.play("holding-right")
-					elif ap.has_animation("attack-melee-right"):
-						ap.play("attack-melee-right")
-					elif ap.has_animation("idle"):
-						ap.play("idle")
+			_play_active_idle(i)
 		else:
 			if ap.has_animation("idle"):
 				ap.play("idle")

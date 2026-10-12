@@ -966,8 +966,11 @@ func _apply_character_model() -> void:
 				if aabb.size.y > 0.01:
 					vis.position.y = -aabb.position.y
 				var skin_idx := _selected_skin_index(id)
-				_skeletal = BlockyAnim.setup(vis, id, skin_idx)
-				BlockyAnim.apply_skin_variant(vis, id, skin_idx)
+				if skin_idx > 0:
+					_skeletal = BlockyAnim.apply_body_variant(vis, id, skin_idx)
+				else:
+					_skeletal = BlockyAnim.setup(vis, id, 0)
+					BlockyAnim.apply_skin_variant(vis, id, 0)
 				if _skeletal != null:
 					_skeletal.play("idle")
 					_anim_state = "idle"
