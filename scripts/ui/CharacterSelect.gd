@@ -110,16 +110,11 @@ func _ready() -> void:
 	if ResourceLoader.exists(bold_path):
 		_btn_font_bold = load(bold_path)
 
-	# Scale the .tscn-authored subtitle label to match the runtime scale.
-	var subtitle := get_node_or_null("UI/SubtitleLabel") as Label
-	if subtitle != null:
-		subtitle.add_theme_font_size_override("font_size", _fs(22))
+	# Scale the .tscn-authored title/subtitle to the runtime viewport.
+	call_deferred("_fit_title")
 
 	_build_stage()
 	_build_ui()
-
-	# Fit the title after layout so label.size is valid (0 during _ready).
-	call_deferred("_fit_title")
 
 	# Restore saved character selection without overwriting it on disk
 	var saved_id := ""
@@ -144,11 +139,15 @@ func _ready() -> void:
 
 
 func _fit_title() -> void:
-	# Deferred until after layout: label.size is 0 during _ready, so the width
-	# measurement has to happen once the Control has its real size.
+	# Deferred until after layout so label.size is valid. Scale the title to the
+	# runtime viewport and shrink it to fit its width; scale the subtitle too.
 	var title := get_node_or_null("UI/TitleLabel") as Label
 	if title != null:
-		_fit_label_font(title, 52, 0.94)
+		title.add_theme_font_size_override("font_size", _fs(46))
+		_fit_label_font(title, 46, 0.94)
+	var subtitle := get_node_or_null("UI/SubtitleLabel") as Label
+	if subtitle != null:
+		subtitle.add_theme_font_size_override("font_size", _fs(20))
 
 
 func _process(delta: float) -> void:
@@ -334,15 +333,30 @@ func _spawn_survivors(bg: Node3D) -> void:
 
 func _build_ui() -> void:
 	var bar: MarginContainer = $UI/BottomBar
-	bar.offset_top = -146.0
+	bar.offset_top = -150.0
 	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 6)
+	vbox.add_theme_constant_override("separation", 8)
 	bar.add_child(vbox)
 
 	_build_name_buttons(vbox)
 	_build_action_row(vbox)
-	_build_step_hints(vbox)
 	_build_tap_zones()
+
+
+func _card_style(accent: Color, active: bool) -> StyleBoxFlat:
+	# Semi-transparent dark rounded card; active gets a neon accent border that
+	# matches the character's podium glow.
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.06, 0.07, 0.10, 0.72 if active else 0.5)
+	sb.set_corner_radius_all(14)
+	sb.set_content_margin_all(10)
+	if active:
+		sb.border_color = accent
+		sb.set_border_width_all(3)
+	else:
+		sb.border_color = Color(1, 1, 1, 0.10)
+		sb.set_border_width_all(2)
+	return sb
 
 
 func _build_name_buttons(vbox: VBoxContainer) -> void:
@@ -353,77 +367,99 @@ func _build_name_buttons(vbox: VBoxContainer) -> void:
 	for i in range(_survivors.size()):
 		var b := Button.new()
 		b.text = _survivors[i].display_name
-		b.custom_minimum_size = Vector2(0, 48)
+		b.custom_minimum_size = Vector2(0, 54)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.focus_mode = Control.FOCUS_NONE
-		_style_button(b, 30, true)
+		_style_card(b, _survivors[i].color, false)
 		var idx := i
 		b.pressed.connect(func() -> void: _select_character(idx, true, true))
 		cols.add_child(b)
 		_col_buttons.append(b)
 
 
+func _style_card(b: Button, accent: Color, active: bool) -> void:
+	b.add_theme_stylebox_override("normal", _card_style(accent, active))
+	b.add_theme_stylebox_override("hover", _card_style(accent, true))
+	b.add_theme_stylebox_override("pressed", _card_style(accent, true))
+	b.add_theme_stylebox_override("focus", _card_style(accent, active))
+	b.add_theme_font_size_override("font_size", _fs(26))
+	b.add_theme_color_override("font_color", Color(0.96, 0.97, 0.99))
+	b.add_theme_color_override("font_hover_color", Color(1, 1, 1))
+	b.add_theme_color_override("font_pressed_color", Color(0.9, 0.92, 0.96))
+	if _btn_font_bold != null:
+		b.add_theme_font_override("font", _btn_font_bold)
+
+
 func _build_action_row(vbox: VBoxContainer) -> void:
 	var actions := HBoxContainer.new()
 	actions.add_theme_constant_override("separation", 14)
+	actions.alignment = BoxContainer.ALIGNMENT_CENTER
 	vbox.add_child(actions)
 
+	# BACK — subtle muted secondary pill, kept small to minimise clutter.
 	var back := Button.new()
 	back.text = "BACK"
-	back.custom_minimum_size = Vector2(140, 52)
+	back.custom_minimum_size = Vector2(120, 50)
 	back.focus_mode = Control.FOCUS_NONE
-	_style_button(back, 22)
+	var back_sb := StyleBoxFlat.new()
+	back_sb.bg_color = Color(0.1, 0.11, 0.14, 0.55)
+	back_sb.set_corner_radius_all(25)
+	back_sb.border_color = Color(1, 1, 1, 0.18)
+	back_sb.set_border_width_all(2)
+	back.add_theme_stylebox_override("normal", back_sb)
+	var back_hover := back_sb.duplicate() as StyleBoxFlat
+	back_hover.bg_color = Color(0.16, 0.17, 0.21, 0.7)
+	back.add_theme_stylebox_override("hover", back_hover)
+	back.add_theme_stylebox_override("pressed", back_hover)
+	back.add_theme_color_override("font_color", Color(0.8, 0.82, 0.86))
+	back.add_theme_font_size_override("font_size", _fs(22))
+	if _btn_font_bold != null:
+		back.add_theme_font_override("font", _btn_font_bold)
 	back.pressed.connect(_on_back_pressed)
 	actions.add_child(back)
 
+	# Selected character name — big bold, coloured, between the two buttons.
 	var mid := VBoxContainer.new()
 	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	mid.add_theme_constant_override("separation", 0)
+	mid.alignment = BoxContainer.ALIGNMENT_CENTER
 	actions.add_child(mid)
 
 	_name_label = Label.new()
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name_label.add_theme_font_size_override("font_size", _fs(40))
+	_name_label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.03, 0.95))
+	_name_label.add_theme_constant_override("outline_size", _fs(10))
 	if _btn_font_bold != null:
 		_name_label.add_theme_font_override("font", _btn_font_bold)
 	mid.add_child(_name_label)
 
+	# PLAY — prominent gradient pill (crimson -> bright), with press feedback.
 	var play := Button.new()
 	play.text = "PLAY"
-	play.custom_minimum_size = Vector2(260, 80)
+	play.custom_minimum_size = Vector2(240, 62)
 	play.focus_mode = Control.FOCUS_NONE
 	var cta := StyleBoxFlat.new()
-	cta.bg_color = Color(0.62, 0.08, 0.08)
-	cta.set_border_width_all(3)
-	cta.border_color = Color(1.0, 0.85, 0.8, 0.5)
-	cta.set_corner_radius_all(18)
+	cta.bg_color = Color(0.85, 0.12, 0.16)
+	cta.set_corner_radius_all(31)
+	cta.border_color = Color(1.0, 0.6, 0.6, 0.6)
+	cta.set_border_width_all(2)
 	play.add_theme_stylebox_override("normal", cta)
 	var cta_hover := cta.duplicate() as StyleBoxFlat
-	cta_hover.bg_color = Color(0.78, 0.12, 0.10)
+	cta_hover.bg_color = Color(0.35, 0.85, 0.4)
 	play.add_theme_stylebox_override("hover", cta_hover)
-	play.add_theme_stylebox_override("pressed", cta_hover)
-	play.add_theme_color_override("font_color", Color(1.0, 0.97, 0.93))
-	play.add_theme_color_override("font_outline_color", Color(0.1, 0.01, 0.01, 0.9))
-	play.add_theme_constant_override("outline_size", 5)
-	play.add_theme_font_size_override("font_size", _fs(34))
-	if _btn_font != null:
-		play.add_theme_font_override("font", _btn_font)
+	var cta_pressed := cta.duplicate() as StyleBoxFlat
+	cta_pressed.bg_color = Color(0.28, 0.7, 0.33)
+	play.add_theme_stylebox_override("pressed", cta_pressed)
+	play.add_theme_color_override("font_color", Color(1, 1, 1))
+	play.add_theme_color_override("font_hover_color", Color(0.05, 0.1, 0.05))
+	play.add_theme_color_override("font_outline_color", Color(0.1, 0.01, 0.01, 0.6))
+	play.add_theme_constant_override("outline_size", 4)
+	play.add_theme_font_size_override("font_size", _fs(32))
+	if _btn_font_bold != null:
+		play.add_theme_font_override("font", _btn_font_bold)
 	play.pressed.connect(_on_play_pressed)
 	actions.add_child(play)
 	_play_btn = play
-
-
-func _build_step_hints(vbox: VBoxContainer) -> void:
-	var steps := Label.new()
-	steps.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	steps.text = "1  Pick a survivor     2  PLAY     3  Choose a level"
-	steps.add_theme_font_size_override("font_size", _fs(18))
-	steps.add_theme_color_override("font_color", Color(0.85, 0.83, 0.78))
-	steps.add_theme_color_override("font_outline_color", Color(0.03, 0.02, 0.04, 0.95))
-	steps.add_theme_constant_override("outline_size", 5)
-	if _btn_font != null:
-		steps.add_theme_font_override("font", _btn_font)
-	vbox.add_child(steps)
 
 
 func _build_tap_zones() -> void:
@@ -527,7 +563,7 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 			_disc_mats[i].albedo_color = _survivors[i].color * mult
 			_disc_mats[i].emission_energy_multiplier = mult
 		if i < _col_buttons.size() and is_instance_valid(_col_buttons[i]):
-			_col_buttons[i].modulate = Color.WHITE if sel else Color(0.66, 0.66, 0.66)
+			_style_card(_col_buttons[i], _survivors[i].color, sel)
 
 	if _name_label != null:
 		_name_label.text = s.display_name
