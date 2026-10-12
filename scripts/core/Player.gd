@@ -1005,7 +1005,10 @@ func _selected_character_id() -> String:
 	var save := get_node_or_null("/root/Save")
 	if save and save.get("selected_character") != null:
 		return String(save.get("selected_character"))
-	return "gamer"
+	# Must match SaveManager.selected_character's default ("doctor"); when /root/Save
+	# is absent the menu restores nothing, so gameplay must not load a different
+	# character than the menu highlights.
+	return "doctor"
 
 func _normalise_model_transform(mdl: Node3D, aabb: AABB) -> void:
 	# The exported GLBs come at wildly different scales, so measure the real
