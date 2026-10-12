@@ -445,6 +445,11 @@ func _build_ui() -> void:
 	_build_side_nav_arrows()
 
 	var bar: MarginContainer = $UI/BottomBar
+	# Center the bottom UI as a tidy column instead of stretching edge-to-edge,
+	# so the header strip + action row read as proportioned boxes.
+	bar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	bar.offset_left = -520.0
+	bar.offset_right = 520.0
 	bar.offset_top = -180.0
 	bar.offset_bottom = -16.0
 	var vbox := VBoxContainer.new()
@@ -550,7 +555,7 @@ func _build_survivor_header(vbox: VBoxContainer) -> void:
 
 	_name_label = Label.new()
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_label.add_theme_font_size_override("font_size", _fs(30))
+	_name_label.add_theme_font_size_override("font_size", _fs(42))
 	_name_label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.03, 0.95))
 	_name_label.add_theme_constant_override("outline_size", _fs(8))
 	if _btn_font_bold != null:
@@ -559,10 +564,12 @@ func _build_survivor_header(vbox: VBoxContainer) -> void:
 
 	_desc_label = Label.new()
 	_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_desc_label.add_theme_font_size_override("font_size", _fs(14))
-	_desc_label.add_theme_color_override("font_color", Color(0.78, 0.84, 0.92, 0.9))
-	if _btn_font != null:
-		_desc_label.add_theme_font_override("font", _btn_font)
+	_desc_label.add_theme_font_size_override("font_size", _fs(20))
+	_desc_label.add_theme_color_override("font_color", Color(0.92, 0.95, 0.99, 0.95))
+	_desc_label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.03, 0.9))
+	_desc_label.add_theme_constant_override("outline_size", _fs(5))
+	if _btn_font_bold != null:
+		_desc_label.add_theme_font_override("font", _btn_font_bold)
 	mid.add_child(_desc_label)
 
 	# Indicator pips row
