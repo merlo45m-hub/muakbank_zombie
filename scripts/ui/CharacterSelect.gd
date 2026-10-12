@@ -523,7 +523,7 @@ func _build_survivor_header(vbox: VBoxContainer) -> void:
 	psb.set_corner_radius_all(16)
 	psb.border_color = Color(1, 1, 1, 0.14)
 	psb.set_border_width_all(2)
-	psb.set_content_margin_all(8)
+	psb.set_content_margin_all(6)
 	panel.add_theme_stylebox_override("panel", psb)
 	vbox.add_child(panel)
 
@@ -663,7 +663,7 @@ func _build_skin_selector(parent: VBoxContainer) -> void:
 	# Previous skin arrow
 	var prev_btn := Button.new()
 	prev_btn.text = "◀"
-	prev_btn.custom_minimum_size = Vector2(34, 28)
+	prev_btn.custom_minimum_size = Vector2(38, 34)
 	prev_btn.focus_mode = Control.FOCUS_NONE
 	_style_skin_arrow(prev_btn)
 	prev_btn.pressed.connect(func() -> void: _cycle_skin(-1))
@@ -674,7 +674,7 @@ func _build_skin_selector(parent: VBoxContainer) -> void:
 	_skin_buttons.clear()
 	for i in range(3):
 		var b := Button.new()
-		b.custom_minimum_size = Vector2(125, 28)
+		b.custom_minimum_size = Vector2(118, 34)
 		b.focus_mode = Control.FOCUS_NONE
 		var idx := i
 		b.pressed.connect(func() -> void: _select_skin(idx, true, true))
@@ -684,7 +684,7 @@ func _build_skin_selector(parent: VBoxContainer) -> void:
 	# Next skin arrow
 	var next_btn := Button.new()
 	next_btn.text = "▶"
-	next_btn.custom_minimum_size = Vector2(34, 28)
+	next_btn.custom_minimum_size = Vector2(38, 34)
 	next_btn.focus_mode = Control.FOCUS_NONE
 	_style_skin_arrow(next_btn)
 	next_btn.pressed.connect(func() -> void: _cycle_skin(1))
