@@ -112,10 +112,11 @@ func _load_environment() -> void:
 const SPAWN_HINTS := {
 	# Old Town: the old hint (-2, 0.15, -25) sat in a pocket boxed in by Building1
 	# (left, 5.8m), Building2 (2.6m) and Building5. A far-corner spawn (34,-34) was
-	# open but put every building out of fog-range view. (7, 0.15, 13) is open ground
-	# ~15m from town centre with >=8m clear radius, so buildings are visible on spawn
-	# and the player can still roam.
-	1: Vector3(7.0, 0.15, 13.0),
+	# open but put every building out of fog-range view. (-2, 0.15, -18) is the best
+	# central open spot (VPS scan: 10.4m clear radius, only candidate in the 8-20m
+	# band) — buildings visible on spawn, room to move. StreetDetail cover buildings
+	# pushed to 16-24m so they do not crowd spawn.
+	1: Vector3(-2.0, 0.15, -18.0),
 	# Cemetery: the centre IS the mausoleum. Census showed its arch filling 7.26% of
 	# the frame from 6.6 m with the pillars adding another 5%, because the probe used
 	# to settle ~2 m from it. Start on the western edge of the grave ring instead and

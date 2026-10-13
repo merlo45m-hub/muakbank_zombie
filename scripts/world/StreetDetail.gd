@@ -209,9 +209,12 @@ const RING_COUNT := 16
 const RING_MIN_H := 3.2
 const RING_MAX_H := 7.5
 # Interior cover buildings: walkable-arena obstacles, WITH colliders.
+# Pushed to the outer band (16-24m) so they do not crowd the player spawn at
+# (7,13) or block the early view — the old 6-13m ring put cover buildings right
+# on top of spawn. Backdrop ring stays at 21-27 for the skyline.
 const COVER_COUNT := 4
-const COVER_R_MIN := 6.0
-const COVER_R_MAX := 13.0
+const COVER_R_MIN := 16.0
+const COVER_R_MAX := 24.0
 const COVER_HEIGHT := 2.8
 # Parked cars along the main road (LevelDetail puts it at z = -4, width 3.4).
 const CAR_ROAD_Z := -4.0
