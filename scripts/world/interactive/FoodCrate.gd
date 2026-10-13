@@ -41,8 +41,12 @@ var food_ammo_scene = preload("res://scenes/world/food_ammo.tscn")
 func _ready() -> void:
 	add_to_group("interactive_prop")
 	lid_node = get_node_or_null("Lid")
-	interaction_zone = get_node_or_null("InteractionZone")
-	body_node = get_node_or_null("Collision")
+	interaction_zone = get_node_or_null("CrateInteractionZone")
+	if interaction_zone == null:
+		interaction_zone = get_node_or_null("InteractionZone")
+	body_node = get_node_or_null("CrateCollision")
+	if body_node == null:
+		body_node = get_node_or_null("Collision")
 	if body_node == null:
 		body_node = get_node_or_null("Body")
 

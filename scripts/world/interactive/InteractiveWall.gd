@@ -23,8 +23,12 @@ var hit_feedback: HitFeedback = null
 
 func _ready() -> void:
 	add_to_group("interactive_prop")
-	mesh_node = get_node_or_null("Mesh")  # the BoxMesh visual
-	body_node = get_node_or_null("Collision")
+	mesh_node = get_node_or_null("WallMesh")  # the BoxMesh visual
+	if mesh_node == null:
+		mesh_node = get_node_or_null("Mesh")
+	body_node = get_node_or_null("WallCollision")
+	if body_node == null:
+		body_node = get_node_or_null("Collision")
 	if body_node == null:
 		body_node = get_node_or_null("Body")
 	# Discover HitFeedback from the level

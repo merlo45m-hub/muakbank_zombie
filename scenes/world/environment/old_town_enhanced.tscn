@@ -401,13 +401,12 @@ size = Vector3(6, 12, 6)
 size = Vector3(16, 14, 16)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_church_building"]
+size = Vector3(22, 12, 18)
 [sub_resource type="BoxShape3D" id="BoxShape3D_building_glb"]
 size = Vector3(8, 12, 8)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_car_glb"]
 size = Vector3(2.2, 1.6, 4.6)
-
-size = Vector3(22, 12, 18)
 
 [node name="OldTown" type="Node3D"]
 
@@ -1462,7 +1461,7 @@ script = ExtResource("54")
 [node name="DoorInteractionZone" type="Area3D" parent="Interactive/HouseProp/FrontDoor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
 collision_layer = 1
-collision_mask = 256
+collision_mask = 2
 
 [node name="DoorZoneShape" type="CollisionShape3D" parent="Interactive/HouseProp/FrontDoor/DoorInteractionZone"]
 shape = SubResource("BoxShape3D_door")
@@ -1512,7 +1511,7 @@ mesh = SubResource("BoxMesh_building3")
 material_override = SubResource("BrickMaterial")
 
 [node name="WallCollision" type="StaticBody3D" parent="Interactive/HouseProp/BrickWall"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.5, -12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 collision_layer = 1
 
 [node name="WallColShape" type="CollisionShape3D" parent="Interactive/HouseProp/BrickWall/WallCollision"]
@@ -1521,7 +1520,7 @@ shape = SubResource("BoxShape3D_building3")
 [node name="WallInteractionZone" type="Area3D" parent="Interactive/HouseProp/BrickWall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
 collision_layer = 1
-collision_mask = 256
+collision_mask = 2
 
 [node name="WallZoneShape" type="CollisionShape3D" parent="Interactive/HouseProp/BrickWall/WallInteractionZone"]
 shape = SubResource("BoxShape3D_door")
@@ -1537,7 +1536,7 @@ mesh = SubResource("BoxMesh_crate")
 material_override = SubResource("WoodMaterial")
 
 [node name="CrateCollision" type="StaticBody3D" parent="Interactive/HouseProp/FoodCrate"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.5, -10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 collision_layer = 1
 
 [node name="CrateColShape" type="CollisionShape3D" parent="Interactive/HouseProp/FoodCrate/CrateCollision"]
@@ -1551,7 +1550,7 @@ material_override = SubResource("WoodMaterial_dark")
 [node name="CrateInteractionZone" type="Area3D" parent="Interactive/HouseProp/FoodCrate"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 collision_layer = 1
-collision_mask = 256
+collision_mask = 2
 
 [node name="CrateZoneShape" type="CollisionShape3D" parent="Interactive/HouseProp/FoodCrate/CrateInteractionZone"]
 shape = SubResource("BoxShape3D_crate")
@@ -1583,7 +1582,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.3, 15)
 script = ExtResource("58")
 
 [node name="CartBody" type="StaticBody3D" parent="Interactive/OldCart"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.3, 15)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 collision_layer = 1
 
 [node name="CartMesh" type="MeshInstance3D" parent="Interactive/OldCart/CartBody"]
@@ -1596,7 +1595,7 @@ shape = SubResource("CapsuleShape3D_overturned_cart")
 [node name="CartInteractionZone" type="Area3D" parent="Interactive/OldCart"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
 collision_layer = 1
-collision_mask = 256
+collision_mask = 2
 
 [node name="CartZoneShape" type="CollisionShape3D" parent="Interactive/OldCart/CartInteractionZone"]
 shape = SubResource("CapsuleShape3D_overturned_cart")
@@ -1650,44 +1649,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.2, -0.4)
 mesh = SubResource("CylinderMesh_cart_wheel")
 material_override = SubResource("DarkMetalMaterial")
 
-;; ── FOOD SPAWNERS (5 spawners inside level bounds) ───────────────────────────────
-
-[node name="FoodSpawner1" type="Node3D" parent="Interactive"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.15, -4)
-script = ExtResource("57")
-
-[node name="SpawnTimer" type="Timer" parent="Interactive/FoodSpawner1"]
-one_shot = false
-wait_time = 4.5
-
-[node name="FoodSpawner2" type="Node3D" parent="Interactive"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.15, 6)
-script = ExtResource("57")
-
-[node name="SpawnTimer" type="Timer" parent="Interactive/FoodSpawner2"]
-one_shot = false
-wait_time = 4.5
-
-[node name="FoodSpawner3" type="Node3D" parent="Interactive"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.15, 10)
-script = ExtResource("57")
-
-[node name="SpawnTimer" type="Timer" parent="Interactive/FoodSpawner3"]
-one_shot = false
-wait_time = 4.5
-
-[node name="FoodSpawner4" type="Node3D" parent="Interactive"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.15, -12)
-script = ExtResource("57")
-
-[node name="SpawnTimer" type="Timer" parent="Interactive/FoodSpawner4"]
-one_shot = false
-wait_time = 4.5
-
-[node name="FoodSpawner5" type="Node3D" parent="Interactive"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, -18)
-script = ExtResource("57")
-
-[node name="SpawnTimer" type="Timer" parent="Interactive/FoodSpawner5"]
-one_shot = false
-wait_time = 4.5

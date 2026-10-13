@@ -199,8 +199,18 @@ func _spawn_random_zombie() -> void:
 		zombie_spitter_scene
 	]
 	var zombie_types = ["dog", "cat", "bear", "rabbit", "chicken", "runner", "spitter"]
-	var type_index = randi() % scenes.size()
-	var zombie_type = zombie_types[type_index]
+	var enemy_pool: Array = Level.get_enemy_pool(current_level)
+	var candidate_scenes: Array = []
+	var candidate_types: Array = []
+	for i in range(zombie_types.size()):
+		if zombie_types[i] in enemy_pool:
+			candidate_scenes.append(scenes[i])
+			candidate_types.append(zombie_types[i])
+	if candidate_types.is_empty():
+		candidate_scenes = scenes
+		candidate_types = zombie_types
+	var type_index = randi() % candidate_scenes.size()
+	var zombie_type = candidate_types[type_index]
 
 	# Borrow a zombie from the pool
 	var pool_entry = _get_pool_for_type(zombie_type)

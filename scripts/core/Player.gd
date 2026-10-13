@@ -878,7 +878,11 @@ func _try_prop_interaction() -> bool:
 		if dist > nearest_dist:
 			continue
 		# Check player is in the prop's interaction zone
-		var zone := prop.get_node_or_null("InteractionZone")
+		var zone: Area3D = null
+		for child in prop.get_children():
+			if child is Area3D and str(child.name).contains("InteractionZone"):
+				zone = child
+				break
 		if zone:
 			var overlapping: Array = zone.get_overlapping_bodies()
 			var player_in_zone := false

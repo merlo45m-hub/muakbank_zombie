@@ -51,8 +51,12 @@ func _ready() -> void:
 	door_hinge = get_node_or_null("DoorHinge")
 	door_body = get_node_or_null("Door")
 	hood_node = find_child_mesh("Hood")
-	interaction_zone = get_node_or_null("InteractionZone")
-	body_node = get_node_or_null("Body")
+	interaction_zone = get_node_or_null("CartInteractionZone")
+	if interaction_zone == null:
+		interaction_zone = get_node_or_null("InteractionZone")
+	body_node = get_node_or_null("CartBody")
+	if body_node == null:
+		body_node = get_node_or_null("Body")
 	if body_node == null:
 		body_node = get_node_or_null("Collision")
 	# Wheels — look for any child MeshInstance3D whose name contains "Wheel"
