@@ -111,10 +111,11 @@ func _load_environment() -> void:
 ## centre now has broken headstones on it.
 const SPAWN_HINTS := {
 	# Old Town: the old hint (-2, 0.15, -25) sat in a pocket boxed in by Building1
-	# (left, 5.8m), Building2 (2.6m) and Building5 — the player was confined to a few
-	# metres and could not explore. (34, 0.15, -34) is open ground: VPS raycast scan
-	# shows a 36m clear radius in all 8 directions, so the player can roam the map.
-	1: Vector3(34.0, 0.15, -34.0),
+	# (left, 5.8m), Building2 (2.6m) and Building5. A far-corner spawn (34,-34) was
+	# open but put every building out of fog-range view. (7, 0.15, 13) is open ground
+	# ~15m from town centre with >=8m clear radius, so buildings are visible on spawn
+	# and the player can still roam.
+	1: Vector3(7.0, 0.15, 13.0),
 	# Cemetery: the centre IS the mausoleum. Census showed its arch filling 7.26% of
 	# the frame from 6.6 m with the pillars adding another 5%, because the probe used
 	# to settle ~2 m from it. Start on the western edge of the grave ring instead and
