@@ -5,15 +5,202 @@
 ## Kit buildings around the arena, parked vehicles along the road, traffic
 ## lights, dumpsters, construction barriers and road signs.
 ##
-## Every pool is built by SCANNING the staged asset dirs at runtime, so the
-## layer degrades gracefully: a missing dir or a missing pack simply removes
-## that category instead of erroring. Placement is seeded and stable.
+## Asset paths are committed explicitly because exported PCK/APK builds cannot
+## enumerate res:// directories with DirAccess. Missing resources are skipped,
+## and placement remains seeded and stable.
 extends Node3D
 
-const COMMERCIAL_DIR := "res://assets/models/cc0/city/commercial/Models/"
-const SUBURBAN_DIR := "res://assets/models/cc0/city/suburban/Models/"
-const ROADS_DIR := "res://assets/models/cc0/city/roads/Models/"
-const CARS_DIR := "res://assets/models/cc0/cars/Models/"
+const BUILDING_ASSETS: Array[String] = [
+	"res://assets/models/cc0/city/commercial/Models/building-a.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-b.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-c.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-d.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-e.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-f.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-g.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-h.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-i.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-j.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-k.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-l.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-m.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-n.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-skyscraper-a.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-skyscraper-b.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-skyscraper-c.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-skyscraper-d.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-skyscraper-e.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-a.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-b.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-c.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-d.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-e.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-f.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-g.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-h.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-i.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-j.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-k.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-l.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-m.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-n.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-o.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-p.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-q.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-r.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-s.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-t.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-u.glb",
+]
+const ROAD_ASSETS: Array[String] = [
+	"res://assets/models/cc0/city/roads/Models/bridge-pillar-wide.glb",
+	"res://assets/models/cc0/city/roads/Models/bridge-pillar.glb",
+	"res://assets/models/cc0/city/roads/Models/construction-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/construction-cone.glb",
+	"res://assets/models/cc0/city/roads/Models/construction-fence.glb",
+	"res://assets/models/cc0/city/roads/Models/construction-light.glb",
+	"res://assets/models/cc0/city/roads/Models/dumpster.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-pole-single.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-pole-wide.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-pole.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-side-single.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-side-wide.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-side.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-wires-wide.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-wires.glb",
+	"res://assets/models/cc0/city/roads/Models/light-curved-cross.glb",
+	"res://assets/models/cc0/city/roads/Models/light-curved-double.glb",
+	"res://assets/models/cc0/city/roads/Models/light-curved.glb",
+	"res://assets/models/cc0/city/roads/Models/light-square-cross.glb",
+	"res://assets/models/cc0/city/roads/Models/light-square-double.glb",
+	"res://assets/models/cc0/city/roads/Models/light-square.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bend-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bend-sidewalk.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bend-square-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bend-square.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bend.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bridge.glb",
+	"res://assets/models/cc0/city/roads/Models/road-crossing.glb",
+	"res://assets/models/cc0/city/roads/Models/road-crossroad-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-crossroad-line.glb",
+	"res://assets/models/cc0/city/roads/Models/road-crossroad-path.glb",
+	"res://assets/models/cc0/city/roads/Models/road-crossroad.glb",
+	"res://assets/models/cc0/city/roads/Models/road-curve-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-curve-intersection-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-curve-intersection.glb",
+	"res://assets/models/cc0/city/roads/Models/road-curve-pavement.glb",
+	"res://assets/models/cc0/city/roads/Models/road-curve.glb",
+	"res://assets/models/cc0/city/roads/Models/road-driveway-double-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-driveway-double.glb",
+	"res://assets/models/cc0/city/roads/Models/road-driveway-single-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-driveway-single.glb",
+	"res://assets/models/cc0/city/roads/Models/road-end-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-end-round-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-end-round.glb",
+	"res://assets/models/cc0/city/roads/Models/road-end.glb",
+	"res://assets/models/cc0/city/roads/Models/road-intersection-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-intersection-line.glb",
+	"res://assets/models/cc0/city/roads/Models/road-intersection-path.glb",
+	"res://assets/models/cc0/city/roads/Models/road-intersection.glb",
+	"res://assets/models/cc0/city/roads/Models/road-roundabout-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-roundabout.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side-entry-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side-entry.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side-exit-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side-exit.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-empty-hanging.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-empty.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-object-stop.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-object-street.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-object-warning.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-stop.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-street.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-warning.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-curve-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-curve.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-flat-curve.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-flat-high.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-flat.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-high-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-high.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant.glb",
+	"res://assets/models/cc0/city/roads/Models/road-split-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-split.glb",
+	"res://assets/models/cc0/city/roads/Models/road-square-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-square.glb",
+	"res://assets/models/cc0/city/roads/Models/road-straight-barrier-end.glb",
+	"res://assets/models/cc0/city/roads/Models/road-straight-barrier-half.glb",
+	"res://assets/models/cc0/city/roads/Models/road-straight-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-straight-half.glb",
+	"res://assets/models/cc0/city/roads/Models/road-straight.glb",
+	"res://assets/models/cc0/city/roads/Models/sign-highway-detailed.glb",
+	"res://assets/models/cc0/city/roads/Models/sign-highway-wide.glb",
+	"res://assets/models/cc0/city/roads/Models/sign-highway.glb",
+	"res://assets/models/cc0/city/roads/Models/tile-high.glb",
+	"res://assets/models/cc0/city/roads/Models/tile-low.glb",
+	"res://assets/models/cc0/city/roads/Models/tile-slant.glb",
+	"res://assets/models/cc0/city/roads/Models/tile-slantHigh.glb",
+	"res://assets/models/cc0/city/roads/Models/traffic-light-hanging.glb",
+	"res://assets/models/cc0/city/roads/Models/traffic-light-object-hanging.glb",
+	"res://assets/models/cc0/city/roads/Models/traffic-light-object-horizontal.glb",
+	"res://assets/models/cc0/city/roads/Models/traffic-light-object-vertical.glb",
+	"res://assets/models/cc0/city/roads/Models/traffic-light.glb",
+]
+const CAR_ASSETS: Array[String] = [
+	"res://assets/models/cc0/cars/Models/ambulance.glb",
+	"res://assets/models/cc0/cars/Models/box.glb",
+	"res://assets/models/cc0/cars/Models/cone-flat.glb",
+	"res://assets/models/cc0/cars/Models/cone.glb",
+	"res://assets/models/cc0/cars/Models/debris-bolt.glb",
+	"res://assets/models/cc0/cars/Models/debris-bumper.glb",
+	"res://assets/models/cc0/cars/Models/debris-door-window.glb",
+	"res://assets/models/cc0/cars/Models/debris-door.glb",
+	"res://assets/models/cc0/cars/Models/debris-drivetrain-axle.glb",
+	"res://assets/models/cc0/cars/Models/debris-drivetrain.glb",
+	"res://assets/models/cc0/cars/Models/debris-nut.glb",
+	"res://assets/models/cc0/cars/Models/debris-plate-a.glb",
+	"res://assets/models/cc0/cars/Models/debris-plate-b.glb",
+	"res://assets/models/cc0/cars/Models/debris-plate-small-a.glb",
+	"res://assets/models/cc0/cars/Models/debris-plate-small-b.glb",
+	"res://assets/models/cc0/cars/Models/debris-spoiler-a.glb",
+	"res://assets/models/cc0/cars/Models/debris-spoiler-b.glb",
+	"res://assets/models/cc0/cars/Models/debris-tire.glb",
+	"res://assets/models/cc0/cars/Models/delivery-flat.glb",
+	"res://assets/models/cc0/cars/Models/delivery.glb",
+	"res://assets/models/cc0/cars/Models/firetruck.glb",
+	"res://assets/models/cc0/cars/Models/garbage-truck.glb",
+	"res://assets/models/cc0/cars/Models/hatchback-sports.glb",
+	"res://assets/models/cc0/cars/Models/kart-oobi.glb",
+	"res://assets/models/cc0/cars/Models/kart-oodi.glb",
+	"res://assets/models/cc0/cars/Models/kart-ooli.glb",
+	"res://assets/models/cc0/cars/Models/kart-oopi.glb",
+	"res://assets/models/cc0/cars/Models/kart-oozi.glb",
+	"res://assets/models/cc0/cars/Models/police.glb",
+	"res://assets/models/cc0/cars/Models/race-future.glb",
+	"res://assets/models/cc0/cars/Models/race.glb",
+	"res://assets/models/cc0/cars/Models/sedan-sports.glb",
+	"res://assets/models/cc0/cars/Models/sedan.glb",
+	"res://assets/models/cc0/cars/Models/suv-luxury.glb",
+	"res://assets/models/cc0/cars/Models/suv.glb",
+	"res://assets/models/cc0/cars/Models/taxi.glb",
+	"res://assets/models/cc0/cars/Models/tractor-police.glb",
+	"res://assets/models/cc0/cars/Models/tractor-shovel.glb",
+	"res://assets/models/cc0/cars/Models/tractor.glb",
+	"res://assets/models/cc0/cars/Models/truck-flat.glb",
+	"res://assets/models/cc0/cars/Models/truck.glb",
+	"res://assets/models/cc0/cars/Models/van.glb",
+	"res://assets/models/cc0/cars/Models/wheel-dark.glb",
+	"res://assets/models/cc0/cars/Models/wheel-default.glb",
+	"res://assets/models/cc0/cars/Models/wheel-racing.glb",
+	"res://assets/models/cc0/cars/Models/wheel-tractor-back.glb",
+	"res://assets/models/cc0/cars/Models/wheel-tractor-dark-back.glb",
+	"res://assets/models/cc0/cars/Models/wheel-tractor-dark-front.glb",
+	"res://assets/models/cc0/cars/Models/wheel-tractor-front.glb",
+	"res://assets/models/cc0/cars/Models/wheel-truck.glb",
+]
 
 # Backdrop ring (outside the courtyard fence): tall skyline, no colliders.
 const RING_MIN_R := 21.0
@@ -47,9 +234,9 @@ var _placed := 0
 
 func _ready() -> void:
 	_rng.seed = 20261006
-	_building_paths = _scan(COMMERCIAL_DIR, "building") + _scan(SUBURBAN_DIR, "building")
-	_road_paths = _scan(ROADS_DIR, "")
-	_car_paths = _scan(CARS_DIR, "")
+	_building_paths = _existing_paths(BUILDING_ASSETS)
+	_road_paths = _existing_paths(ROAD_ASSETS)
+	_car_paths = _existing_paths(CAR_ASSETS)
 	if _building_paths.is_empty():
 		push_warning("StreetDetail: no building models found - street dressing skipped")
 	_building_ring()
@@ -60,24 +247,14 @@ func _ready() -> void:
 		_placed, _building_paths.size(), _road_paths.size(), _car_paths.size()])
 
 
-## Recursively collect .glb paths under a dir whose filename starts with prefix
-## (empty prefix = everything). Returns absolute res:// paths.
-func _scan(dir_path: String, prefix: String) -> Array[String]:
+## Packed APKs cannot enumerate res:// directories with DirAccess, so use
+## committed asset paths and keep only resources present in this build.
+func _existing_paths(paths: Array[String]) -> Array[String]:
 	var out: Array[String] = []
-	var d := DirAccess.open(dir_path)
-	if d == null:
-		return out
-	d.list_dir_begin()
-	var name := d.get_next()
-	while name != "":
-		if d.current_is_dir() and not name.begins_with("."):
-			out.append_array(_scan(dir_path.path_join(name), prefix))
-		elif name.ends_with(".glb") and (prefix == "" or name.begins_with(prefix)):
-			out.append(dir_path.path_join(name))
-		name = d.get_next()
-	d.list_dir_end()
+	for path in paths:
+		if ResourceLoader.exists(path):
+			out.append(path)
 	return out
-
 
 ## Instantiate a model and scale it so its height matches target_h.
 ## Returns null when the model cannot be loaded (never errors).
