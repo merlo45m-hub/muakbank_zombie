@@ -131,11 +131,13 @@ func _anim_open_door() -> void:
 		door_tween.kill()
 	door_tween = create_tween()
 	door_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	# Rotate the door RigidBody directly. The old code tweened door_hinge.limit_angle,
-	# but a HingeJoint3D limit only constrains a body — it never moves one, so the
-	# cart door never opened. door_panel (DoorMesh) is a child of the Door body, so
-	# rotating the body carries the mesh with it and keeps physics + visual in sync.
+	# Freeze the door body so it is not physics-simulated during the scripted
+	# swing — an unfrozen RigidBody3D's transform is solver-owned, so tweening
+	# rotation.y gets overwritten and the cart door never opens (same bug as the
+	# house door; gpt-luna verdict: BROKEN). door_panel (DoorMesh) is a child of
+	# the Door body, so rotating the frozen body carries the mesh with it.
 	if door_body:
+		door_body.freeze = true
 		door_tween.tween_property(door_body, "rotation:y", door_open_angle, door_swing_duration)
 	elif door_panel:
 		door_tween.tween_property(door_panel, "rotation:y", door_open_angle, door_swing_duration)

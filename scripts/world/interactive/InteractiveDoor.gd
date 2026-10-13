@@ -159,11 +159,15 @@ func _start_swing(target: float) -> void:
 		swing_tween.kill()
 	swing_tween = create_tween()
 	swing_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	# Drive the panels' rotation directly. The panels are RigidBody3D in the default
-	# FREEZE_MODE_STATIC, which lets scripted rotation writes stick (verified on VPS:
-	# a tween on PanelA.rotation.z advances 0 -> 1.57 correctly). The HingeJoint3D
-	# stays as the pivot constraint. Panel A swings +target, panel B swings -target
-	# so a double door opens both panels outward.
+	# Freeze the panels so they are NOT physics-simulated during the scripted
+	# swing. The panels are RigidBody3D with freeze=false (physics-controlled); an
+	# unfrozen body's transform is owned by the solver and the HingeJoint3D
+	# constraint, so tweening rotation.z gets overwritten and the door never moves
+	# (gpt-luna verdict: BROKEN — FREEZE_MODE_STATIC only defines behaviour WHEN
+	# frozen, it does not freeze). freeze=true takes the body out of simulation so
+	# the tween's rotation writes stick. The HingeJoint3D stays as the visual pivot.
+	# Panel A swings +target, panel B swings -target so a double door opens outward.
+	_set_panels_frozen(true)
 	if body_a:
 		swing_tween.parallel().tween_property(body_a, "rotation:z", target, swing_duration)
 	if body_b:
@@ -174,10 +178,20 @@ func _start_swing(target: float) -> void:
 func _apply_angle_to_joints(angle: float) -> void:
 	# Snap both panels to the target angle instantly (used on init before any
 	# tween runs). Panels rotate on local Z; B swings opposite for a double door.
+	_set_panels_frozen(true)
 	if body_a:
 		body_a.rotation.z = angle
 	if body_b:
 		body_b.rotation.z = -angle
+
+func _set_panels_frozen(frozen: bool) -> void:
+	# freeze=true removes the panels from physics simulation so scripted rotation
+	# writes survive; freeze=false returns them to solver control (a shoved-open
+	# door could then swing physically, but this game drives doors by script).
+	if body_a:
+		body_a.freeze = frozen
+	if body_b:
+		body_b.freeze = frozen
 
 func _set_panel_collisions(enabled: bool) -> void:
 	# When door is open, panels should not block the player.
