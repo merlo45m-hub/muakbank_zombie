@@ -11,9 +11,9 @@ const QUIT_DELAY = 0.2
 # === CAMERA OVERRIDE FOR TITLE SCREEN ===
 # Zooms in closer with wider FOV so the cemetery backdrop, flanking animals,
 # and moon fill the frame with rich detail, without affecting CharacterSelect.
-const TITLE_CAM_FOV = 78.0
-const TITLE_CAM_POS = Vector3(0.0, 1.28, 0.30)
-const TITLE_CAM_TARGET = Vector3(0.0, 1.02, -3.20)
+const TITLE_CAM_FOV = 52.0
+const TITLE_CAM_POS = Vector3(0.0, 1.35, 1.20)
+const TITLE_CAM_TARGET = Vector3(0.0, 1.05, -2.60)
 
 # === NODE REFS ===
 @onready var play_btn = $UI/ButtonsBox/PlayBtn
