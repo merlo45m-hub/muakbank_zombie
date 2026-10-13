@@ -1,4 +1,4 @@
-[gd_scene load_steps=120 format=3]
+[gd_scene load_steps=132 format=3]
 [ext_resource type="Script" path="res://scripts/world/interactive/InteractiveDoor.gd" id="54"]
 [ext_resource type="Script" path="res://scripts/world/interactive/InteractiveWall.gd" id="55"]
 [ext_resource type="Script" path="res://scripts/world/interactive/FoodCrate.gd" id="56"]
@@ -203,8 +203,8 @@ roughness = 0.95
 metallic = 0.0
 
 [sub_resource type="StandardMaterial3D" id="AsphaltMaterial"]
-albedo_color = Color(0.22, 0.22, 0.22, 1.0)
-roughness = 0.98
+albedo_color = Color(0.12, 0.12, 0.13, 1)
+roughness = 0.9
 metallic = 0.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_mailbox"]
@@ -410,6 +410,46 @@ size = Vector3(8, 12, 8)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_car_glb"]
 size = Vector3(2.2, 1.6, 4.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_road_ew"]
+size = Vector3(120, 0.05, 8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_road_ns"]
+size = Vector3(8, 0.05, 120)
+
+[sub_resource type="StandardMaterial3D" id="SidewalkConcreteMaterial"]
+albedo_color = Color(0.35, 0.34, 0.32, 1)
+roughness = 0.95
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_curb_ew"]
+size = Vector3(56, 0.15, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_curb_ns"]
+size = Vector3(0.2, 0.15, 56)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sidewalk_slab_ew"]
+size = Vector3(7.8, 0.1, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sidewalk_slab_ns"]
+size = Vector3(3, 0.1, 7.8)
+
+[sub_resource type="StandardMaterial3D" id="FenceWoodMaterial"]
+albedo_color = Color(0.25, 0.18, 0.12, 1)
+roughness = 0.9
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_fence_post"]
+size = Vector3(0.15, 1.2, 0.15)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fence_post"]
+size = Vector3(0.15, 1.2, 0.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fence_rail_perimeter"]
+size = Vector3(3.085, 0.1, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fence_rail_plaza"]
+size = Vector3(3, 0.1, 0.1)
 
 [node name="OldTown" type="Node3D"]
 
@@ -1651,4 +1691,2212 @@ material_override = SubResource("DarkMetalMaterial")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.2, -0.4)
 mesh = SubResource("CylinderMesh_cart_wheel")
 material_override = SubResource("DarkMetalMaterial")
+
+[node name="Roads" type="Node3D" parent="."]
+
+[node name="Road_EW" type="MeshInstance3D" parent="Roads"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0)
+	mesh = SubResource("BoxMesh_road_ew")
+	material_override = SubResource("AsphaltMaterial")
+
+[node name="Road_NS" type="MeshInstance3D" parent="Roads"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0)
+	mesh = SubResource("BoxMesh_road_ns")
+	material_override = SubResource("AsphaltMaterial")
+
+[node name="Sidewalks" type="Node3D" parent="."]
+
+[node name="Curb_EW_North_West" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 0.225, 4.1)
+	mesh = SubResource("BoxMesh_curb_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Curb_EW_North_East" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 0.225, 4.1)
+	mesh = SubResource("BoxMesh_curb_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Curb_EW_South_West" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 0.225, -4.1)
+	mesh = SubResource("BoxMesh_curb_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Curb_EW_South_East" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 0.225, -4.1)
+	mesh = SubResource("BoxMesh_curb_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Curb_NS_West_North" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 0.225, 32)
+	mesh = SubResource("BoxMesh_curb_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Curb_NS_West_South" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 0.225, -32)
+	mesh = SubResource("BoxMesh_curb_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Curb_NS_East_North" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.1, 0.225, 32)
+	mesh = SubResource("BoxMesh_curb_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Curb_NS_East_South" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.1, 0.225, -32)
+	mesh = SubResource("BoxMesh_curb_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_1" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_2" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_3" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_4" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_5" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_6" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_7" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_8" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_9" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_10" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_11" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_12" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_13" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_North_14" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0.2, 5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_1" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_2" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_3" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_4" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_5" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_6" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_7" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_8" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_9" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_10" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_11" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_12" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_13" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_EW_South_14" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0.2, -5.7)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ew")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_1" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, -56)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_2" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, -48)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_3" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, -40)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_4" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, -32)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_5" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, -24)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_6" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, -16)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_7" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, -8)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_8" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, 8)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_9" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, 16)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_10" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, 24)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_11" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, 32)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_12" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, 40)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_13" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, 48)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_West_14" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.2, 56)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_1" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, -56)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_2" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, -48)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_3" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, -40)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_4" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, -32)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_5" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, -24)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_6" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, -16)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_7" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, -8)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_8" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, 8)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_9" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, 16)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_10" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, 24)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_11" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, 32)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_12" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, 40)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_13" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, 48)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Slab_NS_East_14" type="MeshInstance3D" parent="Sidewalks"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0.2, 56)
+	mesh = SubResource("BoxMesh_sidewalk_slab_ns")
+	material_override = SubResource("SidewalkConcreteMaterial")
+
+[node name="Fences" type="Node3D" parent="."]
+
+[node name="Fence_Perimeter_0" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.028046, 0, -0.999607, 0, 1, 0, 0.999607, 0, -0.028046, 55, 0.75, 0)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_0"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_0"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_0"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_1" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.084051, 0, -0.996461, 0, 1, 0, 0.996461, 0, -0.084051, 54.9135, 0.75, 3.0839)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_1"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_1"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_1"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_2" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.13979, 0, -0.990181, 0, 1, 0, 0.990181, 0, -0.13979, 54.6542, 0.75, 6.158)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_2"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_2"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_2"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_3" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.19509, 0, -0.980785, 0, 1, 0, 0.980785, 0, -0.19509, 54.2229, 0.75, 9.2128)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_3"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_3"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_3"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_4" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.249776, 0, -0.968304, 0, 1, 0, 0.968304, 0, -0.249776, 53.621, 0.75, 12.2387)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_4"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_4"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_4"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_5" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.303677, 0, -0.952775, 0, 1, 0, 0.952775, 0, -0.303677, 52.8505, 0.75, 15.226)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_5"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_5"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_5"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_6" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.356622, 0, -0.934249, 0, 1, 0, 0.934249, 0, -0.356622, 51.9136, 0.75, 18.1653)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_6"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_6"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_6"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_7" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.408444, 0, -0.912783, 0, 1, 0, 0.912783, 0, -0.408444, 50.8134, 0.75, 21.0476)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_7"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_7"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_7"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_8" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.458982, 0, -0.888446, 0, 1, 0, 0.888446, 0, -0.458982, 49.5533, 0.75, 23.8636)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_8"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_8"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_8"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_9" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.508075, 0, -0.861313, 0, 1, 0, 0.861313, 0, -0.508075, 48.1373, 0.75, 26.6045)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_9"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_9"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_9"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_10" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.55557, 0, -0.83147, 0, 1, 0, 0.83147, 0, -0.55557, 46.5698, 0.75, 29.2618)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_10"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_10"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_10"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_11" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.601317, 0, -0.79901, 0, 1, 0, 0.79901, 0, -0.601317, 44.8558, 0.75, 31.8269)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_11"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_11"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_11"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_12" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.645172, 0, -0.764037, 0, 1, 0, 0.764037, 0, -0.645172, 43.0007, 0.75, 34.2919)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_12"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_12"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_12"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_13" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.686997, 0, -0.72666, 0, 1, 0, 0.72666, 0, -0.686997, 41.0103, 0.75, 36.6491)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_13"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_13"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_13"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_14" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.72666, 0, -0.686997, 0, 1, 0, 0.686997, 0, -0.72666, 38.8909, 0.75, 38.8909)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_14"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_14"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_14"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_15" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.764037, 0, -0.645172, 0, 1, 0, 0.645172, 0, -0.764037, 36.6491, 0.75, 41.0103)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_15"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_15"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_15"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_16" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.79901, 0, -0.601317, 0, 1, 0, 0.601317, 0, -0.79901, 34.2919, 0.75, 43.0007)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_16"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_16"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_16"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_17" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.83147, 0, -0.55557, 0, 1, 0, 0.55557, 0, -0.83147, 31.8269, 0.75, 44.8558)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_17"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_17"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_17"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_18" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.861313, 0, -0.508075, 0, 1, 0, 0.508075, 0, -0.861313, 29.2618, 0.75, 46.5698)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_18"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_18"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_18"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_19" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.888446, 0, -0.458982, 0, 1, 0, 0.458982, 0, -0.888446, 26.6045, 0.75, 48.1373)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_19"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_19"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_19"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_20" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.912783, 0, -0.408444, 0, 1, 0, 0.408444, 0, -0.912783, 23.8636, 0.75, 49.5533)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_20"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_20"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_20"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_21" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.934249, 0, -0.356622, 0, 1, 0, 0.356622, 0, -0.934249, 21.0476, 0.75, 50.8134)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_21"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_21"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_21"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_22" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.952775, 0, -0.303677, 0, 1, 0, 0.303677, 0, -0.952775, 18.1653, 0.75, 51.9136)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_22"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_22"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_22"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_23" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.968304, 0, -0.249776, 0, 1, 0, 0.249776, 0, -0.968304, 15.226, 0.75, 52.8505)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_23"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_23"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_23"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_24" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.980785, 0, -0.19509, 0, 1, 0, 0.19509, 0, -0.980785, 12.2387, 0.75, 53.621)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_24"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_24"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_24"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_25" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.990181, 0, -0.13979, 0, 1, 0, 0.13979, 0, -0.990181, 9.2128, 0.75, 54.2229)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_25"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_25"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_25"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_26" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.996461, 0, -0.084051, 0, 1, 0, 0.084051, 0, -0.996461, 6.158, 0.75, 54.6542)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_26"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_26"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_26"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_27" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.999607, 0, -0.028046, 0, 1, 0, 0.028046, 0, -0.999607, 3.0839, 0.75, 54.9135)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_27"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_27"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_27"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_28" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.999607, 0, 0.028046, 0, 1, 0, -0.028046, 0, -0.999607, 0, 0.75, 55)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_28"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_28"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_28"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_29" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.996461, 0, 0.084051, 0, 1, 0, -0.084051, 0, -0.996461, -3.0839, 0.75, 54.9135)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_29"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_29"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_29"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_30" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.990181, 0, 0.13979, 0, 1, 0, -0.13979, 0, -0.990181, -6.158, 0.75, 54.6542)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_30"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_30"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_30"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_31" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.980785, 0, 0.19509, 0, 1, 0, -0.19509, 0, -0.980785, -9.2128, 0.75, 54.2229)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_31"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_31"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_31"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_32" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.968304, 0, 0.249776, 0, 1, 0, -0.249776, 0, -0.968304, -12.2387, 0.75, 53.621)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_32"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_32"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_32"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_33" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.952775, 0, 0.303677, 0, 1, 0, -0.303677, 0, -0.952775, -15.226, 0.75, 52.8505)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_33"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_33"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_33"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_34" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.934249, 0, 0.356622, 0, 1, 0, -0.356622, 0, -0.934249, -18.1653, 0.75, 51.9136)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_34"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_34"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_34"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_35" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.912783, 0, 0.408444, 0, 1, 0, -0.408444, 0, -0.912783, -21.0476, 0.75, 50.8134)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_35"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_35"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_35"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_36" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.888446, 0, 0.458982, 0, 1, 0, -0.458982, 0, -0.888446, -23.8636, 0.75, 49.5533)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_36"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_36"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_36"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_37" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.861313, 0, 0.508075, 0, 1, 0, -0.508075, 0, -0.861313, -26.6045, 0.75, 48.1373)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_37"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_37"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_37"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_38" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.83147, 0, 0.55557, 0, 1, 0, -0.55557, 0, -0.83147, -29.2618, 0.75, 46.5698)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_38"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_38"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_38"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_39" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.79901, 0, 0.601317, 0, 1, 0, -0.601317, 0, -0.79901, -31.8269, 0.75, 44.8558)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_39"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_39"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_39"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_40" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.764037, 0, 0.645172, 0, 1, 0, -0.645172, 0, -0.764037, -34.2919, 0.75, 43.0007)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_40"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_40"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_40"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_41" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.72666, 0, 0.686997, 0, 1, 0, -0.686997, 0, -0.72666, -36.6491, 0.75, 41.0103)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_41"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_41"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_41"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_42" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.686997, 0, 0.72666, 0, 1, 0, -0.72666, 0, -0.686997, -38.8909, 0.75, 38.8909)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_42"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_42"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_42"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_43" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.645172, 0, 0.764037, 0, 1, 0, -0.764037, 0, -0.645172, -41.0103, 0.75, 36.6491)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_43"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_43"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_43"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_44" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.601317, 0, 0.79901, 0, 1, 0, -0.79901, 0, -0.601317, -43.0007, 0.75, 34.2919)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_44"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_44"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_44"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_45" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.55557, 0, 0.83147, 0, 1, 0, -0.83147, 0, -0.55557, -44.8558, 0.75, 31.8269)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_45"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_45"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_45"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_46" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.508075, 0, 0.861313, 0, 1, 0, -0.861313, 0, -0.508075, -46.5698, 0.75, 29.2618)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_46"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_46"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_46"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_47" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.458982, 0, 0.888446, 0, 1, 0, -0.888446, 0, -0.458982, -48.1373, 0.75, 26.6045)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_47"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_47"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_47"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_48" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.408444, 0, 0.912783, 0, 1, 0, -0.912783, 0, -0.408444, -49.5533, 0.75, 23.8636)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_48"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_48"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_48"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_49" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.356622, 0, 0.934249, 0, 1, 0, -0.934249, 0, -0.356622, -50.8134, 0.75, 21.0476)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_49"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_49"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_49"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_50" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.303677, 0, 0.952775, 0, 1, 0, -0.952775, 0, -0.303677, -51.9136, 0.75, 18.1653)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_50"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_50"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_50"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_51" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.249776, 0, 0.968304, 0, 1, 0, -0.968304, 0, -0.249776, -52.8505, 0.75, 15.226)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_51"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_51"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_51"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_52" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.19509, 0, 0.980785, 0, 1, 0, -0.980785, 0, -0.19509, -53.621, 0.75, 12.2387)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_52"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_52"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_52"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_53" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.13979, 0, 0.990181, 0, 1, 0, -0.990181, 0, -0.13979, -54.2229, 0.75, 9.2128)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_53"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_53"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_53"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_54" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.084051, 0, 0.996461, 0, 1, 0, -0.996461, 0, -0.084051, -54.6542, 0.75, 6.158)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_54"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_54"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_54"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_55" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(-0.028046, 0, 0.999607, 0, 1, 0, -0.999607, 0, -0.028046, -54.9135, 0.75, 3.0839)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_55"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_55"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_55"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_56" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.028046, 0, 0.999607, 0, 1, 0, -0.999607, 0, 0.028046, -55, 0.75, 0)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_56"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_56"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_56"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_57" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.084051, 0, 0.996461, 0, 1, 0, -0.996461, 0, 0.084051, -54.9135, 0.75, -3.0839)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_57"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_57"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_57"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_58" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.13979, 0, 0.990181, 0, 1, 0, -0.990181, 0, 0.13979, -54.6542, 0.75, -6.158)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_58"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_58"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_58"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_59" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.19509, 0, 0.980785, 0, 1, 0, -0.980785, 0, 0.19509, -54.2229, 0.75, -9.2128)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_59"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_59"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_59"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_60" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.249776, 0, 0.968304, 0, 1, 0, -0.968304, 0, 0.249776, -53.621, 0.75, -12.2387)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_60"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_60"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_60"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_61" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.303677, 0, 0.952775, 0, 1, 0, -0.952775, 0, 0.303677, -52.8505, 0.75, -15.226)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_61"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_61"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_61"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_62" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.356622, 0, 0.934249, 0, 1, 0, -0.934249, 0, 0.356622, -51.9136, 0.75, -18.1653)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_62"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_62"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_62"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_63" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.408444, 0, 0.912783, 0, 1, 0, -0.912783, 0, 0.408444, -50.8134, 0.75, -21.0476)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_63"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_63"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_63"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_64" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.458982, 0, 0.888446, 0, 1, 0, -0.888446, 0, 0.458982, -49.5533, 0.75, -23.8636)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_64"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_64"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_64"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_65" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.508075, 0, 0.861313, 0, 1, 0, -0.861313, 0, 0.508075, -48.1373, 0.75, -26.6045)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_65"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_65"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_65"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_66" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.55557, 0, 0.83147, 0, 1, 0, -0.83147, 0, 0.55557, -46.5698, 0.75, -29.2618)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_66"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_66"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_66"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_67" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.601317, 0, 0.79901, 0, 1, 0, -0.79901, 0, 0.601317, -44.8558, 0.75, -31.8269)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_67"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_67"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_67"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_68" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.645172, 0, 0.764037, 0, 1, 0, -0.764037, 0, 0.645172, -43.0007, 0.75, -34.2919)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_68"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_68"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_68"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_69" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.686997, 0, 0.72666, 0, 1, 0, -0.72666, 0, 0.686997, -41.0103, 0.75, -36.6491)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_69"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_69"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_69"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_70" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.72666, 0, 0.686997, 0, 1, 0, -0.686997, 0, 0.72666, -38.8909, 0.75, -38.8909)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_70"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_70"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_70"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_71" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.764037, 0, 0.645172, 0, 1, 0, -0.645172, 0, 0.764037, -36.6491, 0.75, -41.0103)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_71"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_71"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_71"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_72" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.79901, 0, 0.601317, 0, 1, 0, -0.601317, 0, 0.79901, -34.2919, 0.75, -43.0007)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_72"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_72"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_72"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_73" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.83147, 0, 0.55557, 0, 1, 0, -0.55557, 0, 0.83147, -31.8269, 0.75, -44.8558)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_73"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_73"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_73"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_74" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.861313, 0, 0.508075, 0, 1, 0, -0.508075, 0, 0.861313, -29.2618, 0.75, -46.5698)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_74"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_74"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_74"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_75" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.888446, 0, 0.458982, 0, 1, 0, -0.458982, 0, 0.888446, -26.6045, 0.75, -48.1373)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_75"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_75"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_75"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_76" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.912783, 0, 0.408444, 0, 1, 0, -0.408444, 0, 0.912783, -23.8636, 0.75, -49.5533)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_76"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_76"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_76"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_77" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.934249, 0, 0.356622, 0, 1, 0, -0.356622, 0, 0.934249, -21.0476, 0.75, -50.8134)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_77"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_77"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_77"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_78" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.952775, 0, 0.303677, 0, 1, 0, -0.303677, 0, 0.952775, -18.1653, 0.75, -51.9136)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_78"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_78"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_78"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_79" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.968304, 0, 0.249776, 0, 1, 0, -0.249776, 0, 0.968304, -15.226, 0.75, -52.8505)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_79"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_79"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_79"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_80" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.980785, 0, 0.19509, 0, 1, 0, -0.19509, 0, 0.980785, -12.2387, 0.75, -53.621)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_80"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_80"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_80"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_81" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.990181, 0, 0.13979, 0, 1, 0, -0.13979, 0, 0.990181, -9.2128, 0.75, -54.2229)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_81"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_81"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_81"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_82" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.996461, 0, 0.084051, 0, 1, 0, -0.084051, 0, 0.996461, -6.158, 0.75, -54.6542)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_82"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_82"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_82"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_83" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.999607, 0, 0.028046, 0, 1, 0, -0.028046, 0, 0.999607, -3.0839, 0.75, -54.9135)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_83"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_83"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_83"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_84" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.999607, 0, -0.028046, 0, 1, 0, 0.028046, 0, 0.999607, -0, 0.75, -55)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_84"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_84"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_84"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_85" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.996461, 0, -0.084051, 0, 1, 0, 0.084051, 0, 0.996461, 3.0839, 0.75, -54.9135)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_85"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_85"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_85"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_86" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.990181, 0, -0.13979, 0, 1, 0, 0.13979, 0, 0.990181, 6.158, 0.75, -54.6542)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_86"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_86"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_86"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_87" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.980785, 0, -0.19509, 0, 1, 0, 0.19509, 0, 0.980785, 9.2128, 0.75, -54.2229)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_87"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_87"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_87"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_88" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.968304, 0, -0.249776, 0, 1, 0, 0.249776, 0, 0.968304, 12.2387, 0.75, -53.621)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_88"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_88"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_88"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_89" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.952775, 0, -0.303677, 0, 1, 0, 0.303677, 0, 0.952775, 15.226, 0.75, -52.8505)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_89"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_89"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_89"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_90" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.934249, 0, -0.356622, 0, 1, 0, 0.356622, 0, 0.934249, 18.1653, 0.75, -51.9136)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_90"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_90"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_90"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_91" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.912783, 0, -0.408444, 0, 1, 0, 0.408444, 0, 0.912783, 21.0476, 0.75, -50.8134)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_91"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_91"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_91"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_92" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.888446, 0, -0.458982, 0, 1, 0, 0.458982, 0, 0.888446, 23.8636, 0.75, -49.5533)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_92"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_92"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_92"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_93" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.861313, 0, -0.508075, 0, 1, 0, 0.508075, 0, 0.861313, 26.6045, 0.75, -48.1373)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_93"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_93"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_93"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_94" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.83147, 0, -0.55557, 0, 1, 0, 0.55557, 0, 0.83147, 29.2618, 0.75, -46.5698)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_94"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_94"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_94"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_95" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.79901, 0, -0.601317, 0, 1, 0, 0.601317, 0, 0.79901, 31.8269, 0.75, -44.8558)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_95"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_95"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_95"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_96" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.764037, 0, -0.645172, 0, 1, 0, 0.645172, 0, 0.764037, 34.2919, 0.75, -43.0007)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_96"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_96"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_96"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_97" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.72666, 0, -0.686997, 0, 1, 0, 0.686997, 0, 0.72666, 36.6491, 0.75, -41.0103)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_97"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_97"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_97"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_98" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.686997, 0, -0.72666, 0, 1, 0, 0.72666, 0, 0.686997, 38.8909, 0.75, -38.8909)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_98"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_98"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_98"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_99" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.645172, 0, -0.764037, 0, 1, 0, 0.764037, 0, 0.645172, 41.0103, 0.75, -36.6491)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_99"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_99"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_99"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_100" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.601317, 0, -0.79901, 0, 1, 0, 0.79901, 0, 0.601317, 43.0007, 0.75, -34.2919)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_100"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_100"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_100"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_101" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.55557, 0, -0.83147, 0, 1, 0, 0.83147, 0, 0.55557, 44.8558, 0.75, -31.8269)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_101"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_101"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_101"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_102" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.508075, 0, -0.861313, 0, 1, 0, 0.861313, 0, 0.508075, 46.5698, 0.75, -29.2618)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_102"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_102"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_102"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_103" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.458982, 0, -0.888446, 0, 1, 0, 0.888446, 0, 0.458982, 48.1373, 0.75, -26.6045)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_103"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_103"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_103"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_104" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.408444, 0, -0.912783, 0, 1, 0, 0.912783, 0, 0.408444, 49.5533, 0.75, -23.8636)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_104"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_104"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_104"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_105" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.356622, 0, -0.934249, 0, 1, 0, 0.934249, 0, 0.356622, 50.8134, 0.75, -21.0476)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_105"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_105"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_105"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_106" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.303677, 0, -0.952775, 0, 1, 0, 0.952775, 0, 0.303677, 51.9136, 0.75, -18.1653)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_106"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_106"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_106"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_107" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.249776, 0, -0.968304, 0, 1, 0, 0.968304, 0, 0.249776, 52.8505, 0.75, -15.226)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_107"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_107"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_107"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_108" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.19509, 0, -0.980785, 0, 1, 0, 0.980785, 0, 0.19509, 53.621, 0.75, -12.2387)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_108"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_108"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_108"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_109" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.13979, 0, -0.990181, 0, 1, 0, 0.990181, 0, 0.13979, 54.2229, 0.75, -9.2128)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_109"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_109"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_109"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_110" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.084051, 0, -0.996461, 0, 1, 0, 0.996461, 0, 0.084051, 54.6542, 0.75, -6.158)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_110"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_110"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_110"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Perimeter_111" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(0.028046, 0, -0.999607, 0, 1, 0, 0.999607, 0, 0.028046, 54.9135, 0.75, -3.0839)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Perimeter_111"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Perimeter_111"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5425, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_perimeter")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Perimeter_111"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Plaza_0" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.0, 0.75, 7.5)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Plaza_0"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Plaza_0"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_plaza")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Plaza_0"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Plaza_1" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.0, 0.75, 7.5)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Plaza_1"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Plaza_1"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_plaza")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Plaza_1"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Plaza_2" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.0, 0.75, 7.5)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Plaza_2"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Plaza_2"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_plaza")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Plaza_2"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Plaza_3" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.0, 0.75, 7.5)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Plaza_3"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Plaza_3"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_plaza")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Plaza_3"]
+	shape = SubResource("BoxShape3D_fence_post")
+
+[node name="Fence_Plaza_4" type="StaticBody3D" parent="Fences"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.0, 0.75, 7.5)
+	collision_layer = 1
+
+[node name="Post" type="MeshInstance3D" parent="Fences/Fence_Plaza_4"]
+	mesh = SubResource("BoxMesh_fence_post")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Rail" type="MeshInstance3D" parent="Fences/Fence_Plaza_4"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
+	mesh = SubResource("BoxMesh_fence_rail_plaza")
+	material_override = SubResource("FenceWoodMaterial")
+
+[node name="Col" type="CollisionShape3D" parent="Fences/Fence_Plaza_4"]
+	shape = SubResource("BoxShape3D_fence_post")
 
