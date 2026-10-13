@@ -39,6 +39,11 @@ var is_eating: bool = false
 var is_attacking: bool = false
 var is_rage_active: bool = false
 var is_shield_active: bool = false
+# Brief post-hit invulnerability so a swarm of fast zombies (each on its own
+# ~0.4s attack cooldown) cannot stack hits and melt the player in seconds.
+# Without this, 3-4 rabbits landing hits simultaneously dealt 100->20 in ~3s.
+var _hurt_cooldown: float = 0.0
+const HURT_INVULN_TIME: float = 0.8
 var current_weapon: String = "bat"
 # Inventory: food_type -> {"count": int, "heal": int}.
 # The heal value rides along because the food SCENE is the single source of truth for
@@ -235,6 +240,10 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if is_dead:
 		return
+
+	# Tick post-hit invulnerability so the player can be hit again after the window.
+	if _hurt_cooldown > 0.0:
+		_hurt_cooldown -= delta
 
 	# Apply gravity
 	if not is_on_floor():
@@ -681,6 +690,11 @@ func use_special_ability() -> void:
 func take_damage(amount: int) -> void:
 	if is_dead:
 		return
+	# Post-hit invulnerability: ignore hits during the brief window so a swarm
+	# cannot stack damage. This is the single biggest survival-balance lever.
+	if _hurt_cooldown > 0.0:
+		return
+	_hurt_cooldown = HURT_INVULN_TIME
 
 	# Apply damage reduction from character stats
 	if character_stats:
