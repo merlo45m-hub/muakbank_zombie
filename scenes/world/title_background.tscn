@@ -321,12 +321,12 @@ material_override = SubResource("FogMaterial2")
 [node name="EnemyPositions" type="Node3D" parent="."]
 
 [node name="Moon" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.0, 9.5, -18)
 mesh = SubResource("MoonMesh")
 material_override = SubResource("MoonMat")
 
 [node name="MoonGlow" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.0, 9.5, -18)
 mesh = SubResource("GlowQuad")
 material_override = SubResource("GlowMat")
 
