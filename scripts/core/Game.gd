@@ -37,6 +37,7 @@ var zombies_killed: int = 0
 var damage_taken_this_level: bool = false  # for the "untouchable" achievement
 var game_active: bool = false
 var time_remaining: float = GAME_DURATION
+var _waves_cleared: bool = false
 
 # === OPTIONAL SYSTEMS (auto-detected) ===
 var wave_manager: Node = null
@@ -85,6 +86,8 @@ func _ready() -> void:
 	if objective_manager:
 		if objective_manager.has_signal("objective_updated"):
 			objective_manager.objective_updated.connect(_on_objective_updated)
+		if objective_manager.has_signal("objective_completed"):
+			objective_manager.objective_completed.connect(_on_objective_completed)
 	
 	# Set environment based on current level
 	_load_environment()
@@ -225,6 +228,10 @@ func _setup_objectives() -> void:
 	# (kill quota removed — level completion is driven by WaveManager's all_waves_cleared signal)
 	objective_manager.add_objective("eat_food", "Eat to stay alive", 3)
 	objective_manager.add_objective("survive", "Survive the shift", 1)
+	# Level 1 also requires its three side challenges; controllers may re-register these ids.
+	objective_manager.add_objective("l1_spoil_and_survive", "Eat 15 fresh buffet dishes", 1)
+	objective_manager.add_objective("l1_generator_fed", "Power the bio-generator", 1)
+	objective_manager.add_objective("l1_last_stand", "Survive 3 checkpoint waves", 1)
 
 func _setup_achievements() -> void:
 	var am = get_node_or_null("AchievementManager")
@@ -244,6 +251,7 @@ func start_game() -> void:
 	# game_active gates _on_player_damaged; keep it false through placement so a stray
 	# hit during the spawn frame cannot mark the run "damaged" for untouchable.
 	game_active = false
+	_waves_cleared = false
 	score = 0
 	zombies_killed = 0
 	damage_taken_this_level = false
@@ -354,6 +362,40 @@ func _on_combo_changed(combo_count: int) -> void:
 func _on_objective_updated(_id: String, _progress: int, _target: int) -> void:
 	if hud and objective_manager and objective_manager.has_method("get_all_objective_texts"):
 		hud.update_objectives(objective_manager.get_all_objective_texts())
+
+func _on_objective_completed(_id: String) -> void:
+	_check_level_complete()
+
+func _all_minigames_done() -> bool:
+	if not objective_manager:
+		return true
+	var objectives = objective_manager.get("objectives")
+	if typeof(objectives) != TYPE_DICTIONARY:
+		return true
+	var minigame_ids: Array[String] = ["l1_spoil_and_survive", "l1_generator_fed", "l1_last_stand"]
+	var registered_count := 0
+	for id in minigame_ids:
+		if objectives.has(id):
+			registered_count += 1
+	# Older or stripped levels without any mini-game objectives remain survivable.
+	if registered_count == 0:
+		return true
+	if registered_count != minigame_ids.size() or not objective_manager.has_method("is_objective_completed"):
+		return false
+	for id in minigame_ids:
+		if not objective_manager.is_objective_completed(id):
+			return false
+	return true
+
+func _check_level_complete() -> void:
+	if not _waves_cleared or not game_active:
+		return
+	if _all_minigames_done():
+		end_game(true)
+	elif hud and hud.has_method("show_banner"):
+		hud.show_banner("CLEAR THE MINI-GAMES TO FINISH THE LEVEL")
+	else:
+		print("[Game] CLEAR THE MINI-GAMES TO FINISH THE LEVEL")
 
 func end_game(survived: bool) -> void:
 	if not game_active:
@@ -479,8 +521,8 @@ func consume_food(food_type: String) -> bool:
 	return true
 
 func _on_all_waves_cleared() -> void:
-	if game_active:
-		end_game(true)
+	_waves_cleared = true
+	_check_level_complete()
 
 func _on_boss_spawned() -> void:
 	# WaveManager can tick into teardown after end_game; don't play boss music over
