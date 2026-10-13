@@ -61,7 +61,6 @@ func _ready() -> void:
 		interaction_zone.body_exited.connect(_on_zone_body_exited)
 
 	# Set both panels to closed angle initially
-	_current_angle = closed_angle
 	_apply_angle_to_joints(closed_angle)
 
 	# If audio autoload exists, resolve sound names
@@ -160,22 +159,25 @@ func _start_swing(target: float) -> void:
 		swing_tween.kill()
 	swing_tween = create_tween()
 	swing_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	# Animate both hinge joints' limit_angle to the target
-	swing_tween.tween_callback(func(): _apply_angle_to_joints(target))
-	# Also rotate the panel visuals directly for smooth frame-by-frame rendering
-	swing_tween.tween_property(self, "_current_angle", target, swing_duration)
+	# Drive the panels' rotation directly. The panels are RigidBody3D in the default
+	# FREEZE_MODE_STATIC, which lets scripted rotation writes stick (verified on VPS:
+	# a tween on PanelA.rotation.z advances 0 -> 1.57 correctly). The HingeJoint3D
+	# stays as the pivot constraint. Panel A swings +target, panel B swings -target
+	# so a double door opens both panels outward.
+	if body_a:
+		swing_tween.parallel().tween_property(body_a, "rotation:z", target, swing_duration)
+	if body_b:
+		swing_tween.parallel().tween_property(body_b, "rotation:z", -target, swing_duration)
 
 # ── ANGLE APPLICATION ────────────────────────────────────────────────────────────
 
-var _current_angle: float = 0.0
-
 func _apply_angle_to_joints(angle: float) -> void:
-	# HingeJoint3D limit_angle is the swing from the node's initial orientation.
-	# We set it each frame from our animated _current_angle.
-	if hinge_a:
-		hinge_a.set_limit_angle(angle)
-	if hinge_b:
-		hinge_b.set_limit_angle(-angle)  # panel B swings opposite for double-door
+	# Snap both panels to the target angle instantly (used on init before any
+	# tween runs). Panels rotate on local Z; B swings opposite for a double door.
+	if body_a:
+		body_a.rotation.z = angle
+	if body_b:
+		body_b.rotation.z = -angle
 
 func _set_panel_collisions(enabled: bool) -> void:
 	# When door is open, panels should not block the player.

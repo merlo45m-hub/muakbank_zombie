@@ -127,15 +127,17 @@ func on_pushed() -> void:
 # ── DOOR ANIMATION ──────────────────────────────────────────────────────────────
 
 func _anim_open_door() -> void:
-	if not door_hinge:
-		return
 	if door_tween:
 		door_tween.kill()
 	door_tween = create_tween()
 	door_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	door_tween.tween_property(door_hinge, "limit_angle", door_open_angle, door_swing_duration)
-	# Also rotate the visual panel for smooth rendering
-	if door_panel:
+	# Rotate the door RigidBody directly. The old code tweened door_hinge.limit_angle,
+	# but a HingeJoint3D limit only constrains a body — it never moves one, so the
+	# cart door never opened. door_panel (DoorMesh) is a child of the Door body, so
+	# rotating the body carries the mesh with it and keeps physics + visual in sync.
+	if door_body:
+		door_tween.tween_property(door_body, "rotation:y", door_open_angle, door_swing_duration)
+	elif door_panel:
 		door_tween.tween_property(door_panel, "rotation:y", door_open_angle, door_swing_duration)
 
 # ── HOOD ANIMATION ──────────────────────────────────────────────────────────────
@@ -183,10 +185,10 @@ func _reset_vehicle() -> void:
 	is_hood_popped = false
 	is_pushed = false
 	wheel_rotation_speed = 3.0
-	# Close door
-	if door_hinge:
-		door_hinge.set_limit_angle(0.0)
-	if door_panel:
+	# Close door — reset the body rotation (the mesh is its child and follows)
+	if door_body:
+		door_body.rotation.y = 0.0
+	elif door_panel:
 		door_panel.rotation.y = 0.0
 	# Close hood
 	if hood_node:
