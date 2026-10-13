@@ -55,7 +55,7 @@ size = Vector3(60, 0.3, 60)
 albedo_color = Color(0.28, 0.27, 0.25, 1.0)
 albedo_texture = ExtResource("cobblestone_tex")
 uv1_scale = Vector3(30, 30, 1)
-roughness = 0.85
+roughness = 0.9
 metallic = 0.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_building"]
@@ -63,7 +63,7 @@ size = Vector3(9, 7, 9)
 
 [sub_resource type="StandardMaterial3D" id="BrickMaterial"]
 albedo_color = Color(0.48, 0.38, 0.28, 1.0)
-roughness = 0.85
+roughness = 0.9
 metallic = 0.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_building"]
@@ -74,8 +74,11 @@ size = Vector3(1.5, 1.2, 0.15)
 
 [sub_resource type="StandardMaterial3D" id="WindowMaterial"]
 albedo_color = Color(0.2, 0.22, 0.25, 1.0)
-roughness = 0.4
-metallic = 0.3
+roughness = 0.1
+metallic = 0.2
+emission_enabled = true
+emission = Color(0.15, 0.22, 0.32, 1.0)
+emission_energy_multiplier = 0.6
 
 [sub_resource type="BoxMesh" id="BoxMesh_door"]
 size = Vector3(1.5, 2.5, 0.15)
@@ -94,16 +97,19 @@ height = 5.0
 
 [sub_resource type="StandardMaterial3D" id="MetalMaterial"]
 albedo_color = Color(0.4, 0.4, 0.42, 1.0)
-roughness = 0.6
-metallic = 0.7
+roughness = 0.5
+metallic = 0.6
 
 [sub_resource type="SphereMesh" id="SphereMesh_lamp"]
 radius = 0.25
 
 [sub_resource type="StandardMaterial3D" id="RustedMetalMaterial"]
 albedo_color = Color(0.55, 0.35, 0.2, 1.0)
-roughness = 0.8
-metallic = 0.5
+roughness = 0.5
+metallic = 0.4
+emission_enabled = true
+emission = Color(1.0, 0.82, 0.45, 1.0)
+emission_energy_multiplier = 1.8
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_puddle"]
 radius = 2.0
@@ -119,8 +125,8 @@ size = Vector3(1.2, 0.8, 0.6)
 
 [sub_resource type="StandardMaterial3D" id="DebrisMaterial"]
 albedo_color = Color(0.35, 0.3, 0.25, 1.0)
-roughness = 0.9
-metallic = 0.0
+roughness = 0.5
+metallic = 0.4
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_debris"]
 size = Vector3(1.2, 0.8, 0.6)
@@ -134,8 +140,8 @@ height = 1.2
 
 [sub_resource type="StandardMaterial3D" id="BarrelMaterial"]
 albedo_color = Color(0.28, 0.22, 0.18, 1.0)
-roughness = 0.85
-metallic = 0.4
+roughness = 0.5
+metallic = 0.5
 
 [sub_resource type="BoxMesh" id="BoxMesh_roof_debris"]
 size = Vector3(3.0, 0.4, 6.0)
@@ -238,13 +244,13 @@ size = Vector3(0.7, 1.0, 0.6)
 
 [sub_resource type="StandardMaterial3D" id="DarkMetalMaterial"]
 albedo_color = Color(0.15, 0.15, 0.17, 1.0)
-roughness = 0.55
-metallic = 0.8
+roughness = 0.5
+metallic = 0.6
 
 [sub_resource type="StandardMaterial3D" id="RustyIronMaterial"]
 albedo_color = Color(0.5, 0.28, 0.15, 1.0)
-roughness = 0.85
-metallic = 0.6
+roughness = 0.5
+metallic = 0.5
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_hydrant_base"]
 radius = 0.3
@@ -276,13 +282,13 @@ size = Vector3(3.7, 1.5, 2.0)
 
 [sub_resource type="StandardMaterial3D" id="RustyCarMaterial"]
 albedo_color = Color(0.35, 0.2, 0.12, 1.0)
-roughness = 0.95
-metallic = 0.4
+roughness = 0.5
+metallic = 0.5
 
 [sub_resource type="StandardMaterial3D" id="TrunkMaterial"]
 albedo_color = Color(0.3, 0.22, 0.16, 1.0)
-roughness = 0.95
-metallic = 0.0
+roughness = 0.5
+metallic = 0.4
 
 [sub_resource type="BoxMesh" id="BoxMesh_dumpster"]
 size = Vector3(2.0, 1.2, 1.5)
