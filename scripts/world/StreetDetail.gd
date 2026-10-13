@@ -223,7 +223,7 @@ const CAR_COUNT := 7
 const CAR_HEIGHT := 1.5
 # Street furniture.
 const PROP_COUNT := 10
-const LIGHT_COUNT := 6
+const LIGHT_COUNT := 10
 const LIGHT_ENERGY := 1.6
 const LIGHT_RANGE := 7.0
 
@@ -354,10 +354,12 @@ func _parked_cars() -> void:
 	if cars.is_empty():
 		return
 	for i in range(CAR_COUNT):
-		var side := 1.0 if i % 2 == 0 else -1.0
-		var x := -12.0 + float(i) * 4.2 + _rng.randf_range(-0.5, 0.5)
-		var pos := Vector3(x, GROUND_TOP, CAR_ROAD_Z + side * CAR_LANE_OFFSET)
-		var yaw := PI * 0.5 if i % 2 == 0 else -PI * 0.5
+		# Scatter cars around the town (radius 10-18m) instead of one road strip,
+		# so parked vehicles are visible on the routes the player actually walks.
+		var a := TAU * float(i) / float(CAR_COUNT) + _rng.randf_range(-0.15, 0.15)
+		var r := _rng.randf_range(10.0, 18.0)
+		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		var yaw := a + PI * 0.5
 		_spawn(_pick(cars, i * 5 + 2), pos, yaw + _rng.randf_range(-0.08, 0.08),
 			CAR_HEIGHT * _rng.randf_range(0.9, 1.35))
 
@@ -383,9 +385,12 @@ func _street_furniture() -> void:
 	for i in range(LIGHT_COUNT):
 		if lamps.is_empty():
 			break
-		var side := 1.0 if i % 2 == 0 else -1.0
-		var x := -10.0 + float(i) * 6.6
-		var pos := Vector3(x, GROUND_TOP, CAR_ROAD_Z + side * 2.9)
+		# Ring the lamps around the town (radius 12-20m) instead of clustering on
+		# one road strip, so the whole playable area is lit and reads as a lived-in
+		# street wherever the player walks.
+		var a := TAU * float(i) / float(LIGHT_COUNT) + 0.4
+		var r := _rng.randf_range(12.0, 20.0)
+		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
 		var node := _spawn(_pick(lamps, i * 2), pos, 0.0, 3.2)
 		if node == null:
 			continue
