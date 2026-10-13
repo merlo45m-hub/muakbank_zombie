@@ -1,4 +1,4 @@
-[gd_scene load_steps=132 format=3]
+[gd_scene load_steps=135 format=3]
 [ext_resource type="Script" path="res://scripts/world/interactive/InteractiveDoor.gd" id="54"]
 [ext_resource type="Script" path="res://scripts/world/interactive/InteractiveWall.gd" id="55"]
 [ext_resource type="Script" path="res://scripts/world/interactive/FoodCrate.gd" id="56"]
@@ -14,6 +14,9 @@
 [ext_resource type="PackedScene" path="res://assets/models/cc0/cars/Models/taxi.glb" id="car2"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/cars/Models/police.glb" id="car3"]
 [ext_resource type="Texture2D" path="res://assets/textures/cobblestone.jpg" id="cobblestone_tex"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/spoil_and_survive.tscn" id="minigame_spoil"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/keep_generator_fed.tscn" id="minigame_generator"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/last_stand_station.tscn" id="minigame_laststand"]
 
 
 [sub_resource type="Environment" id="OldTownEnv"]
@@ -3900,3 +3903,11 @@ material_override = SubResource("DarkMetalMaterial")
 [node name="Col" type="CollisionShape3D" parent="Fences/Fence_Plaza_4"]
 	shape = SubResource("BoxShape3D_fence_post")
 
+[node name="SpoilAndSurvive" parent="." instance=ExtResource("minigame_spoil")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 18)
+
+[node name="KeepGeneratorFed" parent="." instance=ExtResource("minigame_generator")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 8)
+
+[node name="LastStandStation" parent="." instance=ExtResource("minigame_laststand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -5)
