@@ -13,7 +13,7 @@ func _post_ready() -> void:
 	move_speed = 4.0
 	damage = 10
 	attack_range = 1.6
-	detection_range = 14.0
+	detection_range = 30.0
 	attack_cooldown_time = 1.2
 
 func _physics_process(delta: float) -> void:

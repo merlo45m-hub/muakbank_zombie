@@ -17,7 +17,7 @@ func _post_ready() -> void:
 	move_speed = 2.8
 	damage = 22
 	attack_range = 3.0
-	detection_range = 18.0
+	detection_range = 30.0
 	attack_cooldown_time = 2.0
 	fade_duration = 0.9
 	scale = Vector3(1.8, 1.8, 1.8)

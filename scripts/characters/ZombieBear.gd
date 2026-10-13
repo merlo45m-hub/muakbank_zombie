@@ -14,7 +14,7 @@ func _post_ready() -> void:
 	move_speed = 2.0
 	damage = 25
 	attack_range = 2.2
-	detection_range = 15.0
+	detection_range = 30.0
 	attack_cooldown_time = 2.0
 	fade_duration = 0.8
 
