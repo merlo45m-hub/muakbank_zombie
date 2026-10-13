@@ -7,8 +7,9 @@ signal zombie_killed(zombie_type)
 
 @export var max_zombies: int = 12
 @export var spawn_interval: float = 3.0
-@export var spawn_radius: float = 15.0
-@export var min_spawn_distance: float = 8.0
+@export var spawn_grace_period: float = 10.0
+@export var spawn_radius: float = 22.0
+@export var min_spawn_distance: float = 16.0
 
 # --- Scene preloads ---
 var zombie_dog_scene = preload("res://scenes/characters/zombie_dog.tscn")
@@ -22,6 +23,7 @@ var zombie_spitter_scene = preload("res://scenes/characters/zombie_spitter.tscn"
 var player: Node3D = null
 var active_zombies: Array = []
 var can_spawn: bool = false
+var _first_spawn_done: bool = false
 var difficulty_manager: Node = null
 var current_level: int = 1
 
@@ -155,7 +157,9 @@ func _get_pool_for_type(zombie_type: String) -> Dictionary:
 func start_spawning() -> void:
 	can_spawn = true
 	current_level = Save.get_current_level()
-	spawn_timer.start(spawn_interval)
+	# Give the player time to orient before the first wave enters the world.
+	var initial_delay = spawn_grace_period if not _first_spawn_done else spawn_interval
+	spawn_timer.start(initial_delay)
 	print("[ZombieSpawner] Started spawning zombies")
 
 
@@ -173,6 +177,11 @@ func stop_spawning() -> void:
 func _spawn_random_zombie() -> void:
 	if not can_spawn or not player:
 		return
+	if not _first_spawn_done:
+		_first_spawn_done = true
+		# The first timer fire has already waited out the grace period; restore the
+		# normal cadence so later spawns do not inherit the longer initial delay.
+		spawn_timer.start(spawn_interval)
 	# Use dynamic limits from DifficultyManager when available; fall back to
 	# the exported defaults so the spawner works standalone.
 	# Difficulty SCALES the configured values rather than replacing them, so the
