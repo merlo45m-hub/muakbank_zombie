@@ -35,6 +35,7 @@ size = Vector3(60, 0.3, 60)
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.28, 0.27, 0.25, 1.0)
 albedo_texture = ExtResource("cobblestone_tex")
+uv1_scale = Vector3(30, 30, 1)
 roughness = 0.85
 metallic = 0.0
 

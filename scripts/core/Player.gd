@@ -240,15 +240,13 @@ func _physics_process(delta: float) -> void:
 	# Apply movement
 	move_and_slide()
 
-	# Stuck detection — adapted from gdquest controller.
-	# If we had velocity but didn't move, push out of the blocking geometry.
-	var stuck_epsilon: float = 0.001
-	if velocity.length() > stuck_epsilon:
-		var stuck_check := Vector3(velocity.x, 0, velocity.z)
-		if stuck_check.length() > stuck_epsilon:
-			# Simple nudge along movement direction to escape shallow traps.
-			var nudge_dir := stuck_check.normalized()
-			global_position += nudge_dir * 0.05
+	# Stuck detection — DISABLED. The old code nudged the player 0.05 units every
+	# physics frame whenever horizontal velocity was nonzero — with no check that he
+	# was actually stuck. At 60 ticks/s that injected up to 3 units/second of phantom
+	# movement (overspeed, sliding, jitter). move_and_slide() already resolves wall
+	# collisions correctly; this manual shove fought it. Only reintroduce a nudge if
+	# a genuine "had velocity but moved < epsilon for N frames" stuck condition is
+	# ever observed.
 
 	# ── SAFETY ────────────────────────────────────────────────────────────
 	# Nothing may launch the player: clamp vertical speed to sane values and
@@ -325,7 +323,7 @@ func _handle_movement_input(delta: float) -> void:
 		if _raw_input_dir == Vector2.ZERO:
 			_rotate_toward_direction(_last_strong_direction, delta)
 
-	var accel: float = 10.0
+	var accel: float = 24.0
 	velocity.x = move_toward(velocity.x, target_vel.x, accel * delta)
 	velocity.z = move_toward(velocity.z, target_vel.z, accel * delta)
 
@@ -354,7 +352,7 @@ func _rotate_toward_direction(direction: Vector3, delta: float) -> void:
 	if direction.length() < 0.01:
 		return
 	var target_rot: float = atan2(direction.x, direction.z) + PI
-	var rot_speed: float = 10.0
+	var rot_speed: float = 16.0
 	vis.rotation.y = lerp_angle(vis.rotation.y, target_rot, rot_speed * delta)
 
 
