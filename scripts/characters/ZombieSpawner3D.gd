@@ -8,8 +8,8 @@ signal zombie_killed(zombie_type)
 @export var max_zombies: int = 12
 @export var spawn_interval: float = 3.0
 @export var spawn_grace_period: float = 10.0
-@export var spawn_radius: float = 22.0
-@export var min_spawn_distance: float = 16.0
+@export var spawn_radius: float = 18.0
+@export var min_spawn_distance: float = 9.0
 
 # --- Scene preloads ---
 var zombie_dog_scene = preload("res://scenes/characters/zombie_dog.tscn")
