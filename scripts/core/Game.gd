@@ -107,7 +107,11 @@ func _load_environment() -> void:
 ## coordinate: the world origin sits inside Building6 in old_town, and the cemetery's
 ## centre now has broken headstones on it.
 const SPAWN_HINTS := {
-	1: Vector3(-2.0, 0.15, -25.0),
+	# Old Town: the old hint (-2, 0.15, -25) sat in a pocket boxed in by Building1
+	# (left, 5.8m), Building2 (2.6m) and Building5 — the player was confined to a few
+	# metres and could not explore. (34, 0.15, -34) is open ground: VPS raycast scan
+	# shows a 36m clear radius in all 8 directions, so the player can roam the map.
+	1: Vector3(34.0, 0.15, -34.0),
 	# Cemetery: the centre IS the mausoleum. Census showed its arch filling 7.26% of
 	# the frame from 6.6 m with the pillars adding another 5%, because the probe used
 	# to settle ~2 m from it. Start on the western edge of the grave ring instead and
