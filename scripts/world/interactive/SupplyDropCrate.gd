@@ -40,8 +40,9 @@ func interact() -> void:
 	if controller and controller.has_method("claim_supply_drop") and controller.claim_supply_drop():
 		is_open = true
 		remove_from_group("interactive_prop")
-		if Audio and Audio.has_method("play_sfx"):
-			Audio.play_sfx(open_sound)
+		# GameAudioManager.play_sfx takes an AudioStream, not a StringName — the old
+		# Audio.play_sfx(open_sound) with a string crashed at runtime. No-op the sound
+		# until a by-name sound map exists; the crate must still open.
 		if lid:
 			var tween := create_tween()
 			tween.tween_property(lid, "rotation:x", deg_to_rad(-70.0), 0.3)
