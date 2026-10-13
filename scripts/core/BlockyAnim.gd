@@ -395,8 +395,8 @@ static func apply_skin(visuals: Node3D, texture_path: String) -> void:
 	new_mat.specular_mode = BaseMaterial3D.SPECULAR_TOON
 	# Rim highlight so character silhouettes separate cleanly from the moon backlight.
 	new_mat.rim_enabled = true
-	new_mat.rim = 0.55
-	new_mat.rim_tint = 0.35
+	new_mat.rim = 1.0
+	new_mat.rim_tint = 0.5
 	new_mat.roughness = 0.55
 	new_mat.metallic = 0.05
 	new_mat.albedo_texture = tex
