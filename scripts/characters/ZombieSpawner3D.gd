@@ -157,6 +157,9 @@ func _get_pool_for_type(zombie_type: String) -> Dictionary:
 func start_spawning() -> void:
 	can_spawn = true
 	current_level = Save.get_current_level()
+	# Reset the grace flag so every run (including retries after death) gets the
+	# spawn grace period — otherwise a restart would swarm the player instantly.
+	_first_spawn_done = false
 	# Give the player time to orient before the first wave enters the world.
 	var initial_delay = spawn_grace_period if not _first_spawn_done else spawn_interval
 	spawn_timer.start(initial_delay)
