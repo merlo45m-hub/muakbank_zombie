@@ -399,15 +399,18 @@ func _handle_jump(delta: float) -> void:
 
 func _handle_attack(delta: float) -> void:
 	# ── INTERACTION CHECK ──────────────────────────────────────────────────────
-	# If the player is near an interactive prop, route the attack press to it
-	# instead of combat. This lets the same button open doors, punch walls, etc.
-	if _try_prop_interaction():
+	# If the player presses attack near an interactive prop, route THAT press to
+	# the prop instead of combat (opens doors, punches walls, rummages crates).
+	# Gated on the attack press: calling _try_prop_interaction() every physics
+	# frame made props interact continuously just by standing near them.
+	var attack_just_pressed: bool = Input.is_action_just_pressed("attack")
+	if attack_just_pressed and _try_prop_interaction():
 		return
 
 	if attack_timer > 0:
 		attack_timer -= delta
 
-	if Input.is_action_just_pressed("attack") and not is_attacking and attack_timer <= 0 and not is_dead:
+	if attack_just_pressed and not is_attacking and attack_timer <= 0 and not is_dead:
 		_perform_attack()
 	
 	# Special ability (keyboard "Q" on desktop; the mobile button signals directly)
