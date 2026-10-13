@@ -332,8 +332,8 @@ material_override = SubResource("GlowMat")
 
 [node name="RimLight" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-1, 0, 0, 0, 0.9397, 0.342, 0, 0.342, -0.9397, 0, 8, -18)
-light_color = Color(0.8, 0.88, 1, 1)
-light_energy = 2.8
+light_color = Color(0.82, 0.9, 1, 1)
+light_energy = 3.6
 
 [node name="VignetteLayer" type="CanvasLayer" parent="."]
 layer = -1

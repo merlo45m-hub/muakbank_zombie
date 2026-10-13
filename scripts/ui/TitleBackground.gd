@@ -255,34 +255,44 @@ func _build_animals() -> void:
 func _build_mist() -> void:
 	# Dense low-lying cemetery ground mist: unshaded translucent ellipsoids drifting between the
 	# graves and pedestals to soften background silhouettes and create deep atmospheric volume.
+	const MIST_COLOR := Color(0.60, 0.68, 0.80)
 	var mist_layers: Array[Dictionary] = [
 		# Deep background layer (soft low haze across the far graves and trees)
-		{"p": Vector3(0.0, 0.75, -12.0), "s": Vector3(14.0, 0.85, 3.2), "a": 0.28},
-		{"p": Vector3(-5.0, 0.8, -10.0), "s": Vector3(9.0, 0.8, 2.8), "a": 0.26},
-		{"p": Vector3(5.0, 0.8, -10.5), "s": Vector3(9.0, 0.8, 2.8), "a": 0.26},
-		{"p": Vector3(0.0, 0.7, -8.5), "s": Vector3(11.0, 0.75, 2.6), "a": 0.25},
+		{"p": Vector3(0.0, 0.70, -12.0), "s": Vector3(15.0, 0.80, 3.5), "a": 0.22},
+		{"p": Vector3(-5.5, 0.75, -10.0), "s": Vector3(10.0, 0.75, 3.0), "a": 0.20},
+		{"p": Vector3(5.5, 0.75, -10.5), "s": Vector3(10.0, 0.75, 3.0), "a": 0.20},
+		{"p": Vector3(0.0, 0.65, -8.5), "s": Vector3(12.0, 0.70, 2.8), "a": 0.20},
 
-		# Dense midground mist (softening tombstones, crypt, fences, and dead tree bases)
-		{"p": Vector3(-4.0, 0.65, -6.0), "s": Vector3(6.5, 0.68, 2.2), "a": 0.25},
-		{"p": Vector3(4.0, 0.65, -6.0), "s": Vector3(6.5, 0.68, 2.2), "a": 0.25},
-		{"p": Vector3(-7.0, 0.6, -5.0), "s": Vector3(5.5, 0.62, 2.0), "a": 0.22},
-		{"p": Vector3(7.0, 0.6, -5.0), "s": Vector3(5.5, 0.62, 2.0), "a": 0.22},
-		{"p": Vector3(0.0, 0.58, -4.5), "s": Vector3(6.0, 0.6, 2.0), "a": 0.22},
+		# Midground mist (softening tombstones, crypt, fences, and dead tree bases)
+		{"p": Vector3(-4.5, 0.55, -6.5), "s": Vector3(7.5, 0.60, 2.5), "a": 0.19},
+		{"p": Vector3(4.5, 0.55, -6.5), "s": Vector3(7.5, 0.60, 2.5), "a": 0.19},
+		{"p": Vector3(0.0, 0.50, -5.5), "s": Vector3(8.0, 0.55, 2.4), "a": 0.18},
+		{"p": Vector3(-6.5, 0.52, -5.0), "s": Vector3(6.5, 0.55, 2.2), "a": 0.18},
+		{"p": Vector3(6.5, 0.52, -5.0), "s": Vector3(6.5, 0.55, 2.2), "a": 0.18},
 
-		# Near stage ground mist (hugging the pavement around pedestals)
-		{"p": Vector3(-3.2, 0.36, -2.0), "s": Vector3(3.6, 0.32, 1.4), "a": 0.16},
-		{"p": Vector3(3.2, 0.36, -2.0), "s": Vector3(3.6, 0.32, 1.4), "a": 0.16},
-		{"p": Vector3(0.0, 0.34, -1.8), "s": Vector3(4.2, 0.3, 1.4), "a": 0.16},
-		{"p": Vector3(-1.8, 0.32, -0.8), "s": Vector3(3.2, 0.26, 1.2), "a": 0.14},
-		{"p": Vector3(1.8, 0.32, -0.8), "s": Vector3(3.2, 0.26, 1.2), "a": 0.14},
+		# Ground-hugging mist between graves and stage (depth volume without obscuring pedestal)
+		{"p": Vector3(0.0, 0.32, -4.4), "s": Vector3(7.0, 0.30, 2.2), "a": 0.18},
+		{"p": Vector3(-1.6, 0.30, -3.9), "s": Vector3(5.2, 0.28, 2.0), "a": 0.17},
+		{"p": Vector3(1.6, 0.30, -3.9), "s": Vector3(5.2, 0.28, 2.0), "a": 0.17},
+		{"p": Vector3(-4.8, 0.34, -3.8), "s": Vector3(6.5, 0.32, 2.4), "a": 0.19},
+		{"p": Vector3(4.8, 0.34, -3.8), "s": Vector3(6.5, 0.32, 2.4), "a": 0.19},
+		{"p": Vector3(-2.8, 0.32, -3.2), "s": Vector3(6.0, 0.30, 2.2), "a": 0.18},
+		{"p": Vector3(2.8, 0.32, -3.2), "s": Vector3(6.0, 0.30, 2.2), "a": 0.18},
+		{"p": Vector3(0.0, 0.28, -2.8), "s": Vector3(5.5, 0.24, 1.8), "a": 0.14},
+
+		# Flanking low stage mist hugging pavement
+		{"p": Vector3(-3.5, 0.30, -1.8), "s": Vector3(4.2, 0.26, 1.6), "a": 0.15},
+		{"p": Vector3(3.5, 0.30, -1.8), "s": Vector3(4.2, 0.26, 1.6), "a": 0.15},
+		{"p": Vector3(-4.2, 0.28, -0.8), "s": Vector3(3.6, 0.24, 1.4), "a": 0.13},
+		{"p": Vector3(4.2, 0.28, -0.8), "s": Vector3(3.6, 0.24, 1.4), "a": 0.13},
 	]
 	for m: Dictionary in mist_layers:
-		var blob := _sphere(1.0, Color(0.38, 0.46, 0.58), m.p)
+		var blob := _sphere(1.0, MIST_COLOR, m.p)
 		blob.scale = m.s
 		var mat := StandardMaterial3D.new()
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mat.albedo_color = Color(0.38, 0.46, 0.58, float(m.a))
+		mat.albedo_color = Color(MIST_COLOR.r, MIST_COLOR.g, MIST_COLOR.b, float(m.a))
 		blob.material_override = mat
 		add_child(blob)
 

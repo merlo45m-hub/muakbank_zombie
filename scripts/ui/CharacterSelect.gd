@@ -7,7 +7,7 @@ extends Control
 const WOOD_TEX := preload("res://assets/textures/wood_planks.jpg")
 
 const PEDESTAL_Z := -1.6
-const PEDESTAL_TOP := 0.44
+const PEDESTAL_TOP := 0.50
 const MODEL_ORIGIN_Y := PEDESTAL_TOP + 0.01
 const SURVIVOR_HEIGHT := 1.75
 
@@ -152,8 +152,8 @@ func _ready() -> void:
 		cam = get_node_or_null("Background3D/Camera") as Camera3D
 	if cam != null:
 		cam.fov = 74.0
-		var initial_pos := Vector3(0.0, 1.25, 1.10)
-		var initial_look := Vector3(0.0, 1.12, -1.60)
+		var initial_pos := Vector3(0.0, 1.28, 1.10)
+		var initial_look := Vector3(0.0, 1.15, -1.60)
 		cam.global_position = initial_pos
 		cam.look_at(initial_look, Vector3.UP)
 
@@ -295,63 +295,63 @@ func _build_pedestals(bg: Node3D) -> void:
 	ped_root.name = "Pedestal_Stage"
 	bg.add_child(ped_root)
 
-	# Tier 1: Base Plinth (Bottom Bevel, 48 segments for smooth circular curvature)
+	# Tier 1: Massive Stone Foundation Plinth (wide architectural base)
 	var base := MeshInstance3D.new()
 	var base_cyl := CylinderMesh.new()
-	base_cyl.top_radius = 0.82
-	base_cyl.bottom_radius = 0.90
+	base_cyl.top_radius = 0.94
+	base_cyl.bottom_radius = 1.02
 	base_cyl.height = 0.12
 	base_cyl.radial_segments = 48
 	base.mesh = base_cyl
 	base.position = Vector3(0.0, 0.20 + 0.06, PEDESTAL_Z)
 	var base_mat := StandardMaterial3D.new()
-	base_mat.albedo_color = Color(0.14, 0.15, 0.18)
-	base_mat.roughness = 0.35
-	base_mat.metallic = 0.45
+	base_mat.albedo_color = Color(0.18, 0.20, 0.24)
+	base_mat.roughness = 0.70
+	base_mat.metallic = 0.15
 	base.material_override = base_mat
 	ped_root.add_child(base)
 
-	# Tier 2: Bevel Collar (Recessed middle step)
+	# Tier 2: Sculpted Stone Dais (middle architectural riser)
 	var collar := MeshInstance3D.new()
 	var col_cyl := CylinderMesh.new()
-	col_cyl.top_radius = 0.72
-	col_cyl.bottom_radius = 0.80
-	col_cyl.height = 0.08
+	col_cyl.top_radius = 0.80
+	col_cyl.bottom_radius = 0.88
+	col_cyl.height = 0.10
 	col_cyl.radial_segments = 48
 	collar.mesh = col_cyl
-	collar.position = Vector3(0.0, 0.20 + 0.12 + 0.04, PEDESTAL_Z)
+	collar.position = Vector3(0.0, 0.32 + 0.05, PEDESTAL_Z)
 	var collar_mat := StandardMaterial3D.new()
-	collar_mat.albedo_color = Color(0.18, 0.20, 0.24)
-	collar_mat.roughness = 0.30
-	collar_mat.metallic = 0.35
+	collar_mat.albedo_color = Color(0.22, 0.24, 0.28)
+	collar_mat.roughness = 0.60
+	collar_mat.metallic = 0.20
 	collar.material_override = collar_mat
 	ped_root.add_child(collar)
 
-	# Tier 3: Top Standing Platform (Charcoal matte platform, top at Y = 0.44)
+	# Tier 3: Upper Standing Platform (polished charcoal stone platform, top at Y = 0.50)
 	var top_disc := MeshInstance3D.new()
 	var top_cyl := CylinderMesh.new()
-	top_cyl.top_radius = 0.62
-	top_cyl.bottom_radius = 0.65
-	top_cyl.height = 0.04
+	top_cyl.top_radius = 0.70
+	top_cyl.bottom_radius = 0.74
+	top_cyl.height = 0.08
 	top_cyl.radial_segments = 48
 	top_disc.mesh = top_cyl
-	top_disc.position = Vector3(0.0, 0.20 + 0.12 + 0.08 + 0.02, PEDESTAL_Z)
+	top_disc.position = Vector3(0.0, 0.42 + 0.04, PEDESTAL_Z)
 	var top_mat := StandardMaterial3D.new()
-	top_mat.albedo_color = Color(0.10, 0.11, 0.14)
-	top_mat.roughness = 0.55
-	top_mat.metallic = 0.15
+	top_mat.albedo_color = Color(0.12, 0.13, 0.16)
+	top_mat.roughness = 0.45
+	top_mat.metallic = 0.25
 	top_disc.material_override = top_mat
 	ped_root.add_child(top_disc)
 
-	# Recessed circular neon light strip (nestled in the bevel trench at Y = 0.405)
+	# Top Inlay Neon Light Strip (torus nestled flush into the top platform perimeter)
 	var neon_ring := MeshInstance3D.new()
 	var torus := TorusMesh.new()
-	torus.inner_radius = 0.63
-	torus.outer_radius = 0.70
+	torus.inner_radius = 0.60
+	torus.outer_radius = 0.68
 	torus.rings = 48
 	torus.ring_segments = 16
 	neon_ring.mesh = torus
-	neon_ring.position = Vector3(0.0, 0.405, PEDESTAL_Z)
+	neon_ring.position = Vector3(0.0, 0.498, PEDESTAL_Z)
 	var nmat := StandardMaterial3D.new()
 	nmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	nmat.albedo_color = Color.WHITE * 2.2
@@ -362,15 +362,15 @@ func _build_pedestals(bg: Node3D) -> void:
 	ped_root.add_child(neon_ring)
 	_pedestal_neon_mat = nmat
 
-	# Inner subtle glow disc on top platform surface
+	# Inner subtle glow disc on top platform standing surface
 	var inner_glow := MeshInstance3D.new()
 	var inner_cm := CylinderMesh.new()
-	inner_cm.top_radius = 0.58
-	inner_cm.bottom_radius = 0.58
+	inner_cm.top_radius = 0.57
+	inner_cm.bottom_radius = 0.57
 	inner_cm.height = 0.005
 	inner_cm.radial_segments = 36
 	inner_glow.mesh = inner_cm
-	inner_glow.position = Vector3(0.0, 0.443, PEDESTAL_Z)
+	inner_glow.position = Vector3(0.0, 0.503, PEDESTAL_Z)
 	var inner_mat := StandardMaterial3D.new()
 	inner_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	inner_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -382,8 +382,8 @@ func _build_pedestals(bg: Node3D) -> void:
 	# Contact shadow on pavement plane
 	var shadow := MeshInstance3D.new()
 	var scyl := CylinderMesh.new()
-	scyl.top_radius = 0.95
-	scyl.bottom_radius = 0.95
+	scyl.top_radius = 1.08
+	scyl.bottom_radius = 1.08
 	scyl.height = 0.01
 	scyl.radial_segments = 32
 	shadow.mesh = scyl
@@ -396,7 +396,7 @@ func _build_pedestals(bg: Node3D) -> void:
 
 	# Recessed OmniLight casting colored glow upward onto survivor + floor
 	var light := OmniLight3D.new()
-	light.position = Vector3(0.0, 0.44 + 0.18, PEDESTAL_Z + 0.15)
+	light.position = Vector3(0.0, PEDESTAL_TOP + 0.18, PEDESTAL_Z + 0.15)
 	light.light_color = Color.WHITE
 	light.light_energy = 1.2
 	light.omni_range = 4.2
@@ -408,10 +408,10 @@ func _build_pedestals(bg: Node3D) -> void:
 	area.name = "StageArea3D"
 	var cshape := CollisionShape3D.new()
 	var cyl_col := CylinderShape3D.new()
-	cyl_col.radius = 0.88
+	cyl_col.radius = 0.96
 	cyl_col.height = 2.6
 	cshape.shape = cyl_col
-	cshape.position = Vector3(0.0, 0.44 + 1.1, PEDESTAL_Z)
+	cshape.position = Vector3(0.0, PEDESTAL_TOP + 1.1, PEDESTAL_Z)
 	area.add_child(cshape)
 	area.input_event.connect(func(_cam: Node, ev: InputEvent, _pos: Vector3, _n: Vector3, _s: int) -> void:
 		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
@@ -962,8 +962,8 @@ func _tween_camera_to_survivor(_index: int) -> void:
 		return
 
 	# Single hero character framing: pulled in close, centered at x=0
-	var target_cam_pos := Vector3(0.0, 1.25, 1.10)
-	var target_look := Vector3(0.0, 1.12, -1.60)
+	var target_cam_pos := Vector3(0.0, 1.28, 1.10)
+	var target_look := Vector3(0.0, 1.15, -1.60)
 
 	if _cam_tween != null and _cam_tween.is_valid():
 		_cam_tween.kill()
