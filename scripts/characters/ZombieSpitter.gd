@@ -12,7 +12,7 @@ var is_spitting: bool = false
 func _post_ready() -> void:
 	max_health = 35
 	move_speed = 2.2
-	damage = 14
+	damage = 8
 	attack_range = 9.0
 	detection_range = 30.0
 	attack_cooldown_time = 2.2

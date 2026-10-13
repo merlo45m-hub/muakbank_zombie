@@ -15,7 +15,7 @@ var summon_timer: float = 0.0
 func _post_ready() -> void:
 	max_health = 260
 	move_speed = 2.8
-	damage = 22
+	damage = 15
 	attack_range = 3.0
 	detection_range = 30.0
 	attack_cooldown_time = 2.0

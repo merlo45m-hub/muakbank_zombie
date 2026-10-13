@@ -11,7 +11,7 @@ var hop_timer: float = 0.0
 func _post_ready() -> void:
 	max_health = 10
 	move_speed = 7.5
-	damage = 5
+	damage = 3
 	attack_range = 0.9
 	detection_range = 30.0
 	attack_cooldown_time = 0.4

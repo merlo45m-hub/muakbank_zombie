@@ -11,7 +11,7 @@ var flap_timer: float = 0.0
 func _post_ready() -> void:
 	max_health = 10
 	move_speed = 4.5
-	damage = 8
+	damage = 5
 	attack_range = 1.0
 	detection_range = 30.0
 	attack_cooldown_time = 0.5
