@@ -47,7 +47,7 @@ func _physics_process(delta: float) -> void:
 		for body in fence_area.get_overlapping_bodies():
 			if not body.is_in_group("enemies") or not is_instance_valid(body) or bool(body.get("is_dead")):
 				continue
-			var instance_id := body.get_instance_id()
+			var instance_id: int = body.get_instance_id()
 			var speed: Variant = body.get("move_speed")
 			if speed != null and not _original_speeds.has(instance_id):
 				_original_speeds[instance_id] = float(speed)
