@@ -44,6 +44,10 @@ var is_shield_active: bool = false
 # Without this, 3-4 rabbits landing hits simultaneously dealt 100->20 in ~3s.
 var _hurt_cooldown: float = 0.0
 const HURT_INVULN_TIME: float = 1.2
+# Damage-free window right after spawn so the player can orient before the first
+# zombie reaches them.
+var _spawn_grace: float = 0.0
+const SPAWN_GRACE_TIME: float = 5.0
 var current_weapon: String = "bat"
 # Inventory: food_type -> {"count": int, "heal": int}.
 # The heal value rides along because the food SCENE is the single source of truth for
@@ -245,6 +249,10 @@ func _physics_process(delta: float) -> void:
 	if _hurt_cooldown > 0.0:
 		_hurt_cooldown -= delta
 
+	# Tick the spawn grace window down.
+	if _spawn_grace > 0.0:
+		_spawn_grace -= delta
+
 	# Apply gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -286,6 +294,10 @@ func mark_safe_spawn(pos: Vector3) -> void:
 	# eight levels, and recovering into a wall is the bug this project spent a night
 	# chasing.
 	_start_position = pos
+	# Spawn grace: the first rabbit can reach the player ~6s after spawn and a new
+	# player is still learning the joystick then. A short damage-free window at the
+	# start turns an instant melt into a fair fight.
+	_spawn_grace = SPAWN_GRACE_TIME
 
 
 func _handle_movement_input(delta: float) -> void:
@@ -689,6 +701,9 @@ func use_special_ability() -> void:
 
 func take_damage(amount: int) -> void:
 	if is_dead:
+		return
+	# Spawn grace: no damage during the first moments after spawning.
+	if _spawn_grace > 0.0:
 		return
 	# Post-hit invulnerability: ignore hits during the brief window so a swarm
 	# cannot stack damage. This is the single biggest survival-balance lever.
