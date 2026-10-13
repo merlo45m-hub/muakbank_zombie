@@ -22,12 +22,28 @@
 [sub_resource type="Environment" id="OldTownEnv"]
 background_mode = 1
 background_color = Color(0.05, 0.06, 0.09, 1.0)
-ambient_light_source = 0
-ambient_light_energy = 0.3
+ambient_light_source = 2
+ambient_light_color = Color(0.12, 0.14, 0.2, 1.0)
+ambient_light_energy = 0.5
+ambient_light_sky_contribution = 0.0
 fog_enabled = true
 fog_light_color = Color(0.08, 0.09, 0.12, 1.0)
-fog_density = 0.018
+fog_density = 0.015
+fog_sky_affect = 0.5
+fog_height = 1.0
+fog_height_density = 0.3
+glow_enabled = true
+glow_intensity = 0.3
+glow_strength = 0.9
+glow_bloom = 0.1
+glow_hdr_threshold = 1.0
+glow_blend_mode = 1
+adjustment_enabled = true
+adjustment_brightness = 1.05
+adjustment_contrast = 1.08
+adjustment_saturation = 1.1
 tonemap_mode = 2
+tonemap_white = 1.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(60, 0.3, 60)
@@ -1290,15 +1306,15 @@ material_override = SubResource("AsphaltMaterial")
 
 [node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
-light_color = Color(0.65, 0.6, 0.55, 1.0)
-light_energy = 0.35
-omni_range = 80.0
+light_color = Color(1.0, 0.68, 0.42, 1.0)
+light_energy = 1.0
+omni_range = 24.0
 omni_attenuation = 2.0
 
 [node name="DirectionalLight" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(0.5, -0.7, 0.5, 0.2, 0.65, 0.73, -0.84, -0.36, 0.4, 15, 20, 10)
-light_color = Color(0.85, 0.75, 0.62, 1.0)
-light_energy = 0.75
+light_color = Color(0.7, 0.78, 1.0, 1.0)
+light_energy = 1.2
 shadow_enabled = true
 directional_shadow_mode = 0
 
