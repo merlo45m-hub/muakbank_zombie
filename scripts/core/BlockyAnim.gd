@@ -570,22 +570,87 @@ static func attach_archetype_props(visuals: Node3D, character_id: String) -> voi
 				torso.add_child(steth)
 
 		"nurse":
-			# Surgical mask on face (in head local units, front of face is Z=4.0)
+			# Surgical mask & nurse cap on head (in head local units, front of face is Z=4.0, top is Y=8.0)
 			var head_n := visuals.find_child("head", true, false) as Node3D
 			if head_n != null:
 				var mask_root := Node3D.new()
 				mask_root.name = "ArchetypeProp_NurseMask"
 
+				# 1. Surgical Mask (positioned over mouth/nose at Y=2.2, size 4.8x2.2x0.35, leaving eyes at Y=3.8..4.8 clear)
 				var mask := MeshInstance3D.new()
 				var mm := BoxMesh.new()
-				mm.size = Vector3(5.2, 3.2, 0.6)
+				mm.size = Vector3(4.8, 2.2, 0.35)
 				mask.mesh = mm
-				mask.position = Vector3(0.0, 3.6, 4.2)
+				mask.position = Vector3(0.0, 2.2, 4.18)
 				var mmat := StandardMaterial3D.new()
-				mmat.albedo_color = Color(0.12, 0.72, 0.78)
-				mmat.roughness = 0.65
+				mmat.albedo_color = Color(0.18, 0.72, 0.76)
+				mmat.roughness = 0.75
 				mask.material_override = mmat
 				mask_root.add_child(mask)
+
+				# Top border / nose bridge wire
+				var top_wire := MeshInstance3D.new()
+				var wm := BoxMesh.new()
+				wm.size = Vector3(4.8, 0.22, 0.38)
+				top_wire.mesh = wm
+				top_wire.position = Vector3(0.0, 3.2, 4.20)
+				var wmat := StandardMaterial3D.new()
+				wmat.albedo_color = Color(0.94, 0.96, 0.98)
+				wmat.roughness = 0.6
+				top_wire.material_override = wmat
+				mask_root.add_child(top_wire)
+
+				# Bottom hem / chin fold
+				var bot_hem := MeshInstance3D.new()
+				var bm := BoxMesh.new()
+				bm.size = Vector3(4.8, 0.18, 0.38)
+				bot_hem.mesh = bm
+				bot_hem.position = Vector3(0.0, 1.15, 4.20)
+				bot_hem.material_override = wmat
+				mask_root.add_child(bot_hem)
+
+				# White elastic ear straps (from mask corners back along head sides)
+				for side in [-1.0, 1.0]:
+					var strap := MeshInstance3D.new()
+					var sm := BoxMesh.new()
+					sm.size = Vector3(0.12, 0.16, 1.6)
+					strap.mesh = sm
+					strap.position = Vector3(side * 2.4, 2.2, 3.4)
+					strap.material_override = wmat
+					mask_root.add_child(strap)
+
+				# 2. Classic Nurse Cap (clean white folded cap perched on top of head with signature mint cross)
+				var cap := MeshInstance3D.new()
+				var cm := BoxMesh.new()
+				cm.size = Vector3(3.4, 1.1, 1.8)
+				cap.mesh = cm
+				cap.position = Vector3(0.0, 8.45, 0.8)
+				var cap_mat := StandardMaterial3D.new()
+				cap_mat.albedo_color = Color(0.96, 0.97, 0.99)
+				cap_mat.roughness = 0.5
+				cap.material_override = cap_mat
+				mask_root.add_child(cap)
+
+				# Medical cross emblem on the cap
+				var cross_mat := StandardMaterial3D.new()
+				cross_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				cross_mat.albedo_color = Color(0.18, 0.96, 0.65) * 2.0 # Nurse signature mint green
+
+				var cross_h := MeshInstance3D.new()
+				var chm := BoxMesh.new()
+				chm.size = Vector3(1.0, 0.32, 0.08)
+				cross_h.mesh = chm
+				cross_h.position = Vector3(0.0, 8.45, 1.74)
+				cross_h.material_override = cross_mat
+				mask_root.add_child(cross_h)
+
+				var cross_v := MeshInstance3D.new()
+				var cvm := BoxMesh.new()
+				cvm.size = Vector3(0.32, 1.0, 0.08)
+				cross_v.mesh = cvm
+				cross_v.position = Vector3(0.0, 8.45, 1.74)
+				cross_v.material_override = cross_mat
+				mask_root.add_child(cross_v)
 
 				head_n.add_child(mask_root)
 

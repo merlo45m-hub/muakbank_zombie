@@ -448,9 +448,9 @@ func _build_ui() -> void:
 	# Center the bottom UI as a tidy column instead of stretching edge-to-edge,
 	# so the header strip + action row read as proportioned boxes.
 	bar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	bar.offset_left = -520.0
-	bar.offset_right = 520.0
-	bar.offset_top = -180.0
+	bar.offset_left = -560.0
+	bar.offset_right = 560.0
+	bar.offset_top = -188.0
 	bar.offset_bottom = -16.0
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 8)
@@ -603,6 +603,12 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 	actions.alignment = BoxContainer.ALIGNMENT_CENTER
 	vbox.add_child(actions)
 
+	# Left container to match PLAY button width (240px) so the skin selector is centered
+	var back_container := BoxContainer.new()
+	back_container.custom_minimum_size = Vector2(240, 56)
+	back_container.alignment = BoxContainer.ALIGNMENT_BEGIN
+	actions.add_child(back_container)
+
 	# BACK
 	var back := Button.new()
 	back.text = "BACK"
@@ -623,7 +629,7 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 	if _btn_font_bold != null:
 		back.add_theme_font_override("font", _btn_font_bold)
 	back.pressed.connect(_on_back_pressed)
-	actions.add_child(back)
+	back_container.add_child(back)
 
 	# Center: Skin selector
 	var skin_mid := VBoxContainer.new()
@@ -664,13 +670,13 @@ func _build_action_row(vbox: VBoxContainer) -> void:
 func _build_skin_selector(parent: VBoxContainer) -> void:
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 6)
+	row.add_theme_constant_override("separation", 8)
 	parent.add_child(row)
 
 	# Previous skin arrow
 	var prev_btn := Button.new()
 	prev_btn.text = "◀"
-	prev_btn.custom_minimum_size = Vector2(38, 34)
+	prev_btn.custom_minimum_size = Vector2(44, 44)
 	prev_btn.focus_mode = Control.FOCUS_NONE
 	_style_skin_arrow(prev_btn)
 	prev_btn.pressed.connect(func() -> void: _cycle_skin(-1))
@@ -681,7 +687,7 @@ func _build_skin_selector(parent: VBoxContainer) -> void:
 	_skin_buttons.clear()
 	for i in range(3):
 		var b := Button.new()
-		b.custom_minimum_size = Vector2(118, 34)
+		b.custom_minimum_size = Vector2(150, 44)
 		b.focus_mode = Control.FOCUS_NONE
 		var idx := i
 		b.pressed.connect(func() -> void: _select_skin(idx, true, true))
@@ -691,7 +697,7 @@ func _build_skin_selector(parent: VBoxContainer) -> void:
 	# Next skin arrow
 	var next_btn := Button.new()
 	next_btn.text = "▶"
-	next_btn.custom_minimum_size = Vector2(38, 34)
+	next_btn.custom_minimum_size = Vector2(44, 44)
 	next_btn.focus_mode = Control.FOCUS_NONE
 	_style_skin_arrow(next_btn)
 	next_btn.pressed.connect(func() -> void: _cycle_skin(1))
@@ -713,7 +719,7 @@ func _style_skin_arrow(b: Button) -> void:
 	b.add_theme_stylebox_override("hover", hover)
 	b.add_theme_stylebox_override("pressed", hover)
 	b.add_theme_stylebox_override("focus", sb)
-	b.add_theme_font_size_override("font_size", _fs(15))
+	b.add_theme_font_size_override("font_size", _fs(18))
 	b.add_theme_color_override("font_color", Color(0.9, 0.92, 0.96))
 	if _btn_font_bold != null:
 		b.add_theme_font_override("font", _btn_font_bold)
@@ -722,7 +728,7 @@ func _style_skin_arrow(b: Button) -> void:
 func _style_skin_button(b: Button, accent: Color, active: bool) -> void:
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0.12, 0.14, 0.20, 0.90) if active else Color(0.06, 0.08, 0.11, 0.55)
-	sb.set_corner_radius_all(14)
+	sb.set_corner_radius_all(16)
 	sb.set_content_margin_all(4)
 	if active:
 		sb.border_color = accent
@@ -737,7 +743,7 @@ func _style_skin_button(b: Button, accent: Color, active: bool) -> void:
 	b.add_theme_stylebox_override("hover", hover)
 	b.add_theme_stylebox_override("pressed", hover)
 	b.add_theme_stylebox_override("focus", sb)
-	b.add_theme_font_size_override("font_size", _fs(14))
+	b.add_theme_font_size_override("font_size", _fs(15))
 	b.add_theme_color_override("font_color", Color(1, 1, 1) if active else Color(0.72, 0.75, 0.80))
 	if _btn_font_bold != null:
 		b.add_theme_font_override("font", _btn_font_bold if active else _btn_font)
