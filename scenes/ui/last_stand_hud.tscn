@@ -1,0 +1,28 @@
+[gd_scene load_steps=1 format=3]
+
+[node name="LastStandHUD" type="CanvasLayer"]
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -240.0
+offset_top = 118.0
+offset_right = 240.0
+offset_bottom = 205.0
+grow_horizontal = 2
+
+[node name="Layout" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="Status" type="Label" parent="Panel/Layout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "STATION READY"
+horizontal_alignment = 1
+
+[node name="Warning" type="Label" parent="Panel/Layout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1

@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3]
+
+[sub_resource type="BoxMesh" id="ConcreteMesh"]
+size = Vector3(4.0, 1.2, 0.8)
+
+[sub_resource type="BoxShape3D" id="ConcreteShape"]
+size = Vector3(4.0, 1.2, 0.8)
+
+[sub_resource type="BoxMesh" id="SandbagMesh"]
+size = Vector3(1.0, 0.45, 0.55)
+
+[node name="CheckpointBarricade" type="StaticBody3D"]
+collision_layer = 1
+
+[node name="ConcreteBarrier" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.6, 0)
+mesh = SubResource("ConcreteMesh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.6, 0)
+shape = SubResource("ConcreteShape")
+
+[node name="Sandbags" type="Node3D" parent="."]
+position = Vector3(0, 1.15, 0)
+
+[node name="SandbagLeft" type="MeshInstance3D" parent="Sandbags"]
+position = Vector3(-1.05, 0, 0)
+mesh = SubResource("SandbagMesh")
+
+[node name="SandbagCenter" type="MeshInstance3D" parent="Sandbags"]
+mesh = SubResource("SandbagMesh")
+
+[node name="SandbagRight" type="MeshInstance3D" parent="Sandbags"]
+position = Vector3(1.05, 0, 0)
+mesh = SubResource("SandbagMesh")
