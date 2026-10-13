@@ -125,7 +125,7 @@ func _place_player(p: CharacterBody3D) -> void:
 	var spot := Vector3.INF
 	var ground_y := 0.0
 	for cand in _spawn_candidates(hint):
-		var gy := _ground_height(space, cand)
+		var gy := _ground_height(space, cand, p)
 		if is_inf(gy):
 			continue
 		var at := Vector3(cand.x, gy, cand.z)
@@ -152,10 +152,13 @@ func _spawn_candidates(hint: Vector3) -> Array[Vector3]:
 			out.append(hint + Vector3(cos(rad) * r, 0.0, sin(rad) * r))
 	return out
 
-func _ground_height(space: PhysicsDirectSpaceState3D, at: Vector3) -> float:
+func _ground_height(space: PhysicsDirectSpaceState3D, at: Vector3, player_body: CharacterBody3D) -> float:
 	# INF means the column is hollow - a hole in the level is not a spawn point.
 	var q := PhysicsRayQueryParameters3D.create(at + Vector3(0, 14, 0), at - Vector3(0, 14, 0))
 	q.collide_with_areas = false
+	# The player is initially placed at the spawn hint in game.tscn. Without this
+	# exclusion, the hint's downward ray hits the player's capsule before the floor.
+	q.exclude = [player_body.get_rid()]
 	var hit := space.intersect_ray(q)
 	if hit.is_empty():
 		return INF
@@ -178,7 +181,7 @@ func _spot_is_clear(space: PhysicsDirectSpaceState3D, at: Vector3, p: CharacterB
 			return false
 	# Reject ledges: the ground has to be level within a step of the spot.
 	for d in [0.6, -0.6, 0.0]:
-		var gy := _ground_height(space, at + Vector3(d, 0, 0))
+		var gy := _ground_height(space, at + Vector3(d, 0, 0), p)
 		if is_inf(gy) or absf(gy - at.y) > 0.6:
 			return false
 	return true

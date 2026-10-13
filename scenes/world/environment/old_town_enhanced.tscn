@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/cc0/cars/Models/sedan.glb" id="car1"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/cars/Models/taxi.glb" id="car2"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/cars/Models/police.glb" id="car3"]
+[ext_resource type="Texture2D" path="res://assets/textures/cobblestone.jpg" id="cobblestone_tex"]
 
 
 [sub_resource type="Environment" id="OldTownEnv"]
@@ -32,8 +33,9 @@ size = Vector3(60, 0.3, 60)
 size = Vector3(60, 0.3, 60)
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
-albedo_color = Color(0.16, 0.15, 0.13, 1.0)
-roughness = 0.95
+albedo_color = Color(0.28, 0.27, 0.25, 1.0)
+albedo_texture = ExtResource("cobblestone_tex")
+roughness = 0.85
 metallic = 0.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_building"]
