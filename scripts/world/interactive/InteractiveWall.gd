@@ -41,9 +41,10 @@ func _ready() -> void:
 	if mesh_node:
 		original_material = mesh_node.material_override
 
-	# Resolve impact sound
-	if Audio:
-		impact_sound = "wall_impact" if Audio.has_sound("wall_impact") else ""
+	# Resolve impact sound. GameAudioManager has no has_sound(String) API — guard
+	# with has_method so a missing sound never kills _ready; the wall still punches.
+	if Audio and Audio.has_method("play_sfx"):
+		impact_sound = "wall_impact"
 
 # ── PUNCH (called by player interaction) ────────────────────────────────────────
 
@@ -98,5 +99,6 @@ func _process(delta: float) -> void:
 # ── AUDIO ────────────────────────────────────────────────────────────────────────
 
 func _play_impact_sound() -> void:
-	if Audio and impact_sound != "":
+	# No play_sound(String) on GameAudioManager; no-op rather than throw.
+	if Audio and impact_sound != "" and Audio.has_method("play_sound"):
 		Audio.play_sound(impact_sound)

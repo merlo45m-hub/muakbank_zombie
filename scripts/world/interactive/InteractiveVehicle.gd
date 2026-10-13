@@ -77,11 +77,13 @@ func _ready() -> void:
 		interaction_zone.body_entered.connect(_on_zone_body_entered)
 		interaction_zone.body_exited.connect(_on_zone_body_exited)
 
-	# Resolve sounds
-	if Audio:
-		door_sound = "door_open" if Audio.has_sound("door_open") else ""
-		hood_sound = "hood_pop" if Audio.has_sound("hood_pop") else ""
-		push_sound = "vehicle_push" if Audio.has_sound("vehicle_push") else ""
+	# Resolve sounds. GameAudioManager has no has_sound(String) API — the old call
+	# threw at runtime and killed _ready. Guard with has_method so a missing sound
+	# never breaks the cart; the door still swings.
+	if Audio and Audio.has_method("play_sfx"):
+		door_sound = "door_open"
+		hood_sound = "hood_pop"
+		push_sound = "vehicle_push"
 
 	# Start closed
 	is_door_open = false
@@ -217,5 +219,6 @@ func find_child_hinge(prefix: String) -> HingeJoint3D:
 # ── AUDIO ────────────────────────────────────────────────────────────────────────
 
 func _play_sound(sound_name: StringName) -> void:
-	if Audio and sound_name != "":
+	# No play_sound(String) on GameAudioManager; no-op rather than throw.
+	if Audio and sound_name != "" and Audio.has_method("play_sound"):
 		Audio.play_sound(sound_name)

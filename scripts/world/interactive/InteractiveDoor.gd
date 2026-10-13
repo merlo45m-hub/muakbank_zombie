@@ -63,11 +63,13 @@ func _ready() -> void:
 	# Set both panels to closed angle initially
 	_apply_angle_to_joints(closed_angle)
 
-	# If audio autoload exists, resolve sound names
-	if Audio:
-		door_open_sound = "door_open" if Audio.has_sound("door_open") else ""
-		door_close_sound = "door_close" if Audio.has_sound("door_close") else ""
-		door_lock_sound = "door_lock" if Audio.has_sound("door_lock") else ""
+	# Resolve sound names. GameAudioManager exposes named play_* methods and
+	# play_sfx(stream) — it has NO has_sound(String)/play_sound(String) API. The old
+	# calls threw at runtime and killed _ready before the door was wired. Guard with
+	# has_method so a missing sound never breaks the prop; the door still swings.
+	if Audio and Audio.has_method("play_sfx"):
+		door_open_sound = "door_open"
+		door_close_sound = "door_close"
 
 # ── CHILD DISCOVERY ─────────────────────────────────────────────────────────────
 
@@ -203,7 +205,10 @@ func _set_panel_collisions(enabled: bool) -> void:
 # ── AUDIO ────────────────────────────────────────────────────────────────────────
 
 func _play_sound(sound_name: StringName) -> void:
-	if Audio and sound_name != "":
+	# GameAudioManager has no play_sound(String); play_sfx takes an AudioStream.
+	# Until a by-name sound map exists, no-op rather than throw — the door must not
+	# crash mid-swing over a missing sound.
+	if Audio and sound_name != "" and Audio.has_method("play_sound"):
 		Audio.play_sound(sound_name)
 
 # ── PROCESS ──────────────────────────────────────────────────────────────────────
