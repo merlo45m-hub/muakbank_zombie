@@ -163,7 +163,11 @@ func _spawn_candidates(hint: Vector3) -> Array[Vector3]:
 
 func _ground_height(space: PhysicsDirectSpaceState3D, at: Vector3, player_body: CharacterBody3D) -> float:
 	# INF means the column is hollow - a hole in the level is not a spawn point.
-	var q := PhysicsRayQueryParameters3D.create(at + Vector3(0, 14, 0), at - Vector3(0, 14, 0))
+	# Cast from just above the player's head (2m), not 14m: a ray from high up hits
+	# rooftops / backdrop geometry floating over the spawn and reports that as the
+	# "ground", dropping the player 12m through the air at (-14,-14). Start low so
+	# we measure the actual floor under the player.
+	var q := PhysicsRayQueryParameters3D.create(at + Vector3(0, 2.5, 0), at - Vector3(0, 4, 0))
 	q.collide_with_areas = false
 	# The player is initially placed at the spawn hint in game.tscn. Without this
 	# exclusion, the hint's downward ray hits the player's capsule before the floor.
