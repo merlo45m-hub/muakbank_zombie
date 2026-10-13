@@ -10,7 +10,11 @@ var hop_timer: float = 0.0
 
 func _post_ready() -> void:
 	max_health = 10
-	move_speed = 7.5
+	# Was 7.5 — faster than the player (4.5), so a rabbit could never be escaped or
+	# kited and a pair of them melted the player regardless of skill. Drop to just
+	# under player speed: still a fast swarm threat, but the player can outmaneuver
+	# and fight back.
+	move_speed = 4.0
 	damage = 3
 	attack_range = 0.9
 	detection_range = 30.0
