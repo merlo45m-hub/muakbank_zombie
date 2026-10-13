@@ -43,7 +43,7 @@ var is_shield_active: bool = false
 # ~0.4s attack cooldown) cannot stack hits and melt the player in seconds.
 # Without this, 3-4 rabbits landing hits simultaneously dealt 100->20 in ~3s.
 var _hurt_cooldown: float = 0.0
-const HURT_INVULN_TIME: float = 0.8
+const HURT_INVULN_TIME: float = 1.2
 var current_weapon: String = "bat"
 # Inventory: food_type -> {"count": int, "heal": int}.
 # The heal value rides along because the food SCENE is the single source of truth for
