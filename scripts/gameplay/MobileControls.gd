@@ -19,6 +19,7 @@ signal weapon_switch_pressed
 var sprint_btn: Button = null
 var jump_btn: Button = null
 var weapon_btn: Button = null
+var attack_btn: Button = null
 var sprint_active: bool = false
 
 # === STATE ===
@@ -53,8 +54,9 @@ func _ready() -> void:
 	_build_sprint_button()
 	_build_jump_button()
 	_build_weapon_button()
+	_build_attack_button()
 	# Every action button gets the same press pop.
-	for b in [sprint_btn, jump_btn, weapon_btn]:
+	for b in [sprint_btn, jump_btn, weapon_btn, attack_btn]:
 		if b is Control:
 			(b as Control).button_down.connect(_punch.bind(b))
 
@@ -151,6 +153,39 @@ func _build_weapon_button() -> void:
 	weapon_btn.add_theme_stylebox_override("normal", style)
 	weapon_btn.pressed.connect(func(): emit_signal("weapon_switch_pressed"))
 	add_child(weapon_btn)
+
+func _build_attack_button() -> void:
+	# Mobile attack control. The old AttackBtn (mislabeled \"VS\") was removed at the
+	# user's request, which left the player with NO way to attack on mobile — kills
+	# stayed 0. This is a clean attack button emitting the attack_pressed signal the
+	# player already listens for. Placed bottom-right in the thumb zone.
+	attack_btn = Button.new()
+	attack_btn.text = "ATTACK"
+	attack_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE)
+	attack_btn.anchor_left = 1.0
+	attack_btn.anchor_right = 1.0
+	attack_btn.anchor_top = 1.0
+	attack_btn.anchor_bottom = 1.0
+	attack_btn.offset_left = -250.0
+	attack_btn.offset_top = -250.0
+	attack_btn.offset_right = -50.0
+	attack_btn.offset_bottom = -50.0
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.5, 0.12, 0.12, 0.85)
+	style.set_border_width_all(3)
+	style.border_color = Color(1, 1, 1, 0.3)
+	style.set_corner_radius_all(BTN_CORNER_RADIUS)
+	attack_btn.add_theme_stylebox_override("normal", style)
+	var active_style = StyleBoxFlat.new()
+	active_style.bg_color = Color(0.75, 0.2, 0.2, 0.95)
+	active_style.set_border_width_all(3)
+	active_style.border_color = Color(1, 1, 1, 0.5)
+	active_style.set_corner_radius_all(BTN_CORNER_RADIUS)
+	attack_btn.add_theme_stylebox_override("pressed", active_style)
+	attack_btn.pressed.connect(func():
+		emit_signal("attack_pressed")
+		Input.vibrate_handheld(35))
+	add_child(attack_btn)
 
 func _on_joystick_input(event: InputEvent) -> void:
 	# Touch path — the real device path. The panels inside the area are visual
