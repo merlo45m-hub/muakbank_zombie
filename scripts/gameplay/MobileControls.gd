@@ -14,10 +14,8 @@ signal weapon_switch_pressed
 # === NODE REFS ===
 @onready var joystick_area = $JoystickArea
 @onready var joystick_knob = $JoystickArea/JoystickKnob
-@onready var attack_btn = $AttackBtn
 
 # Dynamically created buttons
-var special_btn: Button = null
 var sprint_btn: Button = null
 var jump_btn: Button = null
 var weapon_btn: Button = null
@@ -52,27 +50,11 @@ func _punch(btn: Control) -> void:
 
 
 func _ready() -> void:
-	if attack_btn:
-		attack_btn.pressed.connect(func():
-			emit_signal("attack_pressed")
-			Input.vibrate_handheld(35))
-		# Thumb-sized attack button, 2x2 right-hand cluster with PUNCH/PICKUP/JUMP/SWAP.
-		# Its scene anchor is center-right; re-anchor to the bottom or the offsets
-		# below land it halfway up the screen.
-		attack_btn.anchor_top = 1.0
-		attack_btn.anchor_bottom = 1.0
-		attack_btn.offset_left = -250.0
-		attack_btn.offset_top = -250.0
-		attack_btn.offset_right = -50.0
-		attack_btn.offset_bottom = -50.0
-		attack_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE + 6)
-
-	_build_punch_pickup_button()
 	_build_sprint_button()
 	_build_jump_button()
 	_build_weapon_button()
 	# Every action button gets the same press pop.
-	for b in [attack_btn, special_btn, sprint_btn, jump_btn, weapon_btn]:
+	for b in [sprint_btn, jump_btn, weapon_btn]:
 		if b is Control:
 			(b as Control).button_down.connect(_punch.bind(b))
 
@@ -94,47 +76,6 @@ func _ready() -> void:
 			joystick_knob.anchor_bottom = 0.0
 			joystick_knob.size = Vector2(120, 120)
 			joystick_knob.position = joystick_area.size / 2.0 - joystick_knob.size / 2.0
-
-func _build_punch_pickup_button() -> void:
-	"""PUNCH/PICKUP button — Roblox-style dual-action.
-	Short press (< 0.3s): punch attack.
-	Long press OR near pickup: grab/use nearby food or weapon."""
-	special_btn = Button.new()
-	special_btn.text = "PUNCH/PICKUP"
-	special_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE)
-	special_btn.anchor_left = 1.0
-	special_btn.anchor_right = 1.0
-	special_btn.anchor_top = 1.0
-	special_btn.anchor_bottom = 1.0
-	special_btn.offset_left = -250.0
-	special_btn.offset_top = -490.0
-	special_btn.offset_right = -50.0
-	special_btn.offset_bottom = -290.0
-	# Hold detection: track press time, emit different signals on short vs long release.
-	var press_start := 0.0
-	var hold_timer: float = 0.0
-	const SHORT_PRESS_MAX: float = 0.3
-	var pressed_down := false
-	special_btn.button_down.connect(func():
-		pressed_down = true
-		press_start = Time.get_ticks_msec() / 1000.0
-		hold_timer = 0.0
-	)
-	special_btn.button_up.connect(func():
-		if not pressed_down:
-			return
-		pressed_down = false
-		hold_timer = Time.get_ticks_msec() / 1000.0 - press_start
-		if hold_timer < SHORT_PRESS_MAX:
-			# Short press = punch
-			emit_signal("punch_pickup_pressed", false)
-			Input.vibrate_handheld(20)
-		else:
-			# Long press = grab attempt
-			emit_signal("punch_pickup_pressed", true)
-			Input.vibrate_handheld(30)
-	)
-	add_child(special_btn)
 
 func _build_sprint_button() -> void:
 	sprint_btn = Button.new()
