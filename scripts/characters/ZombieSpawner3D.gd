@@ -299,11 +299,14 @@ func _spawn_random_zombie() -> void:
 	# Keep the exact bound Callable on the zombie so a pooled reuse can drop its
 	# previous connection instead of firing the handler twice.
 	if zombie.has_signal("died"):
-		# Untyped: get() returns Nil on a zombie's first spawn (the property does not
-		# exist yet) and assigning that to a typed Callable is itself an error.
-		var prev = zombie.get("_died_callable")
-		if prev is Callable and prev.is_valid() and zombie.died.is_connected(prev):
-			zombie.died.disconnect(prev)
+		# Disconnect ANY prior _on_zombie_died connection before reconnecting, so
+		# pooled respawns don't stack handlers ("Signal 'died' is already connected").
+		# The old _died_callable check missed connections whose bound ref had gone
+		# invalid, so the guard never fired and the signal double-connected.
+		for c in zombie.died.get_connections():
+			var cb: Callable = c.callable
+			if cb.is_valid() and cb.get_method() == "_on_zombie_died":
+				zombie.died.disconnect(cb)
 		var bound := _on_zombie_died.bind(zombie, zombie_type)
 		zombie.died.connect(bound)
 		zombie.set("_died_callable", bound)
