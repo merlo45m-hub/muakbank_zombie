@@ -224,8 +224,8 @@ const CAR_HEIGHT := 1.5
 # Street furniture.
 const PROP_COUNT := 10
 const LIGHT_COUNT := 10
-const LIGHT_ENERGY := 1.6
-const LIGHT_RANGE := 7.0
+const LIGHT_ENERGY := 2.6
+const LIGHT_RANGE := 14.0
 
 const GROUND_TOP := 0.0
 var _rng := RandomNumberGenerator.new()
