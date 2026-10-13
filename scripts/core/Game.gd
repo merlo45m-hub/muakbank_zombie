@@ -453,6 +453,10 @@ func on_zombie_killed(zombie_type: String) -> void:
 	
 	zombies_killed += 1
 	score += SCORE_PER_KILL
+	# Update the HUD kill counter immediately — emitting kills_changed alone left
+	# the HUD stuck at the start value (0) because nothing re-read it on each kill.
+	if hud and hud.has_method("update_kills"):
+		hud.update_kills(zombies_killed)
 	
 	# Apply combo multiplier if combo system present
 	if combo_system and combo_system.has_method("register_kill"):

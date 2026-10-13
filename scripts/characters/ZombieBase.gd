@@ -623,6 +623,10 @@ func set_vfn_field(field) -> void:
 
 
 func _on_DetectionArea_body_entered(body: Node3D) -> void:
+	# Guard against the signal firing as the zombie is being torn down (death/pool
+	# return) — get_tree() is null then and set_target would error ("data.tree null").
+	if not is_inside_tree() or is_dead:
+		return
 	if body.is_in_group("player") and not is_dead:
 		set_target(body)
 
