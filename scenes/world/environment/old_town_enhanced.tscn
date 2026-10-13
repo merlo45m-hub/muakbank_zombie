@@ -500,6 +500,7 @@ collision_layer = 1
 [node name="Model" parent="Buildings/Building1" instance=ExtResource("bld1")]
 
 [node name="Col" type="CollisionShape3D" parent="Buildings/Building1"]
+scale = Vector3(0.55, 0.7, 0.55)
 shape = SubResource("BoxShape3D_building_glb")
 
 [node name="Building2" type="StaticBody3D" parent="Buildings"]
@@ -509,6 +510,7 @@ collision_layer = 1
 [node name="Model" parent="Buildings/Building2" instance=ExtResource("bld2")]
 
 [node name="Col" type="CollisionShape3D" parent="Buildings/Building2"]
+scale = Vector3(0.55, 0.7, 0.55)
 shape = SubResource("BoxShape3D_building_glb")
 
 [node name="Building3" type="StaticBody3D" parent="Buildings"]
@@ -518,6 +520,7 @@ collision_layer = 1
 [node name="Model" parent="Buildings/Building3" instance=ExtResource("bld3")]
 
 [node name="Col" type="CollisionShape3D" parent="Buildings/Building3"]
+scale = Vector3(0.55, 0.7, 0.55)
 shape = SubResource("BoxShape3D_building_glb")
 
 [node name="Building4" type="StaticBody3D" parent="Buildings"]
@@ -527,6 +530,7 @@ collision_layer = 1
 [node name="Model" parent="Buildings/Building4" instance=ExtResource("bld4")]
 
 [node name="Col" type="CollisionShape3D" parent="Buildings/Building4"]
+scale = Vector3(0.55, 0.7, 0.55)
 shape = SubResource("BoxShape3D_building_glb")
 
 [node name="Building5" type="StaticBody3D" parent="Buildings"]
@@ -536,6 +540,7 @@ collision_layer = 1
 [node name="Model" parent="Buildings/Building5" instance=ExtResource("bld5")]
 
 [node name="Col" type="CollisionShape3D" parent="Buildings/Building5"]
+scale = Vector3(0.55, 0.7, 0.55)
 shape = SubResource("BoxShape3D_building_glb")
 
 [node name="Building6" type="StaticBody3D" parent="Buildings"]
@@ -545,6 +550,7 @@ collision_layer = 1
 [node name="Model" parent="Buildings/Building6" instance=ExtResource("bld6")]
 
 [node name="Col" type="CollisionShape3D" parent="Buildings/Building6"]
+scale = Vector3(0.55, 0.7, 0.55)
 shape = SubResource("BoxShape3D_building_glb")
 
 
