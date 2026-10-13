@@ -828,6 +828,7 @@ func _build_stage_tap_zone() -> void:
 	var z := Button.new()
 	z.flat = true
 	z.focus_mode = Control.FOCUS_NONE
+	z.mouse_filter = Control.MOUSE_FILTER_IGNORE  # Don't intercept touches; 3D raycast in _unhandled_input handles stage taps
 	z.anchor_left = 0.20
 	z.anchor_right = 0.80
 	z.anchor_top = 0.15
