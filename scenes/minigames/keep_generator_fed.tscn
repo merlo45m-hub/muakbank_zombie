@@ -1,0 +1,217 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/BioGeneratorController.gd" id="controller_script"]
+[ext_resource type="Script" path="res://scripts/world/interactive/BioGeneratorHopper.gd" id="hopper_script"]
+[ext_resource type="Script" path="res://scripts/world/interactive/UVPerimeterFence.gd" id="fence_script"]
+[ext_resource type="PackedScene" path="res://scenes/world/props/bio_generator.tscn" id="generator_scene"]
+[ext_resource type="PackedScene" path="res://scenes/ui/generator_fed_hud.tscn" id="hud_scene"]
+[ext_resource type="Script" path="res://scripts/world/interactive/FoodCrate.gd" id="food_crate_script"]
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(44, 0.5, 44)
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(44, 0.5, 44)
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.19, 0.2, 0.2, 1)
+roughness = 0.95
+
+[sub_resource type="BoxShape3D" id="ConsoleZoneShape"]
+size = Vector3(1.8, 2.0, 1.8)
+
+[sub_resource type="BoxShape3D" id="HopperZoneShape"]
+size = Vector3(2.0, 2.0, 2.0)
+
+[sub_resource type="BoxMesh" id="ConsoleMesh"]
+size = Vector3(0.8, 1.1, 0.45)
+
+[sub_resource type="SphereMesh" id="StatusLightMesh"]
+radius = 0.12
+height = 0.24
+
+[sub_resource type="BoxMesh" id="CrateMesh"]
+size = Vector3(0.9, 0.8, 0.9)
+
+[sub_resource type="BoxShape3D" id="CrateShape"]
+size = Vector3(0.9, 0.8, 0.9)
+
+[sub_resource type="BoxShape3D" id="CrateZoneShape"]
+size = Vector3(2.2, 2.0, 2.2)
+
+[node name="KeepGeneratorFed" type="Node3D"]
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.25, 0)
+mesh = SubResource("FloorMesh")
+surface_material_override/0 = SubResource("FloorMaterial")
+
+[node name="FloorCollision" type="StaticBody3D" parent="."]
+collision_layer = 1
+
+[node name="Shape" type="CollisionShape3D" parent="FloorCollision"]
+position = Vector3(0, -0.25, 0)
+shape = SubResource("FloorShape")
+
+[node name="BioGenerator" parent="." instance=ExtResource("generator_scene")]
+position = Vector3(0, 0, 1.5)
+
+[node name="Floodlights" type="Node3D" parent="."]
+
+[node name="FloodlightNorth" type="OmniLight3D" parent="Floodlights"]
+position = Vector3(0, 5, -6)
+light_color = Color(0.72, 0.88, 1, 1)
+light_energy = 0.0
+omni_range = 14.0
+visible = false
+
+[node name="FloodlightEast" type="OmniLight3D" parent="Floodlights"]
+position = Vector3(6, 5, 0)
+light_color = Color(0.72, 0.88, 1, 1)
+light_energy = 0.0
+omni_range = 14.0
+visible = false
+
+[node name="FloodlightSouth" type="OmniLight3D" parent="Floodlights"]
+position = Vector3(0, 5, 6)
+light_color = Color(0.72, 0.88, 1, 1)
+light_energy = 0.0
+omni_range = 14.0
+visible = false
+
+[node name="FloodlightWest" type="OmniLight3D" parent="Floodlights"]
+position = Vector3(-6, 5, 0)
+light_color = Color(0.72, 0.88, 1, 1)
+light_energy = 0.0
+omni_range = 14.0
+visible = false
+
+[node name="UVFence" type="Node3D" parent="."]
+script = ExtResource("fence_script")
+
+[node name="GeneratorFedHUD" parent="." instance=ExtResource("hud_scene")]
+
+[node name="Controller" type="Node3D" parent="."]
+script = ExtResource("controller_script")
+
+[node name="Console" type="Node3D" parent="Controller"]
+position = Vector3(0, 0, 0.2)
+
+[node name="ConsoleBody" type="MeshInstance3D" parent="Controller/Console"]
+position = Vector3(0, 0.55, -1.15)
+mesh = SubResource("ConsoleMesh")
+
+[node name="StatusLight" type="MeshInstance3D" parent="Controller/Console"]
+position = Vector3(0, 1.2, -1.15)
+mesh = SubResource("StatusLightMesh")
+
+[node name="InteractionZone" type="Area3D" parent="Controller"]
+position = Vector3(0, 1.0, -1.1)
+collision_layer = 0
+collision_mask = 2
+
+[node name="Shape" type="CollisionShape3D" parent="Controller/InteractionZone"]
+shape = SubResource("ConsoleZoneShape")
+
+[node name="Prompt" type="Label3D" parent="Controller"]
+position = Vector3(0, 2.15, -1.1)
+font_size = 48
+pixel_size = 0.004
+text = "START AUXILIARY GENERATOR"
+outline_size = 8
+modulate = Color(0.75, 0.94, 1, 1)
+
+[node name="Hopper" type="Node3D" parent="."]
+position = Vector3(2.0, 0, 1.0)
+script = ExtResource("hopper_script")
+
+[node name="InteractionZone" type="Area3D" parent="Hopper"]
+collision_layer = 0
+collision_mask = 2
+
+[node name="Shape" type="CollisionShape3D" parent="Hopper/InteractionZone"]
+shape = SubResource("HopperZoneShape")
+
+[node name="Prompt" type="Label3D" parent="Hopper"]
+position = Vector3(0, 1.7, 0)
+font_size = 44
+pixel_size = 0.004
+text = "FEED HOPPER [ATTACK]"
+outline_size = 8
+modulate = Color(1, 0.78, 0.25, 1)
+visible = false
+
+[node name="SupplyCrateNorth" type="Node3D" parent="."]
+position = Vector3(0, 0.5, -17)
+script = ExtResource("food_crate_script")
+food_to_spawn = "pizza"
+
+[node name="CrateMesh" type="MeshInstance3D" parent="SupplyCrateNorth"]
+mesh = SubResource("CrateMesh")
+
+[node name="CrateCollision" type="StaticBody3D" parent="SupplyCrateNorth"]
+
+[node name="CrateColShape" type="CollisionShape3D" parent="SupplyCrateNorth/CrateCollision"]
+shape = SubResource("CrateShape")
+
+[node name="Lid" type="MeshInstance3D" parent="SupplyCrateNorth"]
+position = Vector3(0, 0.42, 0)
+mesh = SubResource("CrateMesh")
+
+[node name="CrateInteractionZone" type="Area3D" parent="SupplyCrateNorth"]
+position = Vector3(0, 0.4, 0)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CrateZoneShape" type="CollisionShape3D" parent="SupplyCrateNorth/CrateInteractionZone"]
+shape = SubResource("CrateZoneShape")
+
+[node name="SupplyCrateEast" type="Node3D" parent="."]
+position = Vector3(17, 0.5, 0)
+script = ExtResource("food_crate_script")
+food_to_spawn = "medkit"
+
+[node name="CrateMesh" type="MeshInstance3D" parent="SupplyCrateEast"]
+mesh = SubResource("CrateMesh")
+
+[node name="CrateCollision" type="StaticBody3D" parent="SupplyCrateEast"]
+
+[node name="CrateColShape" type="CollisionShape3D" parent="SupplyCrateEast/CrateCollision"]
+shape = SubResource("CrateShape")
+
+[node name="Lid" type="MeshInstance3D" parent="SupplyCrateEast"]
+position = Vector3(0, 0.42, 0)
+mesh = SubResource("CrateMesh")
+
+[node name="CrateInteractionZone" type="Area3D" parent="SupplyCrateEast"]
+position = Vector3(0, 0.4, 0)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CrateZoneShape" type="CollisionShape3D" parent="SupplyCrateEast/CrateInteractionZone"]
+shape = SubResource("CrateZoneShape")
+
+[node name="SupplyCrateWest" type="Node3D" parent="."]
+position = Vector3(-17, 0.5, 0)
+script = ExtResource("food_crate_script")
+food_to_spawn = "burger"
+
+[node name="CrateMesh" type="MeshInstance3D" parent="SupplyCrateWest"]
+mesh = SubResource("CrateMesh")
+
+[node name="CrateCollision" type="StaticBody3D" parent="SupplyCrateWest"]
+
+[node name="CrateColShape" type="CollisionShape3D" parent="SupplyCrateWest/CrateCollision"]
+shape = SubResource("CrateShape")
+
+[node name="Lid" type="MeshInstance3D" parent="SupplyCrateWest"]
+position = Vector3(0, 0.42, 0)
+mesh = SubResource("CrateMesh")
+
+[node name="CrateInteractionZone" type="Area3D" parent="SupplyCrateWest"]
+position = Vector3(0, 0.4, 0)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CrateZoneShape" type="CollisionShape3D" parent="SupplyCrateWest/CrateInteractionZone"]
+shape = SubResource("CrateZoneShape")

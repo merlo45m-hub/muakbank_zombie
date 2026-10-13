@@ -1,0 +1,48 @@
+[gd_scene load_steps=7 format=3]
+
+[sub_resource type="BoxMesh" id="GeneratorBodyMesh"]
+size = Vector3(2.4, 1.5, 1.6)
+
+[sub_resource type="StandardMaterial3D" id="GeneratorBodyMaterial"]
+albedo_color = Color(0.16, 0.18, 0.17, 1)
+metallic = 0.72
+roughness = 0.48
+
+[sub_resource type="BoxMesh" id="GeneratorPanelMesh"]
+size = Vector3(1.2, 0.65, 0.12)
+
+[sub_resource type="StandardMaterial3D" id="GeneratorPanelMaterial"]
+albedo_color = Color(0.83, 0.58, 0.12, 1)
+metallic = 0.35
+roughness = 0.55
+
+[sub_resource type="CylinderMesh" id="GeneratorGaugeMesh"]
+top_radius = 0.24
+bottom_radius = 0.24
+height = 0.08
+
+[sub_resource type="BoxShape3D" id="GeneratorCollisionShape"]
+size = Vector3(2.4, 1.5, 1.6)
+
+[node name="BioGenerator" type="Node3D"]
+
+[node name="EngineBlock" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.9, 0)
+mesh = SubResource("GeneratorBodyMesh")
+surface_material_override/0 = SubResource("GeneratorBodyMaterial")
+
+[node name="ControlPanel" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.22, -0.87)
+mesh = SubResource("GeneratorPanelMesh")
+surface_material_override/0 = SubResource("GeneratorPanelMaterial")
+
+[node name="FuelGauge" type="MeshInstance3D" parent="."]
+position = Vector3(0.72, 1.44, -0.91)
+mesh = SubResource("GeneratorGaugeMesh")
+surface_material_override/0 = SubResource("GeneratorPanelMaterial")
+
+[node name="Collision" type="StaticBody3D" parent="."]
+
+[node name="Shape" type="CollisionShape3D" parent="Collision"]
+position = Vector3(0, 0.9, 0)
+shape = SubResource("GeneratorCollisionShape")
