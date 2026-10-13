@@ -464,7 +464,7 @@ collision_layer = 1
 shape = SubResource("BoxShape3D_building_glb")
 
 [node name="Building5" type="StaticBody3D" parent="Buildings"]
-transform = Transform3D(7.0000, 0, 0, 0, 7.0000, 0, 0, 0, 7.0000, -8.0, 0, 8.0)
+transform = Transform3D(4.0000, 0, 0, 0, 4.0000, 0, 0, 0, 4.0000, -8.0, 0, 8.0)
 collision_layer = 1
 
 [node name="Model" parent="Buildings/Building5" instance=ExtResource("bld5")]

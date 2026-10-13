@@ -107,7 +107,7 @@ func _load_environment() -> void:
 ## coordinate: the world origin sits inside Building6 in old_town, and the cemetery's
 ## centre now has broken headstones on it.
 const SPAWN_HINTS := {
-	1: Vector3(-2.0, 0.15, -6.0),
+	1: Vector3(-2.0, 0.15, -25.0),
 	# Cemetery: the centre IS the mausoleum. Census showed its arch filling 7.26% of
 	# the frame from 6.6 m with the pillars adding another 5%, because the probe used
 	# to settle ~2 m from it. Start on the western edge of the grave ring instead and
