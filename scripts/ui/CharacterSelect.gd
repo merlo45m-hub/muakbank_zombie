@@ -298,12 +298,12 @@ func _build_pedestals(bg: Node3D) -> void:
 	# Tier 1: Massive Stone Foundation Plinth (wide architectural base)
 	var base := MeshInstance3D.new()
 	var base_cyl := CylinderMesh.new()
-	base_cyl.top_radius = 1.12
-	base_cyl.bottom_radius = 1.24
-	base_cyl.height = 0.15
+	base_cyl.top_radius = 1.18
+	base_cyl.bottom_radius = 1.28
+	base_cyl.height = 0.16
 	base_cyl.radial_segments = 48
 	base.mesh = base_cyl
-	base.position = Vector3(0.0, 0.175, PEDESTAL_Z)
+	base.position = Vector3(0.0, 0.18, PEDESTAL_Z)
 	var base_mat := StandardMaterial3D.new()
 	base_mat.albedo_color = Color(0.14, 0.14, 0.15)
 	base_mat.roughness = 0.95
@@ -314,12 +314,12 @@ func _build_pedestals(bg: Node3D) -> void:
 	# Tier 2: Sculpted Stone Dais (middle architectural riser)
 	var collar := MeshInstance3D.new()
 	var col_cyl := CylinderMesh.new()
-	col_cyl.top_radius = 0.88
-	col_cyl.bottom_radius = 0.98
+	col_cyl.top_radius = 0.92
+	col_cyl.bottom_radius = 1.05
 	col_cyl.height = 0.14
 	col_cyl.radial_segments = 48
 	collar.mesh = col_cyl
-	collar.position = Vector3(0.0, 0.32, PEDESTAL_Z)
+	collar.position = Vector3(0.0, 0.33, PEDESTAL_Z)
 	var collar_mat := StandardMaterial3D.new()
 	collar_mat.albedo_color = Color(0.15, 0.15, 0.16)
 	collar_mat.roughness = 0.95
@@ -330,12 +330,12 @@ func _build_pedestals(bg: Node3D) -> void:
 	# Tier 3: Upper Standing Platform (solid dark stone platform, top at Y = 0.50)
 	var top_disc := MeshInstance3D.new()
 	var top_cyl := CylinderMesh.new()
-	top_cyl.top_radius = 0.72
-	top_cyl.bottom_radius = 0.78
-	top_cyl.height = 0.11
+	top_cyl.top_radius = 0.74
+	top_cyl.bottom_radius = 0.82
+	top_cyl.height = 0.12
 	top_cyl.radial_segments = 48
 	top_disc.mesh = top_cyl
-	top_disc.position = Vector3(0.0, 0.445, PEDESTAL_Z)
+	top_disc.position = Vector3(0.0, 0.44, PEDESTAL_Z)
 	var top_mat := StandardMaterial3D.new()
 	top_mat.albedo_color = Color(0.13, 0.13, 0.14)
 	top_mat.roughness = 0.95
@@ -346,18 +346,18 @@ func _build_pedestals(bg: Node3D) -> void:
 	# Top Inlay Neon Light Strip (torus nestled flush into the top platform perimeter)
 	var neon_ring := MeshInstance3D.new()
 	var torus := TorusMesh.new()
-	torus.inner_radius = 0.60
-	torus.outer_radius = 0.67
+	torus.inner_radius = 0.63
+	torus.outer_radius = 0.69
 	torus.rings = 48
 	torus.ring_segments = 16
 	neon_ring.mesh = torus
 	neon_ring.position = Vector3(0.0, 0.499, PEDESTAL_Z)
 	var nmat := StandardMaterial3D.new()
 	nmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	nmat.albedo_color = Color.WHITE * 2.2
+	nmat.albedo_color = Color.WHITE
 	nmat.emission_enabled = true
 	nmat.emission = Color.WHITE
-	nmat.emission_energy_multiplier = 3.6
+	nmat.emission_energy_multiplier = 2.0
 	neon_ring.material_override = nmat
 	ped_root.add_child(neon_ring)
 	_pedestal_neon_mat = nmat
@@ -366,11 +366,19 @@ func _build_pedestals(bg: Node3D) -> void:
 	var inner_mat := StandardMaterial3D.new()
 	_pedestal_inner_mat = inner_mat
 
+	# Soft front fill light so the architectural stone tiers are clearly visible
+	var ped_fill := OmniLight3D.new()
+	ped_fill.position = Vector3(0.0, 0.30, PEDESTAL_Z + 1.8)
+	ped_fill.light_color = Color(0.72, 0.78, 0.90)
+	ped_fill.light_energy = 0.8
+	ped_fill.omni_range = 3.6
+	ped_root.add_child(ped_fill)
+
 	# Contact shadow on pavement plane
 	var shadow := MeshInstance3D.new()
 	var scyl := CylinderMesh.new()
-	scyl.top_radius = 1.38
-	scyl.bottom_radius = 1.38
+	scyl.top_radius = 1.42
+	scyl.bottom_radius = 1.42
 	scyl.height = 0.01
 	scyl.radial_segments = 32
 	shadow.mesh = scyl
@@ -381,7 +389,7 @@ func _build_pedestals(bg: Node3D) -> void:
 	shadow.material_override = smat
 	ped_root.add_child(shadow)
 
-	# Recessed OmniLight casting colored glow upward onto survivor + floor
+	# Recessed OmniLight casting colored glow upward onto survivor
 	var light := OmniLight3D.new()
 	light.position = Vector3(0.0, PEDESTAL_TOP + 0.18, PEDESTAL_Z + 0.15)
 	light.light_color = Color.WHITE
@@ -395,7 +403,7 @@ func _build_pedestals(bg: Node3D) -> void:
 	area.name = "StageArea3D"
 	var cshape := CollisionShape3D.new()
 	var cyl_col := CylinderShape3D.new()
-	cyl_col.radius = 1.25
+	cyl_col.radius = 1.28
 	cyl_col.height = 2.6
 	cshape.shape = cyl_col
 	cshape.position = Vector3(0.0, PEDESTAL_TOP + 1.1, PEDESTAL_Z)
@@ -889,12 +897,12 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 	# 1. Update single Pedestal lighting and neon materials
 	if _pedestal_light != null and is_instance_valid(_pedestal_light):
 		_pedestal_light.light_color = s.color
-		_pedestal_light.light_energy = 1.2
+		_pedestal_light.light_energy = 1.0
 
 	if _pedestal_neon_mat != null:
-		_pedestal_neon_mat.albedo_color = s.color * 2.4
+		_pedestal_neon_mat.albedo_color = s.color * 1.5
 		_pedestal_neon_mat.emission = s.color
-		_pedestal_neon_mat.emission_energy_multiplier = 3.6
+		_pedestal_neon_mat.emission_energy_multiplier = 2.0
 
 	if _pedestal_inner_mat != null:
 		_pedestal_inner_mat.albedo_color = Color(s.color.r, s.color.g, s.color.b, 0.42)
