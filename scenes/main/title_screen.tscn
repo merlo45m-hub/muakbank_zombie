@@ -7,9 +7,10 @@
 [ext_resource type="FontFile" path="res://assets/fonts/SpecialElite-Regular.ttf" id="4"]
 [ext_resource type="Texture2D" path="res://assets/textures/wood_planks.jpg" id="5"]
 [ext_resource type="Texture2D" path="res://assets/textures/blood_splatter.png" id="6"]
+[ext_resource type="FontFile" path="res://assets/fonts/Bungee-Regular.ttf" id="7"]
 
 [sub_resource type="LabelSettings" id="TitleSettings"]
-font = ExtResource("3")
+font = ExtResource("7")
 font_size = 92
 font_color = Color(1, 1, 1, 1)
 outline_size = 8
@@ -105,7 +106,7 @@ theme_override_colors/font_hover_color = Color(1, 0.97, 0.9, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
 theme_override_colors/font_outline_color = Color(0.08, 0.05, 0.03, 0.9)
 theme_override_constants/outline_size = 4
-theme_override_fonts/font = ExtResource("4")
+theme_override_fonts/font = ExtResource("7")
 theme_override_colors/font_outline_color = Color(0.05, 0.02, 0.01, 0.9)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 30
@@ -123,7 +124,7 @@ theme_override_colors/font_hover_color = Color(1, 0.97, 0.9, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
 theme_override_colors/font_outline_color = Color(0.08, 0.05, 0.03, 0.9)
 theme_override_constants/outline_size = 4
-theme_override_fonts/font = ExtResource("4")
+theme_override_fonts/font = ExtResource("7")
 theme_override_colors/font_outline_color = Color(0.05, 0.02, 0.01, 0.9)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 30
@@ -141,7 +142,7 @@ theme_override_colors/font_hover_color = Color(1, 0.97, 0.9, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
 theme_override_colors/font_outline_color = Color(0.08, 0.05, 0.03, 0.9)
 theme_override_constants/outline_size = 4
-theme_override_fonts/font = ExtResource("4")
+theme_override_fonts/font = ExtResource("7")
 theme_override_colors/font_outline_color = Color(0.05, 0.02, 0.01, 0.9)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 30
@@ -159,7 +160,7 @@ theme_override_colors/font_hover_color = Color(1, 0.97, 0.9, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
 theme_override_colors/font_outline_color = Color(0.08, 0.05, 0.03, 0.9)
 theme_override_constants/outline_size = 4
-theme_override_fonts/font = ExtResource("4")
+theme_override_fonts/font = ExtResource("7")
 theme_override_colors/font_outline_color = Color(0.05, 0.02, 0.01, 0.9)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 30
@@ -177,7 +178,7 @@ theme_override_colors/font_hover_color = Color(1, 0.97, 0.9, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
 theme_override_colors/font_outline_color = Color(0.08, 0.05, 0.03, 0.9)
 theme_override_constants/outline_size = 4
-theme_override_fonts/font = ExtResource("4")
+theme_override_fonts/font = ExtResource("7")
 theme_override_colors/font_outline_color = Color(0.05, 0.02, 0.01, 0.9)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 30
