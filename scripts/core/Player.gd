@@ -388,14 +388,31 @@ func _update_skeletal_anim(delta: float) -> void:
 		_jump_lock -= delta
 		return
 	var spd := Vector2(velocity.x, velocity.z).length()
-	var want := "idle" if spd < 0.35 else "run"
+	# The blocky rig ships 'walk' and 'sprint' clips but NOT a literal 'run' clip.
+	# BlockyAnim.setup registers a 'run'->'sprint' alias, but if that setup path
+	# was skipped the play("run") call silently no-ops and the character slides
+	# with no cycle. Resolve the moving clip to a clip that actually exists.
+	var want := "idle" if spd < 0.35 else _moving_clip()
 	if _anim_state != want:
 		_anim_state = want
-		_skeletal.play(want, 0.18)
-	if want == "run":
+		if _skeletal.has_animation(want):
+			_skeletal.play(want, 0.18)
+	if want != "idle":
 		_skeletal.speed_scale = clampf(spd / 2.3, 0.75, 1.7)
 	else:
 		_skeletal.speed_scale = 1.0
+
+
+## Return the best available locomotion clip: prefer 'walk', fall back to
+## 'sprint'/'run' if 'walk' is somehow absent. Never returns a clip the rig lacks.
+func _moving_clip() -> String:
+	if _skeletal.has_animation("walk"):
+		return "walk"
+	if _skeletal.has_animation("run"):
+		return "run"
+	if _skeletal.has_animation("sprint"):
+		return "sprint"
+	return "idle"
 
 
 func _handle_jump(delta: float) -> void:
