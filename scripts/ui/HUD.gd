@@ -4,13 +4,22 @@ class_name HUD
 ## HUD — Survival UI Controller with Food Bar + Center Banner
 ## Attach to CanvasLayer in main game scene
 
-@onready var health_bar = $VBoxLeft/HypeContainer/HypeBar
+# Health bar & label — prominent indicator for player survival
+@onready var health_bar: ProgressBar = $VBoxLeft/HealthContainer/HealthBar
+@onready var health_label: Label = $VBoxLeft/HealthContainer/HealthLabel
+
+# Secondary arcade meters (Hype / Overwhelm)
+@onready var hype_bar = $VBoxLeft/HypeContainer/HypeBar
 @onready var stamina_bar = $VBoxLeft/OverwhelmContainer/OverwhelmBar
 @onready var score_label = $VBoxRight/LikesLabel
 @onready var kills_label = $VBoxRight/KillsLabel
 @onready var timer_label = $VBoxRight/TimerLabel
 @onready var center_banner = $CenterBanner
 @onready var banner_label = $CenterBanner/BannerLabel
+
+# Health visual styling and hit feedback state
+var _health_fill_style: StyleBoxFlat = null
+var _last_health: int = -1
 
 # Food bar — 6 slots
 @onready var food_bar = $FoodBar
@@ -29,11 +38,80 @@ var objective_label: Label = null
 var banner_tween: Tween = null
 
 func _ready() -> void:
+	_init_health_bar()
+	_connect_player_signals()
 	_build_extra_labels()
 	_collect_food_slots()
 	_connect_food_buttons()
 	_connect_food_signals()
 	print("[HUD] Ready")
+
+# ── HEALTH BAR & SIGNALS ────────────────────────────────────────
+
+func _init_health_bar() -> void:
+	"""Set up dedicated stylebox for reactive health color transitions (green->yellow->red)."""
+	if not health_bar:
+		return
+	var fill_sb = health_bar.get_theme_stylebox("fill")
+	if fill_sb is StyleBoxFlat:
+		_health_fill_style = fill_sb.duplicate() as StyleBoxFlat
+	else:
+		_health_fill_style = StyleBoxFlat.new()
+		_health_fill_style.corner_radius_top_left = 4
+		_health_fill_style.corner_radius_top_right = 4
+		_health_fill_style.corner_radius_bottom_right = 4
+		_health_fill_style.corner_radius_bottom_left = 4
+	health_bar.add_theme_stylebox_override("fill", _health_fill_style)
+
+func _connect_player_signals() -> void:
+	"""Wire up player signals reactively as fallback or standalone init."""
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		return
+	# Connect to player health_changed signal if not already connected by parent scene
+	if player.has_signal("health_changed") and not player.health_changed.is_connected(update_health):
+		player.health_changed.connect(update_health)
+	# Connect damaged signal for immediate hit feedback flash
+	if player.has_signal("damaged") and not player.damaged.is_connected(_on_player_damaged):
+		player.damaged.connect(_on_player_damaged)
+	# Seed initial values immediately if player already has state
+	if "health" in player and "max_health" in player:
+		update_health(player.health, player.max_health)
+
+func _on_player_damaged(_amount: int) -> void:
+	"""Player took damage — trigger immediate visual feedback."""
+	_flash_health_bar()
+
+func _flash_health_bar() -> void:
+	"""Briefly flash the health bar to make damage immediately noticeable."""
+	if not health_bar:
+		return
+	var tween = create_tween()
+	tween.tween_property(health_bar, "modulate", Color(2.0, 0.4, 0.4, 1.0), 0.06)
+	tween.tween_property(health_bar, "modulate", Color.WHITE, 0.12)
+
+func _update_health_bar_visuals(current: int, maximum: int) -> void:
+	"""Update health bar color (green -> yellow -> red) and label text/color."""
+	var max_hp: float = float(max(1, maximum))
+	var cur_hp: float = float(max(0, current))
+	var pct: float = clampf(cur_hp / max_hp, 0.0, 1.0)
+
+	# Smooth color progression from safe green through caution yellow to danger red
+	var bar_color: Color
+	if pct > 0.5:
+		var t: float = (pct - 0.5) * 2.0
+		bar_color = Color(1.0, 0.85, 0.2).lerp(Color(0.2, 0.85, 0.3), t)
+	else:
+		var t: float = pct * 2.0
+		bar_color = Color(0.95, 0.15, 0.15).lerp(Color(1.0, 0.85, 0.2), t)
+
+	if _health_fill_style:
+		_health_fill_style.bg_color = bar_color
+
+	if health_label:
+		health_label.text = "HEALTH: %d / %d" % [max(0, current), maximum]
+		health_label.add_theme_color_override("font_color", bar_color)
+
 
 func _collect_food_slots() -> void:
 	"""Collect food slot buttons for later state updates."""
@@ -194,9 +272,27 @@ func update_timer(seconds: int) -> void:
 			timer_label.modulate = Color(1, 0.3, 0.3)
 
 func update_health(current: int, maximum: int) -> void:
+	# Update dedicated health bar and prominent label
 	if health_bar:
 		health_bar.max_value = float(maximum)
-		health_bar.set_value(float(current), true)
+		health_bar.value = float(current)
+		_update_health_bar_visuals(current, maximum)
+
+		# Trigger visual damage feedback if health decreased
+		if _last_health != -1 and current < _last_health:
+			_flash_health_bar()
+		_last_health = current
+
+	# Keep HypeBar synchronized alongside health so existing HUD mechanics remain intact
+	if hype_bar and hype_bar.has_method("set_value"):
+		hype_bar.max_value = float(maximum)
+		hype_bar.set_value(float(current), true)
+
+func update_hype(current: int, maximum: int) -> void:
+	"""Update HypeBar specifically if driven by separate hype/audience mechanics."""
+	if hype_bar and hype_bar.has_method("set_value"):
+		hype_bar.max_value = float(maximum)
+		hype_bar.set_value(float(current), true)
 
 func update_stamina(current: int, maximum: int) -> void:
 	if stamina_bar:
