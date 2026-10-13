@@ -147,6 +147,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.15, -6)
 script = ExtResource("2")
 collision_layer = 2
 collision_mask = 1
+floor_snap_length = 0.3
 
 [node name="PlayerFill" type="OmniLight3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 1.65, 0.9)

@@ -63,6 +63,8 @@ var camrot_h: float = 0.0
 var camrot_v: float = -0.18
 var h_sensitivity: float = 0.015
 var v_sensitivity: float = 0.012
+var _camera_follow_offset: Vector3 = Vector3.ZERO
+var _camera_follow_speed: float = 12.0
 
 # === INPUT STATE (improved — separates raw from processed) ===
 var _raw_input_dir: Vector2 = Vector2.ZERO
@@ -97,6 +99,12 @@ var _applied_visual: Node3D = null
 
 
 func _ready() -> void:
+	if camera_arm:
+		# Preserve the authored camera height while detaching the arm from player motion.
+		_camera_follow_offset = global_basis * camera_arm.position
+		camera_arm.top_level = true
+		camera_arm.global_position = global_position + _camera_follow_offset
+
 	var char_id := _selected_character_id()
 	var stats_path := "res://assets/materials/stats_%s.tres" % char_id
 	if ResourceLoader.exists(stats_path):
@@ -211,6 +219,7 @@ func _process(delta: float) -> void:
 	# Apply camera rotation to the SpringArm each frame.
 	# Doing this in _process (not _physics_process) keeps the camera smooth
 	# independent of physics tick rate — adapted from gdquest approach.
+	_smooth_camera_follow(delta)
 	_apply_camera_rotation()
 
 	# Tick the weapon system so fire_timer decrements and cooldowns expire.
@@ -323,7 +332,7 @@ func _handle_movement_input(delta: float) -> void:
 		if _raw_input_dir == Vector2.ZERO:
 			_rotate_toward_direction(_last_strong_direction, delta)
 
-	var accel: float = 24.0
+	var accel: float = 26.0
 	velocity.x = move_toward(velocity.x, target_vel.x, accel * delta)
 	velocity.z = move_toward(velocity.z, target_vel.z, accel * delta)
 
@@ -352,7 +361,7 @@ func _rotate_toward_direction(direction: Vector3, delta: float) -> void:
 	if direction.length() < 0.01:
 		return
 	var target_rot: float = atan2(direction.x, direction.z) + PI
-	var rot_speed: float = 16.0
+	var rot_speed: float = 18.0
 	vis.rotation.y = lerp_angle(vis.rotation.y, target_rot, rot_speed * delta)
 
 
@@ -434,6 +443,15 @@ func _apply_camera_rotation() -> void:
 	camera_arm.rotation.y = camrot_h
 	if camera:
 		camera.rotation.x = camrot_v
+
+
+func _smooth_camera_follow(delta: float) -> void:
+	if not camera_arm:
+		return
+	# Exponential easing keeps follow lag consistent across different frame rates.
+	var target_position: Vector3 = global_position + _camera_follow_offset
+	var follow_weight: float = 1.0 - exp(-_camera_follow_speed * delta)
+	camera_arm.global_position = camera_arm.global_position.lerp(target_position, follow_weight)
 
 
 # ──────────────────────────────────────────────
