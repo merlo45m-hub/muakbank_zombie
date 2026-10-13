@@ -219,7 +219,7 @@ const COVER_HEIGHT := 2.8
 # Parked cars along the main road (LevelDetail puts it at z = -4, width 3.4).
 const CAR_ROAD_Z := -4.0
 const CAR_LANE_OFFSET := 1.6
-const CAR_COUNT := 7
+const CAR_COUNT := 14
 const CAR_HEIGHT := 1.5
 # Street furniture.
 const PROP_COUNT := 10
@@ -277,6 +277,10 @@ func _spawn(path: String, pos: Vector3, yaw: float, target_h: float) -> Node3D:
 	if aabb.size.y > 0.001 and target_h > 0.0:
 		var s := target_h / aabb.size.y
 		inst.scale = Vector3(s, s, s)
+		# Lift so the model's bounding-box bottom sits exactly on pos.y, otherwise
+		# models whose origin is at their centre (most car .glb) sink halfway into
+		# the road and are invisible from the player's eye level.
+		inst.position.y = pos.y - aabb.position.y * s
 	_placed += 1
 	return inst
 
