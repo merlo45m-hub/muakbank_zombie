@@ -202,30 +202,57 @@ const CAR_ASSETS: Array[String] = [
 	"res://assets/models/cc0/cars/Models/wheel-truck.glb",
 ]
 
-# Backdrop ring (outside the courtyard fence): tall skyline, no colliders.
-const RING_MIN_R := 21.0
-const RING_MAX_R := 27.0
-const RING_COUNT := 16
+# Backdrop skyline ring (distant horizon outside the expanded town): tall skyline, no colliders.
+# Pushed outward to 60-85m with 28 buildings so the horizon looks full and dense
+# around the enlarged ~200-220m floor instead of leaving a barren rim.
+const RING_MIN_R := 60.0
+const RING_MAX_R := 85.0
+const RING_COUNT := 28
 const RING_MIN_H := 3.2
 const RING_MAX_H := 7.5
+
 # Interior cover buildings: walkable-arena obstacles, WITH colliders.
-# Pushed to the outer band (16-24m) so they do not crowd the player spawn at
-# (7,13) or block the early view — the old 6-13m ring put cover buildings right
-# on top of spawn. Backdrop ring stays at 21-27 for the skyline.
-const COVER_COUNT := 4
-const COVER_R_MIN := 16.0
-const COVER_R_MAX := 24.0
+# Spread across 25-70m with 10 buildings to populate the larger free-roam area,
+# while keeping clear of player spawn and the 3 mini-game destinations.
+const COVER_COUNT := 10
+const COVER_R_MIN := 25.0
+const COVER_R_MAX := 70.0
 const COVER_HEIGHT := 2.8
-# Parked cars along the main road (LevelDetail puts it at z = -4, width 3.4).
-const CAR_ROAD_Z := -4.0
-const CAR_LANE_OFFSET := 1.6
-const CAR_COUNT := 14
+
+# Exclusion zones for interior cover buildings:
+# Keep cover buildings clear of ~12m radius around player spawn and the 3 mini-game hubs
+# so routes and interaction stations are never obstructed.
+const COVER_EXCLUSION_RADIUS := 12.0
+const COVER_EXCLUSIONS: Array[Vector2] = [
+	Vector2(-14.0, -14.0), # Player spawn point
+	Vector2(-70.0, 70.0),  # Mini-game 1: SpoilAndSurvive
+	Vector2(70.0, 60.0),   # Mini-game 2: KeepGeneratorFed (~(70,60))
+	Vector2(72.0, 62.0),   # Mini-game 2: KeepGeneratorFed (~(72,62) exact)
+	Vector2(75.0, -60.0),  # Mini-game 3: LastStandStation (~(75,-60))
+	Vector2(78.0, -62.0),  # Mini-game 3: LastStandStation (~(78,-62) exact)
+]
+
+# Parked cars: ringed across the expanded town (15-70m).
+# 30 vehicles dress the streets and routes connecting the distant mini-games.
+const CAR_COUNT := 30
+const CAR_R_MIN := 15.0
+const CAR_R_MAX := 70.0
 const CAR_HEIGHT := 1.5
-# Street furniture.
-const PROP_COUNT := 10
-const LIGHT_COUNT := 10
+
+# Street furniture (props & lamps): ringed across 15-75m.
+# 24 roadside props and 24 lit street lamps ensure the entire expanded map is
+# dressed and illuminated without dark dead zones.
+const PROP_COUNT := 24
+const PROP_R_MIN := 15.0
+const PROP_R_MAX := 75.0
+const PROP_HEIGHT := 0.9
+
+const LIGHT_COUNT := 24
+const LIGHT_R_MIN := 15.0
+const LIGHT_R_MAX := 75.0
 const LIGHT_ENERGY := 2.6
 const LIGHT_RANGE := 14.0
+const LIGHT_HEIGHT := 3.2
 
 const GROUND_TOP := 0.0
 var _rng := RandomNumberGenerator.new()
@@ -323,14 +350,25 @@ func _building_ring() -> void:
 		_spawn(model, pos, _face(pos, Vector3.ZERO), h)
 
 
-## A few buildings INSIDE the arena as hard cover, with collision.
+## Buildings inside the arena as hard cover, with collision.
+## Kept clear of player spawn and the 3 mini-game locations.
 func _cover_buildings() -> void:
 	if _building_paths.is_empty():
 		return
 	for i in range(COVER_COUNT):
-		var a := TAU * float(i) / float(COVER_COUNT) + 0.7
-		var r := _rng.randf_range(COVER_R_MIN, COVER_R_MAX)
-		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		var base_angle := TAU * float(i) / float(COVER_COUNT) + 0.7
+		var pos := Vector3.ZERO
+		var valid_pos := false
+		for attempt in range(16):
+			var a := base_angle + _rng.randf_range(-0.25, 0.25) * float(attempt + 1)
+			var r := _rng.randf_range(COVER_R_MIN, COVER_R_MAX)
+			var candidate := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+			if _is_cover_pos_clear(Vector2(candidate.x, candidate.z)):
+				pos = candidate
+				valid_pos = true
+				break
+		if not valid_pos:
+			continue
 		var node := _spawn(_pick(_building_paths, i * 3 + 1), pos, _face(pos, Vector3.ZERO),
 			COVER_HEIGHT * _rng.randf_range(0.9, 1.15))
 		if node == null:
@@ -347,7 +385,15 @@ func _cover_buildings() -> void:
 		node.add_child(body)
 
 
-## Vehicles parked along the main road, alternating sides, varied heading.
+## Checks whether a 2D position (x, z) is clear of player spawn and mini-games.
+func _is_cover_pos_clear(pos_2d: Vector2) -> bool:
+	for excl in COVER_EXCLUSIONS:
+		if pos_2d.distance_to(excl) < COVER_EXCLUSION_RADIUS:
+			return false
+	return true
+
+
+## Vehicles scattered across the town, alternating sides, varied heading.
 func _parked_cars() -> void:
 	if _car_paths.is_empty():
 		return
@@ -358,17 +404,17 @@ func _parked_cars() -> void:
 	if cars.is_empty():
 		return
 	for i in range(CAR_COUNT):
-		# Scatter cars around the town (radius 10-18m) instead of one road strip,
-		# so parked vehicles are visible on the routes the player actually walks.
+		# Scatter cars around the expanded town across CAR_R_MIN..CAR_R_MAX so
+		# parked vehicles dress the routes between mini-game destinations.
 		var a := TAU * float(i) / float(CAR_COUNT) + _rng.randf_range(-0.15, 0.15)
-		var r := _rng.randf_range(10.0, 18.0)
+		var r := _rng.randf_range(CAR_R_MIN, CAR_R_MAX)
 		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
 		var yaw := a + PI * 0.5
 		_spawn(_pick(cars, i * 5 + 2), pos, yaw + _rng.randf_range(-0.08, 0.08),
 			CAR_HEIGHT * _rng.randf_range(0.9, 1.35))
 
 
-## Dumpsters, barriers, cones, signs along the roadside, plus lit lamps.
+## Dumpsters, barriers, cones, signs, plus lit lamps scattered across the expanded town.
 func _street_furniture() -> void:
 	var pool: Array[String] = []
 	for p in _road_paths:
@@ -377,10 +423,12 @@ func _street_furniture() -> void:
 	for i in range(PROP_COUNT):
 		if pool.is_empty():
 			break
-		var side := 1.0 if i % 2 == 0 else -1.0
-		var x := -13.0 + float(i) * 2.9 + _rng.randf_range(-0.4, 0.4)
-		var pos := Vector3(x, GROUND_TOP, CAR_ROAD_Z + side * _rng.randf_range(2.6, 3.4))
-		_spawn(_pick(pool, i * 4 + 1), pos, _rng.randf_range(0.0, TAU), 0.9)
+		# Ring props across PROP_R_MIN..PROP_R_MAX so road dressing is distributed
+		# across the expanded playable area instead of clustered at the center.
+		var a := TAU * float(i) / float(PROP_COUNT) + _rng.randf_range(-0.15, 0.15)
+		var r := _rng.randf_range(PROP_R_MIN, PROP_R_MAX)
+		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		_spawn(_pick(pool, i * 4 + 1), pos, _rng.randf_range(0.0, TAU), PROP_HEIGHT)
 	var lamps: Array[String] = []
 	for p in _road_paths:
 		var leaf := p.get_file()
@@ -389,13 +437,12 @@ func _street_furniture() -> void:
 	for i in range(LIGHT_COUNT):
 		if lamps.is_empty():
 			break
-		# Ring the lamps around the town (radius 12-20m) instead of clustering on
-		# one road strip, so the whole playable area is lit and reads as a lived-in
-		# street wherever the player walks.
+		# Ring the lamps around the expanded town across LIGHT_R_MIN..LIGHT_R_MAX
+		# so the whole playable area is lit and reads as a lived-in street.
 		var a := TAU * float(i) / float(LIGHT_COUNT) + 0.4
-		var r := _rng.randf_range(12.0, 20.0)
+		var r := _rng.randf_range(LIGHT_R_MIN, LIGHT_R_MAX)
 		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
-		var node := _spawn(_pick(lamps, i * 2), pos, 0.0, 3.2)
+		var node := _spawn(_pick(lamps, i * 2), pos, 0.0, LIGHT_HEIGHT)
 		if node == null:
 			continue
 		var lamp := OmniLight3D.new()
