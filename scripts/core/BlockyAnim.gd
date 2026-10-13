@@ -118,6 +118,14 @@ static func setup(visuals: Node3D, character_id: String = "", variant_index: int
 
 	if not resolved_id.is_empty():
 		apply_skin_for_character(visuals, resolved_id, variant_index)
+		# apply_skin_for_character -> apply_body_variant FREES the rig (and its
+		# AnimationPlayer) and instantiates a fresh one. The `ap` resolved above
+		# is now a dangling freed node — returning it made _skeletal invalid, so
+		# _update_skeletal_anim bailed every frame and the walk/run clips never
+		# played (the character just slid). Re-resolve after the swap.
+		ap = find_animation_player(visuals)
+		if ap != null:
+			_setup_looping_and_aliases(ap)
 
 	return ap
 

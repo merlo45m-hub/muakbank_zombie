@@ -971,11 +971,17 @@ func _apply_character_model() -> void:
 				if aabb.size.y > 0.01:
 					vis.position.y = -aabb.position.y
 				var skin_idx := _selected_skin_index(id)
+				# apply_skin_variant -> apply_body_variant FREES the existing rig
+				# and instantiates a fresh one, so any AnimationPlayer resolved
+				# before it is a dangling freed node. Resolve _skeletal AFTER all
+				# rig swaps, or _update_skeletal_anim's is_instance_valid check
+				# fails every frame and the walk/run clips never play (the
+				# character just slides).
 				if skin_idx > 0:
 					_skeletal = BlockyAnim.apply_body_variant(vis, id, skin_idx)
 				else:
-					_skeletal = BlockyAnim.setup(vis, id, 0)
 					BlockyAnim.apply_skin_variant(vis, id, 0)
+					_skeletal = BlockyAnim.setup(vis, id, 0)
 				if _skeletal != null:
 					_skeletal.play("idle")
 					_anim_state = "idle"
