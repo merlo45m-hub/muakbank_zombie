@@ -40,7 +40,7 @@ emission_energy_multiplier = 2.0
 [node name="SpoilAndSurvive" type="Node3D"]
 
 [node name="Controller" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.2, 0, 18.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1")
 hud_path = NodePath("../BuffetHUD")
 platters_container_path = NodePath("../Platters")
