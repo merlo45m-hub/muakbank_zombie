@@ -6,8 +6,10 @@ extends Node3D
 signal zombie_killed(zombie_type)
 
 @export var max_zombies: int = 12
-@export var spawn_interval: float = 3.0
-@export var spawn_grace_period: float = 10.0
+# 5.0s (was 3.0s): early waves ramp more gently so player is not swarmed en route to objectives
+@export var spawn_interval: float = 5.0
+# 25.0s (was 10.0s): player needs ~15-20s travel to nearest mini-game; 25s allows real progress before pressure starts
+@export var spawn_grace_period: float = 25.0
 @export var spawn_radius: float = 18.0
 @export var min_spawn_distance: float = 9.0
 
