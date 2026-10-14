@@ -425,6 +425,10 @@ func _on_interaction_zone_body_entered(body: Node3D) -> void:
 	if body.is_in_group("player") and state == RunState.IDLE:
 		if prompt:
 			prompt.visible = true
+		# Auto-start on entering the zone: the player is often mid-flight from
+		# zombies when they reach a mini-game, and stopping to press ATTACK gets
+		# them killed. Walking into the buffet begins the round.
+		_start_round()
 
 func _on_interaction_zone_body_exited(body: Node3D) -> void:
 	if body.is_in_group("player") and state == RunState.IDLE:

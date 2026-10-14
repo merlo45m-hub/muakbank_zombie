@@ -3934,7 +3934,7 @@ material_override = SubResource("DarkMetalMaterial")
 	shape = SubResource("BoxShape3D_fence_post")
 
 [node name="SpoilAndSurvive" parent="." instance=ExtResource("minigame_spoil")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 0, 22)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 2)
 
 [node name="KeepGeneratorFed" parent="." instance=ExtResource("minigame_generator")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 20)
