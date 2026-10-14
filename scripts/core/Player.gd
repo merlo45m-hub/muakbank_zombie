@@ -527,8 +527,17 @@ func _on_mobile_move(vector: Vector2) -> void:
 
 
 func _on_mobile_attack() -> void:
-	if not is_dead:
-		_perform_attack()
+	if is_dead:
+		return
+	# Interactive props first, exactly like the keyboard path in _handle_attack().
+	# The mobile button used to call _perform_attack() directly, which skipped this
+	# gate entirely — so on touch NO mini-game podium, terminal, hopper, platter or
+	# supply crate could ever be interacted with, making every Level 1 objective
+	# unreachable by touch. Props win the press when one is in range; otherwise
+	# this falls through to a normal melee swing.
+	if _try_prop_interaction():
+		return
+	_perform_attack()
 
 func _on_mobile_punch_pickup(grab: bool) -> void:
 	"""PUNCH/PICKUP button handler.

@@ -62,6 +62,14 @@ func _punch(btn: Control) -> void:
 
 
 func _ready() -> void:
+	# This Control is FULL-SCREEN (anchor_right/bottom = 1.0 in game.tscn) and a
+	# Control defaults to mouse_filter STOP, so it consumed every touch on the
+	# right half of the screen. Player._unhandled_input() therefore never saw the
+	# InputEventScreenDrag and the camera could not be orbited at all — the
+	# camera-drag code was correct, it was simply never reached.
+	# IGNORE lets touches fall through to _unhandled_input; the child buttons and
+	# the joystick keep their own STOP/IGNORE filters, so they still work.
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_sprint_button()
 	_build_jump_button()
 	_build_weapon_button()

@@ -60,6 +60,13 @@ const FOOD_SCENES: Array[PackedScene] = [
 func _ready() -> void:
 	add_to_group("interactive_prop")
 	hud = get_node_or_null(hud_path) as CanvasLayer
+	# The HUD CanvasLayer root has no visible=false in the scene, only its child
+	# labels are hidden, so the panel rendered its IDLE defaults (TIME 60.0s /
+	# DISHES 0/15) from level start — a frozen fake round that never moved and
+	# made the mini-game look broken-and-stuck rather than simply not started.
+	# Hide the whole layer until a round is actually running.
+	if hud:
+		hud.visible = false
 	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
 	
 	_discover_slots()
@@ -136,6 +143,11 @@ func _start_round() -> void:
 	rush_timer = 0.0
 	stagger_timer = 0.0
 	_clear_speed_modifier()
+	# Show the HUD now that a round is genuinely running (hidden in _ready so the
+	# idle panel never faked an in-progress round).
+	if hud:
+		hud.visible = true
+	_update_hud()
 	
 	if interaction_zone:
 		interaction_zone.set_deferred("monitoring", false)

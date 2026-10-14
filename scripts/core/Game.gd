@@ -314,7 +314,20 @@ func _process(delta: float) -> void:
 	time_remaining -= delta
 	if time_remaining <= 0:
 		time_remaining = 0
-		end_game(true)  # Survived!
+		# The clock expiring is NOT automatically a win. Finishing Level 1 requires
+		# surviving the waves AND completing the mini-game objectives; the old code
+		# called end_game(true) here unconditionally, so the level reported
+		# "SHIFT COMPLETE!" with every objective at 0/3, 0/1, 0/1, 0/1 and unlocked
+		# the next level without the player ever touching a mini-game.
+		# Route through the same gate the wave path uses so both agree.
+		_waves_cleared = true
+		_check_level_complete()
+		# If the gate did not end the level, the mini-games are still outstanding.
+		# Stop the run cleanly rather than leaving the player in a live level with a
+		# frozen clock and no way to finish: nothing else ends this level now that
+		# the timer no longer wins it outright.
+		if game_active:
+			_finish_shift_incomplete()
 		return
 	
 	# Update HUD timer (cheap, only when second changes)
@@ -402,6 +415,18 @@ func _check_level_complete() -> void:
 		hud.show_banner("CLEAR THE MINI-GAMES TO FINISH THE LEVEL")
 	else:
 		print("[Game] CLEAR THE MINI-GAMES TO FINISH THE LEVEL")
+
+
+## End the shift as NOT survived. Used when the clock runs out with mini-game
+## objectives still outstanding: the player is not punished with a game-over, but
+## the level is not credited as complete either, so the next level stays locked.
+func _finish_shift_incomplete() -> void:
+	if not game_active:
+		return
+	if hud and hud.has_method("show_banner"):
+		hud.show_banner("SHIFT OVER — MINI-GAMES INCOMPLETE")
+	print("[Game] Shift over with objectives incomplete — level not credited.")
+	end_game(false)
 
 func end_game(survived: bool) -> void:
 	if not game_active:
