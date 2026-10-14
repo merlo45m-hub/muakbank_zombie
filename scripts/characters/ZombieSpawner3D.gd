@@ -179,8 +179,30 @@ func stop_spawning() -> void:
 	print("[ZombieSpawner] Stopped spawning, all zombies returned to pools")
 
 
+func _any_minigame_round_active() -> bool:
+	# True if any mini-game (interactive_prop with a RunState) is mid-round. Used to
+	# pause new spawns so the player can finish an objective. Null-safe: props without
+	# a state property are skipped.
+	for prop in get_tree().get_nodes_in_group("interactive_prop"):
+		if not is_instance_valid(prop):
+			continue
+		var st = prop.get("state")
+		# SpoilAndSurvive/BioGenerator use RunState.ACTIVE == 1; compare by name so we
+		# don't hard-code the enum int across scripts.
+		if st != null and str(st) == "1":
+			return true
+	return false
+
+
 func _spawn_random_zombie() -> void:
 	if not can_spawn or not player:
+		return
+	# SAFE ZONE: while a mini-game round is active, pause NEW spawns so the player
+	# can complete the objective without being melted mid-round. This resolves the
+	# survival-vs-exploration tension — mini-games are the goal, so reaching one and
+	# completing it should not be a death sentence. Existing zombies still roam.
+	if _any_minigame_round_active():
+		spawn_timer.start(spawn_interval)
 		return
 	if not _first_spawn_done:
 		_first_spawn_done = true
