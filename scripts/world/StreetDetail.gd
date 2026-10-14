@@ -239,17 +239,29 @@ const CAR_R_MIN := 15.0
 const CAR_R_MAX := 70.0
 const CAR_HEIGHT := 1.5
 
+# Near-route car cluster: ~8 cars in the 20-45m band so the streets the player
+# actually walks (between spawn and mini-games) read as dressed/lived-in, not empty.
+const NEAR_CAR_COUNT := 8
+const NEAR_CAR_R_MIN := 20.0
+const NEAR_CAR_R_MAX := 45.0
+
 # Street furniture (props & lamps): ringed across 15-75m.
-# 24 roadside props and 24 lit street lamps ensure the entire expanded map is
-# dressed and illuminated without dark dead zones.
-const PROP_COUNT := 24
+# Bumped prop count and pulled the band inward (15-50m) so road dressing is dense
+# along the main travel corridors the player uses, not just the far ring.
+const PROP_COUNT := 35
 const PROP_R_MIN := 15.0
-const PROP_R_MAX := 75.0
+const PROP_R_MAX := 50.0
 const PROP_HEIGHT := 0.9
 
+# Street lamps: keep total reasonable for mobile (each = 1 OmniLight3D, cap ~40).
+# Added a near band (15-45m) so the player has light where they walk, plus the
+# existing far ring for ambient fill.
 const LIGHT_COUNT := 24
 const LIGHT_R_MIN := 15.0
 const LIGHT_R_MAX := 75.0
+const NEAR_LIGHT_COUNT := 12
+const NEAR_LIGHT_R_MIN := 15.0
+const NEAR_LIGHT_R_MAX := 45.0
 const LIGHT_ENERGY := 2.6
 const LIGHT_RANGE := 14.0
 const LIGHT_HEIGHT := 3.2
@@ -352,15 +364,17 @@ func _building_ring() -> void:
 
 ## Buildings inside the arena as hard cover, with collision.
 ## Kept clear of player spawn and the 3 mini-game locations.
+## Jittered more and picking from full building pool so the town isn't a uniform ring.
 func _cover_buildings() -> void:
 	if _building_paths.is_empty():
 		return
 	for i in range(COVER_COUNT):
-		var base_angle := TAU * float(i) / float(COVER_COUNT) + 0.7
+		var base_angle := TAU * float(i) / float(COVER_COUNT) + _rng.randf_range(-0.4, 0.4)
 		var pos := Vector3.ZERO
 		var valid_pos := false
 		for attempt in range(16):
-			var a := base_angle + _rng.randf_range(-0.25, 0.25) * float(attempt + 1)
+			# Stronger angular jitter per attempt so buildings don't land on a perfect ring.
+			var a := base_angle + _rng.randf_range(-0.35, 0.35) * float(attempt + 1)
 			var r := _rng.randf_range(COVER_R_MIN, COVER_R_MAX)
 			var candidate := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
 			if _is_cover_pos_clear(Vector2(candidate.x, candidate.z)):
@@ -369,8 +383,10 @@ func _cover_buildings() -> void:
 				break
 		if not valid_pos:
 			continue
-		var node := _spawn(_pick(_building_paths, i * 3 + 1), pos, _face(pos, Vector3.ZERO),
-			COVER_HEIGHT * _rng.randf_range(0.9, 1.15))
+		# Vary model selection widely across the full pool (commercial + suburban + skyscraper)
+		# so each cover building reads as distinct, not a repeated prefab.
+		var node := _spawn(_pick(_building_paths, i * 13 + 7), pos, _face(pos, Vector3.ZERO),
+			COVER_HEIGHT * _rng.randf_range(0.85, 1.25))
 		if node == null:
 			continue
 		var aabb := _aabb_of(node)
@@ -403,14 +419,22 @@ func _parked_cars() -> void:
 			cars.append(p)
 	if cars.is_empty():
 		return
+	# Far ring: existing 30 cars across 15-70m for the routes between distant mini-games.
 	for i in range(CAR_COUNT):
-		# Scatter cars around the expanded town across CAR_R_MIN..CAR_R_MAX so
-		# parked vehicles dress the routes between mini-game destinations.
 		var a := TAU * float(i) / float(CAR_COUNT) + _rng.randf_range(-0.15, 0.15)
 		var r := _rng.randf_range(CAR_R_MIN, CAR_R_MAX)
 		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
 		var yaw := a + PI * 0.5
 		_spawn(_pick(cars, i * 5 + 2), pos, yaw + _rng.randf_range(-0.08, 0.08),
+			CAR_HEIGHT * _rng.randf_range(0.9, 1.35))
+	# Near cluster: ~8 cars in the 20-45m band dressing the streets the player
+	# actually walks between spawn and the mini-games.
+	for i in range(NEAR_CAR_COUNT):
+		var a := TAU * float(i) / float(NEAR_CAR_COUNT) + _rng.randf_range(-0.12, 0.12)
+		var r := _rng.randf_range(NEAR_CAR_R_MIN, NEAR_CAR_R_MAX)
+		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		var yaw := a + PI * 0.5
+		_spawn(_pick(cars, i * 7 + 3), pos, yaw + _rng.randf_range(-0.1, 0.1),
 			CAR_HEIGHT * _rng.randf_range(0.9, 1.35))
 
 
@@ -420,11 +444,11 @@ func _street_furniture() -> void:
 	for p in _road_paths:
 		if _is_street_prop(p):
 			pool.append(p)
+	# Props: bumped count and pulled into 15-50m band so dressing is dense along
+	# the main travel corridors the player uses.
 	for i in range(PROP_COUNT):
 		if pool.is_empty():
 			break
-		# Ring props across PROP_R_MIN..PROP_R_MAX so road dressing is distributed
-		# across the expanded playable area instead of clustered at the center.
 		var a := TAU * float(i) / float(PROP_COUNT) + _rng.randf_range(-0.15, 0.15)
 		var r := _rng.randf_range(PROP_R_MIN, PROP_R_MAX)
 		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
@@ -434,15 +458,30 @@ func _street_furniture() -> void:
 		var leaf := p.get_file()
 		if leaf.begins_with("electricity-pole") or leaf.begins_with("light-"):
 			lamps.append(p)
+	# Far ring lamps: ambient fill across 15-75m.
 	for i in range(LIGHT_COUNT):
 		if lamps.is_empty():
 			break
-		# Ring the lamps around the expanded town across LIGHT_R_MIN..LIGHT_R_MAX
-		# so the whole playable area is lit and reads as a lived-in street.
 		var a := TAU * float(i) / float(LIGHT_COUNT) + 0.4
 		var r := _rng.randf_range(LIGHT_R_MIN, LIGHT_R_MAX)
 		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
 		var node := _spawn(_pick(lamps, i * 2), pos, 0.0, LIGHT_HEIGHT)
+		if node == null:
+			continue
+		var lamp := OmniLight3D.new()
+		lamp.light_energy = LIGHT_ENERGY
+		lamp.omni_range = LIGHT_RANGE
+		lamp.light_color = Color(1.0, 0.86, 0.66)
+		lamp.position = Vector3(0, 3.0, 0)
+		node.add_child(lamp)
+	# Near band lamps: player needs light where they walk (15-45m), not just the perimeter.
+	for i in range(NEAR_LIGHT_COUNT):
+		if lamps.is_empty():
+			break
+		var a := TAU * float(i) / float(NEAR_LIGHT_COUNT) + 0.7
+		var r := _rng.randf_range(NEAR_LIGHT_R_MIN, NEAR_LIGHT_R_MAX)
+		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		var node := _spawn(_pick(lamps, i * 3 + 5), pos, 0.0, LIGHT_HEIGHT)
 		if node == null:
 			continue
 		var lamp := OmniLight3D.new()
