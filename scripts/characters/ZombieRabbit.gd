@@ -15,10 +15,17 @@ func _post_ready() -> void:
 	# under player speed: still a fast swarm threat, but the player can outmaneuver
 	# and fight back.
 	move_speed = 4.0
-	damage = 3
+	# Was 3 (inflated to ~9-12 by the difficulty multiplier). A rabbit that latches
+	# on while the player is navigating (not attacking, so no knockback) free-damaged
+	# 110->0 in 15s. Cut to 2 so an attached rabbit is a slow bleed the player can
+	# outrun or turn and fight, not an instant death.
+	damage = 2
 	attack_range = 0.9
 	detection_range = 30.0
-	attack_cooldown_time = 0.4
+	# Was 0.4s — the player's own 1.2s hurt-invuln spaces the actual hits, but a
+	# shorter rabbit cooldown meant it was always mid-windup on the player. 1.0s
+	# keeps it aggressive but readable.
+	attack_cooldown_time = 1.0
 	fade_duration = 0.3
 
 func _physics_process(delta: float) -> void:

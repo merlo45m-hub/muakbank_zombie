@@ -43,7 +43,11 @@ var is_shield_active: bool = false
 # ~0.4s attack cooldown) cannot stack hits and melt the player in seconds.
 # Without this, 3-4 rabbits landing hits simultaneously dealt 100->20 in ~3s.
 var _hurt_cooldown: float = 0.0
-const HURT_INVULN_TIME: float = 1.2
+# Was 1.2s. An attached rabbit hit every 1.2s for ~9 dmg -> 110 HP gone in 15s while
+# the player navigated (no knockback because they weren't attacking). A longer window
+# (2.5s) cuts the incoming DPS roughly in half so a chasing enemy is a bleed you can
+# outrun or turn and fight, not an instant death.
+const HURT_INVULN_TIME: float = 2.5
 # Damage-free window right after spawn so the player can orient before the first
 # zombie reaches them.
 var _spawn_grace: float = 0.0
