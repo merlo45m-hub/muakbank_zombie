@@ -37,9 +37,9 @@ var objective_label: Label = null
 # Wayfinding markers for the 3 mini-games
 var waypoint_markers: Dictionary = {}
 const WAYPOINT_POSITIONS: Dictionary = {
-	"l1_spoil_and_survive": Vector3(-45, 0, 40),
-	"l1_generator_fed":   Vector3(48, 0, 38),
-	"l1_last_stand":      Vector3(50, 0, -42)
+	"l1_spoil_and_survive": Vector3(-26, 0, 22),
+	"l1_generator_fed":   Vector3(28, 0, 20),
+	"l1_last_stand":      Vector3(30, 0, -24)
 }  # Match scene instance transforms exactly so markers point to the right world positions
 
 # Throttle waypoint updates to ~10Hz to avoid per-frame churn
