@@ -10,11 +10,6 @@ config_version=5
 
 [application]
 
-# Shift length in seconds for a level run. Game.gd reads this and falls back to
-# its built-in 600s default when unset. Lower it to exercise the end-of-shift
-# gate quickly during testing.
-game/shift_duration=600.0
-
 config/name="Muakbank_zombie"
 run/main_scene="res://scenes/main/title_screen.tscn"
 config/features=PackedStringArray("4.7")

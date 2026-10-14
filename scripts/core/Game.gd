@@ -20,10 +20,13 @@ signal food_eaten(food_type, amount)
 @onready var environment: Node3D = $Environment
 
 # === GAME CONFIG ===
-# Shift length. Exposed as a project setting so it can be tuned without a
-# rebuild — and so a test can shorten it to exercise the end-of-shift gate.
+# Shift length in seconds. Kept as a plain constant on purpose: Godot 4.7 does
+# NOT auto-load custom keys from project.godot (verified by probe — has_setting()
+# returns false and get_setting() returns the fallback for a key present only in
+# the file, and set_initial_value() would then clobber any file override), so a
+# "tunable" project setting here would silently ignore project.godot and always
+# read the default. Change this constant to retune the shift.
 const GAME_DURATION: float = 600.0  # 10 minutes
-const GAME_DURATION_SETTING := "game/shift_duration"
 const MAX_ZOMBIES: int = 12
 const ZOMBIE_SPAWN_INTERVAL: float = 3.0
 const FOOD_SPAWN_INTERVAL: float = 8.0
@@ -256,12 +259,14 @@ func _setup_achievements() -> void:
 	if am.has_method("load_progress"):
 		am.load_progress()
 
-## The shift length, honouring the project setting override when present.
+## The shift length. Kept as a plain constant on purpose: Godot 4.7 does NOT
+## auto-load custom keys from project.godot (verified by probe — has_setting()
+## returns false and get_setting() returns the fallback for a key present only in
+## the file, and set_initial_value() would then clobber any file override), so a
+## "tunable" setting here would silently ignore project.godot and always read the
+## default. Change this constant to retune the shift; there is no working
+## project-setting path for it.
 func _shift_duration() -> float:
-	if ProjectSettings.has_setting(GAME_DURATION_SETTING):
-		var v: float = float(ProjectSettings.get_setting(GAME_DURATION_SETTING))
-		if v > 0.0:
-			return v
 	return GAME_DURATION
 
 
