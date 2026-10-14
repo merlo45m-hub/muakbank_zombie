@@ -55,6 +55,11 @@ const SEPARATION_FORCE = 2.0
 # Attackers are planted (velocity zeroed), so full-strength separation would slide
 # them straight off the player. A fraction lets them jostle for the ring instead.
 const ATTACK_SEPARATION_FACTOR = 0.3
+# Knockback stagger: after the player lands a hit, the zombie is shoved back and
+# _chase is suppressed for this long so the knockback reads instead of being
+# overwritten by the chase velocity next frame.
+const KNOCKBACK_STAGGER_TIME = 0.35
+var _stagger_timer: float = 0.0
 
 # AI LOD: distant zombies still drift toward the player, but skip the state machine
 # and VFN lookup — that is where the per-frame cost actually lives. The trigger is
@@ -175,6 +180,11 @@ func _physics_process(delta: float) -> void:
 	if is_dead:
 		return
 
+	# Tick the knockback stagger window. While staggered, the zombie keeps its
+	# knockback velocity and does not run the chase state (see _chase guard).
+	if _stagger_timer > 0.0:
+		_stagger_timer -= delta
+
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
@@ -288,6 +298,11 @@ func _chase(delta: float) -> void:
 	if not target or is_dead:
 		current_state = AIState.IDLE
 		target = null
+		return
+
+	# Staggered by a player hit: skip chase this frame so the knockback velocity
+	# carries the zombie back instead of being overwritten by the chase velocity.
+	if _stagger_timer > 0.0:
 		return
 
 	var dist = global_transform.origin.distance_to(target.global_transform.origin)
@@ -407,6 +422,25 @@ func _drive_anim(delta: float) -> void:
 		if ap.get_current_animation() != "idle":
 			ap.play("idle", 0.2)
 		ap.set_speed_scale(1.0)
+
+func apply_knockback(from_pos: Vector3, force: float = 6.0) -> void:
+	# Shove this zombie away from an attacker so the player gets breathing room
+	# instead of a zombie planting on them and dealing free damage every 1.25s
+	# until death. Adds a horizontal velocity impulse away from from_pos and a
+	# short stagger window during which _chase is suppressed, so the knockback
+	# actually moves it instead of being overwritten next frame. The chase state
+	# re-acquires after the stagger, so it reads as a stagger, not a disable.
+	if is_dead:
+		return
+	var dir := global_transform.origin - from_pos
+	dir.y = 0.0
+	if dir.length_squared() < 0.001:
+		return
+	dir = dir.normalized()
+	velocity.x = dir.x * force
+	velocity.z = dir.z * force
+	_stagger_timer = KNOCKBACK_STAGGER_TIME
+
 
 func take_damage(amount: int) -> void:
 	if is_dead:

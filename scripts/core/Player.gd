@@ -644,6 +644,11 @@ func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 				if has_node("HitFeedback") and $HitFeedback.has_method("emit_hit"):
 					$HitFeedback.emit_hit(enemy.global_transform.origin, str(enemy.get("zombie_type")))
 				enemy.take_damage(damage)
+				# Knock the enemy back so it can't plant on the player and deal
+				# free damage every 1.25s until death — gives the player a window
+				# to reposition or finish it.
+				if enemy.has_method("apply_knockback"):
+					enemy.apply_knockback(global_transform.origin, 7.0)
 				# Impact feel: a light camera kick + haptic tick per landed hit.
 				Input.vibrate_handheld(18)
 				var game_scene := get_tree().current_scene
