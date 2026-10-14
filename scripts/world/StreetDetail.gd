@@ -222,14 +222,12 @@ const COVER_HEIGHT := 2.8
 # Exclusion zones for interior cover buildings:
 # Keep cover buildings clear of ~12m radius around player spawn and the 3 mini-game hubs
 # so routes and interaction stations are never obstructed.
-const COVER_EXCLUSION_RADIUS := 12.0
+const COVER_EXCLUSION_RADIUS := 16.0
 const COVER_EXCLUSIONS: Array[Vector2] = [
 	Vector2(-14.0, -14.0), # Player spawn point
-	Vector2(-70.0, 70.0),  # Mini-game 1: SpoilAndSurvive
-	Vector2(70.0, 60.0),   # Mini-game 2: KeepGeneratorFed (~(70,60))
-	Vector2(72.0, 62.0),   # Mini-game 2: KeepGeneratorFed (~(72,62) exact)
-	Vector2(75.0, -60.0),  # Mini-game 3: LastStandStation (~(75,-60))
-	Vector2(78.0, -62.0),  # Mini-game 3: LastStandStation (~(78,-62) exact)
+	Vector2(-14.0, 2.0),   # Mini-game 1: SpoilAndSurvive (current position)
+	Vector2(28.0, 20.0),   # Mini-game 2: KeepGeneratorFed (current position)
+	Vector2(30.0, -24.0),  # Mini-game 3: LastStandStation (current position)
 ]
 
 # Parked cars: ringed across the expanded town (15-70m).
