@@ -83,7 +83,7 @@ rotation = Vector3(0, -1.5708, 0)
 
 [node name="PerimeterBoundaryZone" type="Area3D" parent="."]
 collision_layer = 0
-collision_mask = 2
+collision_mask = 1
 
 [node name="Shape" type="CollisionShape3D" parent="PerimeterBoundaryZone"]
 shape = SubResource("PerimeterShape")
@@ -103,7 +103,7 @@ mesh = SubResource("StatusLightMesh")
 [node name="InteractionZone" type="Area3D" parent="CheckpointTerminal"]
 position = Vector3(0, 1.0, -1.1)
 collision_layer = 0
-collision_mask = 2
+collision_mask = 1
 
 [node name="Shape" type="CollisionShape3D" parent="CheckpointTerminal/InteractionZone"]
 shape = SubResource("TerminalZoneShape")
@@ -136,7 +136,7 @@ mesh = SubResource("CrateMesh")
 [node name="InteractionZone" type="Area3D" parent="SupplyDropCrate"]
 position = Vector3(0, 0.4, 0)
 collision_layer = 0
-collision_mask = 2
+collision_mask = 1
 
 [node name="Shape" type="CollisionShape3D" parent="SupplyDropCrate/InteractionZone"]
 shape = SubResource("CrateZoneShape")
