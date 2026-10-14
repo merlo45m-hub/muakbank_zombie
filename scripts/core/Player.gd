@@ -110,6 +110,10 @@ var _jump_lock := 0.0
 # state such as "attack" on the very next frame, so the clip is clobbered before
 # it is ever seen. Mirrors the _jump_lock pattern already used for jumping.
 var _attack_lock := 0.0
+# Fallback-punch state: used only when the rig has no "attack-melee-right" clip.
+# _punch_arm is the visible arm mesh; _punch_t is the swing clock in seconds.
+var _punch_arm: MeshInstance3D = null
+var _punch_t := 0.0
 
 # The visible character root applied by _apply_character_model (scene visuals,
 # GLB fallback, or null when the placeholder body is the only visual).
@@ -412,13 +416,20 @@ func _play_jump_anim() -> void:
 
 ## Drive idle/run/jump from actual speed every physics tick.
 func _update_skeletal_anim(delta: float) -> void:
-	if _skeletal == null or not is_instance_valid(_skeletal):
-		return
 	# A one-shot state owns the rig until its lock expires. Without this guard the
 	# speed-derived state below overwrites "attack" on the very next frame and the
 	# melee clip is never seen (this was the real reason the punch read as a flop).
+	#
+	# The lock is ticked HERE (before the _skeletal null check) on purpose: the
+	# fallback procedural punch runs on rigs where _skeletal IS null, so bailing
+	# out early would leave its swing frozen mid-arc.
 	if _attack_lock > 0.0:
 		_attack_lock -= delta
+		# Tick the arm-only fallback swing when the rig clip path was not taken.
+		if _punch_arm != null:
+			_update_procedural_punch(delta)
+		return
+	if _skeletal == null or not is_instance_valid(_skeletal):
 		return
 	if _jump_lock > 0.0:
 		_jump_lock -= delta
@@ -623,19 +634,110 @@ func _trigger_attack_feedback() -> void:
 	# The Kenney Blocky rig ships a real right-hand melee clip; BlockyAnim already
 	# maps the "attack" state onto it. Play it so the strike reads as an arm swing
 	# rather than the whole body pitching over.
-	# Guarded with has_animation() so placeholder/fallback rigs simply fall through
-	# to the whole-body tween below instead of silently no-opping.
-	if _skeletal != null and is_instance_valid(_skeletal) and _skeletal.has_animation("attack-melee-right"):
+	#
+	# ROOT CAUSE of "the clip plays but the arm never moves" (proven at runtime on
+	# the VPS by instantiating the real authored scene, character_nurse.tscn):
+	# `_skeletal` ends up NULL, so the whole block below never ran and the arms
+	# simply hung at rest. In _apply_character_model()'s preferred branch the rig
+	# is taken from the authored character_*.tscn scene, and BlockyAnim's
+	# apply_skin_variant()/setup() chain re-instantiates that rig (freeing the old
+	# one) while _ready() then RE-PARENTS the visual under a new
+	# ProceduralAnimator. The handle captured through all that reordering does not
+	# survive, and the old `is_instance_valid()` guard swallowed the failure
+	# silently instead of recovering.
+	# FIX: resolve the AnimationPlayer fresh from the CURRENT tree at attack time,
+	# so the punch no longer depends on any of that ordering.
+	_skeletal = _resolve_skeletal_player()
+	if _skeletal != null and _skeletal.has_animation("attack-melee-right"):
 		# Hold the state so _update_skeletal_anim() cannot overwrite it next frame.
 		_anim_state = "attack"
-		_attack_lock = weapon_swing_duration + 0.05
-		_skeletal.play("attack-melee-right", 0.06)
+		# The clip is 0.417s long (14 keys, arm-right sweeping 0° → -162° → 0°).
+		# The old lock was weapon_swing_duration + 0.05 = 0.30s, which CUT THE CLIP
+		# OFF before its recovery half — the arm snapped back to rest mid-swing,
+		# which reads as a twitch rather than a punch. Hold for the full clip.
+		_attack_lock = _skeletal.get_animation("attack-melee-right").length + 0.05
+		_skeletal.play("attack-melee-right", 0.04)
+	else:
+		# No usable rig clip (placeholder capsule, or rig without the melee clip).
+		# Fall back to a tight arm-only swing on the visible body so the punch
+		# still reads as a strike — never the old whole-body pitch/flop.
+		_attack_lock = 0.30
+		_procedural_punch()
 	# The old whole-body swing tween is gone on purpose. It targeted
 	# _visual_root() — the entire applied character model — pitching the whole
 	# body 45 degrees forward and back, which is exactly the "flop" the player
 	# reported. WeaponSystem is logic-only (no weapon mesh / attach node exists to
 	# swing), and the rig's real "attack-melee-right" clip already animates the
 	# arm, so no transform tween is needed at all.
+
+
+## Re-resolve the rig's AnimationPlayer from the CURRENT tree.
+##
+## WHY THIS EXISTS (the "punch shows no arm motion" bug, proven at runtime): the
+## `_skeletal` handle resolved once during _apply_character_model() does not
+## survive the rig swaps and the ProceduralAnimator re-parent that happen in
+## _ready(), so by the time the player punches it is null and the melee clip is
+## never played — the arms just hang. Resolving fresh from the live visual
+## subtree at attack time makes the punch independent of all that ordering.
+## Returns null when no rig is present (placeholder body).
+func _resolve_skeletal_player() -> AnimationPlayer:
+	var root := _visual_root()
+	if root == null or not is_instance_valid(root):
+		return null
+	var ap := root.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if ap == null:
+		# The Blocky rig ships the AnimationPlayer as a SIBLING of the glb root,
+		# so also look beside the visual root (see BlockyAnim.find_animation_player).
+		var parent := root.get_parent()
+		if parent != null:
+			ap = parent.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	return ap
+
+
+## Fallback punch for rigs with no melee clip: swing the visible arm node only.
+## Drives rotation.x on "arm-right" (the same channel the real clip uses), so the
+## motion is identical in character to the clip — never a whole-body pitch.
+func _procedural_punch() -> void:
+	var arm := _find_visible_arm()
+	if arm == null:
+		return
+	_punch_arm = arm
+	_punch_t = 0.0
+
+
+## Locate the right-arm mesh under the currently applied visual.
+func _find_visible_arm() -> MeshInstance3D:
+	var root := _visual_root()
+	if root == null or not is_instance_valid(root):
+		return null
+	for mi in root.find_children("arm-right", "MeshInstance3D", true, false):
+		if (mi as MeshInstance3D).visible:
+			return mi as MeshInstance3D
+	return null
+
+
+## Tick the fallback punch swing. Called from _physics_process while
+## _attack_lock > 0 and the rig clip path was not taken.
+func _update_procedural_punch(delta: float) -> void:
+	if _punch_arm == null or not is_instance_valid(_punch_arm):
+		return
+	_punch_t += delta
+	var dur := 0.30
+	var u: float = clampf(_punch_t / dur, 0.0, 1.0)
+	# Wind-up (0→25%), strike (25→55%), recover (55→100%) — matches the shape of
+	# the rig's real clip: 0° → -162° → 0°.
+	var angle: float
+	if u < 0.25:
+		angle = lerpf(0.0, deg_to_rad(-30.0), u / 0.25)
+	elif u < 0.55:
+		angle = lerpf(deg_to_rad(-30.0), deg_to_rad(-162.0), (u - 0.25) / 0.30)
+	else:
+		angle = lerpf(deg_to_rad(-162.0), 0.0, (u - 0.55) / 0.45)
+	_punch_arm.rotation.x = angle
+	if u >= 1.0:
+		_punch_arm.rotation.x = 0.0
+		_punch_arm = null
+
 
 func _fire_weapon() -> Dictionary:
 	if not weapon_system or not weapon_system.has_method("fire"):
