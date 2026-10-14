@@ -105,6 +105,11 @@ var _start_position: Vector3 = Vector3.ZERO
 var _skeletal: AnimationPlayer = null
 var _anim_state := ""
 var _jump_lock := 0.0
+# One-shot state locks. Without these, _update_skeletal_anim() (which runs every
+# frame and derives state purely from speed) immediately overwrites a one-shot
+# state such as "attack" on the very next frame, so the clip is clobbered before
+# it is ever seen. Mirrors the _jump_lock pattern already used for jumping.
+var _attack_lock := 0.0
 
 # The visible character root applied by _apply_character_model (scene visuals,
 # GLB fallback, or null when the placeholder body is the only visual).
@@ -409,6 +414,12 @@ func _play_jump_anim() -> void:
 func _update_skeletal_anim(delta: float) -> void:
 	if _skeletal == null or not is_instance_valid(_skeletal):
 		return
+	# A one-shot state owns the rig until its lock expires. Without this guard the
+	# speed-derived state below overwrites "attack" on the very next frame and the
+	# melee clip is never seen (this was the real reason the punch read as a flop).
+	if _attack_lock > 0.0:
+		_attack_lock -= delta
+		return
 	if _jump_lock > 0.0:
 		_jump_lock -= delta
 		return
@@ -615,13 +626,16 @@ func _trigger_attack_feedback() -> void:
 	# Guarded with has_animation() so placeholder/fallback rigs simply fall through
 	# to the whole-body tween below instead of silently no-opping.
 	if _skeletal != null and is_instance_valid(_skeletal) and _skeletal.has_animation("attack-melee-right"):
+		# Hold the state so _update_skeletal_anim() cannot overwrite it next frame.
 		_anim_state = "attack"
+		_attack_lock = weapon_swing_duration + 0.05
 		_skeletal.play("attack-melee-right", 0.06)
-	var swing_vis: Node3D = _visual_root()
-	if swing_vis:
-		weapon_tween = create_tween()
-		weapon_tween.tween_property(swing_vis, "rotation:x", swing_vis.rotation.x - deg_to_rad(45), weapon_swing_duration / 2)
-		weapon_tween.tween_property(swing_vis, "rotation:x", swing_vis.rotation.x, weapon_swing_duration / 2)
+	# The old whole-body swing tween is gone on purpose. It targeted
+	# _visual_root() — the entire applied character model — pitching the whole
+	# body 45 degrees forward and back, which is exactly the "flop" the player
+	# reported. WeaponSystem is logic-only (no weapon mesh / attach node exists to
+	# swing), and the rig's real "attack-melee-right" clip already animates the
+	# arm, so no transform tween is needed at all.
 
 func _fire_weapon() -> Dictionary:
 	if not weapon_system or not weapon_system.has_method("fire"):
