@@ -6,7 +6,11 @@ class_name DifficultyManager
 
 @export var base_difficulty: float = 1.0
 @export var max_difficulty: float = 3.0
-@export var difficulty_ramp_time: float = 60.0
+# Was 60s — the ramp hit ~2x difficulty by the time the player reached the first
+# mini-game (~30s of travel), inflating a 3-dmg rabbit into a 12-dmg hit and melting
+# the player en route. Slow it to 300s so difficulty stays near 1.0 through the early
+# exploration phase and only ramps in long survivable sessions.
+@export var difficulty_ramp_time: float = 300.0
 @export var performance_window: int = 10
 @export var window_seconds: float = 30.0  # sliding window for kill/damage tracking
 
