@@ -224,13 +224,18 @@ func _build_waypoint_markers() -> void:
 	var spacing: float = 48.0
 	var idx: int = 0
 	for obj_id in WAYPOINT_POSITIONS:
-		# Container for this waypoint (arrow + distance)
+		# Container for this waypoint (arrow + distance). Anchor BOTH sides to the
+		# right edge (anchor_left=anchor_right=1.0) so it is a fixed-width box pinned
+		# top-right — mixing anchor_left=0 with anchor_right=1 stretches the box full
+		# width and shoves the children off-screen.
 		var container = HBoxContainer.new()
+		container.anchor_left = 1.0
 		container.anchor_right = 1.0
 		container.anchor_top = 0.0
+		container.anchor_bottom = 0.0
+		container.offset_left = -180.0
 		container.offset_right = -16.0
 		container.offset_top = start_y + idx * spacing
-		container.offset_left = -160.0
 		container.offset_bottom = start_y + idx * spacing + 36.0
 		container.add_theme_constant_override("separation", 6)
 		container.modulate = Color(1, 1, 1, 0.85)  # semi-transparent for readability
