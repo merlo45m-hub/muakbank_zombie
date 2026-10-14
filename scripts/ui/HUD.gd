@@ -34,6 +34,18 @@ var wave_label: Label = null
 var combo_label: Label = null
 var objective_label: Label = null
 
+# Wayfinding markers for the 3 mini-games
+var waypoint_markers: Dictionary = {}
+const WAYPOINT_POSITIONS: Dictionary = {
+	"l1_spoil_and_survive": Vector3(-70, 0, 70),
+	"l1_generator_fed":   Vector3(72, 0, 62),
+	"l1_last_stand":      Vector3(78, 0, -62)
+}  # Match scene instance transforms exactly so markers point to the right world positions
+
+# Throttle waypoint updates to ~10Hz to avoid per-frame churn
+var _waypoint_accumulator: float = 0.0
+const WAYPOINT_UPDATE_INTERVAL: float = 0.1
+
 # Banner state
 var banner_tween: Tween = null
 
@@ -175,7 +187,7 @@ func _build_extra_labels() -> void:
 	wave_label.offset_bottom = 40.0
 	wave_label.text = ""
 	add_child(wave_label)
-	
+
 	# Combo label (below wave)
 	combo_label = Label.new()
 	combo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -189,7 +201,7 @@ func _build_extra_labels() -> void:
 	combo_label.modulate = Color(1, 0.85, 0.2)
 	combo_label.text = ""
 	add_child(combo_label)
-	
+
 	# Objective label (bottom-left)
 	objective_label = Label.new()
 	objective_label.add_theme_font_size_override("font_size", 14)
@@ -201,6 +213,56 @@ func _build_extra_labels() -> void:
 	objective_label.offset_bottom = -16.0
 	objective_label.text = ""
 	add_child(objective_label)
+
+	# Waypoint markers (top-right, stacked vertically so they don't cover the joystick)
+	_build_waypoint_markers()
+
+func _build_waypoint_markers() -> void:
+	"""Create a directional arrow + distance label for each mini-game.
+	   Uses simple Control nodes (TextureRect with arrow glyph + Label) — lightweight and mobile-readable."""
+	var start_y: float = 80.0
+	var spacing: float = 48.0
+	var idx: int = 0
+	for obj_id in WAYPOINT_POSITIONS:
+		# Container for this waypoint (arrow + distance)
+		var container = HBoxContainer.new()
+		container.anchor_right = 1.0
+		container.anchor_top = 0.0
+		container.offset_right = -16.0
+		container.offset_top = start_y + idx * spacing
+		container.offset_left = -160.0
+		container.offset_bottom = start_y + idx * spacing + 36.0
+		container.add_theme_constant_override("separation", 6)
+		container.modulate = Color(1, 1, 1, 0.85)  # semi-transparent for readability
+		add_child(container)
+
+		# Arrow glyph using a Label with Unicode triangle — simple, no texture dependency
+		var arrow = Label.new()
+		arrow.text = "▶"  # right-pointing triangle; we'll rotate it via transform
+		arrow.add_theme_font_size_override("font_size", 24)
+		arrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		arrow.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		arrow.custom_minimum_size = Vector2(32, 32)
+		arrow.modulate = Color(1, 0.9, 0.2)  # gold/yellow for visibility
+		container.add_child(arrow)
+
+		# Distance text
+		var dist_label = Label.new()
+		dist_label.add_theme_font_size_override("font_size", 16)
+		dist_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		dist_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		dist_label.custom_minimum_size = Vector2(60, 28)
+		dist_label.modulate = Color(1, 1, 1, 0.9)
+		dist_label.text = "--m"
+		container.add_child(dist_label)
+
+		waypoint_markers[obj_id] = {
+			"container": container,
+			"arrow": arrow,
+			"distance_label": dist_label,
+			"target_pos": WAYPOINT_POSITIONS[obj_id]
+		}
+		idx += 1
 
 # ── FOOD BAR ───────────────────────────────────────────────────
 
@@ -321,3 +383,59 @@ func update_combo(combo: int, multiplier: float) -> void:
 func update_objectives(texts: Array) -> void:
 	if objective_label:
 		objective_label.text = "\n".join(texts)
+
+func _process(delta: float) -> void:
+	_waypoint_accumulator += delta
+	if _waypoint_accumulator < WAYPOINT_UPDATE_INTERVAL:
+		return
+	_waypoint_accumulator = 0.0
+	_update_waypoint_markers()
+
+func _update_waypoint_markers() -> void:
+	"""Update arrow rotation and distance for each active waypoint. Throttled to ~10Hz."""
+	# Get player node (in "player" group) for "from" position — null-safe
+	var player = get_tree().get_first_node_in_group("player")
+	if not player or not player.has_method("get_global_position"):
+		return
+	var player_pos: Vector3 = player.global_position
+
+	# Get ObjectiveManager autoload to check completion status — null-safe
+	var obj_mgr = get_node_or_null("/root/ObjectiveManager")
+
+	# Camera yaw for screen-space direction (project world dir onto camera horizontal plane)
+	var camera = get_viewport().get_camera_3d()
+	var cam_yaw: float = 0.0
+	if camera:
+		cam_yaw = camera.global_transform.basis.get_euler().y
+
+	for obj_id in waypoint_markers:
+		var marker = waypoint_markers[obj_id]
+		var container: Control = marker["container"]
+		var arrow: Label = marker["arrow"]
+		var dist_label: Label = marker["distance_label"]
+		var target_pos: Vector3 = marker["target_pos"]
+
+		# Hide if objective completed (null-safe ObjectiveManager check)
+		var completed: bool = false
+		if obj_mgr and obj_mgr.has_method("is_objective_completed"):
+			completed = obj_mgr.is_objective_completed(obj_id)
+		container.visible = not completed
+		if completed:
+			continue
+
+		# World direction from player to target (ignore Y for horizontal navigation)
+		var to_target = target_pos - player_pos
+		to_target.y = 0.0
+		var distance: float = to_target.length()
+		if distance < 0.1:
+			continue
+
+		# Angle between camera forward and target direction (screen-space rotation)
+		var target_angle: float = atan2(to_target.x, to_target.z)
+		var relative_angle: float = target_angle - cam_yaw
+		# Rotate arrow label (Label doesn't have rotation, so use a TextureRect approach or rotate container)
+		# Simpler: rotate the arrow Label via transform
+		arrow.rotation = relative_angle
+
+		# Update distance text
+		dist_label.text = "%dm" % int(distance)
