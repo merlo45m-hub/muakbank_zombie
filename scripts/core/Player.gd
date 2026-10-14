@@ -595,11 +595,28 @@ func _perform_attack() -> void:
 func _trigger_attack_feedback() -> void:
 	var _pv := get_node_or_null("PlayerVisuals")
 	if _pv:
-		var _pa := _pv.get_node_or_null("ProceduralAnimator") as ProceduralAnimator
-		if _pa:
-			_pa.trigger_attack()
+		# ── BUG A FIX ("punch = flop") ────────────────────────────────────────
+		# This used to call ProceduralAnimator.trigger_attack() unconditionally,
+		# which runs the ZOMBIE 3-phase pounce curve: a forward pos.z lunge plus a
+		# rot.x pitch-down. On the human player that reads as the whole body
+		# flopping over instead of throwing a punch.
+		# The rig's real "attack-melee-right" clip (below) already drives the arm
+		# swing, and this animator's _process is disabled for the player anyway
+		# (Player.gd _ready), so there is nothing to animate here — skip it.
+		# Zombies are untouched: they never call this function and their own
+		# animator pipeline is unchanged.
+		pass
 	if Audio:
 		Audio.play_click()
+	# ── PUNCH (bug A — "punch = flop") ────────────────────────────────────────
+	# The Kenney Blocky rig ships a real right-hand melee clip; BlockyAnim already
+	# maps the "attack" state onto it. Play it so the strike reads as an arm swing
+	# rather than the whole body pitching over.
+	# Guarded with has_animation() so placeholder/fallback rigs simply fall through
+	# to the whole-body tween below instead of silently no-opping.
+	if _skeletal != null and is_instance_valid(_skeletal) and _skeletal.has_animation("attack-melee-right"):
+		_anim_state = "attack"
+		_skeletal.play("attack-melee-right", 0.06)
 	var swing_vis: Node3D = _visual_root()
 	if swing_vis:
 		weapon_tween = create_tween()

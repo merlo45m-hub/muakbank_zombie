@@ -29,7 +29,18 @@ var joystick_radius: float = 120.0
 var move_input: Vector2 = Vector2.ZERO
 
 # Button layout constants — named so the layout is adjustable in one place
-const SPRINT_BTN_RECT := Rect2(30.0, -520.0, 270.0, -390.0)
+# NOTE: Rect2(position, SIZE) — the 3rd/4th args are width/height, NOT a corner.
+# The original Rect2(30, -520, 270, -390) had a NEGATIVE height, so .end.y
+# evaluated to -910 and _build_sprint_button fed that into offset_bottom,
+# collapsing the button to a ~36px sliver that taps missed.
+#
+# The corrected height (+390) put the top at -520 and the bottom at -130, which
+# then OVERLAPPED the joystick (joystick spans y=550..810 at the 1950x900 runtime
+# viewport, i.e. offsets -350..-90). SPRINT is therefore raised and shortened so
+# it sits entirely ABOVE the joystick: top at -760, bottom at -400, giving a
+# 270x360 target with a 50px clear gap above the joystick's -350 top edge.
+# Verified by res://tools/verify_sprint_final_probe.tscn (RESULT PASS, no overlaps).
+const SPRINT_BTN_RECT := Rect2(30.0, -760.0, 270.0, 360.0)
 # JUMP used to sit almost fully inside the SPECIAL button's rect (both right-column
 # offsets overlapped), so SPECIAL was half-eaten and the labels rendered on top of
 # each other. Park JUMP left of the VS attack button — same bottom band, no overlap.

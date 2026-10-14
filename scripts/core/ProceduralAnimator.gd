@@ -358,7 +358,15 @@ func _process(delta: float) -> void:
 	var is_charging: bool = _body.get("is_charging") if _body.get("is_charging") != null else false
 
 	# Detect rising edge on is_attacking to auto-start lunge.
-	if is_attacking and not _was_attacking:
+	# NOTE (bug A — "punch = flop"): this branch used to run UNCONDITIONALLY, so
+	# the player body inherited the zombie pounce curve (pos.z lunge + rot.x
+	# pitch-down) and read as the whole character flopping over.
+	# ONLY non-human bodies auto-lunge. The player (subtype "human") is gated out:
+	# their real melee clip ("attack-melee-right") is played by
+	# Player._trigger_attack_feedback, which drives the actual arm swing. Zombies
+	# are also unaffected — ZombieBase disables this node's _process() outright and
+	# drives skeletal clips instead, so this auto-lunge is a legacy fallback.
+	if _subtype != "human" and is_attacking and not _was_attacking:
 		if h_speed < 2.0:
 			trigger_attack()
 	_was_attacking = is_attacking

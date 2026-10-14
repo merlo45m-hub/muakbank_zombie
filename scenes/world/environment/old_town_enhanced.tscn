@@ -3855,7 +3855,7 @@ material_override = SubResource("DarkMetalMaterial")
 
 [node name="Fence_Plaza_0" type="StaticBody3D" parent="Fences"]
 	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.0, 0.75, 7.5)
-	collision_layer = 1
+	collision_layer = 0
 
 [node name="Post" type="MeshInstance3D" parent="Fences/Fence_Plaza_0"]
 	mesh = SubResource("BoxMesh_fence_post")
@@ -3871,7 +3871,7 @@ material_override = SubResource("DarkMetalMaterial")
 
 [node name="Fence_Plaza_1" type="StaticBody3D" parent="Fences"]
 	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.0, 0.75, 7.5)
-	collision_layer = 1
+	collision_layer = 0
 
 [node name="Post" type="MeshInstance3D" parent="Fences/Fence_Plaza_1"]
 	mesh = SubResource("BoxMesh_fence_post")
@@ -3887,7 +3887,7 @@ material_override = SubResource("DarkMetalMaterial")
 
 [node name="Fence_Plaza_2" type="StaticBody3D" parent="Fences"]
 	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.0, 0.75, 7.5)
-	collision_layer = 1
+	collision_layer = 0
 
 [node name="Post" type="MeshInstance3D" parent="Fences/Fence_Plaza_2"]
 	mesh = SubResource("BoxMesh_fence_post")
@@ -3903,7 +3903,7 @@ material_override = SubResource("DarkMetalMaterial")
 
 [node name="Fence_Plaza_3" type="StaticBody3D" parent="Fences"]
 	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.0, 0.75, 7.5)
-	collision_layer = 1
+	collision_layer = 0
 
 [node name="Post" type="MeshInstance3D" parent="Fences/Fence_Plaza_3"]
 	mesh = SubResource("BoxMesh_fence_post")
@@ -3919,7 +3919,7 @@ material_override = SubResource("DarkMetalMaterial")
 
 [node name="Fence_Plaza_4" type="StaticBody3D" parent="Fences"]
 	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.0, 0.75, 7.5)
-	collision_layer = 1
+	collision_layer = 0
 
 [node name="Post" type="MeshInstance3D" parent="Fences/Fence_Plaza_4"]
 	mesh = SubResource("BoxMesh_fence_post")
