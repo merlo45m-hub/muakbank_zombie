@@ -17,7 +17,7 @@ albedo_color = Color(0.18, 0.19, 0.2, 1)
 roughness = 0.95
 
 [sub_resource type="BoxShape3D" id="TerminalZoneShape"]
-size = Vector3(1.6, 2.0, 1.6)
+size = Vector3(5.0, 3.0, 5.0)
 
 [sub_resource type="BoxMesh" id="TerminalMesh"]
 size = Vector3(0.8, 1.1, 0.45)
