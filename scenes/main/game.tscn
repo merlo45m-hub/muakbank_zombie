@@ -178,9 +178,9 @@ shape = SubResource("PlayerCollision")
 
 [node name="Camera" type="SpringArm3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0)
-spring_length = 5.6
+spring_length = 4.5
 collision_mask = 1
-margin = 0.3
+margin = 0.6
 
 [node name="Camera3D" type="Camera3D" parent="Player/Camera"]
 transform = Transform3D(1, 0, 0, 0, 0.955, -0.296, 0, 0.296, 0.955, 0, 0.5, 0)
