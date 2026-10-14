@@ -197,6 +197,12 @@ func _any_minigame_round_active() -> bool:
 func _spawn_random_zombie() -> void:
 	if not can_spawn or not player:
 		return
+	# PEACEFUL MODE: when dev peaceful mode is on, spawn nothing so the level can be
+	# explored / tuned without survival pressure.
+	const DevMode := preload("res://scripts/core/DevMode.gd")
+	if DevMode.is_peaceful():
+		spawn_timer.start(spawn_interval)
+		return
 	# SAFE ZONE: while a mini-game round is active, pause NEW spawns so the player
 	# can complete the objective without being melted mid-round. This resolves the
 	# survival-vs-exploration tension — mini-games are the goal, so reaching one and
