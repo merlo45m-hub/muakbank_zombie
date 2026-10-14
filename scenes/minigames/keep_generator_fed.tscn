@@ -122,7 +122,7 @@ mesh = SubResource("StatusLightMesh")
 [node name="InteractionZone" type="Area3D" parent="Controller"]
 position = Vector3(0, 1.0, -1.1)
 collision_layer = 0
-collision_mask = 1
+collision_mask = 2
 
 [node name="Shape" type="CollisionShape3D" parent="Controller/InteractionZone"]
 shape = SubResource("ConsoleZoneShape")
@@ -141,7 +141,7 @@ script = ExtResource("hopper_script")
 
 [node name="InteractionZone" type="Area3D" parent="Hopper"]
 collision_layer = 0
-collision_mask = 1
+collision_mask = 2
 
 [node name="Shape" type="CollisionShape3D" parent="Hopper/InteractionZone"]
 shape = SubResource("HopperZoneShape")
@@ -175,7 +175,7 @@ mesh = SubResource("CrateMesh")
 [node name="CrateInteractionZone" type="Area3D" parent="SupplyCrateNorth"]
 position = Vector3(0, 0.4, 0)
 collision_layer = 0
-collision_mask = 1
+collision_mask = 2
 
 [node name="CrateZoneShape" type="CollisionShape3D" parent="SupplyCrateNorth/CrateInteractionZone"]
 shape = SubResource("CrateZoneShape")
@@ -200,7 +200,7 @@ mesh = SubResource("CrateMesh")
 [node name="CrateInteractionZone" type="Area3D" parent="SupplyCrateEast"]
 position = Vector3(0, 0.4, 0)
 collision_layer = 0
-collision_mask = 1
+collision_mask = 2
 
 [node name="CrateZoneShape" type="CollisionShape3D" parent="SupplyCrateEast/CrateInteractionZone"]
 shape = SubResource("CrateZoneShape")
@@ -225,7 +225,7 @@ mesh = SubResource("CrateMesh")
 [node name="CrateInteractionZone" type="Area3D" parent="SupplyCrateWest"]
 position = Vector3(0, 0.4, 0)
 collision_layer = 0
-collision_mask = 1
+collision_mask = 2
 
 [node name="CrateZoneShape" type="CollisionShape3D" parent="SupplyCrateWest/CrateInteractionZone"]
 shape = SubResource("CrateZoneShape")
