@@ -433,6 +433,10 @@ func _parked_cars() -> void:
 		var a := TAU * float(i) / float(NEAR_CAR_COUNT) + _rng.randf_range(-0.12, 0.12)
 		var r := _rng.randf_range(NEAR_CAR_R_MIN, NEAR_CAR_R_MAX)
 		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		# Keep near cars off the mini-game podiums and spawn — a car on the buffet
+		# would block the interaction zone.
+		if not _is_cover_pos_clear(Vector2(pos.x, pos.z)):
+			continue
 		var yaw := a + PI * 0.5
 		_spawn(_pick(cars, i * 7 + 3), pos, yaw + _rng.randf_range(-0.1, 0.1),
 			CAR_HEIGHT * _rng.randf_range(0.9, 1.35))
@@ -481,6 +485,9 @@ func _street_furniture() -> void:
 		var a := TAU * float(i) / float(NEAR_LIGHT_COUNT) + 0.7
 		var r := _rng.randf_range(NEAR_LIGHT_R_MIN, NEAR_LIGHT_R_MAX)
 		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		# Keep lamps off the mini-game podiums and spawn.
+		if not _is_cover_pos_clear(Vector2(pos.x, pos.z)):
+			continue
 		var node := _spawn(_pick(lamps, i * 3 + 5), pos, 0.0, LIGHT_HEIGHT)
 		if node == null:
 			continue
