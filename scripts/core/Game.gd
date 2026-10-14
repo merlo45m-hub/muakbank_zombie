@@ -20,7 +20,10 @@ signal food_eaten(food_type, amount)
 @onready var environment: Node3D = $Environment
 
 # === GAME CONFIG ===
+# Shift length. Exposed as a project setting so it can be tuned without a
+# rebuild — and so a test can shorten it to exercise the end-of-shift gate.
 const GAME_DURATION: float = 600.0  # 10 minutes
+const GAME_DURATION_SETTING := "game/shift_duration"
 const MAX_ZOMBIES: int = 12
 const ZOMBIE_SPAWN_INTERVAL: float = 3.0
 const FOOD_SPAWN_INTERVAL: float = 8.0
@@ -36,7 +39,7 @@ var score: int = 0
 var zombies_killed: int = 0
 var damage_taken_this_level: bool = false  # for the "untouchable" achievement
 var game_active: bool = false
-var time_remaining: float = GAME_DURATION
+var time_remaining: float = GAME_DURATION  # reset to _shift_duration() in start_game()
 var _waves_cleared: bool = false
 
 # === OPTIONAL SYSTEMS (auto-detected) ===
@@ -253,6 +256,15 @@ func _setup_achievements() -> void:
 	if am.has_method("load_progress"):
 		am.load_progress()
 
+## The shift length, honouring the project setting override when present.
+func _shift_duration() -> float:
+	if ProjectSettings.has_setting(GAME_DURATION_SETTING):
+		var v: float = float(ProjectSettings.get_setting(GAME_DURATION_SETTING))
+		if v > 0.0:
+			return v
+	return GAME_DURATION
+
+
 func start_game() -> void:
 	# game_active gates _on_player_damaged; keep it false through placement so a stray
 	# hit during the spawn frame cannot mark the run "damaged" for untouchable.
@@ -261,7 +273,7 @@ func start_game() -> void:
 	score = 0
 	zombies_killed = 0
 	damage_taken_this_level = false
-	time_remaining = GAME_DURATION
+	time_remaining = _shift_duration()
 	
 	# Reset player. The spot is PROBED against the level's real collision and then
 	# aimed at whatever is worth looking at - see _place_player(). A fixed coordinate
