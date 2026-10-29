@@ -1,74 +1,80 @@
 #!/bin/bash
-# One-command VPS export wrapper
-# Pushes latest to GitHub → VPS pulls → Godot exports Android APK → APK copied to phone
-# Usage: bash tools/export_on_vps.sh [push|pull|export|full]
+# One-command VPS export wrapper (Muakbank Zombie)
+# Edit on phone -> push rescue/muakbank-work -> VPS pulls -> Godot exports Android APK -> APK copied to phone Download
+# Usage: bash tools/export_on_vps.sh [push|pull|export|copy|full]
 # Default: full (push + pull + export + copy)
+#
+# Canonical branch is rescue/muakbank-work while main stays clean (see docs/BRANCH_WORKFLOW.md).
+# Routing uses the `vps` ssh alias (WireGuard 10.9.0.1) with a vpspub (public IP) fallback.
 
 set -e
 
 PROJECT="/storage/emulated/0/Games/Muakbank_zombie"
-VPS="root@162.35.174.155"
-VPS_KEY="$HOME/.ssh/id_ed25519"
+BRANCH="rescue/muakbank-work"
+
+# ssh routing: prefer the `vps` alias (fast wireguard), fall back to public IP (vpspub)
+if ssh -o ConnectTimeout=5 -o BatchMode=yes vps true 2>/dev/null; then
+    VPS_HOST="vps"
+elif ssh -o ConnectTimeout=5 -o BatchMode=yes root@162.35.174.155 true 2>/dev/null; then
+    VPS_HOST="root@162.35.174.155"
+else
+    echo "ERROR: cannot reach VPS via 'ssh vps' or root@162.35.174.155" >&2
+    exit 1
+fi
+
 VPS_GODOT="/root/Godot_v4.7-stable_linux.x86_64"
 VPS_PROJECT="/root/muakbank_zombie"
 PHONE_APK_DIR="/storage/emulated/0/Download"
 ACTION="${1:-full}"
 
-echo "========================================"
-echo "  VPS Export: $ACTION"
-echo "========================================"
-echo ""
+echo "=========================================="
+echo "  VPS Export: $ACTION  (branch: $BRANCH)"
+echo "=========================================="
 
-# Function to run command on VPS
+# run command on VPS
 vps() {
-    ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -i "$VPS_KEY" \
-        "$VPS" "$1" 2>&1
+    ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no "$VPS_HOST" "$1" 2>&1
 }
 
 case "$ACTION" in
     push)
-        echo "--- [1/4] Pushing to GitHub ---"
-        git --git-dir="$PROJECT/.git" --work-tree="$PROJECT" push origin main 2>&1
-        echo "✓ Pushed"
+        echo "--- [1/4] Pushing $BRANCH to GitHub ---"
+        git --git-dir="$PROJECT/.git" --work-tree="$PROJECT" push origin "$BRANCH" 2>&1
+        echo "OK pushed"
         ;;
     pull)
         echo "--- [2/4] Pulling on VPS ---"
-        vps "cd $VPS_PROJECT && git pull origin main" 2>&1
-        echo "✓ VPS pulled"
+        vps "cd $VPS_PROJECT && git fetch origin && git checkout $BRANCH 2>&1 && git pull origin $BRANCH" 2>&1
+        echo "OK vps pulled"
         ;;
     export)
         echo "--- [3/4] Exporting Android APK on VPS ---"
-        vps "cd $VPS_PROJECT && $VPS_GODOT --headless --export-release 'Muakbank Zombie' --export-path /root/builds/muakbank_latest.apk" 2>&1
-        echo "✓ Exported"
+        vps "mkdir -p /root/builds && cd $VPS_PROJECT && $VPS_GODOT --headless --import --path $VPS_PROJECT 2>&1 | tail -3 && $VPS_GODOT --headless --export-debug 'Android' --export-path /root/builds/muakbank_latest.apk" 2>&1
+        echo "OK exported"
         ;;
     copy)
         echo "--- [4/4] Copying APK to phone ---"
-        scp -o ConnectTimeout=10 -o StrictHostKeyChecking=no -i "$VPS_KEY" \
-            "$VPS:/root/builds/muakbank_latest.apk" \
+        scp -o ConnectTimeout=10 -o StrictHostKeyChecking=no "$VPS_HOST:/root/builds/muakbank_latest.apk" \
             "$PHONE_APK_DIR/muakbank_latest_$(date +%Y%m%d_%H%M%S).apk" 2>&1
-        echo "✓ Copied to $PHONE_APK_DIR"
+        echo "OK copied to $PHONE_APK_DIR"
         ;;
     full)
-        echo "--- [1/4] Pushing to GitHub ---"
-        git --git-dir="$PROJECT/.git" --work-tree="$PROJECT" push origin main 2>&1
-        echo "✓ Pushed"
-
+        echo "--- [1/4] Pushing $BRANCH to GitHub ---"
+        git --git-dir="$PROJECT/.git" --work-tree="$PROJECT" push origin "$BRANCH" 2>&1
+        echo "OK pushed"
         echo ""
         echo "--- [2/4] Pulling on VPS ---"
-        vps "cd $VPS_PROJECT && git pull origin main" 2>&1
-        echo "✓ VPS pulled"
-
+        vps "cd $VPS_PROJECT && git fetch origin && git checkout $BRANCH 2>&1 && git pull origin $BRANCH" 2>&1
+        echo "OK vps pulled"
         echo ""
         echo "--- [3/4] Exporting Android APK on VPS ---"
-        vps "cd $VPS_PROJECT && $VPS_GODOT --headless --export-release 'Muakbank Zombie' --export-path /root/builds/muakbank_latest.apk" 2>&1
-        echo "✓ Exported"
-
+        vps "mkdir -p /root/builds && cd $VPS_PROJECT && $VPS_GODOT --headless --import --path $VPS_PROJECT 2>&1 | tail -3 && $VPS_GODOT --headless --export-debug 'Android' --export-path /root/builds/muakbank_latest.apk" 2>&1
+        echo "OK exported"
         echo ""
         echo "--- [4/4] Copying APK to phone ---"
-        scp -o ConnectTimeout=10 -o StrictHostKeyChecking=no -i "$VPS_KEY" \
-            "$VPS:/root/builds/muakbank_latest.apk" \
+        scp -o ConnectTimeout=10 -o StrictHostKeyChecking=no "$VPS_HOST:/root/builds/muakbank_latest.apk" \
             "$PHONE_APK_DIR/muakbank_latest_$(date +%Y%m%d_%H%M%S).apk" 2>&1
-        echo "✓ Copied"
+        echo "OK copied to $PHONE_APK_DIR"
         ;;
     *)
         echo "Usage: bash tools/export_on_vps.sh [push|pull|export|copy|full]"
@@ -76,7 +82,6 @@ case "$ACTION" in
         ;;
 esac
 
-echo ""
-echo "========================================"
+echo "=========================================="
 echo "  Done"
-echo "========================================"
+echo "=========================================="
