@@ -16,9 +16,9 @@ var is_enraged: bool = false
 func _post_ready() -> void:
 	max_health = 300
 	move_speed = 2.5
-	damage = 25
+	damage = 18
 	attack_range = 3.0
-	detection_range = 20.0
+	detection_range = 30.0
 	attack_cooldown_time = 2.5
 	fade_duration = 1.0
 	scale = Vector3(2.0, 2.0, 2.0)

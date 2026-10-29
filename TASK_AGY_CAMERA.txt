@@ -1,0 +1,24 @@
+First read /storage/emulated/0/Games/Muakbank_zombie/WAYFIND_CONTEXT.txt for full context.
+
+YOUR TASK (agy/gemini): Fix the third-person camera clipping into close geometry.
+You OWN and may edit ONLY: scenes/main/game.tscn. Do NOT touch HUD.gd, ObjectiveManager.gd,
+StreetDetail.gd, or old_town_enhanced.tscn (other agents own those).
+
+PROBLEM: exploration playtest showed the camera ends up clipped inside house facades /
+close geometry, making the view unreadable. The SpringArm3D "Camera" (child of Player,
+~line 179 of game.tscn) currently has: spring_length=5.6, collision_mask=1, margin=0.3.
+The collision is on but the camera still presses into walls.
+
+FIX (edit ONLY the Camera SpringArm3D node + optionally the Camera3D child in game.tscn):
+1. Increase margin so the arm pulls in well before the near plane hits geometry:
+   margin 0.3 -> 0.6 (or 0.8). Bigger margin = camera stops further from walls.
+2. Consider shortening spring_length slightly (5.6 -> 4.5) so the default view is closer
+   and less likely to swing behind walls, while still third-person.
+3. Ensure collision_mask = 1 stays (it collides with world geometry on layer 1).
+4. Do NOT change the camera's transform/position offsets, FOV, or anything else. Only
+   spring_length / margin / collision_mask on the SpringArm3D.
+
+Verify: read the node back, confirm the 3 values are set and valid Godot 4 SpringArm3D
+properties. Then commit:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scenes/main/game.tscn && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "fix(level1): camera SpringArm margin/length so it stops clipping into walls"
+Report old->new spring_length + margin as final message.

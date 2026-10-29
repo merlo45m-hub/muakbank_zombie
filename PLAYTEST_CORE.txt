@@ -1,0 +1,20 @@
+Muakbank Zombie - CORE LOOP TEST: reach + activate a mini-game. adb -s 10.0.0.182:45601 for ALL commands. FOCUS ON LEVEL 1 ONLY. Do NOT edit files. Use vision (Read) on screenshots.
+
+IMPORTANT CONTEXT: combat now works. The player has knockback (hitting an enemy shoves it back) and can clear waves. Zombie grace is 25s. The 3 mini-games are ~63m/79m/68m away, shown as gold arrows + distances top-right. Each mini-game podium shows a floating 3D prompt "START ... [ATTACK]" and pressing ATTACK within ~3m activates it.
+
+NAV (viewport 1950x900, physical = viewport*1.6):
+1. adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie; sleep 2; adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher; sleep 5
+2. input tap 1560 672 (title PLAY); sleep 3
+3. input tap 2264 1370 (char-select red PLAY); sleep 3
+4. input tap 1040 528 (Level 1 PLAY NOW); sleep 6 = gameplay
+
+TEST:
+A. Screenshot + Read: confirm 3 gold arrows top-right with distances. The CLOSEST is ~63m (Spoil & Survive buffet). Note which direction its arrow points (up=forward, left, right, down=behind).
+B. Move toward it using SPRINT. The SPRINT button is bottom-LEFT (physical ~240,1152) — tap it ONCE to toggle/hold sprint, then swipe the joystick (physical 250,1090) in the arrow's direction for 3-4s. Joystick swipes: forward=250,1090->250,800; left=250,1090->150,1090; right=250,1090->350,1090; back=250,1090->250,1350. Combine for diagonals (e.g. forward-left=250,1090->180,850).
+C. Keep sprinting in the arrow's direction, re-reading the arrow each time (it rotates as you move — follow where it points). Every couple sprints, screenshot + Read and check the closest distance is DROPPING (63m -> 40m -> 20m...).
+D. IF A ZOMBIE REACHES YOU: stop sprinting, tap ATTACK (physical ~2640,1248) 3-5 times rapidly — the knockback will shove it back and you should kill it (25 dmg one-shots a rabbit). Then resume sprinting. Don't panic-flee; you can win the fight now.
+E. When closest distance < 12m, screenshot + Read carefully: look for the buffet table/podium structure and its floating 3D text prompt (yellow, "START BUFFET CHALLENGE / EAT 15 FRESH DISHES / [ATTACK]").
+F. Walk to within ~3m of the podium and tap ATTACK several times. Screenshot + Read: did the mini-game ACTIVATE? Signs: the podium prompt disappears/changes, a countdown timer starts, "FRESH DISHES" objective begins counting, or the objective label updates.
+G. Pull log: adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog_core.txt. Grep for the buffet/minigame starting, objective progress, kills, and any errors.
+
+FINAL REPORT (cite screenshots + log lines): (1) Did the closest waypoint distance decrease as you navigated (63m -> what)? (2) Did you REACH the mini-game — see its structure + 3D prompt? (3) Did ATTACK activate it — what changed on screen? (4) Did you survive zombies en route (knockback working)? (5) If you did NOT reach/activate it, exactly how close you got (final distance) and what stopped you. Be brutally specific and honest — do NOT fabricate activation. This is the make-or-break core-loop test.

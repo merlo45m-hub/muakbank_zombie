@@ -1,0 +1,22 @@
+=== MUAKBANK ZOMBIE — LEVEL 1 WAYFINDING — SHARED CONTEXT ===
+Project root: /storage/emulated/0/Games/Muakbank_zombie. Branch: feat/charselect-cinematic.
+Godot 4.7. Renderer MOBILE/Compatibility. FOCUS ON LEVEL 1 ONLY.
+
+PROBLEM: The map was just expanded to 220m and the 3 mini-games spread far apart:
+  SpoilAndSurvive  at world (-70, 0, 70)
+  KeepGeneratorFed at world (72, 0, 62)
+  LastStandStation at world (78, 0, -62)
+Player spawns near (-14,-14). An exploration playtest found the player CANNOT find the
+mini-games — no markers, no distance, no landmarks. On a big map this is the critical gap:
+the player must be able to navigate to each destination.
+
+CURRENT HUD (scripts/ui/HUD.gd): has a text objective_label (bottom-left, ~line 194-202)
+that lists objective text only. NO directional arrows, NO distance readout, NO compass.
+CURRENT ObjectiveManager (scripts/gameplay/ObjectiveManager.gd): tracks objectives by id
+in a Dictionary {id -> {title, target, progress, completed}}, emits objective_updated /
+objective_completed / all_objectives_completed. It stores NO world position per objective.
+The 3 mini-game objective IDs are: l1_spoil_and_survive, l1_generator_fed, l1_last_stand.
+
+CONSTRAINTS: Godot 4.7 GDScript, TABS, no god functions, comments explain WHY, reuse REAL
+APis. Do NOT break the working combat/HUD. Each agent owns DISJOINT files (see your task).
+FOCUS ON LEVEL 1 ONLY. After editing READ BACK, then run your task's commit command.

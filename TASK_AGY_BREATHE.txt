@@ -1,0 +1,19 @@
+First read /storage/emulated/0/Games/Muakbank_zombie/REACH_CONTEXT.txt for full context.
+
+YOUR TASK (agy/gemini): Give the player breathing room to travel to a mini-game without
+dying to zombies en route.
+You OWN and may edit ONLY: scripts/characters/ZombieSpawner3D.gd AND
+scripts/gameplay/WaveManager.gd. Do NOT touch scenes, HUD.gd, or Player.gd.
+
+CHANGES (all are existing @export vars — just change the default values, comment WHY):
+1. ZombieSpawner3D.gd: spawn_grace_period 10.0 -> 25.0. The player needs ~15-20s to travel
+   to the nearest mini-game; 10s of grace meant zombies were chasing during the whole trip.
+   25s lets them make real progress before pressure starts.
+2. ZombieSpawner3D.gd: spawn_interval 3.0 -> 5.0 (early waves ramp more gently).
+3. WaveManager.gd: wave_break_time 10.0 -> 15.0 (longer breather between waves).
+4. Do NOT change zombie speeds/damage (already balanced), do NOT change spawn radius or
+   min distance, do NOT touch anything else.
+
+Verify: read both files back, confirm the 3 values changed and are valid. Then commit:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scripts/characters/ZombieSpawner3D.gd scripts/gameplay/WaveManager.gd && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "balance(level1): longer spawn grace + slower early waves so the player can reach a mini-game"
+Report old->new for the 3 values as final message.

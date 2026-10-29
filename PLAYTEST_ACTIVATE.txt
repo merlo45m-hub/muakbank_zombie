@@ -1,0 +1,19 @@
+Muakbank Zombie — MINI-GAME ACTIVATION PLAYTEST. adb -s 10.0.0.182:45601 for ALL commands. FOCUS ON LEVEL 1 ONLY. Do NOT edit files. Use vision (Read) on screenshots.
+
+GOAL: verify the player can FOLLOW A WAYPOINT to a mini-game and ACTIVATE it.
+The HUD now shows 3 gold arrows + distances (top-right) pointing to the mini-games. Each mini-game podium has a floating 3D prompt "START ... [ATTACK]" and pressing ATTACK within range starts it.
+
+NAV (viewport 1950x900, physical = viewport*1.6):
+1. adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie; sleep 2; adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher; sleep 5
+2. input tap 1560 672 (title PLAY); sleep 3
+3. input tap 2264 1370 (char-select red PLAY); sleep 3
+4. input tap 1040 528 (Level 1 PLAY NOW); sleep 6 = gameplay
+
+TEST:
+A. Screenshot + Read: confirm the 3 gold waypoint arrows + distances are visible top-right. Note which arrow points most "up/forward" (that's roughly ahead).
+B. Navigate toward a mini-game: the nearest is ~100m. SPRINT toward it. Hold SPRINT (bottom-left ~physical(240,1152)) and swipe joystick (physical 250,1090 -> 250,800) forward for 4s, repeat, adjusting direction to follow the arrow (if an arrow points left, swipe joystick left; right, swipe right; the arrow rotates as you move). Do several ~4s sprints, screenshotting every couple to check the distance number is DECREASING (you're getting closer).
+C. When a distance drops under ~15m, screenshot + Read: do you see the mini-game structure (buffet table / generator / station) and its floating 3D prompt ("START ... [ATTACK]")?
+D. Walk right up to it and press ATTACK (physical ~2640,1248) a few times. Screenshot + Read: did the mini-game START (a timer/objective HUD appear, prompt change to active)?
+E. Pull log: adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog_act.txt. Look for the mini-game starting, objective registering, any errors.
+
+FINAL REPORT (cite screenshots + log): (1) Are the waypoint arrows visible and do the distances decrease as you navigate? (2) Could you reach a mini-game by following the arrow? (3) Does the floating 3D prompt appear when close? (4) Did pressing ATTACK activate the mini-game? (5) Top 3 issues in the find->activate loop. Be specific. If you could NOT reach a mini-game (too far, got stuck, died to zombies), say exactly how far you got and what stopped you — do NOT fabricate activation.

@@ -1,0 +1,19 @@
+Muakbank Zombie - REACH + ACTIVATE a MINI-GAME. adb -s SERIAL for ALL commands (replace SERIAL with 10.0.0.182:45601). FOCUS ON LEVEL 1 ONLY. Do NOT edit files. Use vision (Read) on screenshots.
+
+The mini-games were moved closer (waypoints now show ~63m/79m/68m) and zombie grace extended to 25s. GOAL: reach a mini-game and activate it.
+
+NAV (viewport 1950x900, physical = viewport*1.6):
+1. adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie; sleep 2; adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher; sleep 5
+2. input tap 1560 672 (title PLAY); sleep 3
+3. input tap 2264 1370 (char-select red PLAY); sleep 3
+4. input tap 1040 528 (Level 1 PLAY NOW); sleep 6 = gameplay
+
+TEST (you have ~25s before zombies pressure you - move NOW):
+A. Screenshot + Read: confirm 3 gold arrows top-right with distances ~63/79/68m. Pick the CLOSEST (63m, the Spoil & Survive buffet, NW).
+B. SPRINT toward it immediately. Hold SPRINT (physical ~240,1152) and swipe joystick forward (physical 250,1090 -> 250,800) for 4s. The closest mini-game is NORTH-WEST, so also steer left: swipe joystick up-left (250,1090 -> 180,850). Repeat 4s sprints ~4-5 times, screenshot every 2 sprints, and WATCH the closest distance number - it should DROP from 63m toward <15m.
+C. If a zombie engages, tap ATTACK (physical ~2640,1248) a few times to kill it, then keep sprinting. Don't get stuck fighting - kite and move.
+D. When closest distance < 15m, screenshot + Read: do you see the buffet table/podium with a floating 3D prompt "START BUFFET CHALLENGE ... [ATTACK]"?
+E. Get within ~3m and tap ATTACK several times. Screenshot + Read: did the mini-game START (prompt changes, a 60s timer / "FRESH DISHES 0/15" objective activates)?
+F. Pull log: adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog_reach.txt. Look for the buffet starting, objective registering, distance traveled, any errors.
+
+FINAL REPORT (cite screenshots + log): (1) Did the closest waypoint distance decrease as you sprinted (63m -> ?)? (2) Did you REACH the mini-game (see its structure + 3D prompt)? (3) Did ATTACK activate it (mini-game HUD/timer appear)? (4) Did you survive the trip or did zombies stop you - at what distance/health? (5) If you could NOT reach it, exactly how far you got and what blocked you. Be brutally specific. Do NOT fabricate - if you didn't reach or activate it, say so and report the closest you got.

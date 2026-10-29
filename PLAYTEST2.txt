@@ -1,0 +1,17 @@
+AUTONOMOUS PLAYTESTER for Muakbank Zombie. Use adb -s 10.0.0.182:45601 for every command. Screen 1440x3120. Fresh build installed (spawn-grace + walk-anim fixes). PLAY and report. DO NOT edit files.
+
+JOYSTICK COORDS (critical — a prior test swiped the wrong spot and only rotated the camera): the virtual joystick zone is bottom-left, center at absolute (160, 2900). ALWAYS start movement swipes at (160,2900). Swiping from y=2700 hits camera-drag.
+
+1. Launch: adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie; adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher
+2. Navigate: screenshot (adb -s 10.0.0.182:45601 shell screencap -p /sdcard/Download/p.png && adb -s 10.0.0.182:45601 pull /sdcard/Download/p.png /data/data/com.termux/files/home/p.png), Read it (you have vision). Tap PLAY on title (~720,420). Tap red PLAY on character select (~1150,2950). In gameplay when you see 3D town + joystick bottom-left + SPRINT/JUMP/SWAP bottom-right.
+3. MOVEMENT (all start at 160,2900, 700ms; screenshot+Read after each):
+ FORWARD: adb -s 10.0.0.182:45601 shell input swipe 160 2900 160 2600 700
+ BACK:    adb -s 10.0.0.182:45601 shell input swipe 160 2900 160 3200 700
+ LEFT:    adb -s 10.0.0.182:45601 shell input swipe 160 2900 100 2900 700
+ RIGHT:   adb -s 10.0.0.182:45601 shell input swipe 160 2900 220 2900 700
+ LONG FWD (~2s): adb -s 10.0.0.182:45601 shell input swipe 160 2900 160 2400 2000
+ Tell if the CHARACTER moved through the world vs only the camera rotated: watch a fixed landmark's position relative to the character, and whether the character's screen pos changes. Pull coords: adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog.txt; Read it; note 'Spawned at' and any position lines.
+4. SURVIVAL+ZOMBIES: after ~30-60s of moving, do zombies approach/attack? Does health/HYPE drop? Screenshot any zombie near player. Note time-to-first-contact.
+5. ANIMATION: in a mid-movement screenshot, look closely at legs/arms — alternating walk cycle or rigid sliding pose?
+
+FINAL: structured report — WORKING / BROKEN (each with evidence+screenshot) / TOP 3 FIXES. Be brutally specific about whether the character actually translated. Cite world-coord logs.

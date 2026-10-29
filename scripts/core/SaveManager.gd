@@ -14,7 +14,9 @@ const SAVE_VERSION: int = 1
 var save_data: Dictionary = {}
 
 var save_path: String = "user://savegame.save"
-var selected_character: String = "doctor"   # real geometry (1146 verts); "gamer" is a 64-vert blockout
+var selected_character: String = "nurse"   # default survivor per character select overhaul
+var selected_skin: int = 0
+var selected_skins: Dictionary = {}
 var pending_results: Dictionary = {}
 
 # SaveMadeEasy key prefix — all save_data fields stored under "game_" namespace
@@ -59,6 +61,12 @@ func _load_game() -> void:
 	# Player._apply_character_model() reads the member var; save_data is what reaches
 	# disk. Without this line they drift and a character choice survives exactly one run.
 	selected_character = String(save_data.get("selected_character", selected_character))
+	selected_skin = int(save_data.get("selected_skin", 0))
+	var loaded_skins = save_data.get("selected_skins", {})
+	if loaded_skins is Dictionary:
+		selected_skins = loaded_skins.duplicate()
+	else:
+		selected_skins = defaults["selected_skins"].duplicate()
 
 	# A file written by an older build is rewritten in the current shape so the
 	# defaults we just backfilled reach disk instead of being re-derived every launch.
@@ -71,8 +79,12 @@ func _coerce(key: String, value, fallback):
 	if value == null:
 		return fallback
 	match key:
-		"high_score", "total_zombies_fed", "total_shifts_completed", "total_likes_earned", "current_level", "difficulty":
+		"high_score", "total_zombies_fed", "total_shifts_completed", "total_likes_earned", "current_level", "difficulty", "selected_skin":
 			return int(value)
+		"selected_skins":
+			if value is Dictionary:
+				return value
+			return fallback
 		"tutorial_completed", "haptics_enabled":
 			return bool(value)
 		"unlocked_levels":
@@ -86,8 +98,10 @@ func _coerce(key: String, value, fallback):
 
 func save_game() -> void:
 	"""Write save_data to disk via SaveMadeEasy's set_var + save."""
-	# Copy the member var into the dictionary first, so the fallback path persists it too.
+	# Copy member vars into the dictionary first, so the fallback path persists them too.
 	save_data["selected_character"] = selected_character
+	save_data["selected_skin"] = selected_skin
+	save_data["selected_skins"] = selected_skins
 	var save_system := _get_save_system()
 	if save_system == null:
 		_save_game_fallback()
@@ -115,11 +129,12 @@ func _save_game_fallback() -> void:
 		push_warning("[SaveManager] Failed to save game: %s" % FileAccess.get_open_error())
 
 func reset_progress() -> void:
-	"""Reset all progress to defaults, including the selected-character member var."""
+	"""Reset all progress to defaults, including selected character and skin."""
 	save_data = _default_save_data()
-	# save_game() copies the member var back into save_data, so it must be reset too
-	# or the pre-reset character silently survives.
+	# save_game() copies member vars back into save_data, so they must be reset too.
 	selected_character = save_data["selected_character"]
+	selected_skin = save_data.get("selected_skin", 0)
+	selected_skins = save_data.get("selected_skins", {}).duplicate()
 	save_game()
 
 func _default_save_data() -> Dictionary:
@@ -134,7 +149,15 @@ func _default_save_data() -> Dictionary:
 		"unlocked_achievements": [],
 		"current_level": 1,
 		"difficulty": 0,  # 0=normal, 1=hard, 2=insane
-		"selected_character": "doctor",  # drives which GLB Player._apply_character_model loads
+		"selected_character": "nurse",  # drives which GLB Player._apply_character_model loads
+		"selected_skin": 0,
+		"selected_skins": {
+			"gamer": 0,
+			"doctor": 0,
+			"nurse": 0,
+			"streamer": 0,
+			"hunter": 0
+		},
 		"tutorial_completed": false,
 		"haptics_enabled": true
 	}
@@ -173,6 +196,10 @@ func is_haptics_enabled() -> bool:
 	# Audio autoload may read this before Save has populated its defaults.
 	return save_data.get("haptics_enabled", true)
 
+func get_selected_skin(character_id: String = "") -> int:
+	var char_id := character_id if not character_id.is_empty() else selected_character
+	return int(selected_skins.get(char_id, selected_skin))
+
 
 # ── SETTERS ───────────────────────────────────────────────────
 
@@ -204,6 +231,16 @@ func set_difficulty(diff: int) -> void:
 func set_selected_character(character_name: String) -> void:
 	selected_character = character_name
 	save_data["selected_character"] = character_name
+	selected_skin = int(selected_skins.get(character_name, 0))
+	save_data["selected_skin"] = selected_skin
+	save_game()
+
+func set_selected_skin(variant_index: int, character_id: String = "") -> void:
+	var char_id := character_id if not character_id.is_empty() else selected_character
+	selected_skin = variant_index
+	selected_skins[char_id] = variant_index
+	save_data["selected_skin"] = selected_skin
+	save_data["selected_skins"] = selected_skins
 	save_game()
 
 func set_haptics_enabled(enabled: bool) -> void:

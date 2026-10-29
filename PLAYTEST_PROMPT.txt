@@ -1,0 +1,38 @@
+You are the AUTONOMOUS PLAYTESTER for Muakbank Zombie (Godot 4 mobile game). adb is connected (use: adb -s 10.0.0.182:45601 for every command; screen 1440x3120). A fresh build with a building-collider fix is installed. Your job: PLAY the game and produce a precise evidence-based report so the curator can fix issues WITHOUT human testing. DO NOT edit any files.
+
+STEP 1 - Launch:
+adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie
+adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher
+
+STEP 2 - Navigate to gameplay. For each screen, capture then READ the image (you have vision):
+adb -s 10.0.0.182:45601 shell screencap -p /sdcard/Download/p.png
+adb -s 10.0.0.182:45601 pull /sdcard/Download/p.png /data/data/com.termux/files/home/p.png
+Read /data/data/com.termux/files/home/p.png
+- Title screen: tap PLAY (center, ~720,420).
+- Character select: tap the red PLAY button (bottom-right, ~1150,2950).
+- You are now in Level 1 gameplay when you see the 3D town, a joystick bottom-left, and SPRINT/JUMP/SWAP buttons bottom-right.
+
+STEP 3 - MOVEMENT TEST (most important). From gameplay, simulate walking by swiping outward from the joystick center (~200,2700). After EACH swipe, screenshot and Read it. Swipes (duration 500ms):
+- FORWARD: adb -s 10.0.0.182:45601 shell input swipe 200 2700 200 2350 500
+- BACK:    adb -s 10.0.0.182:45601 shell input swipe 200 2700 200 3000 500
+- LEFT:    adb -s 10.0.0.182:45601 shell input swipe 200 2700 150 2700 500
+- RIGHT:   adb -s 10.0.0.182:45601 shell input swipe 200 2700 250 2700 500
+Also try a longer forward walk: swipe 200 2700 200 2100 1500 (hold ~1.5s) to see how far it travels.
+
+STEP 4 - REPORT concretely with evidence (cite the screenshots you read):
+(a) MOVEMENT: can the character move in all 4 directions and travel a real distance, or does it get stuck/blocked quickly in some directions? Roughly how far does it get before stopping? Is it boxed in near spawn?
+(b) ANIMATION: is the walk/run animation playing (limbs moving) or is it a rigid sliding statue?
+(c) CAMERA: does it follow smoothly or snap rigidly?
+(d) WORLD: are buildings/props/roads visible and does it look populated? Is there fog hiding things?
+(e) BROKEN: falling through floor, clipping, floating, zombies not spawning, HUD missing, props not interactable?
+(f) OVERALL: does it feel like an explorable town or a cramped box?
+
+STEP 5 - Logs (write to a file to avoid quoting issues):
+adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog.txt
+Read /data/data/com.termux/files/home/glog.txt and note any errors.
+
+FINAL MESSAGE: a STRUCTURED report with three sections:
+WORKING (bullet list of what works, with evidence)
+BROKEN (bullet list, each with the specific evidence + which screenshot)
+TOP 3 FIXES (prioritized, specific and actionable for a Godot dev)
+Be brutally specific and honest — this report REPLACES human playtesting, so accuracy matters more than optimism.

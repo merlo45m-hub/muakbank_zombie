@@ -17,9 +17,9 @@ var strafe_dir: float = 1.0
 func _post_ready() -> void:
 	max_health = 22
 	move_speed = 6.5
-	damage = 12
+	damage = 7
 	attack_range = 1.3
-	detection_range = 16.0
+	detection_range = 30.0
 	attack_cooldown_time = 0.8
 	fade_duration = 0.35
 

@@ -1,0 +1,22 @@
+Muakbank Zombie — EXPANDED MAP EXPLORATION PLAYTEST. adb -s 10.0.0.182:45601 for ALL commands. FOCUS ON LEVEL 1 ONLY. Do NOT edit files. Use vision (Read) on screenshots.
+
+The map was just expanded: ground floor is now 220m (was 120m) and the 3 mini-games were spread far apart:
+  SpoilAndSurvive at (-70, 70)   [north-west]
+  KeepGeneratorFed at (72, 62)   [north-east]
+  LastStandStation at (78, -62)  [south-east]
+Player spawns near (-14,-14) center. StreetDetail now places 116 nodes across the whole map.
+
+NAV (verified; viewport 1950x900, physical = viewport*1.6):
+1. adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie; sleep 2; adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher; sleep 5
+2. input tap 1560 672 (title PLAY); sleep 3
+3. input tap 2264 1370 (char-select red PLAY); sleep 3
+4. input tap 1040 528 (Level 1 PLAY NOW); sleep 6 = gameplay
+
+EXPLORATION TEST:
+A. Confirm in gameplay (screenshot + Read). Note the player's starting view.
+B. SPRINT-explore: the world is 220m. Walk with SPRINT held. First tap SPRINT (bottom-left, ~viewport(150,720)->physical(240,1152)) then swipe the joystick forward hard for ~4s: input swipe 250 1090 250 800 4000. Screenshot + Read. Repeat the forward sprint 3-4 times in the same direction (~15-20s of travel). 
+C. After traveling, screenshot + Read: (a) Did the player actually cross real distance, or hit an invisible wall / get stuck quickly? (b) Does the world feel BIG — open space, buildings spread out, distance visible? (c) Is the whole map populated (buildings/cars/props visible out to the distance) or empty in the far areas?
+D. Try to spot a mini-game: pan the camera around (input swipe 2800 700 2200 700 500) and screenshot from a few angles. Can you see any of the 3 mini-game structures/destinations in the distance, or landmarks pointing to them?
+E. Pull log: adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog_explore.txt. Find the "StreetDetail placed N nodes" line and the player "Spawned at" line.
+
+FINAL REPORT (cite screenshots + log): (1) Does the player move freely across the BIG map, or get stuck/walled? (2) Does the world feel big and explorable now vs the old cramped 120m? (3) Is the whole map populated out to the edges, or empty far from spawn? (4) Can you see/reach toward the mini-game destinations? (5) Top 3 issues to make exploration better (invisible walls, empty regions, no landmarks, etc.). Be specific with evidence. Do NOT fabricate — report exactly what you observed.

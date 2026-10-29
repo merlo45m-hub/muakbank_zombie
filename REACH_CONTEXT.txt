@@ -1,0 +1,29 @@
+=== MUAKBANK ZOMBIE — MAKE MINI-GAMES REACHABLE — SHARED CONTEXT ===
+Project root: /storage/emulated/0/Games/Muakbank_zombie. Branch: feat/charselect-cinematic.
+Godot 4.7. Renderer MOBILE/Compatibility. FOCUS ON LEVEL 1 ONLY.
+
+PROBLEM (from activation playtest): The 3 mini-games are ~94-113m from spawn. The player
+needs ~30-40s to travel that far on foot, but zombies spawn 10s after spawn (every 3s after)
+and kill the player before they arrive (died at ~94m, health 110->0). The mini-games are
+UNREACHABLE — you cannot find+activate them because you die en route. Core loop is broken:
+the game is a death arena, not an explorable map with objectives.
+
+CURRENT STATE:
+- Mini-game positions in old_town_enhanced.tscn (~line 3936+):
+    SpoilAndSurvive  at (-70, 0, 70)   [~99m from spawn]
+    KeepGeneratorFed at (72, 0, 62)    [~94m]
+    LastStandStation at (78, 0, -62)   [~113m]
+- Player spawns at (-14,-14). Map floor is 220m (so -110..+110).
+- HUD.gd WAYPOINT_POSITIONS const dict has the SAME 3 positions (must stay in sync).
+- ZombieSpawner3D.gd: spawn_grace_period=10.0 (@export), spawn_interval=3.0 (@export).
+- WaveManager.gd: wave_break_time=10.0 (@export). Waves start immediately on level start.
+- Player SPAWN_GRACE_TIME=5.0 (damage immunity), animal speeds already tuned (rabbit 4.0,
+  chicken 3.6, player 4.5).
+
+GOAL: the player must be able to reach and activate a mini-game. Two levers:
+1. Bring the mini-games CLOSER (still distinct/spread, but reachable in ~15-20s of travel).
+2. Give the player more breathing room early (longer before zombies pressure them).
+
+CONSTRAINTS: Godot 4.7, TABS in .gd, NO # comments in .tscn node blocks, real properties only.
+DISJOINT FILES — each agent owns specific files (see your task). FOCUS ON LEVEL 1 ONLY.
+READ BACK after editing, then run your task's commit command.

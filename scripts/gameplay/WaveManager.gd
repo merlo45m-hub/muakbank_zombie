@@ -13,7 +13,8 @@ signal boss_defeated
 @export var waves_per_level: int = 5
 @export var base_zombies_per_wave: int = 5
 @export var zombies_per_wave_increment: int = 2
-@export var wave_break_time: float = 10.0
+# 15.0s (was 10.0s): longer breather between waves giving player time to travel to mini-games
+@export var wave_break_time: float = 15.0
 @export var boss_scene: PackedScene = preload("res://scenes/characters/zombie_boss.tscn")
 @export var boss_scene_alt: PackedScene = preload("res://scenes/characters/zombie_butcher.tscn")
 

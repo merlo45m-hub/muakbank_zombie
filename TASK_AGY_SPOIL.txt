@@ -1,0 +1,29 @@
+First read /storage/emulated/0/Games/Muakbank_zombie/MINIGAME_CONTEXT.txt for full context.
+
+YOUR TASK (agy/gemini): Make the SPOIL & SURVIVE buffet mini-game genuinely functional and fun.
+You OWN and may edit ONLY:
+  scripts/gameplay/SpoilAndSurviveController.gd
+  scripts/world/interactive/BuffetPlatterSlot.gd
+  scenes/minigames/spoil_and_survive.tscn
+Do NOT touch other mini-games, Game.gd, HUD.gd, StreetDetail.gd, or old_town_enhanced.tscn.
+
+GOAL: the eat-15-fresh-dishes-in-60s loop must actually work and feel good. Investigate first:
+1. Read SpoilAndSurviveController.gd + BuffetPlatterSlot.gd fully. Trace: how does the player
+   EAT a dish? (walk to platter + attack? interact? auto on proximity?) Does on_dish_eaten fire,
+   increment dishes_eaten, update the objective, handle tainted (bad) dishes?
+2. Verify the win condition (_win_round when dishes_eaten >= 15) and failure (60s timeout)
+   both fire and update state to WON/FAILED.
+3. Check the HUD (spoil_and_survive_hud.tscn) reflects progress (dishes count, combo, timer).
+
+FIX whatever is broken or thin so the loop is complete and satisfying:
+- If eating doesn't work, wire it (the platter InteractionZone + player attack should eat).
+- Ensure tainted dishes give clear negative feedback (health hit / combo break / red flash) and
+  fresh dishes give positive feedback (combo up / score / green flash).
+- Make sure completing 15 dishes triggers _win_round + objective completion.
+- Keep it mobile-touch friendly.
+
+CONSTRAINTS: Godot 4.7, TABS in .gd, NO # comments in .tscn, real properties, bump load_steps
+only if adding ext_resource. Reuse REAL APIs. Do NOT break the auto-start-on-zone-entry or the
+5m InteractionZone. READ BACK, then commit:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scripts/gameplay/SpoilAndSurviveController.gd scripts/world/interactive/BuffetPlatterSlot.gd scenes/minigames/spoil_and_survive.tscn && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "feat(level1): make Spoil and Survive eat-loop functional and satisfying"
+Report what was broken, what you fixed, and how the eat->combo->win loop now works.

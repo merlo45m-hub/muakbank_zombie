@@ -1,0 +1,20 @@
+=== MUAKBANK ZOMBIE — LEVEL 1 VISUAL POLISH — SHARED CONTEXT ===
+Project root: /storage/emulated/0/Games/Muakbank_zombie. Branch: feat/charselect-cinematic.
+Godot 4.7. Renderer MOBILE/Compatibility. FOCUS ON LEVEL 1 ONLY.
+
+STATE: The map is 220m, populated (StreetDetail 116 nodes), lit, playable. Player survives
+(combat balanced). Peaceful mode exists for testing. The 3 mini-games are at:
+  SpoilAndSurvive  (-14, 0, 2)    [16m N of spawn, auto-starts on zone entry]
+  KeepGeneratorFed (28, 0, 20)
+  LastStandStation (30, 0, -24)
+Player spawns (-14,-14). HUD shows gold waypoint arrows + distance to each.
+
+GOAL THIS ROUND: make the mini-game destinations VISUALLY DISTINCT LANDMARKS so a player
+exploring the town can spot them without relying only on the arrow, and make the world
+feel more alive/crafted. Three agents work DISJOINT files — see each task.
+
+CONSTRAINTS (all agents): Godot 4.7, TABS in .gd, NO # comments inside .tscn node/sub_resource
+blocks, every .tscn property REAL, bump load_steps ONLY if you add an ext_resource. Reuse REAL
+APIs, no anti-AI-slop (no god functions, name constants, comments explain WHY). Do NOT break
+combat/movement/fog/lighting that works. FOCUS ON LEVEL 1 ONLY. READ BACK after editing, then
+run your task's commit command. Do NOT touch another agent's files.

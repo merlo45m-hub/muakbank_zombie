@@ -26,4 +26,4 @@ special_duration = 5.0
 food_healing_multiplier = 1.2
 weapon_damage_multiplier = 0.9
 ammo_efficiency = 1.0
-character_color = Color(0.9, 0.9, 0.95, 1)
+character_color = Color(0.08, 0.75, 1, 1)

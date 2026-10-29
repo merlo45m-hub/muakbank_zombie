@@ -1,0 +1,57 @@
+MUAKBANK ZOMBIE — DIAGNOSTIC CONTEXT (read this first)
+
+PROJECT
+  Path (phone storage, direct from Termux, NO adb needed for file work):
+    /storage/emulated/0/Games/Muakbank_zombie
+  Godot 4.7, mobile renderer, branch feat/charselect-cinematic, HEAD 1c2510c (clean/pushed).
+  VPS export scratch: /root/muakbank_zombie (ssh vps). Godot 4.7 on VPS at /root/godot.
+  Device serial for adb: 10.0.0.182:35653 (WiFi IP rotates; see adb-wireless-bridge skill).
+
+RUNTIME FACTS (verified on device 2026-10-14)
+  Game runs LANDSCAPE. Physical screen 3120x1440. `wm size` LIES (reports portrait).
+  project.godot: viewport 1600x900, stretch/mode=canvas_items, stretch/aspect=expand.
+  => RUNTIME viewport is 1950x900 (confirmed by the in-game [CHARSEL_DEBUG] print).
+  => Scale from viewport to physical = 3120/1950 = 1.6 (uniform, both axes).
+  NEVER derive tap coordinates from project.godot's viewport_width. Use 1950x900.
+
+CONTROL RECTS (computed from scripts/gameplay/MobileControls.gd, physical px)
+  JOYSTICK  (48, 880) - (464, 1296)     center ~ (256, 1088)
+  SPRINT    (48, 608) - (432, 816)
+  SWAP      (2304, 656) - (2624, 976)
+  JUMP      (2304, 1040) - (2624, 1360)
+  ATTACK    (2720, 1040) - (3040, 1360)
+  Note: JUMP is directly LEFT of ATTACK (no gap); SWAP directly ABOVE JUMP.
+  Verify no overlap when instrumenting.
+
+KNOWN-INTENTIONAL (do NOT "fix" these)
+  - Zombie spawn is OFF by design: DevMode.is_peaceful() gates ZombieSpawner3D.
+    Peaceful mode lets the level be explored/worked on without dying. It is a feature.
+  - Spoil & Survive HUD showing 60.0s/0-of-15 while idle: HUD CanvasLayer root has no
+    visible=false, so the idle panel renders from level start. (A real but minor bug.)
+
+THE THREE BUGS UNDER INVESTIGATION THIS ROUND
+  A. PUNCH = FLOP. Pressing ATTACK makes the character lunge/pitch over like a zombie
+     pounce instead of punching. Root cause located: scripts/core/ProceduralAnimator.gd
+     lines ~361-364 auto-call trigger_attack() on the is_attacking rising edge, which
+     runs the whole-body lunge curve (pos.z lunge + rot.x pitch-down). A human punch
+     should move the ARM/WEAPON, not pitch the torso.
+  B. BUTTON HIT-TESTING. Some buttons reportedly do nothing / hit the wrong action.
+     Suspects: rect overlap (JUMP/ATTACK/SWAP cluster), or signal routing.
+  C. MAP ACCESS. Certain parts of the level are inaccessible (invisible walls,
+     colliders, geometry). Cause not yet proven.
+
+DIAGNOSTIC METHOD (mandatory — see skill godot-inspect-without-screenshots)
+  - Do NOT diagnose by screenshot + vision. It misreads the target.
+  - Add temporary print("[DBG] ...") in code, build, run on device, read
+    `adb -s 10.0.0.182:35653 logcat -d -s godot:* | grep DBG`. Remove prints before commit.
+  - Prove movement with PIL frame-diff (ImageChops.difference mean ~30 = moved).
+  - Prove map geometry with a VPS SceneTree raycast probe on old_town_enhanced.tscn
+    (8-direction casts from a point; report collider name + distance per direction).
+  - godot-ai MCP EDITOR tools work (scene_get_hierarchy, node_find, node_get_properties,
+    logs_read, script_manage). Its LIVE runtime (game_manage) does NOT work headless
+    on Godot 4.7 — do not attempt runtime input through it.
+
+VERIFY BEFORE CLAIMING DONE
+  - GDScript: full-project import on VPS is the real gate, NOT per-file --check-only
+    (per-file gives FALSE failures on cross-file class_name refs).
+  - Report actual numbers/output, never a guess.

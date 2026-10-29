@@ -1,15 +1,9 @@
-[gd_scene load_steps=68 format=3]
+[gd_scene load_steps=20 format=3]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(100, 0.2, 100)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
-# This was size (100, 0.2, 100) - a 100-metre plate - and SEVENTY-NINE nodes shared it:
-# the floor plus 78 structures and props (walls, fences, gates, graves, the bell tower).
-# A 100x100 slab of collision hanging at each of those is what makes a world feel broken
-# to walk in. The floor has its own ground shape now; this is sized for the smallest
-# common case (a grave or prop) rather than the largest, because a slightly short collider
-# on a long wall is far less maddening than an invisible wall around a headstone.
 size = Vector3(2.4, 1.5, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
@@ -84,11 +78,6 @@ background_color = Color(0.05, 0.06, 0.09, 1.0)
 ambient_light_source = 0
 ambient_light_energy = 0.3
 fog_enabled = true
-# The fog colour was (0.3, 0.35, 0.4) - pale blue-grey - at density 0.03. With the camera
-# looking nearly level, most of the frame IS ground 10-60 m away, and at 0.03 density the
-# ground 30 m out is about 60% fog colour: the "over-lit featureless pale ground" that made
-# this level look washed out was fog, not lights. Night fog should swallow detail into
-# darkness, not into pastel.
 fog_light_color = Color(0.08, 0.09, 0.12, 1.0)
 fog_density = 0.018
 tonemap_mode = 2
@@ -1164,8 +1153,6 @@ mesh = SubResource("SphereMesh_fog_big")
 material_override = SubResource("MistMaterial")
 
 [node name="NearBandStructures" type="Node3D" parent="."]
-## Dense near-band content within 1-8m of spawn (0, 0.15, 0) — headstones,
-## broken walls, dead trunks, fence sections to fill mid/lower frame regions.
 
 [node name="NearHeadstone1" type="StaticBody3D" parent="NearBandStructures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, -3)
@@ -1233,8 +1220,6 @@ material_override = SubResource("StoneMaterial")
 [node name="FenceCol" type="CollisionShape3D" parent="NearBandStructures/NearFence"]
 shape = SubResource("BoxShape3D_floor")
 
-## Player-proximal structures within 1-4m of player at (7.43, 2.08, -0.76)
-## to fill frame mid/lower regions
 
 [node name="PlayerHeadstone" type="StaticBody3D" parent="NearBandStructures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.5, -10)

@@ -14,13 +14,12 @@ signal weapon_switch_pressed
 # === NODE REFS ===
 @onready var joystick_area = $JoystickArea
 @onready var joystick_knob = $JoystickArea/JoystickKnob
-@onready var attack_btn = $AttackBtn
 
 # Dynamically created buttons
-var special_btn: Button = null
 var sprint_btn: Button = null
 var jump_btn: Button = null
 var weapon_btn: Button = null
+var attack_btn: Button = null
 var sprint_active: bool = false
 
 # === STATE ===
@@ -30,7 +29,18 @@ var joystick_radius: float = 120.0
 var move_input: Vector2 = Vector2.ZERO
 
 # Button layout constants — named so the layout is adjustable in one place
-const SPRINT_BTN_RECT := Rect2(30.0, -520.0, 270.0, -390.0)
+# NOTE: Rect2(position, SIZE) — the 3rd/4th args are width/height, NOT a corner.
+# The original Rect2(30, -520, 270, -390) had a NEGATIVE height, so .end.y
+# evaluated to -910 and _build_sprint_button fed that into offset_bottom,
+# collapsing the button to a ~36px sliver that taps missed.
+#
+# The corrected height (+390) put the top at -520 and the bottom at -130, which
+# then OVERLAPPED the joystick (joystick spans y=550..810 at the 1950x900 runtime
+# viewport, i.e. offsets -350..-90). SPRINT is therefore raised and shortened so
+# it sits entirely ABOVE the joystick: top at -760, bottom at -400, giving a
+# 270x360 target with a 50px clear gap above the joystick's -350 top edge.
+# Verified by res://tools/verify_sprint_final_probe.tscn (RESULT PASS, no overlaps).
+const SPRINT_BTN_RECT := Rect2(30.0, -760.0, 270.0, 360.0)
 # JUMP used to sit almost fully inside the SPECIAL button's rect (both right-column
 # offsets overlapped), so SPECIAL was half-eaten and the labels rendered on top of
 # each other. Park JUMP left of the VS attack button — same bottom band, no overlap.
@@ -52,27 +62,20 @@ func _punch(btn: Control) -> void:
 
 
 func _ready() -> void:
-	if attack_btn:
-		attack_btn.pressed.connect(func():
-			emit_signal("attack_pressed")
-			Input.vibrate_handheld(35))
-		# Thumb-sized attack button, 2x2 right-hand cluster with PUNCH/PICKUP/JUMP/SWAP.
-		# Its scene anchor is center-right; re-anchor to the bottom or the offsets
-		# below land it halfway up the screen.
-		attack_btn.anchor_top = 1.0
-		attack_btn.anchor_bottom = 1.0
-		attack_btn.offset_left = -250.0
-		attack_btn.offset_top = -250.0
-		attack_btn.offset_right = -50.0
-		attack_btn.offset_bottom = -50.0
-		attack_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE + 6)
-
-	_build_punch_pickup_button()
+	# This Control is FULL-SCREEN (anchor_right/bottom = 1.0 in game.tscn) and a
+	# Control defaults to mouse_filter STOP, so it consumed every touch on the
+	# right half of the screen. Player._unhandled_input() therefore never saw the
+	# InputEventScreenDrag and the camera could not be orbited at all — the
+	# camera-drag code was correct, it was simply never reached.
+	# IGNORE lets touches fall through to _unhandled_input; the child buttons and
+	# the joystick keep their own STOP/IGNORE filters, so they still work.
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_sprint_button()
 	_build_jump_button()
 	_build_weapon_button()
+	_build_attack_button()
 	# Every action button gets the same press pop.
-	for b in [attack_btn, special_btn, sprint_btn, jump_btn, weapon_btn]:
+	for b in [sprint_btn, jump_btn, weapon_btn, attack_btn]:
 		if b is Control:
 			(b as Control).button_down.connect(_punch.bind(b))
 
@@ -94,47 +97,6 @@ func _ready() -> void:
 			joystick_knob.anchor_bottom = 0.0
 			joystick_knob.size = Vector2(120, 120)
 			joystick_knob.position = joystick_area.size / 2.0 - joystick_knob.size / 2.0
-
-func _build_punch_pickup_button() -> void:
-	"""PUNCH/PICKUP button — Roblox-style dual-action.
-	Short press (< 0.3s): punch attack.
-	Long press OR near pickup: grab/use nearby food or weapon."""
-	special_btn = Button.new()
-	special_btn.text = "PUNCH/PICKUP"
-	special_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE)
-	special_btn.anchor_left = 1.0
-	special_btn.anchor_right = 1.0
-	special_btn.anchor_top = 1.0
-	special_btn.anchor_bottom = 1.0
-	special_btn.offset_left = -250.0
-	special_btn.offset_top = -490.0
-	special_btn.offset_right = -50.0
-	special_btn.offset_bottom = -290.0
-	# Hold detection: track press time, emit different signals on short vs long release.
-	var press_start := 0.0
-	var hold_timer: float = 0.0
-	const SHORT_PRESS_MAX: float = 0.3
-	var pressed_down := false
-	special_btn.button_down.connect(func():
-		pressed_down = true
-		press_start = Time.get_ticks_msec() / 1000.0
-		hold_timer = 0.0
-	)
-	special_btn.button_up.connect(func():
-		if not pressed_down:
-			return
-		pressed_down = false
-		hold_timer = Time.get_ticks_msec() / 1000.0 - press_start
-		if hold_timer < SHORT_PRESS_MAX:
-			# Short press = punch
-			emit_signal("punch_pickup_pressed", false)
-			Input.vibrate_handheld(20)
-		else:
-			# Long press = grab attempt
-			emit_signal("punch_pickup_pressed", true)
-			Input.vibrate_handheld(30)
-	)
-	add_child(special_btn)
 
 func _build_sprint_button() -> void:
 	sprint_btn = Button.new()
@@ -210,6 +172,39 @@ func _build_weapon_button() -> void:
 	weapon_btn.add_theme_stylebox_override("normal", style)
 	weapon_btn.pressed.connect(func(): emit_signal("weapon_switch_pressed"))
 	add_child(weapon_btn)
+
+func _build_attack_button() -> void:
+	# Mobile attack control. The old AttackBtn (mislabeled \"VS\") was removed at the
+	# user's request, which left the player with NO way to attack on mobile — kills
+	# stayed 0. This is a clean attack button emitting the attack_pressed signal the
+	# player already listens for. Placed bottom-right in the thumb zone.
+	attack_btn = Button.new()
+	attack_btn.text = "ATTACK"
+	attack_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE)
+	attack_btn.anchor_left = 1.0
+	attack_btn.anchor_right = 1.0
+	attack_btn.anchor_top = 1.0
+	attack_btn.anchor_bottom = 1.0
+	attack_btn.offset_left = -250.0
+	attack_btn.offset_top = -250.0
+	attack_btn.offset_right = -50.0
+	attack_btn.offset_bottom = -50.0
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.5, 0.12, 0.12, 0.85)
+	style.set_border_width_all(3)
+	style.border_color = Color(1, 1, 1, 0.3)
+	style.set_corner_radius_all(BTN_CORNER_RADIUS)
+	attack_btn.add_theme_stylebox_override("normal", style)
+	var active_style = StyleBoxFlat.new()
+	active_style.bg_color = Color(0.75, 0.2, 0.2, 0.95)
+	active_style.set_border_width_all(3)
+	active_style.border_color = Color(1, 1, 1, 0.5)
+	active_style.set_corner_radius_all(BTN_CORNER_RADIUS)
+	attack_btn.add_theme_stylebox_override("pressed", active_style)
+	attack_btn.pressed.connect(func():
+		emit_signal("attack_pressed")
+		Input.vibrate_handheld(35))
+	add_child(attack_btn)
 
 func _on_joystick_input(event: InputEvent) -> void:
 	# Touch path — the real device path. The panels inside the area are visual

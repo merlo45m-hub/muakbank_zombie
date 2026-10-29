@@ -1,0 +1,9 @@
+ENVIRONMENT RE-CHECK for Muakbank Zombie. Use adb -s 10.0.0.182:45601 for every command. GAME IS LANDSCAPE (screenshots 3120x1440, joystick ~250,1090). After the StreetDetail hardcode fix + fog reduction. Do NOT edit files.
+
+1. Launch: adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie; adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher
+2. Navigate: screenshot (adb -s 10.0.0.182:45601 shell screencap -p /sdcard/Download/p.png && adb -s 10.0.0.182:45601 pull /sdcard/Download/p.png /data/data/com.termux/files/home/p.png), Read it. Tap PLAY on title (~720,420). Tap red PLAY on char select (~1150,2950).
+3. Walk forward ~2s: adb -s 10.0.0.182:45601 shell input swipe 250 1090 250 900 2000. Screenshot + Read. Pan camera: adb -s 10.0.0.182:45601 shell input swipe 2800 700 2400 700 400. Screenshot + Read from 2-3 angles.
+4. Pull log: adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog2.txt. Read it and find the StreetDetail line reporting how many nodes were placed.
+5. ASSESS with vision on the screenshots: (a) Is the town now POPULATED — buildings, cars, roadside props visible on screen? Cite the StreetDetail node count from the log. (b) Is fog less washed-out — can you see the ground and route clearly, more contrast than before? (c) Does it look like a real town now vs empty before? (d) Any NEW breakage — floating buildings, z-fighting, props sticking through walls, buildings inside the play area blocking movement?
+
+FINAL: a VISUAL RE-CHECK verdict — for POPULATION and for READABILITY say BETTER / SAME / WORSE than the prior empty foggy state, with screenshot evidence and the exact StreetDetail log line. Then list the TOP 3 remaining visual issues if any, each specific and actionable. Be brutally honest.

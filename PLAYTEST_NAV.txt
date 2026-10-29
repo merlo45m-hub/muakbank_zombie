@@ -1,0 +1,20 @@
+Muakbank Zombie — AUTONOMOUS LEVEL 1 PLAYTEST. Use adb -s 10.0.0.182:45601 for ALL commands. FOCUS ON LEVEL 1 (Old Town) ONLY. Do NOT edit any files. Use vision (Read) on every screenshot.
+
+CRITICAL — the game viewport is 1950x900, uniformly scaled 1.6x to the physical 3120x1440 screen. So physical_coord = viewport_coord * 1.6. These tap coords are VERIFIED — use them exactly:
+1. Title PLAY button: adb -s 10.0.0.182:45601 shell input tap 1560 672  (reaches character select)
+2. Character-select red PLAY: adb -s 10.0.0.182:45601 shell input tap 2264 1370  (reaches LEVEL SELECT)
+3. Level 1 "PLAY NOW" card (top-left of the 3x2 grid): adb -s 10.0.0.182:45601 shell input tap 1040 528  (reaches Level 1 gameplay)
+
+STEPS:
+A. adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie; sleep 2; adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher; sleep 5
+B. Screenshot: adb -s 10.0.0.182:45601 shell screencap -p /sdcard/Download/p.png && adb -s 10.0.0.182:45601 pull /sdcard/Download/p.png /data/data/com.termux/files/home/p.png — Read it to confirm it's the title.
+C. Tap the 3 coords above IN ORDER, screenshotting + Reading after EACH to confirm the screen advanced (title -> char select -> level select -> gameplay). If a tap does NOT advance, Read the screenshot, find the correct button, and tap its physical coords (viewport*1.6).
+D. Once in Level 1 gameplay (3D town + joystick bottom-left + HUD), assess with vision:
+   - Is the forward view an OPEN street (not a building wall/roof filling the screen)?
+   - Are parked CARS visible on the street now? (there should be ~14)
+   - Are street lamps / the road lit and readable, or still near-black?
+   - Is the town POPULATED (buildings, props visible)?
+E. MOVEMENT TEST: walk forward 3s: adb -s 10.0.0.182:45601 shell input swipe 250 1090 250 850 3000. Screenshot + Read. Does the character move along the open street without clipping into a building? Then turn/pan: adb -s 10.0.0.182:45601 shell input swipe 2800 700 2300 700 400. Screenshot + Read from the new angle.
+F. Pull the log: adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog.txt. Find the "StreetDetail placed N nodes" line and any errors.
+
+FINAL REPORT (be brutally specific, cite screenshots): (1) Did you reach Level 1 gameplay? (2) POPULATION — are cars/props/buildings visible? quote the StreetDetail node count. (3) READABILITY — is the road lit and readable? (4) MOVEMENT — does the character move freely along an open street without wall/roof clipping? (5) Any new breakage (floating props, z-fighting, sunk cars)? (6) Top 3 remaining issues for Level 1, each actionable. This replaces human playtesting.

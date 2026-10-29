@@ -39,6 +39,19 @@ var is_eating: bool = false
 var is_attacking: bool = false
 var is_rage_active: bool = false
 var is_shield_active: bool = false
+# Brief post-hit invulnerability so a swarm of fast zombies (each on its own
+# ~0.4s attack cooldown) cannot stack hits and melt the player in seconds.
+# Without this, 3-4 rabbits landing hits simultaneously dealt 100->20 in ~3s.
+var _hurt_cooldown: float = 0.0
+# Was 1.2s. An attached rabbit hit every 1.2s for ~9 dmg -> 110 HP gone in 15s while
+# the player navigated (no knockback because they weren't attacking). A longer window
+# (2.5s) cuts the incoming DPS roughly in half so a chasing enemy is a bleed you can
+# outrun or turn and fight, not an instant death.
+const HURT_INVULN_TIME: float = 2.5
+# Damage-free window right after spawn so the player can orient before the first
+# zombie reaches them.
+var _spawn_grace: float = 0.0
+const SPAWN_GRACE_TIME: float = 5.0
 var current_weapon: String = "bat"
 # Inventory: food_type -> {"count": int, "heal": int}.
 # The heal value rides along because the food SCENE is the single source of truth for
@@ -63,6 +76,8 @@ var camrot_h: float = 0.0
 var camrot_v: float = -0.18
 var h_sensitivity: float = 0.015
 var v_sensitivity: float = 0.012
+var _camera_follow_offset: Vector3 = Vector3.ZERO
+var _camera_follow_speed: float = 12.0
 
 # === INPUT STATE (improved — separates raw from processed) ===
 var _raw_input_dir: Vector2 = Vector2.ZERO
@@ -90,6 +105,15 @@ var _start_position: Vector3 = Vector3.ZERO
 var _skeletal: AnimationPlayer = null
 var _anim_state := ""
 var _jump_lock := 0.0
+# One-shot state locks. Without these, _update_skeletal_anim() (which runs every
+# frame and derives state purely from speed) immediately overwrites a one-shot
+# state such as "attack" on the very next frame, so the clip is clobbered before
+# it is ever seen. Mirrors the _jump_lock pattern already used for jumping.
+var _attack_lock := 0.0
+# Fallback-punch state: used only when the rig has no "attack-melee-right" clip.
+# _punch_arm is the visible arm mesh; _punch_t is the swing clock in seconds.
+var _punch_arm: MeshInstance3D = null
+var _punch_t := 0.0
 
 # The visible character root applied by _apply_character_model (scene visuals,
 # GLB fallback, or null when the placeholder body is the only visual).
@@ -97,7 +121,16 @@ var _applied_visual: Node3D = null
 
 
 func _ready() -> void:
-	# Load character stats if assigned
+	if camera_arm:
+		# Preserve the authored camera height while detaching the arm from player motion.
+		_camera_follow_offset = global_basis * camera_arm.position
+		camera_arm.top_level = true
+		camera_arm.global_position = global_position + _camera_follow_offset
+
+	var char_id := _selected_character_id()
+	var stats_path := "res://assets/materials/stats_%s.tres" % char_id
+	if ResourceLoader.exists(stats_path):
+		character_stats = load(stats_path) as CharacterStats
 	if character_stats:
 		_apply_character_stats()
 
@@ -208,6 +241,7 @@ func _process(delta: float) -> void:
 	# Apply camera rotation to the SpringArm each frame.
 	# Doing this in _process (not _physics_process) keeps the camera smooth
 	# independent of physics tick rate — adapted from gdquest approach.
+	_smooth_camera_follow(delta)
 	_apply_camera_rotation()
 
 	# Tick the weapon system so fire_timer decrements and cooldowns expire.
@@ -224,6 +258,14 @@ func _physics_process(delta: float) -> void:
 	if is_dead:
 		return
 
+	# Tick post-hit invulnerability so the player can be hit again after the window.
+	if _hurt_cooldown > 0.0:
+		_hurt_cooldown -= delta
+
+	# Tick the spawn grace window down.
+	if _spawn_grace > 0.0:
+		_spawn_grace -= delta
+
 	# Apply gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -237,15 +279,13 @@ func _physics_process(delta: float) -> void:
 	# Apply movement
 	move_and_slide()
 
-	# Stuck detection — adapted from gdquest controller.
-	# If we had velocity but didn't move, push out of the blocking geometry.
-	var stuck_epsilon: float = 0.001
-	if velocity.length() > stuck_epsilon:
-		var stuck_check := Vector3(velocity.x, 0, velocity.z)
-		if stuck_check.length() > stuck_epsilon:
-			# Simple nudge along movement direction to escape shallow traps.
-			var nudge_dir := stuck_check.normalized()
-			global_position += nudge_dir * 0.05
+	# Stuck detection — DISABLED. The old code nudged the player 0.05 units every
+	# physics frame whenever horizontal velocity was nonzero — with no check that he
+	# was actually stuck. At 60 ticks/s that injected up to 3 units/second of phantom
+	# movement (overspeed, sliding, jitter). move_and_slide() already resolves wall
+	# collisions correctly; this manual shove fought it. Only reintroduce a nudge if
+	# a genuine "had velocity but moved < epsilon for N frames" stuck condition is
+	# ever observed.
 
 	# ── SAFETY ────────────────────────────────────────────────────────────
 	# Nothing may launch the player: clamp vertical speed to sane values and
@@ -267,6 +307,10 @@ func mark_safe_spawn(pos: Vector3) -> void:
 	# eight levels, and recovering into a wall is the bug this project spent a night
 	# chasing.
 	_start_position = pos
+	# Spawn grace: the first rabbit can reach the player ~6s after spawn and a new
+	# player is still learning the joystick then. A short damage-free window at the
+	# start turns an instant melt into a fair fight.
+	_spawn_grace = SPAWN_GRACE_TIME
 
 
 func _handle_movement_input(delta: float) -> void:
@@ -322,7 +366,7 @@ func _handle_movement_input(delta: float) -> void:
 		if _raw_input_dir == Vector2.ZERO:
 			_rotate_toward_direction(_last_strong_direction, delta)
 
-	var accel: float = 10.0
+	var accel: float = 26.0
 	velocity.x = move_toward(velocity.x, target_vel.x, accel * delta)
 	velocity.z = move_toward(velocity.z, target_vel.z, accel * delta)
 
@@ -350,8 +394,8 @@ func _rotate_toward_direction(direction: Vector3, delta: float) -> void:
 		return
 	if direction.length() < 0.01:
 		return
-	var target_rot: float = atan2(direction.x, direction.z)
-	var rot_speed: float = 10.0
+	var target_rot: float = atan2(direction.x, direction.z) + PI
+	var rot_speed: float = 18.0
 	vis.rotation.y = lerp_angle(vis.rotation.y, target_rot, rot_speed * delta)
 
 
@@ -372,20 +416,50 @@ func _play_jump_anim() -> void:
 
 ## Drive idle/run/jump from actual speed every physics tick.
 func _update_skeletal_anim(delta: float) -> void:
+	# A one-shot state owns the rig until its lock expires. Without this guard the
+	# speed-derived state below overwrites "attack" on the very next frame and the
+	# melee clip is never seen (this was the real reason the punch read as a flop).
+	#
+	# The lock is ticked HERE (before the _skeletal null check) on purpose: the
+	# fallback procedural punch runs on rigs where _skeletal IS null, so bailing
+	# out early would leave its swing frozen mid-arc.
+	if _attack_lock > 0.0:
+		_attack_lock -= delta
+		# Tick the arm-only fallback swing when the rig clip path was not taken.
+		if _punch_arm != null:
+			_update_procedural_punch(delta)
+		return
 	if _skeletal == null or not is_instance_valid(_skeletal):
 		return
 	if _jump_lock > 0.0:
 		_jump_lock -= delta
 		return
 	var spd := Vector2(velocity.x, velocity.z).length()
-	var want := "idle" if spd < 0.35 else "run"
+	# The blocky rig ships 'walk' and 'sprint' clips but NOT a literal 'run' clip.
+	# BlockyAnim.setup registers a 'run'->'sprint' alias, but if that setup path
+	# was skipped the play("run") call silently no-ops and the character slides
+	# with no cycle. Resolve the moving clip to a clip that actually exists.
+	var want := "idle" if spd < 0.35 else _moving_clip()
 	if _anim_state != want:
 		_anim_state = want
-		_skeletal.play(want, 0.18)
-	if want == "run":
+		if _skeletal.has_animation(want):
+			_skeletal.play(want, 0.18)
+	if want != "idle":
 		_skeletal.speed_scale = clampf(spd / 2.3, 0.75, 1.7)
 	else:
 		_skeletal.speed_scale = 1.0
+
+
+## Return the best available locomotion clip: prefer 'walk', fall back to
+## 'sprint'/'run' if 'walk' is somehow absent. Never returns a clip the rig lacks.
+func _moving_clip() -> String:
+	if _skeletal.has_animation("walk"):
+		return "walk"
+	if _skeletal.has_animation("run"):
+		return "run"
+	if _skeletal.has_animation("sprint"):
+		return "sprint"
+	return "idle"
 
 
 func _handle_jump(delta: float) -> void:
@@ -398,15 +472,18 @@ func _handle_jump(delta: float) -> void:
 
 func _handle_attack(delta: float) -> void:
 	# ── INTERACTION CHECK ──────────────────────────────────────────────────────
-	# If the player is near an interactive prop, route the attack press to it
-	# instead of combat. This lets the same button open doors, punch walls, etc.
-	if _try_prop_interaction():
+	# If the player presses attack near an interactive prop, route THAT press to
+	# the prop instead of combat (opens doors, punches walls, rummages crates).
+	# Gated on the attack press: calling _try_prop_interaction() every physics
+	# frame made props interact continuously just by standing near them.
+	var attack_just_pressed: bool = Input.is_action_just_pressed("attack")
+	if attack_just_pressed and _try_prop_interaction():
 		return
 
 	if attack_timer > 0:
 		attack_timer -= delta
 
-	if Input.is_action_just_pressed("attack") and not is_attacking and attack_timer <= 0 and not is_dead:
+	if attack_just_pressed and not is_attacking and attack_timer <= 0 and not is_dead:
 		_perform_attack()
 	
 	# Special ability (keyboard "Q" on desktop; the mobile button signals directly)
@@ -432,6 +509,15 @@ func _apply_camera_rotation() -> void:
 		camera.rotation.x = camrot_v
 
 
+func _smooth_camera_follow(delta: float) -> void:
+	if not camera_arm:
+		return
+	# Exponential easing keeps follow lag consistent across different frame rates.
+	var target_position: Vector3 = global_position + _camera_follow_offset
+	var follow_weight: float = 1.0 - exp(-_camera_follow_speed * delta)
+	camera_arm.global_position = camera_arm.global_position.lerp(target_position, follow_weight)
+
+
 # ──────────────────────────────────────────────
 #  MOBILE CALLBACKS
 # ──────────────────────────────────────────────
@@ -441,8 +527,17 @@ func _on_mobile_move(vector: Vector2) -> void:
 
 
 func _on_mobile_attack() -> void:
-	if not is_dead:
-		_perform_attack()
+	if is_dead:
+		return
+	# Interactive props first, exactly like the keyboard path in _handle_attack().
+	# The mobile button used to call _perform_attack() directly, which skipped this
+	# gate entirely — so on touch NO mini-game podium, terminal, hopper, platter or
+	# supply crate could ever be interacted with, making every Level 1 objective
+	# unreachable by touch. Props win the press when one is in range; otherwise
+	# this falls through to a normal melee swing.
+	if _try_prop_interaction():
+		return
+	_perform_attack()
 
 func _on_mobile_punch_pickup(grab: bool) -> void:
 	"""PUNCH/PICKUP button handler.
@@ -474,12 +569,12 @@ func _pickup_nearby() -> void:
 		return
 	# Check each result for food or weapon pickup areas
 	for result in results:
-		var body := result["collider"] if result.has("collider") else null
+		var body: Object = result["collider"] if result.has("collider") else null
 		if body == null:
 			continue
 		# Food pickup
 		if body.has_method("collect") and not (body.get("is_collected") == true):
-			var food_type := body.get("food_type") if body.has("food_type") else ""
+			var food_type: Variant = body.get("food_type") if body.has("food_type") else ""
 			var heal := int(body.get("health_amount")) if body.has("health_amount") else 0
 			if food_type != "":
 				body.collect(self)
@@ -489,7 +584,7 @@ func _pickup_nearby() -> void:
 				return
 		# Weapon pickup
 		if body.has_method("take") and not (body.get("taken") == true):
-			var weapon_id := body.get("weapon_id") if body.has("weapon_id") else ""
+			var weapon_id: Variant = body.get("weapon_id") if body.has("weapon_id") else ""
 			if weapon_id != "":
 				body.take()
 				equip_weapon(weapon_id)
@@ -531,16 +626,127 @@ func _perform_attack() -> void:
 func _trigger_attack_feedback() -> void:
 	var _pv := get_node_or_null("PlayerVisuals")
 	if _pv:
-		var _pa := _pv.get_node_or_null("ProceduralAnimator") as ProceduralAnimator
-		if _pa:
-			_pa.trigger_attack()
+		# ── BUG A FIX ("punch = flop") ────────────────────────────────────────
+		# This used to call ProceduralAnimator.trigger_attack() unconditionally,
+		# which runs the ZOMBIE 3-phase pounce curve: a forward pos.z lunge plus a
+		# rot.x pitch-down. On the human player that reads as the whole body
+		# flopping over instead of throwing a punch.
+		# The rig's real "attack-melee-right" clip (below) already drives the arm
+		# swing, and this animator's _process is disabled for the player anyway
+		# (Player.gd _ready), so there is nothing to animate here — skip it.
+		# Zombies are untouched: they never call this function and their own
+		# animator pipeline is unchanged.
+		pass
 	if Audio:
 		Audio.play_click()
-	var swing_vis: Node3D = _visual_root()
-	if swing_vis:
-		weapon_tween = create_tween()
-		weapon_tween.tween_property(swing_vis, "rotation:x", swing_vis.rotation.x - deg_to_rad(45), weapon_swing_duration / 2)
-		weapon_tween.tween_property(swing_vis, "rotation:x", swing_vis.rotation.x, weapon_swing_duration / 2)
+	# ── PUNCH (bug A — "punch = flop") ────────────────────────────────────────
+	# The Kenney Blocky rig ships a real right-hand melee clip; BlockyAnim already
+	# maps the "attack" state onto it. Play it so the strike reads as an arm swing
+	# rather than the whole body pitching over.
+	#
+	# ROOT CAUSE of "the clip plays but the arm never moves" (proven at runtime on
+	# the VPS by instantiating the real authored scene, character_nurse.tscn):
+	# `_skeletal` ends up NULL, so the whole block below never ran and the arms
+	# simply hung at rest. In _apply_character_model()'s preferred branch the rig
+	# is taken from the authored character_*.tscn scene, and BlockyAnim's
+	# apply_skin_variant()/setup() chain re-instantiates that rig (freeing the old
+	# one) while _ready() then RE-PARENTS the visual under a new
+	# ProceduralAnimator. The handle captured through all that reordering does not
+	# survive, and the old `is_instance_valid()` guard swallowed the failure
+	# silently instead of recovering.
+	# FIX: resolve the AnimationPlayer fresh from the CURRENT tree at attack time,
+	# so the punch no longer depends on any of that ordering.
+	_skeletal = _resolve_skeletal_player()
+	if _skeletal != null and _skeletal.has_animation("attack-melee-right"):
+		# Hold the state so _update_skeletal_anim() cannot overwrite it next frame.
+		_anim_state = "attack"
+		# The clip is 0.417s long (14 keys, arm-right sweeping 0° → -162° → 0°).
+		# The old lock was weapon_swing_duration + 0.05 = 0.30s, which CUT THE CLIP
+		# OFF before its recovery half — the arm snapped back to rest mid-swing,
+		# which reads as a twitch rather than a punch. Hold for the full clip.
+		_attack_lock = _skeletal.get_animation("attack-melee-right").length + 0.05
+		_skeletal.play("attack-melee-right", 0.04)
+	else:
+		# No usable rig clip (placeholder capsule, or rig without the melee clip).
+		# Fall back to a tight arm-only swing on the visible body so the punch
+		# still reads as a strike — never the old whole-body pitch/flop.
+		_attack_lock = 0.30
+		_procedural_punch()
+	# The old whole-body swing tween is gone on purpose. It targeted
+	# _visual_root() — the entire applied character model — pitching the whole
+	# body 45 degrees forward and back, which is exactly the "flop" the player
+	# reported. WeaponSystem is logic-only (no weapon mesh / attach node exists to
+	# swing), and the rig's real "attack-melee-right" clip already animates the
+	# arm, so no transform tween is needed at all.
+
+
+## Re-resolve the rig's AnimationPlayer from the CURRENT tree.
+##
+## WHY THIS EXISTS (the "punch shows no arm motion" bug, proven at runtime): the
+## `_skeletal` handle resolved once during _apply_character_model() does not
+## survive the rig swaps and the ProceduralAnimator re-parent that happen in
+## _ready(), so by the time the player punches it is null and the melee clip is
+## never played — the arms just hang. Resolving fresh from the live visual
+## subtree at attack time makes the punch independent of all that ordering.
+## Returns null when no rig is present (placeholder body).
+func _resolve_skeletal_player() -> AnimationPlayer:
+	var root := _visual_root()
+	if root == null or not is_instance_valid(root):
+		return null
+	var ap := root.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if ap == null:
+		# The Blocky rig ships the AnimationPlayer as a SIBLING of the glb root,
+		# so also look beside the visual root (see BlockyAnim.find_animation_player).
+		var parent := root.get_parent()
+		if parent != null:
+			ap = parent.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	return ap
+
+
+## Fallback punch for rigs with no melee clip: swing the visible arm node only.
+## Drives rotation.x on "arm-right" (the same channel the real clip uses), so the
+## motion is identical in character to the clip — never a whole-body pitch.
+func _procedural_punch() -> void:
+	var arm := _find_visible_arm()
+	if arm == null:
+		return
+	_punch_arm = arm
+	_punch_t = 0.0
+
+
+## Locate the right-arm mesh under the currently applied visual.
+func _find_visible_arm() -> MeshInstance3D:
+	var root := _visual_root()
+	if root == null or not is_instance_valid(root):
+		return null
+	for mi in root.find_children("arm-right", "MeshInstance3D", true, false):
+		if (mi as MeshInstance3D).visible:
+			return mi as MeshInstance3D
+	return null
+
+
+## Tick the fallback punch swing. Called from _physics_process while
+## _attack_lock > 0 and the rig clip path was not taken.
+func _update_procedural_punch(delta: float) -> void:
+	if _punch_arm == null or not is_instance_valid(_punch_arm):
+		return
+	_punch_t += delta
+	var dur := 0.30
+	var u: float = clampf(_punch_t / dur, 0.0, 1.0)
+	# Wind-up (0→25%), strike (25→55%), recover (55→100%) — matches the shape of
+	# the rig's real clip: 0° → -162° → 0°.
+	var angle: float
+	if u < 0.25:
+		angle = lerpf(0.0, deg_to_rad(-30.0), u / 0.25)
+	elif u < 0.55:
+		angle = lerpf(deg_to_rad(-30.0), deg_to_rad(-162.0), (u - 0.25) / 0.30)
+	else:
+		angle = lerpf(deg_to_rad(-162.0), 0.0, (u - 0.55) / 0.45)
+	_punch_arm.rotation.x = angle
+	if u >= 1.0:
+		_punch_arm.rotation.x = 0.0
+		_punch_arm = null
+
 
 func _fire_weapon() -> Dictionary:
 	if not weapon_system or not weapon_system.has_method("fire"):
@@ -584,6 +790,11 @@ func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 				if has_node("HitFeedback") and $HitFeedback.has_method("emit_hit"):
 					$HitFeedback.emit_hit(enemy.global_transform.origin, str(enemy.get("zombie_type")))
 				enemy.take_damage(damage)
+				# Knock the enemy back so it can't plant on the player and deal
+				# free damage every 1.25s until death — gives the player a window
+				# to reposition or finish it.
+				if enemy.has_method("apply_knockback"):
+					enemy.apply_knockback(global_transform.origin, 7.0)
 				# Impact feel: a light camera kick + haptic tick per landed hit.
 				Input.vibrate_handheld(18)
 				var game_scene := get_tree().current_scene
@@ -642,6 +853,14 @@ func use_special_ability() -> void:
 func take_damage(amount: int) -> void:
 	if is_dead:
 		return
+	# Spawn grace: no damage during the first moments after spawning.
+	if _spawn_grace > 0.0:
+		return
+	# Post-hit invulnerability: ignore hits during the brief window so a swarm
+	# cannot stack damage. This is the single biggest survival-balance lever.
+	if _hurt_cooldown > 0.0:
+		return
+	_hurt_cooldown = HURT_INVULN_TIME
 
 	# Apply damage reduction from character stats
 	if character_stats:
@@ -875,9 +1094,13 @@ func _try_prop_interaction() -> bool:
 		if dist > nearest_dist:
 			continue
 		# Check player is in the prop's interaction zone
-		var zone := prop.get_node_or_null("InteractionZone")
+		var zone: Area3D = null
+		for child in prop.get_children():
+			if child is Area3D and str(child.name).contains("InteractionZone"):
+				zone = child
+				break
 		if zone:
-			var overlapping := zone.get_overlapping_bodies()
+			var overlapping: Array = zone.get_overlapping_bodies()
 			var player_in_zone := false
 			for body in overlapping:
 				if body.is_in_group("player"):
@@ -962,7 +1185,18 @@ func _apply_character_model() -> void:
 				var aabb := _model_aabb(vis)
 				if aabb.size.y > 0.01:
 					vis.position.y = -aabb.position.y
-				_skeletal = CharacterAnim.setup(vis, id)
+				var skin_idx := _selected_skin_index(id)
+				# apply_skin_variant -> apply_body_variant FREES the existing rig
+				# and instantiates a fresh one, so any AnimationPlayer resolved
+				# before it is a dangling freed node. Resolve _skeletal AFTER all
+				# rig swaps, or _update_skeletal_anim's is_instance_valid check
+				# fails every frame and the walk/run clips never play (the
+				# character just slides).
+				if skin_idx > 0:
+					_skeletal = BlockyAnim.apply_body_variant(vis, id, skin_idx)
+				else:
+					BlockyAnim.apply_skin_variant(vis, id, 0)
+					_skeletal = BlockyAnim.setup(vis, id, 0)
 				if _skeletal != null:
 					_skeletal.play("idle")
 					_anim_state = "idle"
@@ -1002,7 +1236,13 @@ func _selected_character_id() -> String:
 	var save := get_node_or_null("/root/Save")
 	if save and save.get("selected_character") != null:
 		return String(save.get("selected_character"))
-	return "gamer"
+	return "nurse"
+
+func _selected_skin_index(id: String) -> int:
+	var save := get_node_or_null("/root/Save")
+	if save and save.has_method("get_selected_skin"):
+		return save.get_selected_skin(id)
+	return 0
 
 func _normalise_model_transform(mdl: Node3D, aabb: AABB) -> void:
 	# The exported GLBs come at wildly different scales, so measure the real

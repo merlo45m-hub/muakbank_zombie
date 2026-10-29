@@ -1,13 +1,9 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/CharacterSelect.gd" id="1_cs"]
 [ext_resource type="PackedScene" path="res://scenes/world/title_background.tscn" id="2_bg"]
-[ext_resource type="Shader" path="res://shaders/title_blood_drip.gdshader" id="3_drip"]
-[ext_resource type="FontFile" path="res://assets/fonts/Nosifer-Regular.ttf" id="4_font"]
-[ext_resource type="FontFile" path="res://assets/fonts/SpecialElite-Regular.ttf" id="5_se"]
-
-[sub_resource type="ShaderMaterial" id="DripMat"]
-shader = ExtResource("3_drip")
+[ext_resource type="FontFile" path="res://assets/fonts/LilitaOne-Regular.ttf" id="4_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/Poppins-Bold.ttf" id="5_se"]
 
 [node name="CharacterSelect" type="Control"]
 layout_mode = 3
@@ -32,19 +28,21 @@ mouse_filter = 2
 
 [node name="TitleLabel" type="Label" parent="UI"]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -580.0
-offset_top = 8.0
-offset_right = 580.0
-offset_bottom = 100.0
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 24.0
+offset_top = 10.0
+offset_right = -24.0
+offset_bottom = 74.0
 grow_horizontal = 2
-material = SubResource("DripMat")
+theme_override_colors/font_color = Color(0.96, 0.97, 0.99, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.03, 0.06, 0.9)
+theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("4_font")
-theme_override_font_sizes/font_size = 52
-text = "CHOOSE YOUR SURVIVOR"
+theme_override_font_sizes/font_size = 46
+text = "SELECT YOUR SURVIVOR"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="SubtitleLabel" type="Label" parent="UI"]
 layout_mode = 1
@@ -52,16 +50,14 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -420.0
-offset_top = 106.0
+offset_top = 76.0
 offset_right = 420.0
-offset_bottom = 138.0
+offset_bottom = 104.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(0.92, 0.9, 0.86, 0.95)
-theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.03, 1)
-theme_override_constants/outline_size = 8
+theme_override_colors/font_color = Color(0.72, 0.78, 0.86, 0.9)
 theme_override_fonts/font = ExtResource("5_se")
-theme_override_font_sizes/font_size = 22
-text = "Who will face the cemetery?"
+theme_override_font_sizes/font_size = 20
+text = "CHOOSE YOUR FIGHTER"
 horizontal_alignment = 1
 
 [node name="StageZones" type="Control" parent="UI"]

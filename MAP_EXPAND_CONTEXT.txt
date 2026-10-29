@@ -1,0 +1,41 @@
+=== MUAKBANK ZOMBIE — LEVEL 1 (OLD TOWN) MAP EXPANSION — SHARED CONTEXT ===
+Project root (ONLY real copy): /storage/emulated/0/Games/Muakbank_zombie
+Branch: feat/charselect-cinematic. Godot 4.7. Renderer MOBILE/Compatibility.
+FOCUS ON LEVEL 1 (Old Town) ONLY. Do NOT touch other levels.
+
+GOAL: Level 1 is too small/cramped. The player wants a BIG, explorable, free-roam
+world with room for the 3 mini-games to be spread out and distinct destinations.
+
+CURRENT STATE (measured):
+- Main ground floor: BoxMesh 120x120m (BoxMesh_floor_big, ~line 165 of old_town_enhanced.tscn), collision BoxShape3D 120x120.
+- A second 60x60 floor exists (older, likely a sub-area).
+- StreetDetail.gd populates the town with constants: backdrop ring RING_MIN_R=21/RING_MAX_R=27 (16 tall skyline buildings, no colliders); interior cover buildings COVER_R_MIN=16/COVER_R_MAX=24 (4, WITH colliders); 14 cars ringed 10-18m; 10 props; 10 lamps ringed 12-20m.
+- Player spawns at (-14,-14), faces open street.
+- 3 mini-games instanced in old_town_enhanced.tscn (~line 3936+):
+    SpoilAndSurvive at (-14, 0, 18)
+    KeepGeneratorFed at (14, 0, 8)
+    LastStandStation at (30, 0, -5)
+  All within ~35m of center — cramped, close together, not distinct destinations.
+- The game already works: spawn on ground, move, kill animals, clear waves, score.
+
+COORD SYSTEM: X/Z horizontal, Y up. Ground top is Y=0. Town centered on origin.
+The 3 mini-games are the progression gates the player must find + activate.
+
+WHAT "EXPANDED" MEANS HERE:
+1. The playable ground must grow (e.g. 120 -> 200m+) so there is real space to roam.
+2. The 3 mini-games must be spread FAR apart (e.g. 60-80m from each other and from
+   spawn) so reaching each is a journey, not a few steps. Each becomes a distinct
+   destination with its own neighborhood.
+3. StreetDetail population (buildings/cars/props/lamps) must fill the LARGER area,
+   not just cluster at center — the whole map should feel populated.
+4. Spawn stays roughly central; the world opens out around it.
+
+CONSTRAINTS:
+- Godot 4.7, TABS in .gd, NO # comments inside .tscn node/sub_resource blocks, every
+  .tscn property must be a REAL Godot 4 property. If you add an ext_resource you MUST
+  bump load_steps in the [gd_scene] header. Do NOT break the fog/lighting/combat that
+  already works. Keep the perimeter from looking empty.
+- Each agent owns DISJOINT files — see your individual task. Do NOT edit another
+  agent's files.
+- Reuse REAL APIs. No anti-AI-slop: no god functions, name constants, comments explain WHY.
+- After editing, READ BACK + verify. Then run the commit command in your task.

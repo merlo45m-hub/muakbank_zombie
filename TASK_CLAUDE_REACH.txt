@@ -1,0 +1,28 @@
+First read /storage/emulated/0/Games/Muakbank_zombie/REACH_CONTEXT.txt for full context.
+
+YOUR TASK (Claude, senior Godot engineer): Bring the 3 mini-games close enough to reach,
+and keep the HUD waypoints in sync.
+You OWN and may edit ONLY: scenes/world/environment/old_town_enhanced.tscn AND
+scripts/ui/HUD.gd. Do NOT touch ZombieSpawner3D.gd / WaveManager.gd / Player.gd (another
+agent owns those).
+
+CHANGES:
+1. In old_town_enhanced.tscn (~line 3936+), move the 3 mini-game instances CLOSER to spawn
+   (-14,-14) but still spread into distinct directions so they are separate destinations.
+   Target ~40-50m from spawn (reachable in ~12-15s of sprinting). Keep them on the 220m
+   floor (within -100..+100) and clear of spawn. Proposed (adjust only if off-floor):
+       SpoilAndSurvive:  (-70,0,70)  -> (-45, 0, 40)   [NW, ~62m — or closer]
+       KeepGeneratorFed: (72,0,62)   -> (48, 0, 38)    [NE]
+       LastStandStation: (78,0,-62)  -> (50, 0, -42)   [SE]
+   Pick final coords that are ~40-55m from (-14,-14), spread ~120deg apart, on the floor.
+   Edit ONLY the transform line of each instance node.
+2. In scripts/ui/HUD.gd, update the WAYPOINT_POSITIONS const dict to the EXACT same 3 new
+   positions (the markers must point where the mini-games actually are). Keep the keys
+   (l1_spoil_and_survive, l1_generator_fed, l1_last_stand).
+3. Do NOT change anything else — not fog, lighting, StreetDetail, other HUD elements.
+
+CONSTRAINTS: Godot 4.7, TABS in .gd, NO # comments in .tscn node blocks, real properties.
+READ BACK both edits and confirm the .tscn transforms and HUD WAYPOINT_POSITIONS match
+exactly. Then commit BOTH files:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scenes/world/environment/old_town_enhanced.tscn scripts/ui/HUD.gd && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "feat(level1): bring the 3 mini-games within reach (~45m) + sync HUD waypoints"
+Report the 3 old->new positions (both files) as final message.

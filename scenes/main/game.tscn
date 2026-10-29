@@ -147,6 +147,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.15, -6)
 script = ExtResource("2")
 collision_layer = 2
 collision_mask = 1
+floor_snap_length = 0.3
 
 [node name="PlayerFill" type="OmniLight3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 1.65, 0.9)
@@ -177,7 +178,9 @@ shape = SubResource("PlayerCollision")
 
 [node name="Camera" type="SpringArm3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0)
-spring_length = 5.6
+spring_length = 4.5
+collision_mask = 1
+margin = 0.6
 
 [node name="Camera3D" type="Camera3D" parent="Player/Camera"]
 transform = Transform3D(1, 0, 0, 0, 0.955, -0.296, 0, 0.296, 0.955, 0, 0.5, 0)
@@ -270,18 +273,6 @@ offset_bottom = 75.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("KnobStyle")
-
-[node name="AttackBtn" type="Button" parent="Player/MobileControls"]
-layout_mode = 1
-anchors_preset = 6
-offset_left = -120.0
-offset_top = -120.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 1
-grow_vertical = 0
-theme_override_font_sizes/font_size = 24
-text = "VS"
 
 [node name="WeaponSystem" type="Node3D" parent="Player"]
 script = ExtResource("7")

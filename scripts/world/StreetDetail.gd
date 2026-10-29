@@ -5,37 +5,264 @@
 ## Kit buildings around the arena, parked vehicles along the road, traffic
 ## lights, dumpsters, construction barriers and road signs.
 ##
-## Every pool is built by SCANNING the staged asset dirs at runtime, so the
-## layer degrades gracefully: a missing dir or a missing pack simply removes
-## that category instead of erroring. Placement is seeded and stable.
+## Asset paths are committed explicitly because exported PCK/APK builds cannot
+## enumerate res:// directories with DirAccess. Missing resources are skipped,
+## and placement remains seeded and stable.
 extends Node3D
 
-const COMMERCIAL_DIR := "res://assets/models/cc0/city/commercial/Models/"
-const SUBURBAN_DIR := "res://assets/models/cc0/city/suburban/Models/"
-const ROADS_DIR := "res://assets/models/cc0/city/roads/Models/"
-const CARS_DIR := "res://assets/models/cc0/cars/Models/"
+const BUILDING_ASSETS: Array[String] = [
+	"res://assets/models/cc0/city/commercial/Models/building-a.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-b.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-c.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-d.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-e.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-f.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-g.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-h.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-i.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-j.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-k.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-l.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-m.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-n.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-skyscraper-a.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-skyscraper-b.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-skyscraper-c.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-skyscraper-d.glb",
+	"res://assets/models/cc0/city/commercial/Models/building-skyscraper-e.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-a.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-b.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-c.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-d.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-e.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-f.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-g.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-h.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-i.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-j.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-k.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-l.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-m.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-n.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-o.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-p.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-q.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-r.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-s.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-t.glb",
+	"res://assets/models/cc0/city/suburban/Models/building-type-u.glb",
+]
+const ROAD_ASSETS: Array[String] = [
+	"res://assets/models/cc0/city/roads/Models/bridge-pillar-wide.glb",
+	"res://assets/models/cc0/city/roads/Models/bridge-pillar.glb",
+	"res://assets/models/cc0/city/roads/Models/construction-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/construction-cone.glb",
+	"res://assets/models/cc0/city/roads/Models/construction-fence.glb",
+	"res://assets/models/cc0/city/roads/Models/construction-light.glb",
+	"res://assets/models/cc0/city/roads/Models/dumpster.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-pole-single.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-pole-wide.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-pole.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-side-single.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-side-wide.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-side.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-wires-wide.glb",
+	"res://assets/models/cc0/city/roads/Models/electricity-wires.glb",
+	"res://assets/models/cc0/city/roads/Models/light-curved-cross.glb",
+	"res://assets/models/cc0/city/roads/Models/light-curved-double.glb",
+	"res://assets/models/cc0/city/roads/Models/light-curved.glb",
+	"res://assets/models/cc0/city/roads/Models/light-square-cross.glb",
+	"res://assets/models/cc0/city/roads/Models/light-square-double.glb",
+	"res://assets/models/cc0/city/roads/Models/light-square.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bend-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bend-sidewalk.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bend-square-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bend-square.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bend.glb",
+	"res://assets/models/cc0/city/roads/Models/road-bridge.glb",
+	"res://assets/models/cc0/city/roads/Models/road-crossing.glb",
+	"res://assets/models/cc0/city/roads/Models/road-crossroad-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-crossroad-line.glb",
+	"res://assets/models/cc0/city/roads/Models/road-crossroad-path.glb",
+	"res://assets/models/cc0/city/roads/Models/road-crossroad.glb",
+	"res://assets/models/cc0/city/roads/Models/road-curve-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-curve-intersection-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-curve-intersection.glb",
+	"res://assets/models/cc0/city/roads/Models/road-curve-pavement.glb",
+	"res://assets/models/cc0/city/roads/Models/road-curve.glb",
+	"res://assets/models/cc0/city/roads/Models/road-driveway-double-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-driveway-double.glb",
+	"res://assets/models/cc0/city/roads/Models/road-driveway-single-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-driveway-single.glb",
+	"res://assets/models/cc0/city/roads/Models/road-end-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-end-round-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-end-round.glb",
+	"res://assets/models/cc0/city/roads/Models/road-end.glb",
+	"res://assets/models/cc0/city/roads/Models/road-intersection-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-intersection-line.glb",
+	"res://assets/models/cc0/city/roads/Models/road-intersection-path.glb",
+	"res://assets/models/cc0/city/roads/Models/road-intersection.glb",
+	"res://assets/models/cc0/city/roads/Models/road-roundabout-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-roundabout.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side-entry-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side-entry.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side-exit-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side-exit.glb",
+	"res://assets/models/cc0/city/roads/Models/road-side.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-empty-hanging.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-empty.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-object-stop.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-object-street.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-object-warning.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-stop.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-street.glb",
+	"res://assets/models/cc0/city/roads/Models/road-sign-warning.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-curve-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-curve.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-flat-curve.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-flat-high.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-flat.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-high-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant-high.glb",
+	"res://assets/models/cc0/city/roads/Models/road-slant.glb",
+	"res://assets/models/cc0/city/roads/Models/road-split-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-split.glb",
+	"res://assets/models/cc0/city/roads/Models/road-square-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-square.glb",
+	"res://assets/models/cc0/city/roads/Models/road-straight-barrier-end.glb",
+	"res://assets/models/cc0/city/roads/Models/road-straight-barrier-half.glb",
+	"res://assets/models/cc0/city/roads/Models/road-straight-barrier.glb",
+	"res://assets/models/cc0/city/roads/Models/road-straight-half.glb",
+	"res://assets/models/cc0/city/roads/Models/road-straight.glb",
+	"res://assets/models/cc0/city/roads/Models/sign-highway-detailed.glb",
+	"res://assets/models/cc0/city/roads/Models/sign-highway-wide.glb",
+	"res://assets/models/cc0/city/roads/Models/sign-highway.glb",
+	"res://assets/models/cc0/city/roads/Models/tile-high.glb",
+	"res://assets/models/cc0/city/roads/Models/tile-low.glb",
+	"res://assets/models/cc0/city/roads/Models/tile-slant.glb",
+	"res://assets/models/cc0/city/roads/Models/tile-slantHigh.glb",
+	"res://assets/models/cc0/city/roads/Models/traffic-light-hanging.glb",
+	"res://assets/models/cc0/city/roads/Models/traffic-light-object-hanging.glb",
+	"res://assets/models/cc0/city/roads/Models/traffic-light-object-horizontal.glb",
+	"res://assets/models/cc0/city/roads/Models/traffic-light-object-vertical.glb",
+	"res://assets/models/cc0/city/roads/Models/traffic-light.glb",
+]
+const CAR_ASSETS: Array[String] = [
+	"res://assets/models/cc0/cars/Models/ambulance.glb",
+	"res://assets/models/cc0/cars/Models/box.glb",
+	"res://assets/models/cc0/cars/Models/cone-flat.glb",
+	"res://assets/models/cc0/cars/Models/cone.glb",
+	"res://assets/models/cc0/cars/Models/debris-bolt.glb",
+	"res://assets/models/cc0/cars/Models/debris-bumper.glb",
+	"res://assets/models/cc0/cars/Models/debris-door-window.glb",
+	"res://assets/models/cc0/cars/Models/debris-door.glb",
+	"res://assets/models/cc0/cars/Models/debris-drivetrain-axle.glb",
+	"res://assets/models/cc0/cars/Models/debris-drivetrain.glb",
+	"res://assets/models/cc0/cars/Models/debris-nut.glb",
+	"res://assets/models/cc0/cars/Models/debris-plate-a.glb",
+	"res://assets/models/cc0/cars/Models/debris-plate-b.glb",
+	"res://assets/models/cc0/cars/Models/debris-plate-small-a.glb",
+	"res://assets/models/cc0/cars/Models/debris-plate-small-b.glb",
+	"res://assets/models/cc0/cars/Models/debris-spoiler-a.glb",
+	"res://assets/models/cc0/cars/Models/debris-spoiler-b.glb",
+	"res://assets/models/cc0/cars/Models/debris-tire.glb",
+	"res://assets/models/cc0/cars/Models/delivery-flat.glb",
+	"res://assets/models/cc0/cars/Models/delivery.glb",
+	"res://assets/models/cc0/cars/Models/firetruck.glb",
+	"res://assets/models/cc0/cars/Models/garbage-truck.glb",
+	"res://assets/models/cc0/cars/Models/hatchback-sports.glb",
+	"res://assets/models/cc0/cars/Models/kart-oobi.glb",
+	"res://assets/models/cc0/cars/Models/kart-oodi.glb",
+	"res://assets/models/cc0/cars/Models/kart-ooli.glb",
+	"res://assets/models/cc0/cars/Models/kart-oopi.glb",
+	"res://assets/models/cc0/cars/Models/kart-oozi.glb",
+	"res://assets/models/cc0/cars/Models/police.glb",
+	"res://assets/models/cc0/cars/Models/race-future.glb",
+	"res://assets/models/cc0/cars/Models/race.glb",
+	"res://assets/models/cc0/cars/Models/sedan-sports.glb",
+	"res://assets/models/cc0/cars/Models/sedan.glb",
+	"res://assets/models/cc0/cars/Models/suv-luxury.glb",
+	"res://assets/models/cc0/cars/Models/suv.glb",
+	"res://assets/models/cc0/cars/Models/taxi.glb",
+	"res://assets/models/cc0/cars/Models/tractor-police.glb",
+	"res://assets/models/cc0/cars/Models/tractor-shovel.glb",
+	"res://assets/models/cc0/cars/Models/tractor.glb",
+	"res://assets/models/cc0/cars/Models/truck-flat.glb",
+	"res://assets/models/cc0/cars/Models/truck.glb",
+	"res://assets/models/cc0/cars/Models/van.glb",
+	"res://assets/models/cc0/cars/Models/wheel-dark.glb",
+	"res://assets/models/cc0/cars/Models/wheel-default.glb",
+	"res://assets/models/cc0/cars/Models/wheel-racing.glb",
+	"res://assets/models/cc0/cars/Models/wheel-tractor-back.glb",
+	"res://assets/models/cc0/cars/Models/wheel-tractor-dark-back.glb",
+	"res://assets/models/cc0/cars/Models/wheel-tractor-dark-front.glb",
+	"res://assets/models/cc0/cars/Models/wheel-tractor-front.glb",
+	"res://assets/models/cc0/cars/Models/wheel-truck.glb",
+]
 
-# Backdrop ring (outside the courtyard fence): tall skyline, no colliders.
-const RING_MIN_R := 21.0
-const RING_MAX_R := 27.0
-const RING_COUNT := 16
+# Backdrop skyline ring (distant horizon outside the expanded town): tall skyline, no colliders.
+# Pushed outward to 60-85m with 28 buildings so the horizon looks full and dense
+# around the enlarged ~200-220m floor instead of leaving a barren rim.
+const RING_MIN_R := 60.0
+const RING_MAX_R := 85.0
+const RING_COUNT := 28
 const RING_MIN_H := 3.2
 const RING_MAX_H := 7.5
+
 # Interior cover buildings: walkable-arena obstacles, WITH colliders.
-const COVER_COUNT := 4
-const COVER_R_MIN := 6.0
-const COVER_R_MAX := 13.0
+# Spread across 25-70m with 10 buildings to populate the larger free-roam area,
+# while keeping clear of player spawn and the 3 mini-game destinations.
+const COVER_COUNT := 10
+const COVER_R_MIN := 25.0
+const COVER_R_MAX := 70.0
 const COVER_HEIGHT := 2.8
-# Parked cars along the main road (LevelDetail puts it at z = -4, width 3.4).
-const CAR_ROAD_Z := -4.0
-const CAR_LANE_OFFSET := 1.6
-const CAR_COUNT := 7
+
+# Exclusion zones for interior cover buildings:
+# Keep cover buildings clear of ~12m radius around player spawn and the 3 mini-game hubs
+# so routes and interaction stations are never obstructed.
+const COVER_EXCLUSION_RADIUS := 16.0
+const COVER_EXCLUSIONS: Array[Vector2] = [
+	Vector2(-14.0, -14.0), # Player spawn point
+	Vector2(-14.0, 2.0),   # Mini-game 1: SpoilAndSurvive (current position)
+	Vector2(28.0, 20.0),   # Mini-game 2: KeepGeneratorFed (current position)
+	Vector2(30.0, -24.0),  # Mini-game 3: LastStandStation (current position)
+]
+
+# Parked cars: ringed across the expanded town (15-70m).
+# 30 vehicles dress the streets and routes connecting the distant mini-games.
+const CAR_COUNT := 30
+const CAR_R_MIN := 15.0
+const CAR_R_MAX := 70.0
 const CAR_HEIGHT := 1.5
-# Street furniture.
-const PROP_COUNT := 10
-const LIGHT_COUNT := 6
-const LIGHT_ENERGY := 1.6
-const LIGHT_RANGE := 7.0
+
+# Near-route car cluster: ~8 cars in the 20-45m band so the streets the player
+# actually walks (between spawn and mini-games) read as dressed/lived-in, not empty.
+const NEAR_CAR_COUNT := 8
+const NEAR_CAR_R_MIN := 20.0
+const NEAR_CAR_R_MAX := 45.0
+
+# Street furniture (props & lamps): ringed across 15-75m.
+# Bumped prop count and pulled the band inward (15-50m) so road dressing is dense
+# along the main travel corridors the player uses, not just the far ring.
+const PROP_COUNT := 35
+const PROP_R_MIN := 15.0
+const PROP_R_MAX := 50.0
+const PROP_HEIGHT := 0.9
+
+# Street lamps: keep total reasonable for mobile (each = 1 OmniLight3D, cap ~40).
+# Added a near band (15-45m) so the player has light where they walk, plus the
+# existing far ring for ambient fill.
+const LIGHT_COUNT := 24
+const LIGHT_R_MIN := 15.0
+const LIGHT_R_MAX := 75.0
+const NEAR_LIGHT_COUNT := 12
+const NEAR_LIGHT_R_MIN := 15.0
+const NEAR_LIGHT_R_MAX := 45.0
+const LIGHT_ENERGY := 2.6
+const LIGHT_RANGE := 14.0
+const LIGHT_HEIGHT := 3.2
 
 const GROUND_TOP := 0.0
 var _rng := RandomNumberGenerator.new()
@@ -47,9 +274,9 @@ var _placed := 0
 
 func _ready() -> void:
 	_rng.seed = 20261006
-	_building_paths = _scan(COMMERCIAL_DIR, "building") + _scan(SUBURBAN_DIR, "building")
-	_road_paths = _scan(ROADS_DIR, "")
-	_car_paths = _scan(CARS_DIR, "")
+	_building_paths = _existing_paths(BUILDING_ASSETS)
+	_road_paths = _existing_paths(ROAD_ASSETS)
+	_car_paths = _existing_paths(CAR_ASSETS)
 	if _building_paths.is_empty():
 		push_warning("StreetDetail: no building models found - street dressing skipped")
 	_building_ring()
@@ -60,24 +287,14 @@ func _ready() -> void:
 		_placed, _building_paths.size(), _road_paths.size(), _car_paths.size()])
 
 
-## Recursively collect .glb paths under a dir whose filename starts with prefix
-## (empty prefix = everything). Returns absolute res:// paths.
-func _scan(dir_path: String, prefix: String) -> Array[String]:
+## Packed APKs cannot enumerate res:// directories with DirAccess, so use
+## committed asset paths and keep only resources present in this build.
+func _existing_paths(paths: Array[String]) -> Array[String]:
 	var out: Array[String] = []
-	var d := DirAccess.open(dir_path)
-	if d == null:
-		return out
-	d.list_dir_begin()
-	var name := d.get_next()
-	while name != "":
-		if d.current_is_dir() and not name.begins_with("."):
-			out.append_array(_scan(dir_path.path_join(name), prefix))
-		elif name.ends_with(".glb") and (prefix == "" or name.begins_with(prefix)):
-			out.append(dir_path.path_join(name))
-		name = d.get_next()
-	d.list_dir_end()
+	for path in paths:
+		if ResourceLoader.exists(path):
+			out.append(path)
 	return out
-
 
 ## Instantiate a model and scale it so its height matches target_h.
 ## Returns null when the model cannot be loaded (never errors).
@@ -97,6 +314,10 @@ func _spawn(path: String, pos: Vector3, yaw: float, target_h: float) -> Node3D:
 	if aabb.size.y > 0.001 and target_h > 0.0:
 		var s := target_h / aabb.size.y
 		inst.scale = Vector3(s, s, s)
+		# Lift so the model's bounding-box bottom sits exactly on pos.y, otherwise
+		# models whose origin is at their centre (most car .glb) sink halfway into
+		# the road and are invisible from the player's eye level.
+		inst.position.y = pos.y - aabb.position.y * s
 	_placed += 1
 	return inst
 
@@ -139,16 +360,31 @@ func _building_ring() -> void:
 		_spawn(model, pos, _face(pos, Vector3.ZERO), h)
 
 
-## A few buildings INSIDE the arena as hard cover, with collision.
+## Buildings inside the arena as hard cover, with collision.
+## Kept clear of player spawn and the 3 mini-game locations.
+## Jittered more and picking from full building pool so the town isn't a uniform ring.
 func _cover_buildings() -> void:
 	if _building_paths.is_empty():
 		return
 	for i in range(COVER_COUNT):
-		var a := TAU * float(i) / float(COVER_COUNT) + 0.7
-		var r := _rng.randf_range(COVER_R_MIN, COVER_R_MAX)
-		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
-		var node := _spawn(_pick(_building_paths, i * 3 + 1), pos, _face(pos, Vector3.ZERO),
-			COVER_HEIGHT * _rng.randf_range(0.9, 1.15))
+		var base_angle := TAU * float(i) / float(COVER_COUNT) + _rng.randf_range(-0.4, 0.4)
+		var pos := Vector3.ZERO
+		var valid_pos := false
+		for attempt in range(16):
+			# Stronger angular jitter per attempt so buildings don't land on a perfect ring.
+			var a := base_angle + _rng.randf_range(-0.35, 0.35) * float(attempt + 1)
+			var r := _rng.randf_range(COVER_R_MIN, COVER_R_MAX)
+			var candidate := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+			if _is_cover_pos_clear(Vector2(candidate.x, candidate.z)):
+				pos = candidate
+				valid_pos = true
+				break
+		if not valid_pos:
+			continue
+		# Vary model selection widely across the full pool (commercial + suburban + skyscraper)
+		# so each cover building reads as distinct, not a repeated prefab.
+		var node := _spawn(_pick(_building_paths, i * 13 + 7), pos, _face(pos, Vector3.ZERO),
+			COVER_HEIGHT * _rng.randf_range(0.85, 1.25))
 		if node == null:
 			continue
 		var aabb := _aabb_of(node)
@@ -163,7 +399,15 @@ func _cover_buildings() -> void:
 		node.add_child(body)
 
 
-## Vehicles parked along the main road, alternating sides, varied heading.
+## Checks whether a 2D position (x, z) is clear of player spawn and mini-games.
+func _is_cover_pos_clear(pos_2d: Vector2) -> bool:
+	for excl in COVER_EXCLUSIONS:
+		if pos_2d.distance_to(excl) < COVER_EXCLUSION_RADIUS:
+			return false
+	return true
+
+
+## Vehicles scattered across the town, alternating sides, varied heading.
 func _parked_cars() -> void:
 	if _car_paths.is_empty():
 		return
@@ -173,40 +417,76 @@ func _parked_cars() -> void:
 			cars.append(p)
 	if cars.is_empty():
 		return
+	# Far ring: existing 30 cars across 15-70m for the routes between distant mini-games.
 	for i in range(CAR_COUNT):
-		var side := 1.0 if i % 2 == 0 else -1.0
-		var x := -12.0 + float(i) * 4.2 + _rng.randf_range(-0.5, 0.5)
-		var pos := Vector3(x, GROUND_TOP, CAR_ROAD_Z + side * CAR_LANE_OFFSET)
-		var yaw := PI * 0.5 if i % 2 == 0 else -PI * 0.5
+		var a := TAU * float(i) / float(CAR_COUNT) + _rng.randf_range(-0.15, 0.15)
+		var r := _rng.randf_range(CAR_R_MIN, CAR_R_MAX)
+		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		var yaw := a + PI * 0.5
 		_spawn(_pick(cars, i * 5 + 2), pos, yaw + _rng.randf_range(-0.08, 0.08),
+			CAR_HEIGHT * _rng.randf_range(0.9, 1.35))
+	# Near cluster: ~8 cars in the 20-45m band dressing the streets the player
+	# actually walks between spawn and the mini-games.
+	for i in range(NEAR_CAR_COUNT):
+		var a := TAU * float(i) / float(NEAR_CAR_COUNT) + _rng.randf_range(-0.12, 0.12)
+		var r := _rng.randf_range(NEAR_CAR_R_MIN, NEAR_CAR_R_MAX)
+		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		# Keep near cars off the mini-game podiums and spawn — a car on the buffet
+		# would block the interaction zone.
+		if not _is_cover_pos_clear(Vector2(pos.x, pos.z)):
+			continue
+		var yaw := a + PI * 0.5
+		_spawn(_pick(cars, i * 7 + 3), pos, yaw + _rng.randf_range(-0.1, 0.1),
 			CAR_HEIGHT * _rng.randf_range(0.9, 1.35))
 
 
-## Dumpsters, barriers, cones, signs along the roadside, plus lit lamps.
+## Dumpsters, barriers, cones, signs, plus lit lamps scattered across the expanded town.
 func _street_furniture() -> void:
 	var pool: Array[String] = []
 	for p in _road_paths:
 		if _is_street_prop(p):
 			pool.append(p)
+	# Props: bumped count and pulled into 15-50m band so dressing is dense along
+	# the main travel corridors the player uses.
 	for i in range(PROP_COUNT):
 		if pool.is_empty():
 			break
-		var side := 1.0 if i % 2 == 0 else -1.0
-		var x := -13.0 + float(i) * 2.9 + _rng.randf_range(-0.4, 0.4)
-		var pos := Vector3(x, GROUND_TOP, CAR_ROAD_Z + side * _rng.randf_range(2.6, 3.4))
-		_spawn(_pick(pool, i * 4 + 1), pos, _rng.randf_range(0.0, TAU), 0.9)
+		var a := TAU * float(i) / float(PROP_COUNT) + _rng.randf_range(-0.15, 0.15)
+		var r := _rng.randf_range(PROP_R_MIN, PROP_R_MAX)
+		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		_spawn(_pick(pool, i * 4 + 1), pos, _rng.randf_range(0.0, TAU), PROP_HEIGHT)
 	var lamps: Array[String] = []
 	for p in _road_paths:
 		var leaf := p.get_file()
 		if leaf.begins_with("electricity-pole") or leaf.begins_with("light-"):
 			lamps.append(p)
+	# Far ring lamps: ambient fill across 15-75m.
 	for i in range(LIGHT_COUNT):
 		if lamps.is_empty():
 			break
-		var side := 1.0 if i % 2 == 0 else -1.0
-		var x := -10.0 + float(i) * 6.6
-		var pos := Vector3(x, GROUND_TOP, CAR_ROAD_Z + side * 2.9)
-		var node := _spawn(_pick(lamps, i * 2), pos, 0.0, 3.2)
+		var a := TAU * float(i) / float(LIGHT_COUNT) + 0.4
+		var r := _rng.randf_range(LIGHT_R_MIN, LIGHT_R_MAX)
+		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		var node := _spawn(_pick(lamps, i * 2), pos, 0.0, LIGHT_HEIGHT)
+		if node == null:
+			continue
+		var lamp := OmniLight3D.new()
+		lamp.light_energy = LIGHT_ENERGY
+		lamp.omni_range = LIGHT_RANGE
+		lamp.light_color = Color(1.0, 0.86, 0.66)
+		lamp.position = Vector3(0, 3.0, 0)
+		node.add_child(lamp)
+	# Near band lamps: player needs light where they walk (15-45m), not just the perimeter.
+	for i in range(NEAR_LIGHT_COUNT):
+		if lamps.is_empty():
+			break
+		var a := TAU * float(i) / float(NEAR_LIGHT_COUNT) + 0.7
+		var r := _rng.randf_range(NEAR_LIGHT_R_MIN, NEAR_LIGHT_R_MAX)
+		var pos := Vector3(cos(a) * r, GROUND_TOP, sin(a) * r)
+		# Keep lamps off the mini-game podiums and spawn.
+		if not _is_cover_pos_clear(Vector2(pos.x, pos.z)):
+			continue
+		var node := _spawn(_pick(lamps, i * 3 + 5), pos, 0.0, LIGHT_HEIGHT)
 		if node == null:
 			continue
 		var lamp := OmniLight3D.new()

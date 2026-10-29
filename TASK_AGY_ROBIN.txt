@@ -1,0 +1,83 @@
+TASK FOR AGY — write a report on the repo https://github.com/apurvsinghgautam/robin
+
+GOAL: a thorough, evidence-based report on what this repo is, how it works, whether it is
+usable, and whether it is worth our attention. Cite file paths you actually read. Do NOT
+guess or invent — if you cannot determine something, say so.
+
+VERIFIED FACTS (already established, do not re-derive):
+  full_name:    apurvsinghgautam/robin
+  description:  AI-Powered Dark Web OSINT Tool
+  language:     Python
+  stars:        7553    forks: 1413    open issues: 1
+  pushed_at:    2026-10-03   default branch: main   archived: false
+  license:      MIT
+  topics:       ai-tool, darkweb, darkweb-osint, investigation-tool, llm-powered, osint, osint-tool
+
+USE THE GITHUB MCP (you have it registered) to read the repo. Suggested approach:
+  - list the repo tree (recursive) to map the layout
+  - read README.md, requirements/pyproject, the main entrypoint, and 3-5 core modules
+  - read open issues and recent commits for activity/maintenance signal
+  - check whether there are tests, CI, or a Dockerfile
+Read enough real files that every claim below is backed by something you actually saw.
+
+OUR ENVIRONMENT (matters a lot for the "can we use it" section):
+  - Termux on Android/aarch64 (ARM64), no root, no systemd. Python 3.14 available.
+  - We do have a Linux VPS (Debian-ish, x86_64) reachable over ssh where heavier things run.
+  - We are NOT doing dark-web investigations. We are a Godot game dev shop. We are evaluating
+    this repo for (a) general technical interest / possible technique reuse, and (b) whether
+    any part of it could be useful to us. Be blunt about relevance — "not relevant to us" is
+    a perfectly good answer if that is what the evidence says.
+
+DELIVERABLES — answer every one:
+
+1. WHAT IT IS
+   - What the tool actually does, in your own words, based on the README + code.
+   - The architecture: entrypoint, main modules, how the LLM is used, what data sources it
+     hits (.onion/Tor, clear-web, breach data, etc.).
+   - The tech stack (frameworks, models, external services/APIs it depends on).
+
+2. CODE QUALITY & MATURITY
+   - Repo structure and how coherent it is.
+   - Are there tests? CI? Type hints? A Dockerfile? Docs beyond the README?
+   - Maintenance signal: commit cadence, last real commit, how many contributors, whether
+     issues are being answered.
+   - Anything that looks unfinished, stubbed, or aspirational.
+
+3. DEPENDENCIES & RUNTIME REQUIREMENTS
+   - What it needs to actually run: Python version, heavy deps (tor? selenium? playwright?
+     a local LLM? API keys for OpenAI/Anthropic?), a Tor daemon, a display/browser, etc.
+   - CRITICAL: list every EXTERNAL SERVICE and every API KEY / CREDENTIAL it expects.
+   - Would it run on Termux/aarch64? On our x86_64 VPS? Give a verdict for each with reasons.
+
+4. SECURITY & SAFETY POSTURE  (be rigorous and specific — this matters most)
+   - What does it do with credentials/API keys? Any hardcoded secrets, .env handling,
+     secrets in the repo or in commit history?
+   - Does it make outbound network calls to third parties? Which, and what is sent?
+   - Any obvious injection/command-execution/RCE surface (e.g. shell=True, eval, unsanitised
+     input to a subprocess)?
+   - Is it safe to install and even to `pip install` blindly? Would you run it against your
+     own infrastructure? Say what you would want to audit first.
+   - LEGAL/ETHICS FLAG: note plainly that "dark web OSINT" tooling carries real legal and
+     ethical exposure depending on jurisdiction and use. Do not lecture — one clear paragraph.
+
+5. RELEVANCE TO US
+   - Blunt assessment: is any of this useful for a Godot game dev shop doing agent-tooling
+     work? Look for any TRANSFERABLE TECHNIQUE (e.g. how it structures an LLM agent loop,
+     scraping, Tor routing, report generation) that we could reuse. Be specific about which
+     file demonstrates it, or say there is nothing.
+
+6. BOTTOM LINE
+   - One paragraph: what it is, how mature, whether it is safe to touch, and whether we should
+     care.
+
+CONSTRAINTS:
+- READ-ONLY. Do not clone-and-run anything. Do not install, execute, or mutate anything.
+  Reading the repo via the github MCP is exactly the right amount of action.
+- Do NOT commit, create, or edit any file.
+- If the repo is large, prioritise: README, entrypoint, requirements/pyproject, config, and
+  the modules that implement the core loop. Say which files you did NOT get to.
+
+REPORT FORMAT: one section per deliverable above, then end with:
+  RESULT: REPORTED <one-line summary>
+Put any "I could not determine this" statements clearly in the relevant section rather than
+papering over them.

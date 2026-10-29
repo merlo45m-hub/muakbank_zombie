@@ -10,9 +10,9 @@ class_name ZombieCat
 func _post_ready() -> void:
 	max_health = 20
 	move_speed = 5.5
-	damage = 15
+	damage = 9
 	attack_range = 1.4
-	detection_range = 10.0
+	detection_range = 30.0
 	attack_cooldown_time = 1.0
 
 func _chase(delta: float) -> void:

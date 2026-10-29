@@ -1,0 +1,19 @@
+Muakbank Zombie - CORE LOOP verification in PEACEFUL MODE. adb -s 10.0.0.182:45601 for ALL commands. FOCUS ON LEVEL 1 ONLY. Do NOT edit files. Use vision (Read) on screenshots.
+
+PEACEFUL MODE IS ON: no zombies spawn, no damage. You can explore freely. GOAL: walk to a mini-game and ACTIVATE it — verify the full core loop now that survival pressure is gone.
+
+NAV (viewport 1950x900, physical = viewport*1.6):
+1. adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie; sleep 2; adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher; sleep 5
+2. input tap 1560 672 (title PLAY); sleep 3
+3. input tap 2264 1370 (char-select red PLAY); sleep 3
+4. input tap 1040 528 (Level 1 PLAY NOW); sleep 6 = gameplay
+
+TEST (no zombies, take your time):
+A. Screenshot + Read: confirm 3 gold arrows top-right with distances. Note the CLOSEST and which direction its arrow points (up/forward, down/back, left, right). Remember: the arrow is CAMERA-relative — it points where to go on screen.
+B. Walk toward the closest mini-game. Swipe the joystick (physical 250,1090) in the arrow's direction for 3-4s. Re-screenshot + Read the arrow every couple swipes and CORRECT your direction — follow where the arrow points each time (if it swings left, swipe left; if it points up/forward, swipe up). Watch the closest distance number DROP.
+C. When closest distance < 12m, screenshot + Read carefully: look for the mini-game structure. Spoil & Survive = a buffet table with food platters. KeepGeneratorFed = a generator/hopper. LastStandStation = a barricade/station. Each has a floating 3D text prompt.
+D. For Spoil & Survive specifically: it AUTO-STARTS when you walk into its interaction zone (no attack needed). Walk right up to the buffet table. Screenshot + Read: did the round START? Signs: the objective panel timer starts counting down from 60s, "FRESH DISHES" begins, the podium prompt changes/disappears.
+E. If it did NOT auto-start, tap ATTACK (physical ~2640,1248) a few times near the podium as a fallback.
+F. Pull log: adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog_peaceful.txt. Look for the buffet/minigame activating, "round", objective progress, any errors.
+
+FINAL REPORT (cite screenshots + log lines): (1) Confirm peaceful mode (no zombies, no damage). (2) Did the closest waypoint distance decrease as you navigated (start -> end)? (3) Did you REACH a mini-game — describe the structure + its 3D prompt. (4) Did it ACTIVATE — auto-start or attack? What changed on screen / in the log? (5) If you could NOT reach or activate it, exactly how close you got and what happened. Be brutally specific and honest — this is the make-or-break core-loop test and peaceful mode removes all excuses. Do NOT fabricate.

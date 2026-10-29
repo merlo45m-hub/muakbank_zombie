@@ -1,0 +1,23 @@
+Muakbank Zombie Godot 4.7 — CHARACTER SELECT INPUT BUG. Project root: /storage/emulated/0/Games/Muakbank_zombie. FOCUS ON LEVEL 1 (Old Town) ONLY. Do NOT touch other levels. Do NOT touch the title screen, gameplay scenes, or StreetDetail.gd.
+
+SYMPTOM: On the character-select screen, the red PLAY button (built in code in scripts/ui/CharacterSelect.gd) does NOT respond to adb taps. A 9-tap sweep of the bottom-right region (viewport 1380-1520 x 800-860, which is physical ~2690-2960 x 1280-1376 on the 3120x1440 screen) produced no transition. The title-screen PLAY button works fine, so godot input itself is not broken.
+
+CONTEXT:
+- The game renders to a 1600x900 VIRTUAL viewport, stretch mode "canvas_items", aspect "expand". physical = viewport * 1.95 (x) / 1.6 (y).
+- CharacterSelect.gd builds its buttons in _build_actions() (line ~596): an HBoxContainer "actions" holds BACK + skin arrows + a red PLAY Button (custom_minimum_size 240x56, play.pressed.connect(_on_play_pressed) at line ~660).
+- There is a _unhandled_input() at line 213 and _update_tap_zones() at line 845 (currently a no-op "pass"). The script also tracks _touch_start and has a _stage_tap_btn.
+- @onready vars: _play_btn, _stage_tap_btn, _char_prev_btn, _char_next_btn, _skin_buttons, _skin_prev_btn, _skin_next_btn.
+
+TASK: Find WHY the red PLAY button doesn't receive taps on device and FIX it so a tap on it advances to gameplay. Investigate:
+1. Read _unhandled_input (line 213) — does it consume/eat touch events before the Button sees them? A _stage_tap_btn or camera-drag handler swallowing InputEventScreenTouch is the prime suspect.
+2. Check if a full-screen transparent Button/Control (_stage_tap_btn, added around line 842) sits ABOVE the PLAY button in the tree and intercepts taps.
+3. Check mouse_filter / the z-order of the actions container vs the stage tap zone.
+4. Verify the PLAY button's actual on-screen rect is where we think (viewport bottom-right).
+
+Use the godot-ai MCP tools to inspect the live scene (scene_get_hierarchy, node_find, node_get_properties) and editor_state. The VPS godot-ai attach server is running on 127.0.0.1:8000.
+
+FIX (make the red PLAY reliably tappable): the cleanest fix is to ensure the PLAY button is NOT occluded — either give the stage tap zone mouse_filter=IGNORE, or reorder it behind the buttons, or stop _unhandled_input from consuming touch events on the button area. Do NOT change the visual layout. Do NOT break camera drag / character cycling.
+
+RULES: Godot 4.7 GDScript, TABS, comments explain WHY. Edit ONLY scripts/ui/CharacterSelect.gd. After editing, READ back and confirm the fix is coherent. Then commit:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scripts/ui/CharacterSelect.gd && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "fix(ui): character-select PLAY button swallowed by stage tap zone — make it tappable"
+Report the root cause + the exact fix as your final message.

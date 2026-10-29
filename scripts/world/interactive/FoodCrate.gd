@@ -41,16 +41,23 @@ var food_ammo_scene = preload("res://scenes/world/food_ammo.tscn")
 func _ready() -> void:
 	add_to_group("interactive_prop")
 	lid_node = get_node_or_null("Lid")
-	interaction_zone = get_node_or_null("InteractionZone")
-	body_node = get_node_or_null("Collision") or get_node_or_null("Body")
+	interaction_zone = get_node_or_null("CrateInteractionZone")
+	if interaction_zone == null:
+		interaction_zone = get_node_or_null("InteractionZone")
+	body_node = get_node_or_null("CrateCollision")
+	if body_node == null:
+		body_node = get_node_or_null("Collision")
+	if body_node == null:
+		body_node = get_node_or_null("Body")
 
 	if interaction_zone:
 		interaction_zone.body_entered.connect(_on_zone_body_entered)
 		interaction_zone.body_exited.connect(_on_zone_body_exited)
 
-	# Resolve rummage sound
-	if Audio:
-		rummage_sound = "crate_rummage" if Audio.has_sound("crate_rummage") else ""
+	# Resolve rummage sound. GameAudioManager has no has_sound(String) API — guard
+	# with has_method so a missing sound never kills _ready; the crate still opens.
+	if Audio and Audio.has_method("play_sfx"):
+		rummage_sound = "crate_rummage"
 
 	# Start closed
 	is_open = false
@@ -205,5 +212,6 @@ func _reset_crate() -> void:
 # ── AUDIO ────────────────────────────────────────────────────────────────────────
 
 func _play_rummage_sound() -> void:
-	if Audio and rummage_sound != "":
+	# No play_sound(String) on GameAudioManager; no-op rather than throw.
+	if Audio and rummage_sound != "" and Audio.has_method("play_sound"):
 		Audio.play_sound(rummage_sound)

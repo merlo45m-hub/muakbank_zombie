@@ -1,0 +1,41 @@
+First read /storage/emulated/0/Games/Muakbank_zombie/WAYFIND_CONTEXT.txt for full context.
+
+YOUR TASK (Claude, senior Godot engineer): Add WAYFINDING to the gameplay HUD so the
+player can find the 3 mini-games on the big 220m map.
+You OWN and may edit ONLY: scripts/ui/HUD.gd. Do NOT touch game.tscn, ObjectiveManager.gd,
+or any other file (other agents own those).
+
+GOAL: on-screen guidance to each mini-game destination. Implement, in HUD.gd:
+1. A MINIMAP or, simpler and more robust on mobile, a set of DIRECTIONAL MARKERS: for each
+   of the 3 mini-games, show an on-screen arrow/indicator pointing toward it plus its
+   distance in metres. Place them top-center or top-right so they don't cover the joystick.
+2. The 3 mini-game world positions (hardcode as a const Dictionary in HUD.gd, comment WHY —
+   they match the scene instance transforms):
+       "l1_spoil_and_survive": Vector3(-70, 0, 70)
+       "l1_generator_fed":   Vector3(72, 0, 62)
+       "l1_last_stand":      Vector3(78, 0, -62)
+3. Each frame (or throttled ~10Hz), for each NOT-yet-completed mini-game: compute the
+   vector from the player to the destination, get its distance, and rotate the arrow to
+   point at it (screen-space). Show distance text like "42m". Hide a marker once that
+   mini-game is completed — query ObjectiveManager (autoload, likely
+   get_node("/root/ObjectiveManager") or an autoload singleton) via is_objective_completed(id).
+   If ObjectiveManager is not reachable, gate on nothing (always show) rather than crash —
+   use a null-safe check.
+4. Find the player node for the "from" position: the player is in group "player"
+   (get_tree().get_first_node_in_group("player")) — use its global_position. Null-safe.
+5. Keep it clean and mobile-readable: small arrows + distance, semi-transparent, not
+   clutter. Use Control nodes (TextureRect or a Label with an arrow glyph, or a simple
+   ColorRect triangle). Do NOT add heavy 3D markers.
+
+IMPLEMENTATION NOTES:
+- HUD.gd builds its UI in code (labels/containers created with .new()). Follow that style.
+- Screen-space direction: project the world direction onto the camera's basis, or simpler —
+  compute the angle between the player's facing and the direction to the target, and rotate
+  the arrow by that angle. Use the player's global_transform.basis or the camera yaw.
+- Throttle updates with an accumulator in _process to avoid per-frame churn.
+
+CONSTRAINTS: Godot 4.7, TABS, no # comments needed (it's .gd), comments explain WHY.
+Reuse REAL APIs, null-safe everywhere. Do NOT break existing HUD elements.
+READ BACK the file. Then commit:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scripts/ui/HUD.gd && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "feat(level1): HUD waypoint arrows + distance to the 3 mini-games for navigation"
+Report what you added (marker type, how direction is computed, how completion hides them) as final message.

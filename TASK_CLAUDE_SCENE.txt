@@ -1,0 +1,34 @@
+First read /storage/emulated/0/Games/Muakbank_zombie/MAP_EXPAND_CONTEXT.txt for full context.
+
+YOUR TASK (Claude, senior Godot engineer): Grow the Level 1 ground floor and spread the
+3 mini-games far apart so the world is big and explorable.
+You OWN and may edit ONLY: scenes/world/environment/old_town_enhanced.tscn. Do NOT touch
+StreetDetail.gd (another agent is expanding population), do NOT touch scripts.
+
+CHANGES in old_town_enhanced.tscn:
+1. GROUND FLOOR: the main playable floor is BoxMesh_floor_big (size Vector3(120,0.3,120),
+   ~line 165) with collision BoxShape3D_floor_big (120x120). Grow BOTH the mesh AND its
+   collision shape to ~Vector3(220, 0.3, 220) so there is a big open world. If there is
+   a visible ground MeshInstance3D using BoxMesh_floor_big, its scale/size must match.
+   IMPORTANT: if you change a sub_resource's size, any node referencing it updates
+   automatically; but if the floor is scaled via node transform instead, scale the node.
+   Keep uv1_scale proportional so the cobblestone texture does not stretch (if floor
+   doubles, roughly double uv1_scale from 30 -> ~55). Do NOT change load_steps unless you
+   add/remove an ext_resource.
+2. MINI-GAME SPREAD: the 3 mini-game instances (~line 3936+) are cramped near center.
+   Move them FAR apart so each is a distinct destination across the bigger map. Proposed
+   (adjust if they'd land off the new 220m floor — keep each >=25m inside the floor edge):
+       SpoilAndSurvive:  (-14,0,18)  -> (-70, 0, 70)
+       KeepGeneratorFed: (14,0,8)    -> (72, 0, 62)
+       LastStandStation: (30,0,-5)   -> (78, 0, -62)
+   Edit ONLY the transform line of each instance node. Keep them as instances of the same
+   ExtResource. These 3 spots must stay clear of the player spawn (-14,-14).
+3. Do NOT touch: fog, lighting, Environment, StreetDetail, any script. Only the floor
+   size + the 3 mini-game transforms.
+
+CONSTRAINTS: Godot 4.7 .tscn, TABS, NO # comments inside node/sub_resource blocks, every
+property REAL. If you add an ext_resource bump load_steps; you should not need to.
+READ BACK the edited region and confirm the 3 transforms + floor size are consistent.
+Then commit:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scenes/world/environment/old_town_enhanced.tscn && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "feat(level1): expand ground floor to 220m + spread the 3 mini-games into distinct destinations"
+Report old->new floor size + the 3 old->new mini-game positions as your final message.

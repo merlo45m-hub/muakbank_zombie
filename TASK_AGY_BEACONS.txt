@@ -1,0 +1,22 @@
+First read /storage/emulated/0/Games/Muakbank_zombie/VISUAL_CONTEXT.txt for full context.
+
+YOUR TASK (agy/gemini): Add a tall glowing BEACON above each of the 3 mini-games so players can spot them from a distance as landmarks.
+You OWN and may edit ONLY these 3 files:
+  scenes/minigames/spoil_and_survive.tscn
+  scenes/minigames/keep_generator_fed.tscn  (verify exact filename with ls)
+  scenes/minigames/last_stand_station.tscn  (verify exact filename with ls)
+Do NOT touch old_town_enhanced.tscn, StreetDetail.gd, HUD.gd, or any script.
+
+For EACH mini-game scene, add a landmark beacon as a child of the root Node3D (the node named after the mini-game, parent="."):
+1. A tall thin pillar/column (MeshInstance3D with a CylinderMesh or BoxMesh) rising ~8-10m above the podium, so it's visible over buildings.
+2. A glowing light at the top: an OmniLight3D with a distinct color PER mini-game so they're distinguishable:
+     Spoil & Survive  = warm gold/orange (food)   Color(1.0, 0.7, 0.2)
+     Keep Generator Fed = green (power/fuel)       Color(0.3, 1.0, 0.4)
+     Last Stand Station = red (combat/danger)      Color(1.0, 0.25, 0.2)
+   light_energy ~2.0, omni_range ~20m so the glow reads at night.
+3. The pillar mesh should use an emissive/unshaded material so it glows — add a StandardMaterial3D sub_resource with albedo_color = the beacon color, emission_enabled = true, emission = the color, emission_energy_multiplier ~2.0. If you add sub_resources you MUST bump load_steps in the [gd_scene] header by the number of new ext_resource/sub_resource entries (sub_resources created via [sub_resource] also count toward load_steps in Godot 4 — actually load_steps counts ext_resources + sub_resources + 1; verify by checking the current load_steps and the resource count, and set load_steps = total resources + 1).
+4. Keep it cheap (mobile): one cylinder mesh + one light per beacon, no shadows on the light (shadow_enabled = false).
+
+CONSTRAINTS: Godot 4.7 .tscn, TABS, NO # comments in node blocks, real properties. Place the beacon at the root so it inherits the mini-game's world position. READ BACK each file and confirm load_steps matches the resource count. Then commit all 3:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scenes/minigames/ && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "feat(level1): glowing color-coded beacon landmarks above each mini-game"
+Report the beacon design per mini-game + load_steps before/after as final message. If a mini-game scene filename differs, use the real one.

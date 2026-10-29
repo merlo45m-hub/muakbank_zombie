@@ -20,6 +20,12 @@ signal food_eaten(food_type, amount)
 @onready var environment: Node3D = $Environment
 
 # === GAME CONFIG ===
+# Shift length in seconds. Kept as a plain constant on purpose: Godot 4.7 does
+# NOT auto-load custom keys from project.godot (verified by probe — has_setting()
+# returns false and get_setting() returns the fallback for a key present only in
+# the file, and set_initial_value() would then clobber any file override), so a
+# "tunable" project setting here would silently ignore project.godot and always
+# read the default. Change this constant to retune the shift.
 const GAME_DURATION: float = 600.0  # 10 minutes
 const MAX_ZOMBIES: int = 12
 const ZOMBIE_SPAWN_INTERVAL: float = 3.0
@@ -36,7 +42,8 @@ var score: int = 0
 var zombies_killed: int = 0
 var damage_taken_this_level: bool = false  # for the "untouchable" achievement
 var game_active: bool = false
-var time_remaining: float = GAME_DURATION
+var time_remaining: float = GAME_DURATION  # reset to _shift_duration() in start_game()
+var _waves_cleared: bool = false
 
 # === OPTIONAL SYSTEMS (auto-detected) ===
 var wave_manager: Node = null
@@ -85,6 +92,8 @@ func _ready() -> void:
 	if objective_manager:
 		if objective_manager.has_signal("objective_updated"):
 			objective_manager.objective_updated.connect(_on_objective_updated)
+		if objective_manager.has_signal("objective_completed"):
+			objective_manager.objective_completed.connect(_on_objective_completed)
 	
 	# Set environment based on current level
 	_load_environment()
@@ -107,7 +116,13 @@ func _load_environment() -> void:
 ## coordinate: the world origin sits inside Building6 in old_town, and the cemetery's
 ## centre now has broken headstones on it.
 const SPAWN_HINTS := {
-	1: Vector3(-2.0, 0.15, -6.0),
+	# Old Town: the old hint (-2, 0.15, -25) sat in a pocket boxed in by Building1
+	# (left, 5.8m), Building2 (2.6m) and Building5. A far-corner spawn (34,-34) was
+	# open but put every building out of fog-range view. (-14, 0.15, -14) is open
+	# ground with 40m clear forward view + camera clearance on all sides (VPS scan
+	# score 33) — the previous (-2,-18) was boxed in by Building1/2/5 (only the 135°
+	# diagonal was open), so forward movement hit a building wall.
+	1: Vector3(-14.0, 0.15, -14.0),
 	# Cemetery: the centre IS the mausoleum. Census showed its arch filling 7.26% of
 	# the frame from 6.6 m with the pillars adding another 5%, because the probe used
 	# to settle ~2 m from it. Start on the western edge of the grave ring instead and
@@ -125,7 +140,7 @@ func _place_player(p: CharacterBody3D) -> void:
 	var spot := Vector3.INF
 	var ground_y := 0.0
 	for cand in _spawn_candidates(hint):
-		var gy := _ground_height(space, cand)
+		var gy := _ground_height(space, cand, p)
 		if is_inf(gy):
 			continue
 		var at := Vector3(cand.x, gy, cand.z)
@@ -152,10 +167,17 @@ func _spawn_candidates(hint: Vector3) -> Array[Vector3]:
 			out.append(hint + Vector3(cos(rad) * r, 0.0, sin(rad) * r))
 	return out
 
-func _ground_height(space: PhysicsDirectSpaceState3D, at: Vector3) -> float:
+func _ground_height(space: PhysicsDirectSpaceState3D, at: Vector3, player_body: CharacterBody3D) -> float:
 	# INF means the column is hollow - a hole in the level is not a spawn point.
-	var q := PhysicsRayQueryParameters3D.create(at + Vector3(0, 14, 0), at - Vector3(0, 14, 0))
+	# Cast from just above the player's head (2m), not 14m: a ray from high up hits
+	# rooftops / backdrop geometry floating over the spawn and reports that as the
+	# "ground", dropping the player 12m through the air at (-14,-14). Start low so
+	# we measure the actual floor under the player.
+	var q := PhysicsRayQueryParameters3D.create(at + Vector3(0, 2.5, 0), at - Vector3(0, 4, 0))
 	q.collide_with_areas = false
+	# The player is initially placed at the spawn hint in game.tscn. Without this
+	# exclusion, the hint's downward ray hits the player's capsule before the floor.
+	q.exclude = [player_body.get_rid()]
 	var hit := space.intersect_ray(q)
 	if hit.is_empty():
 		return INF
@@ -178,7 +200,7 @@ func _spot_is_clear(space: PhysicsDirectSpaceState3D, at: Vector3, p: CharacterB
 			return false
 	# Reject ledges: the ground has to be level within a step of the spot.
 	for d in [0.6, -0.6, 0.0]:
-		var gy := _ground_height(space, at + Vector3(d, 0, 0))
+		var gy := _ground_height(space, at + Vector3(d, 0, 0), p)
 		if is_inf(gy) or absf(gy - at.y) > 0.6:
 			return false
 	return true
@@ -218,6 +240,10 @@ func _setup_objectives() -> void:
 	# (kill quota removed — level completion is driven by WaveManager's all_waves_cleared signal)
 	objective_manager.add_objective("eat_food", "Eat to stay alive", 3)
 	objective_manager.add_objective("survive", "Survive the shift", 1)
+	# Level 1 also requires its three side challenges; controllers may re-register these ids.
+	objective_manager.add_objective("l1_spoil_and_survive", "Eat 15 fresh buffet dishes", 1)
+	objective_manager.add_objective("l1_generator_fed", "Power the bio-generator", 1)
+	objective_manager.add_objective("l1_last_stand", "Survive 3 checkpoint waves", 1)
 
 func _setup_achievements() -> void:
 	var am = get_node_or_null("AchievementManager")
@@ -233,14 +259,26 @@ func _setup_achievements() -> void:
 	if am.has_method("load_progress"):
 		am.load_progress()
 
+## The shift length. Kept as a plain constant on purpose: Godot 4.7 does NOT
+## auto-load custom keys from project.godot (verified by probe — has_setting()
+## returns false and get_setting() returns the fallback for a key present only in
+## the file, and set_initial_value() would then clobber any file override), so a
+## "tunable" setting here would silently ignore project.godot and always read the
+## default. Change this constant to retune the shift; there is no working
+## project-setting path for it.
+func _shift_duration() -> float:
+	return GAME_DURATION
+
+
 func start_game() -> void:
 	# game_active gates _on_player_damaged; keep it false through placement so a stray
 	# hit during the spawn frame cannot mark the run "damaged" for untouchable.
 	game_active = false
+	_waves_cleared = false
 	score = 0
 	zombies_killed = 0
 	damage_taken_this_level = false
-	time_remaining = GAME_DURATION
+	time_remaining = _shift_duration()
 	
 	# Reset player. The spot is PROBED against the level's real collision and then
 	# aimed at whatever is worth looking at - see _place_player(). A fixed coordinate
@@ -293,7 +331,20 @@ func _process(delta: float) -> void:
 	time_remaining -= delta
 	if time_remaining <= 0:
 		time_remaining = 0
-		end_game(true)  # Survived!
+		# The clock expiring is NOT automatically a win. Finishing Level 1 requires
+		# surviving the waves AND completing the mini-game objectives; the old code
+		# called end_game(true) here unconditionally, so the level reported
+		# "SHIFT COMPLETE!" with every objective at 0/3, 0/1, 0/1, 0/1 and unlocked
+		# the next level without the player ever touching a mini-game.
+		# Route through the same gate the wave path uses so both agree.
+		_waves_cleared = true
+		_check_level_complete()
+		# If the gate did not end the level, the mini-games are still outstanding.
+		# Stop the run cleanly rather than leaving the player in a live level with a
+		# frozen clock and no way to finish: nothing else ends this level now that
+		# the timer no longer wins it outright.
+		if game_active:
+			_finish_shift_incomplete()
 		return
 	
 	# Update HUD timer (cheap, only when second changes)
@@ -347,6 +398,52 @@ func _on_combo_changed(combo_count: int) -> void:
 func _on_objective_updated(_id: String, _progress: int, _target: int) -> void:
 	if hud and objective_manager and objective_manager.has_method("get_all_objective_texts"):
 		hud.update_objectives(objective_manager.get_all_objective_texts())
+
+func _on_objective_completed(_id: String) -> void:
+	_check_level_complete()
+
+func _all_minigames_done() -> bool:
+	if not objective_manager:
+		return true
+	var objectives = objective_manager.get("objectives")
+	if typeof(objectives) != TYPE_DICTIONARY:
+		return true
+	var minigame_ids: Array[String] = ["l1_spoil_and_survive", "l1_generator_fed", "l1_last_stand"]
+	var registered_count := 0
+	for id in minigame_ids:
+		if objectives.has(id):
+			registered_count += 1
+	# Older or stripped levels without any mini-game objectives remain survivable.
+	if registered_count == 0:
+		return true
+	if registered_count != minigame_ids.size() or not objective_manager.has_method("is_objective_completed"):
+		return false
+	for id in minigame_ids:
+		if not objective_manager.is_objective_completed(id):
+			return false
+	return true
+
+func _check_level_complete() -> void:
+	if not _waves_cleared or not game_active:
+		return
+	if _all_minigames_done():
+		end_game(true)
+	elif hud and hud.has_method("show_banner"):
+		hud.show_banner("CLEAR THE MINI-GAMES TO FINISH THE LEVEL")
+	else:
+		print("[Game] CLEAR THE MINI-GAMES TO FINISH THE LEVEL")
+
+
+## End the shift as NOT survived. Used when the clock runs out with mini-game
+## objectives still outstanding: the player is not punished with a game-over, but
+## the level is not credited as complete either, so the next level stays locked.
+func _finish_shift_incomplete() -> void:
+	if not game_active:
+		return
+	if hud and hud.has_method("show_banner"):
+		hud.show_banner("SHIFT OVER — MINI-GAMES INCOMPLETE")
+	print("[Game] Shift over with objectives incomplete — level not credited.")
+	end_game(false)
 
 func end_game(survived: bool) -> void:
 	if not game_active:
@@ -403,6 +500,10 @@ func on_zombie_killed(zombie_type: String) -> void:
 	
 	zombies_killed += 1
 	score += SCORE_PER_KILL
+	# Update the HUD kill counter immediately — emitting kills_changed alone left
+	# the HUD stuck at the start value (0) because nothing re-read it on each kill.
+	if hud and hud.has_method("update_kills"):
+		hud.update_kills(zombies_killed)
 	
 	# Apply combo multiplier if combo system present
 	if combo_system and combo_system.has_method("register_kill"):
@@ -472,8 +573,8 @@ func consume_food(food_type: String) -> bool:
 	return true
 
 func _on_all_waves_cleared() -> void:
-	if game_active:
-		end_game(true)
+	_waves_cleared = true
+	_check_level_complete()
 
 func _on_boss_spawned() -> void:
 	# WaveManager can tick into teardown after end_game; don't play boss music over

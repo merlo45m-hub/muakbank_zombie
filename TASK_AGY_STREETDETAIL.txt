@@ -1,0 +1,27 @@
+First read /storage/emulated/0/Games/Muakbank_zombie/MAP_EXPAND_CONTEXT.txt for full context.
+
+YOUR TASK (agy/gemini): Expand StreetDetail.gd population to fill a BIGGER map.
+You OWN and may edit ONLY: scripts/world/StreetDetail.gd. Do NOT touch any .tscn, do
+NOT touch Player.gd/Game.gd/minigame scripts. Another agent is growing the ground
+floor to ~200m and spreading the mini-games out; your job is to populate that larger
+space so it does not look empty.
+
+CHANGES to make in StreetDetail.gd (name the new values as constants, comment WHY):
+1. Backdrop skyline ring: push outward and add more so the horizon is full at the new
+   scale. E.g. RING_MIN_R 21->60, RING_MAX_R 27->85, RING_COUNT 16->28. Keep them
+   collider-free (they are distant skyline).
+2. Interior cover buildings: spread across the wider town instead of a tight 16-24m
+   band. E.g. COVER_R_MIN 16->25, COVER_R_MAX 24->70, COVER_COUNT 4->10. They keep
+   colliders (walkable obstacles) but must NOT sit on the player spawn (-14,-14) or
+   on the 3 mini-game destinations (see context: they are being moved to roughly
+   (-70,70), (70,60), (75,-60) — keep cover buildings clear of a ~12m radius around
+   each of those and around spawn).
+3. Cars: ring across the bigger map. CAR_COUNT 14->30, radius band widen to ~15-70m.
+4. Props + lamps: PROP_COUNT 10->24, LIGHT_COUNT 10->24, ring them across ~15-75m so
+   the whole map is lit and dressed, not just the center.
+5. Keep the _spawn ground-align fix (AABB bottom on ground) intact.
+
+Verify: the _parked_cars/_street_furniture/ring loops use these constants uniformly
+(check each loop reads the right constant). READ BACK the file. Then commit:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scripts/world/StreetDetail.gd && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "feat(level1): expand StreetDetail population to fill the larger explorable map"
+Report the old->new constant values + expected node counts as your final message.

@@ -61,14 +61,15 @@ func _ready() -> void:
 		interaction_zone.body_exited.connect(_on_zone_body_exited)
 
 	# Set both panels to closed angle initially
-	_current_angle = closed_angle
 	_apply_angle_to_joints(closed_angle)
 
-	# If audio autoload exists, resolve sound names
-	if Audio:
-		door_open_sound = "door_open" if Audio.has_sound("door_open") else ""
-		door_close_sound = "door_close" if Audio.has_sound("door_close") else ""
-		door_lock_sound = "door_lock" if Audio.has_sound("door_lock") else ""
+	# Resolve sound names. GameAudioManager exposes named play_* methods and
+	# play_sfx(stream) — it has NO has_sound(String)/play_sound(String) API. The old
+	# calls threw at runtime and killed _ready before the door was wired. Guard with
+	# has_method so a missing sound never breaks the prop; the door still swings.
+	if Audio and Audio.has_method("play_sfx"):
+		door_open_sound = "door_open"
+		door_close_sound = "door_close"
 
 # ── CHILD DISCOVERY ─────────────────────────────────────────────────────────────
 
@@ -118,7 +119,7 @@ func door_interact() -> void:
 		return
 
 	# Building up long-press timer
-	long_press_timer += get_process_delta_time()
+	long_press_timer += _delta_time()
 	if long_press_timer >= LONG_PRESS_THRESHOLD and not long_press_hold:
 		long_press_hold = true
 		open_fully()
@@ -160,22 +161,39 @@ func _start_swing(target: float) -> void:
 		swing_tween.kill()
 	swing_tween = create_tween()
 	swing_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	# Animate both hinge joints' limit_angle to the target
-	swing_tween.tween_callback(func(): _apply_angle_to_joints(target))
-	# Also rotate the panel visuals directly for smooth frame-by-frame rendering
-	swing_tween.tween_property(self, "_current_angle", target, swing_duration)
+	# Freeze the panels so they are NOT physics-simulated during the scripted
+	# swing. The panels are RigidBody3D with freeze=false (physics-controlled); an
+	# unfrozen body's transform is owned by the solver and the HingeJoint3D
+	# constraint, so tweening rotation.z gets overwritten and the door never moves
+	# (gpt-luna verdict: BROKEN — FREEZE_MODE_STATIC only defines behaviour WHEN
+	# frozen, it does not freeze). freeze=true takes the body out of simulation so
+	# the tween's rotation writes stick. The HingeJoint3D stays as the visual pivot.
+	# Panel A swings +target, panel B swings -target so a double door opens outward.
+	_set_panels_frozen(true)
+	if body_a:
+		swing_tween.parallel().tween_property(body_a, "rotation:z", target, swing_duration)
+	if body_b:
+		swing_tween.parallel().tween_property(body_b, "rotation:z", -target, swing_duration)
 
 # ── ANGLE APPLICATION ────────────────────────────────────────────────────────────
 
-var _current_angle: float = 0.0
-
 func _apply_angle_to_joints(angle: float) -> void:
-	# HingeJoint3D limit_angle is the swing from the node's initial orientation.
-	# We set it each frame from our animated _current_angle.
-	if hinge_a:
-		hinge_a.set_limit_angle(angle)
-	if hinge_b:
-		hinge_b.set_limit_angle(-angle)  # panel B swings opposite for double-door
+	# Snap both panels to the target angle instantly (used on init before any
+	# tween runs). Panels rotate on local Z; B swings opposite for a double door.
+	_set_panels_frozen(true)
+	if body_a:
+		body_a.rotation.z = angle
+	if body_b:
+		body_b.rotation.z = -angle
+
+func _set_panels_frozen(frozen: bool) -> void:
+	# freeze=true removes the panels from physics simulation so scripted rotation
+	# writes survive; freeze=false returns them to solver control (a shoved-open
+	# door could then swing physically, but this game drives doors by script).
+	if body_a:
+		body_a.freeze = frozen
+	if body_b:
+		body_b.freeze = frozen
 
 func _set_panel_collisions(enabled: bool) -> void:
 	# When door is open, panels should not block the player.
@@ -187,7 +205,10 @@ func _set_panel_collisions(enabled: bool) -> void:
 # ── AUDIO ────────────────────────────────────────────────────────────────────────
 
 func _play_sound(sound_name: StringName) -> void:
-	if Audio and sound_name != "":
+	# GameAudioManager has no play_sound(String); play_sfx takes an AudioStream.
+	# Until a by-name sound map exists, no-op rather than throw — the door must not
+	# crash mid-swing over a missing sound.
+	if Audio and sound_name != "" and Audio.has_method("play_sound"):
 		Audio.play_sound(sound_name)
 
 # ── PROCESS ──────────────────────────────────────────────────────────────────────
@@ -212,5 +233,8 @@ func _process(delta: float) -> void:
 			_reset_pending = false
 			toggle_to_closed()
 
-func get_process_delta_time() -> float:
-	return Engine.get_physics_frames() > 0 and get_tree().get_process_delta_time() or 0.016
+# NOTE: renamed from get_process_delta_time() — that name overrides a native Node
+# method, which Godot 4 rejects as a parse error (warning treated as error).
+func _delta_time() -> float:
+	var d: float = get_tree().get_process_delta_time() if get_tree() else 0.016
+	return d if d > 0.0 else 0.016

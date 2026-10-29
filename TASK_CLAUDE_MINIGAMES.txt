@@ -1,0 +1,29 @@
+First read /storage/emulated/0/Games/Muakbank_zombie/MINIGAME_CONTEXT.txt for full context.
+
+YOUR TASK (Claude, senior Godot engineer): Make the KEEP GENERATOR FED and LAST STAND STATION
+mini-games functional. You OWN and may edit ONLY:
+  scripts/gameplay/BioGeneratorController.gd
+  scripts/gameplay/BioGeneratorHopper.gd
+  scripts/gameplay/LastStandStationController.gd
+  scenes/minigames/keep_generator_fed.tscn
+  scenes/minigames/last_stand_station.tscn
+Do NOT touch SpoilAndSurvive files (another agent owns those), Game.gd, HUD.gd, StreetDetail.gd,
+or old_town_enhanced.tscn.
+
+PART A — Keep Generator Fed: the player deposits food as fuel to power a generator. Investigate
+BioGeneratorController.gd + BioGeneratorHopper.gd. Verify: can the player deposit food (walk to
+hopper + interact/attack)? Does deposited fuel accumulate? Does reaching the fuel goal complete
+the objective (update_progress on l1_generator_fed)? Fix the deposit->fill->complete loop if thin
+or broken. Add clear feedback (fuel gauge / progress / completion state).
+
+PART B — Last Stand Station: survive checkpoint waves. Investigate LastStandStationController.gd.
+Verify: do waves spawn at the station, can they be cleared, does clearing them complete the
+objective (l1_last_stand)? Check CheckpointArmoryTerminal.gd too if referenced. Fix the
+wave->clear->complete loop. Note: this mini-game is MEANT to have zombies (it is a combat gate),
+so do NOT make it zombie-free — unlike the eating/generator ones.
+
+CONSTRAINTS: Godot 4.7, TABS in .gd, NO # comments in .tscn, real properties, bump load_steps
+only if adding ext_resource. Reuse REAL APIs. Do NOT break auto-start-on-zone-entry or the 5m
+InteractionZones. READ BACK each file, then commit:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scripts/gameplay/BioGeneratorController.gd scripts/gameplay/BioGeneratorHopper.gd scripts/gameplay/LastStandStationController.gd scenes/minigames/keep_generator_fed.tscn scenes/minigames/last_stand_station.tscn && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "feat(level1): make Generator Fed and Last Stand mini-games functional"
+Report what was broken/thin in each, what you fixed, and how each loop now completes its objective.

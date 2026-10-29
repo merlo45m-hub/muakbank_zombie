@@ -10,11 +10,13 @@ var flap_timer: float = 0.0
 
 func _post_ready() -> void:
 	max_health = 10
-	move_speed = 4.5
-	damage = 8
+	# Was 4.5 = player speed, so a chicken matched the player and could not be
+	# outrun. Drop to 3.6 so the player can kite it, and slow the attack to 0.8s.
+	move_speed = 3.6
+	damage = 5
 	attack_range = 1.0
-	detection_range = 8.0
-	attack_cooldown_time = 0.5
+	detection_range = 30.0
+	attack_cooldown_time = 0.8
 	fade_duration = 0.3
 
 func _physics_process(delta: float) -> void:

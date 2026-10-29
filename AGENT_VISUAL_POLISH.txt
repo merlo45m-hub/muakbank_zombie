@@ -1,0 +1,19 @@
+Muakbank Zombie Godot 4.7 — VISUAL POLISH for Level 1 (Old Town). Project root: /storage/emulated/0/Games/Muakbank_zombie. Renderer MOBILE/Compatibility. FOCUS ON LEVEL 1 ONLY.
+
+A vision playtest (gpt-luna) confirmed: the town is POPULATED (47 StreetDetail nodes, buildings + roadside shrubs visible) and READABLE (fog fixed), BUT two issues remain:
+1. CARS are placed (log says cars=50) but NOT VISIBLE in the street views — the player never sees a car on the route they walk.
+2. The ROAD is very dark and bare — reads as near-black asphalt with no life.
+
+The spawn is at (-14,-14); the player roams the whole town. StreetDetail currently scatters cars at radius 10-18m (_parked_cars in scripts/world/StreetDetail.gd) and lamps at 12-20m.
+
+YOUR TASK (use godot-ai MCP tools on the VPS editor — scene_get_hierarchy, node_find, node_get_properties, editor_screenshot — to inspect live, then edit):
+
+A) MAKE CARS VISIBLE: Investigate why cars don't show. Likely causes: (a) car models are too small / sink below ground, (b) cars spawn inside buildings, (c) car scale/height wrong. Check a few placed car nodes' global_position + scale via node_find. Fix so parked cars are clearly visible from the street — ensure they sit ON the ground (y correct), are a sensible size (~1.5m), and not buried in buildings. You may nudge CAR_HEIGHT or the radius band. Keep the ring scatter.
+
+B) LIGHT THE ROAD: the road is near-black. Options: (a) add a few more street lamps clustered nearer the road/center where the player walks, (b) add a subtle DirectionalLight or raise the existing ambient slightly, (c) add emissive detail to the ground material. Pick the cleanest. Do NOT wash out the fog contrast that was just fixed — keep it moody but readable. If editing old_town_enhanced.tscn Environment, only tweak real Environment properties (TABS, no # comments, don't change load_steps unless you add an ext_resource and bump it).
+
+C) OPTIONAL road dressing: if road props (dumpsters/cones/signs) are also clustered off-route, ring them too so the streets feel lived-in wherever the player walks.
+
+RULES: Godot 4.7, TABS, no anti-AI-slop (no god functions, name constants, comments explain WHY). Prefer SMALL targeted edits over rewrites. Edit ONLY scripts/world/StreetDetail.gd and/or scenes/world/environment/old_town_enhanced.tscn. Do NOT touch Player.gd, Game.gd, CharacterSelect.gd, or other levels. After editing READ back + verify via godot-ai editor_screenshot that cars are visible and the road is lit. Then commit:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scripts/world/StreetDetail.gd scenes/world/environment/old_town_enhanced.tscn && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "feat(level1): make parked cars visible on the route + light the dark road"
+Report exactly what you changed + evidence (car node positions/scales, screenshot) as final message.

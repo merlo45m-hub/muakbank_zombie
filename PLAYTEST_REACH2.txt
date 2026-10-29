@@ -1,0 +1,19 @@
+Muakbank Zombie - REACH + ACTIVATE the buffet (exclusions fixed). adb -s 10.0.0.182:45601 for ALL commands. FOCUS ON LEVEL 1 ONLY. Do NOT edit files. Use vision (Read) on screenshots.
+
+PEACEFUL MODE IS ON: no zombies, no damage, unlimited time. The buffet (Spoil & Survive) now has a CLEAR 16m-radius approach (props no longer spawn on it). It AUTO-STARTS when you walk into its interaction zone.
+
+NAV (viewport 1950x900, physical = viewport*1.6):
+1. adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie; sleep 2; adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher; sleep 5
+2. input tap 1560 672 (title PLAY); sleep 3
+3. input tap 2264 1370 (char-select red PLAY); sleep 3
+4. input tap 1040 528 (Level 1 PLAY NOW); sleep 6 = gameplay
+
+CRITICAL NAVIGATION METHOD (the arrow is camera-relative — follow it on SCREEN, do NOT use fixed world directions):
+- Screenshot + Read. Find the CLOSEST waypoint (smallest distance, the buffet ~16m at start). Look at its ARROW: which way does the triangle point on screen? Up=swipe joystick up, Down=swipe down, Left=swipe left, Right=swipe right.
+- Swipe the joystick (start at physical 250,1090) in that screen direction for ~2.5s. Joystick swipes: up=250,1090 to 250,850; down=250,1090 to 250,1330; left=250,1090 to 130,1090; right=250,1090 to 370,1090.
+- RE-screenshot + Read after EACH swipe. Re-read the arrow. If the distance INCREASED, you went the wrong way — reverse. If it DECREASED, keep going the same way. Iterate: the distance should trend 16 -> 12 -> 8 -> 4 -> 0.
+- The camera yaw changes as you move, so the arrow's screen direction changes too. ALWAYS re-read before each swipe. This read-correct loop is the key.
+
+WHEN DISTANCE < 5m: screenshot + Read. You should see the buffet table (food platters on a podium) and possibly a tall GOLD glowing beacon pillar above it. Walk the last few metres in. The round should AUTO-START: the top-center objective panel timer begins counting down from 60s and "FRESH DISHES: 0/15" becomes the active goal.
+
+FINAL REPORT (cite screenshots + log): (1) Confirm peaceful (no zombies/damage). (2) Show the distance trending down as you followed the arrow (list the sequence of closest-distance readings). (3) Did you REACH the buffet — describe what you saw (table, gold beacon, 3D prompt)? (4) Did it AUTO-START — did the timer start counting / objective change? Cite the log: adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog_reach2.txt then grep for round/buffet/ACTIVE. (5) If you could NOT reach it, the closest distance you hit and what blocked you. Be honest and specific — do NOT fabricate activation.

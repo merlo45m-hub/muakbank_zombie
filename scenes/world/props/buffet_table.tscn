@@ -1,0 +1,112 @@
+[gd_scene load_steps=13 format=3]
+
+[sub_resource type="StandardMaterial3D" id="TableWoodMaterial"]
+albedo_color = Color(0.24, 0.16, 0.1, 1)
+roughness = 0.75
+
+[sub_resource type="StandardMaterial3D" id="TableClothMaterial"]
+albedo_color = Color(0.85, 0.82, 0.78, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="SignFrameMaterial"]
+albedo_color = Color(0.12, 0.13, 0.15, 1)
+metallic = 0.7
+roughness = 0.45
+
+[sub_resource type="BoxMesh" id="BackTableMesh"]
+size = Vector3(8, 0.8, 1.4)
+
+[sub_resource type="BoxMesh" id="BackClothMesh"]
+size = Vector3(7.9, 0.06, 1.35)
+
+[sub_resource type="BoxMesh" id="WingTableMesh"]
+size = Vector3(1.4, 0.8, 4.4)
+
+[sub_resource type="BoxMesh" id="WingClothMesh"]
+size = Vector3(1.35, 0.06, 4.35)
+
+[sub_resource type="BoxMesh" id="MarqueeSignMesh"]
+size = Vector3(6.5, 0.7, 0.15)
+
+[sub_resource type="CylinderMesh" id="PostMesh"]
+top_radius = 0.06
+bottom_radius = 0.06
+height = 3.2
+
+[sub_resource type="BoxShape3D" id="BackCollisionShape"]
+size = Vector3(8, 0.85, 1.4)
+
+[sub_resource type="BoxShape3D" id="LeftCollisionShape"]
+size = Vector3(1.4, 0.85, 4.4)
+
+[sub_resource type="BoxShape3D" id="RightCollisionShape"]
+size = Vector3(1.4, 0.85, 4.4)
+
+[node name="BuffetTable" type="StaticBody3D"]
+collision_layer = 1
+
+[node name="BackTableMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, -0.7)
+mesh = SubResource("BackTableMesh")
+surface_material_override/0 = SubResource("TableWoodMaterial")
+
+[node name="BackClothMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.83, -0.7)
+mesh = SubResource("BackClothMesh")
+surface_material_override/0 = SubResource("TableClothMaterial")
+
+[node name="LeftWingMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3, 0.4, 2.2)
+mesh = SubResource("WingTableMesh")
+surface_material_override/0 = SubResource("TableWoodMaterial")
+
+[node name="LeftClothMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3, 0.83, 2.2)
+mesh = SubResource("WingClothMesh")
+surface_material_override/0 = SubResource("TableClothMaterial")
+
+[node name="RightWingMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 0.4, 2.2)
+mesh = SubResource("WingTableMesh")
+surface_material_override/0 = SubResource("TableWoodMaterial")
+
+[node name="RightClothMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 0.83, 2.2)
+mesh = SubResource("WingClothMesh")
+surface_material_override/0 = SubResource("TableClothMaterial")
+
+[node name="MarqueePostLeft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3, 1.6, -1.2)
+mesh = SubResource("PostMesh")
+surface_material_override/0 = SubResource("SignFrameMaterial")
+
+[node name="MarqueePostRight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 1.6, -1.2)
+mesh = SubResource("PostMesh")
+surface_material_override/0 = SubResource("SignFrameMaterial")
+
+[node name="MarqueeBoard" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -1.2)
+mesh = SubResource("MarqueeSignMesh")
+surface_material_override/0 = SubResource("SignFrameMaterial")
+
+[node name="MarqueeLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -1.1)
+modulate = Color(1, 0.82, 0.25, 1)
+outline_modulate = Color(0.15, 0.1, 0.05, 1)
+text = "FRESH BITES ONLY — AVOID THE ROT"
+font_size = 40
+outline_size = 6
+pixel_size = 0.004
+
+[node name="CollisionBack" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, -0.7)
+shape = SubResource("BackCollisionShape")
+
+[node name="CollisionLeft" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3, 0.425, 2.2)
+shape = SubResource("LeftCollisionShape")
+
+[node name="CollisionRight" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 0.425, 2.2)
+shape = SubResource("RightCollisionShape")

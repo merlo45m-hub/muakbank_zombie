@@ -28,6 +28,40 @@ extends RefCounted
 
 const MARKER_PATH := "user://dev_mode"
 const MARKER_VERSION := "1"
+const PEACEFUL_PATH := "user://dev_peaceful"
+
+
+## True when "peaceful mode" is on — no zombies spawn, so the level can be
+## explored / tuned / playtested without survival pressure. Separate from dev_mode
+## so it can be toggled independently. Persists via a marker file like dev_mode.
+static func is_peaceful() -> bool:
+	if OS.has_feature("editor"):
+		return false
+	return FileAccess.file_exists(PEACEFUL_PATH)
+
+
+## Turn peaceful mode on (no zombie spawns). Safe to call repeatedly.
+static func enable_peaceful() -> void:
+	var f := FileAccess.open(PEACEFUL_PATH, FileAccess.WRITE)
+	if f:
+		f.store_string(MARKER_VERSION)
+		f.close()
+
+
+## Turn peaceful mode off (zombies spawn normally). Returns true if off after the call.
+static func disable_peaceful() -> bool:
+	if FileAccess.file_exists(PEACEFUL_PATH):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(PEACEFUL_PATH))
+	return not FileAccess.file_exists(PEACEFUL_PATH)
+
+
+## Flip peaceful mode. Returns the NEW state.
+static func toggle_peaceful() -> bool:
+	if is_peaceful():
+		disable_peaceful()
+	else:
+		enable_peaceful()
+	return is_peaceful()
 
 
 ## True when dev tooling (dev_room, DebugOverlay, title dev menu) should run.

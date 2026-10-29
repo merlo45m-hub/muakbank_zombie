@@ -11,9 +11,9 @@ var bark_timer: float = 0.0
 func _post_ready() -> void:
 	max_health = 30
 	move_speed = 4.0
-	damage = 10
+	damage = 6
 	attack_range = 1.6
-	detection_range = 14.0
+	detection_range = 30.0
 	attack_cooldown_time = 1.2
 
 func _physics_process(delta: float) -> void:

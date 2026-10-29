@@ -53,5 +53,8 @@ func spawn_drops(world_pos: Vector3) -> void:
 	for item in roll_drops():
 		if item is PackedScene:
 			var instance = item.instantiate()
-			instance.global_position = world_pos + Vector3(randf_range(-0.5, 0.5), 0.5, randf_range(-0.5, 0.5))
+			# Add to the tree BEFORE touching global_position — a Node3D's
+			# global_position setter asserts is_inside_tree(), so setting it on a
+			# freshly instantiated (detached) node throws every kill.
 			scene.add_child(instance)
+			instance.global_position = world_pos + Vector3(randf_range(-0.5, 0.5), 0.5, randf_range(-0.5, 0.5))

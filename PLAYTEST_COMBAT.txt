@@ -1,0 +1,16 @@
+Muakbank Zombie — LEVEL 1 COMBAT PLAYTEST. adb -s 10.0.0.182:45601 for ALL commands. FOCUS ON LEVEL 1 ONLY. Do NOT edit files. Use vision (Read) on screenshots.
+
+NAV (verified, viewport 1950x900 scale 1.6 -> physical = viewport*1.6):
+1. adb -s 10.0.0.182:45601 shell am force-stop com.merlo45.muakbankzombie; sleep 2; adb -s 10.0.0.182:45601 shell am start -n com.merlo45.muakbankzombie/com.godot.game.GodotAppLauncher; sleep 5
+2. input tap 1560 672 (title PLAY) -> sleep 3
+3. input tap 2264 1370 (char-select red PLAY) -> sleep 3
+4. input tap 1040 528 (Level 1 PLAY NOW card) -> sleep 5  = in gameplay
+
+COMBAT TEST — the player now spawns ON THE GROUND (was a bug spawning 12m in air, now fixed). Verify the core loop actually works:
+A. Confirm in gameplay (screenshot + Read): is the player character visible standing on the ground? Is the view an open street or indoor space?
+B. Wait ~12s for the first zombie to spawn and approach (screenshot + Read): does a zombie appear and walk toward the player?
+C. FIGHT: move the joystick to walk toward/around the zombie (input swipe 250 1090 250 900 1500), then tap ATTACK. The ATTACK button is bottom-right, roughly viewport(1650,780) -> physical(2640,1248). Tap it several times: adb -s 10.0.0.182:45601 shell input tap 2640 1248 (repeat 4-5x with 0.5s gaps). Screenshot + Read after.
+D. Check the log for the fight outcome: adb -s 10.0.0.182:45601 logcat -d -s godot:* > /data/data/com.termux/files/home/glog_combat.txt. Look for: zombie killed? player damage? KILLS counter? "Took X damage"? "DIED"? How long did the player survive?
+E. Pull the score/health state from the screenshot HUD (top-left HEALTH bar, top-right SCORE/KILLS).
+
+FINAL REPORT (cite screenshots + log lines): (1) Does the player spawn on the ground and MOVE normally now? (2) Do zombies spawn, approach, and can the player KILL them (KILLS counter goes up)? (3) How long does the player survive, and what kills them — zombie swarm too fast, or can't fight back? (4) Is the combat loop FUN/functional or still broken? (5) Top 3 fixes to make Level 1 actually playable and fun. Be brutally specific with evidence. Do NOT fabricate — if you can't reach gameplay or the fight doesn't work, say exactly what you observed.

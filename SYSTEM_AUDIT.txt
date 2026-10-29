@@ -1,0 +1,169 @@
+SYSTEM AUDIT — Hermes tools & skills. READ-ONLY. DO NOT EDIT, DELETE, OR COMMIT ANYTHING.
+
+You are auditing a working Hermes Agent installation on Termux/Android for
+REDUNDANCY and INEFFICIENCY, and for opportunities to improve it. This is a
+development environment used for Godot game work (Muakbank Zombie) and general
+engineering. Report findings with ranked recommendations; the human decides what
+gets actioned.
+
+ABSOLUTE RULE: read-only. Do not modify, move, delete, create, or commit any
+file. Do not change config. You may run read commands, cat/grep, and probes that
+do not mutate state. If you think something should change, RECOMMEND it — never
+do it.
+
+=====================================================================
+SCOPE
+=====================================================================
+
+1. SKILLS  (~/.hermes/skills/ — ~40 installed, listed below)
+   - Redundancy: overlapping scope, duplicated instructions, multiple skills
+     teaching the same thing, superseded older versions.
+   - Bloat: excessively long SKILL.md files that will eat context on every load
+     (report total lines/bytes per skill and flag the worst offenders).
+   - Staleness: instructions that are now wrong, reference dead paths, or
+     document behaviour that has since changed.
+   - Gaps: repeated hard-won lessons that are NOT captured in any skill (you can
+     infer these from the session history below).
+   - Known suspects to examine closely:
+       * design-taste-frontend AND design-taste-frontend-v1 (v1 kept "for
+         projects depending on exact behaviour" — is anything actually using it?)
+       * godot-game-dev (SKILL.md is ~100KB, plus ~25 reference files) — is that
+         size justified, or should parts be split/trimmed?
+       * the "hermes/*" category (agents-md-authoring, godot-ai-mcp,
+         hermes-install-maintenance, hermes-plugins-skills-setup,
+         termux-cli-agents) — overlap with top-level skills?
+       * superpowers:* plugin skills — many are generic process skills; are they
+         adding value or just bulk?
+       * reverse-engineer-anything vs rea MCP — is the skill still relevant now
+         the rea MCP is disabled?
+
+2. MEMORY (the MEMORY + USER PROFILE blocks injected every turn)
+   - Both are near their character caps (memory ~87-92%, user profile ~98%).
+   - Look for: stale entries, entries that should live in a skill instead,
+     duplication between memory and a skill, anything that no longer matches
+     reality (e.g. paths, tool states).
+   - Read the actual files:
+       ~/.hermes/mnemosyne/... (Mnemosyne is the active provider)
+     and report what is in the injected blocks vs what is durable.
+   - Flag anything that is TASK PROGRESS rather than a durable fact — that
+     belongs in session history, not in always-on memory.
+
+3. MCP SERVERS (hermes mcp list; config in ~/.hermes/config.yaml)
+   - Current: docs, filesystem, github, godot-ai (all over ssh to the VPS),
+     rea (local npx, DISABLED/broken, user-deferred).
+   - godot-ai: MCP server 4.3.0 + addon 4.3.0, 47 tools. NOTE the editor-side
+     tools work but the live-runtime tools (game_manage) do NOT work headless on
+     Godot 4.7 — is the tool set being loaded more broadly than it is usable?
+   - rea: broken for months, user says "we don't need it now". Should the entry
+     be removed from config, or kept disabled? What is the cost of keeping it?
+   - Any overlap between MCP filesystem tools and the built-in search_files /
+     read_file tools? (The user's own routing rule says: phone -> search_files,
+     VPS -> MCP filesystem, GitHub -> gh CLI.)
+
+4. CLI AGENT TOOLCHAIN
+   - agy (Antigravity CLI) — per-model quota, opus 429s, gemini works. Has its
+     own 5 MCPs registered (docs, filesystem, fs-project, github, test-ssh).
+     NOTE: agy's "docs" and "test-ssh" both expose the same docs_* tool names —
+     a failure in one is MASKED by the other. Worth flagging.
+   - Claude Code — driven headless via `set -a; source ~/.zshrc; set +a;
+     claude -p "..." --allowedTools "..." < /dev/null`. Known gotchas:
+     ANTHROPIC_BASE_URL must be https://openrouter.ai/api (no trailing /v1);
+     ~/.claude.json must NOT carry an oauthAccount or it pins provider routing to
+     anthropic-only and 400s.
+   - Codex CLI — has a proot DNS/TLS wrapper at ~/.local/bin/codex.
+   - Is there redundancy across these three agents' MCP registrations? Could they
+     share one config?
+
+5. THE SESSION-START HEALTH CHECK
+   - A skill (termux-cli-agents) now mandates a startup check: probe agy/claude/
+     codex with real tasks + gh + MCP counts, one-line table, before any work.
+   - Is it well-formed? Is it duplicated anywhere else? Is it actually runnable
+     as written (check every command in it resolves)?
+   - Cost: how long does it take, and is that worth it every session?
+
+6. DELEGATION / WORKFLOW PATTERNS
+   - The standing model: Hermes curates (decides, reviews, commits, owns user
+     comms), agents build (agy/Claude/Codex/gpt-luna). Verify the skills encode
+     this consistently.
+   - Look for workflow instructions that CONTRADICT each other between skills.
+   - The user has repeatedly corrected: "you are the curator, you shouldn't be
+     doing none of that" and "dispatch diagnosis to an agent, never investigate
+     inline". Check whether the skills make that unambiguous enough that it
+     would not need repeating.
+
+=====================================================================
+SESSION HISTORY — hard-won lessons (use these to find GAPS)
+=====================================================================
+These are real events from recent sessions. If a lesson is NOT captured in a
+skill or memory, that is a GAP worth reporting.
+
+- A probe that HARD-CODED a copy of a constant and rebuilt synthetic objects
+  printed "RESULT PASS" while testing nothing. Editing the real code changed
+  none of its numbers. Lesson: a probe must load the REAL script/scene; run a
+  NEGATIVE CONTROL (re-introduce the bug, confirm the probe FAILS).
+- Godot control geometry: a full-screen Control with default mouse_filter STOP
+  swallows every touch, silently disabling a feature whose handler is correct.
+- Two input paths must stay in sync (keyboard ran _try_prop_interaction(), the
+  mobile button did not) — a feature worked on keyboard, not touch.
+- A timer that wins the game without consulting the win condition.
+- A CanvasLayer root with no visible=false rendered idle defaults forever.
+- _skeletal was null at attack time because rig re-instantiation + animator
+  re-parent broke the handle; the is_instance_valid() guard swallowed it.
+- Godot 4.7 will NOT read a custom key from project.godot (4 probes proved it);
+  set_initial_value() actively clobbers file overrides.
+- tar syncs that drop .godot/ wipe global_script_class_cache.cfg, so every
+  class_name fails to resolve — a sync artifact, not a code bug.
+- Godot 4 API renames that are PARSE-FATAL so a probe exits 124 with zero
+  output and looks like a hang: get_viewport_rect() on a bare Node, and
+  Rect2.intersect() (Godot 3) vs intersection() (Godot 4).
+- An agent's "RESULT: VERIFIED" report where the install timestamp was stale —
+  it tested an old build and produced a confident, fictional report.
+- The godot-ai addon was installed but never listed in [editor_plugins]
+  enabled, so the in-editor half of the bridge never loaded while
+  `hermes mcp test` happily reported 47 tools.
+- godot-ai MCP's live-runtime ops do not work headless on Godot 4.7; its
+  EDITOR tools do.
+- An agy "review" run can exit 0 having done nothing; and a build delegation can
+  exit 0 having edited ZERO files. git status is the ground truth, not exit code.
+- Probes must be dispatched to agents, not hand-cranked by Hermes (repeated
+  user correction).
+
+=====================================================================
+ENVIRONMENT FACTS (verify, don't assume)
+=====================================================================
+- HOME=/data/data/com.termux/files/home, Termux/aarch64, Hermes runs in a proot.
+- Hermes repo: $HOME/Hermes-Agent. Main venv: $HOME/hermes-env (py3.14).
+- Mnemosyne is the active memory provider (local SQLite).
+- Skills live in ~/.hermes/skills/ (categories incl. hermes/, devops/).
+- Superpowers plugin skills under ~/.hermes/plugins/superpowers/skills/.
+- VPS: `ssh vps` (key auth), Godot 4.7, export templates present.
+- Game project: /storage/emulated/0/Games/Muakbank_zombie (direct from Termux).
+- Device: adb serial 10.0.0.182:35653.
+
+=====================================================================
+DELIVERABLE
+=====================================================================
+Produce a ranked report:
+
+A. REDUNDANCIES — what overlaps, with evidence (file paths + line counts), and
+   what you would consolidate. Ranked by context/cost saved.
+
+B. INEFFICIENCIES — things that waste time, tokens, or turns. Include the
+   session-start health check cost, oversized skills, and any tool that is
+   loaded/registered but unusable.
+
+C. INCORRECT OR STALE — instructions that are now wrong, with the file and the
+   correction.
+
+D. GAPS — lessons from the history above (and any others you spot) that are not
+   captured in any skill or memory.
+
+E. TOP 5 RECOMMENDED ACTIONS — each with: what, why, expected saving, and RISK
+   (what breaks if done wrong). Mark anything DESTRUCTIVE clearly.
+
+Be concrete: cite file paths and real line counts. Do not speculate where you
+can measure. Distinguish "verified by reading" from "inferred".
+
+End with: 'RESULT: AUDITED <one-line summary>'
+
+REMINDER: READ-ONLY. Recommend, never act.

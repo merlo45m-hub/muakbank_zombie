@@ -1,0 +1,27 @@
+=== MUAKBANK ZOMBIE — LEVEL 1 MINI-GAME POLISH — SHARED CONTEXT ===
+Project root: /storage/emulated/0/Games/Muakbank_zombie. Branch: feat/charselect-cinematic.
+Godot 4.7. Renderer MOBILE/Compatibility. FOCUS ON LEVEL 1 ONLY.
+
+STATE: Core game works. The 3 mini-games exist and are activatable (auto-start on zone entry,
+5m InteractionZone). Their objective IDs: l1_spoil_and_survive, l1_generator_fed, l1_last_stand.
+Level-complete gate in Game.gd requires all waves cleared AND all 3 mini-games done
+(_all_minigames_done + _check_level_complete). The mini-games are at (-14,2),(28,20),(30,-24).
+
+GOAL: make each mini-game genuinely FUN and FUNCTIONAL — clear objective, clear feedback,
+satisfying to complete. Right now they activate but the inner mechanic may be thin.
+
+THE 3 MINI-GAMES (each agent owns ONE, disjoint files):
+1. Spoil & Survive (SpoilAndSurviveController.gd + scenes/minigames/spoil_and_survive.tscn +
+   scripts/world/interactive/BuffetPlatterSlot.gd): eat 15 fresh dishes in 60s, avoid tainted
+   ones. Check: does eating actually work (walk to platter + attack/interact eats a dish)? Does
+   the combo/taint logic function? Is there clear feedback when you eat good vs tainted?
+2. Keep Generator Fed (BioGeneratorController.gd + BioGeneratorHopper.gd): deposit food as
+   fuel. Check: can the player actually deposit food? Does the generator fill up / complete?
+3. Last Stand Station (LastStandStationController.gd): survive checkpoint waves. Check: do the
+   waves spawn and can they be cleared to complete the objective?
+
+CONSTRAINTS (all): Godot 4.7, TABS in .gd, NO # comments in .tscn node blocks, real properties,
+bump load_steps only if adding ext_resource. Reuse REAL APIs, no anti-AI-slop. Do NOT break the
+working spawn/movement/combat/waypoints. Do NOT touch Game.gd, HUD.gd, StreetDetail.gd,
+old_town_enhanced.tscn, or other mini-games' files. READ BACK, then commit with your task's
+git command. Report what you changed + how you verified it works.

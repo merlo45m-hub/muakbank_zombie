@@ -6,9 +6,12 @@ extends Node3D
 signal zombie_killed(zombie_type)
 
 @export var max_zombies: int = 12
-@export var spawn_interval: float = 3.0
-@export var spawn_radius: float = 15.0
-@export var min_spawn_distance: float = 8.0
+# 5.0s (was 3.0s): early waves ramp more gently so player is not swarmed en route to objectives
+@export var spawn_interval: float = 5.0
+# 25.0s (was 10.0s): player needs ~15-20s travel to nearest mini-game; 25s allows real progress before pressure starts
+@export var spawn_grace_period: float = 25.0
+@export var spawn_radius: float = 18.0
+@export var min_spawn_distance: float = 9.0
 
 # --- Scene preloads ---
 var zombie_dog_scene = preload("res://scenes/characters/zombie_dog.tscn")
@@ -22,6 +25,7 @@ var zombie_spitter_scene = preload("res://scenes/characters/zombie_spitter.tscn"
 var player: Node3D = null
 var active_zombies: Array = []
 var can_spawn: bool = false
+var _first_spawn_done: bool = false
 var difficulty_manager: Node = null
 var current_level: int = 1
 
@@ -155,7 +159,12 @@ func _get_pool_for_type(zombie_type: String) -> Dictionary:
 func start_spawning() -> void:
 	can_spawn = true
 	current_level = Save.get_current_level()
-	spawn_timer.start(spawn_interval)
+	# Reset the grace flag so every run (including retries after death) gets the
+	# spawn grace period — otherwise a restart would swarm the player instantly.
+	_first_spawn_done = false
+	# Give the player time to orient before the first wave enters the world.
+	var initial_delay = spawn_grace_period if not _first_spawn_done else spawn_interval
+	spawn_timer.start(initial_delay)
 	print("[ZombieSpawner] Started spawning zombies")
 
 
@@ -170,9 +179,42 @@ func stop_spawning() -> void:
 	print("[ZombieSpawner] Stopped spawning, all zombies returned to pools")
 
 
+func _any_minigame_round_active() -> bool:
+	# True if any mini-game (interactive_prop with a RunState) is mid-round. Used to
+	# pause new spawns so the player can finish an objective. Null-safe: props without
+	# a state property are skipped.
+	for prop in get_tree().get_nodes_in_group("interactive_prop"):
+		if not is_instance_valid(prop):
+			continue
+		var st = prop.get("state")
+		# SpoilAndSurvive/BioGenerator use RunState.ACTIVE == 1; compare by name so we
+		# don't hard-code the enum int across scripts.
+		if st != null and str(st) == "1":
+			return true
+	return false
+
+
 func _spawn_random_zombie() -> void:
 	if not can_spawn or not player:
 		return
+	# PEACEFUL MODE: when dev peaceful mode is on, spawn nothing so the level can be
+	# explored / tuned without survival pressure.
+	const DevMode := preload("res://scripts/core/DevMode.gd")
+	if DevMode.is_peaceful():
+		spawn_timer.start(spawn_interval)
+		return
+	# SAFE ZONE: while a mini-game round is active, pause NEW spawns so the player
+	# can complete the objective without being melted mid-round. This resolves the
+	# survival-vs-exploration tension — mini-games are the goal, so reaching one and
+	# completing it should not be a death sentence. Existing zombies still roam.
+	if _any_minigame_round_active():
+		spawn_timer.start(spawn_interval)
+		return
+	if not _first_spawn_done:
+		_first_spawn_done = true
+		# The first timer fire has already waited out the grace period; restore the
+		# normal cadence so later spawns do not inherit the longer initial delay.
+		spawn_timer.start(spawn_interval)
 	# Use dynamic limits from DifficultyManager when available; fall back to
 	# the exported defaults so the spawner works standalone.
 	# Difficulty SCALES the configured values rather than replacing them, so the
@@ -199,8 +241,18 @@ func _spawn_random_zombie() -> void:
 		zombie_spitter_scene
 	]
 	var zombie_types = ["dog", "cat", "bear", "rabbit", "chicken", "runner", "spitter"]
-	var type_index = randi() % scenes.size()
-	var zombie_type = zombie_types[type_index]
+	var enemy_pool: Array = Level.get_enemy_pool(current_level)
+	var candidate_scenes: Array = []
+	var candidate_types: Array = []
+	for i in range(zombie_types.size()):
+		if zombie_types[i] in enemy_pool:
+			candidate_scenes.append(scenes[i])
+			candidate_types.append(zombie_types[i])
+	if candidate_types.is_empty():
+		candidate_scenes = scenes
+		candidate_types = zombie_types
+	var type_index = randi() % candidate_scenes.size()
+	var zombie_type = candidate_types[type_index]
 
 	# Borrow a zombie from the pool
 	var pool_entry = _get_pool_for_type(zombie_type)
@@ -277,11 +329,14 @@ func _spawn_random_zombie() -> void:
 	# Keep the exact bound Callable on the zombie so a pooled reuse can drop its
 	# previous connection instead of firing the handler twice.
 	if zombie.has_signal("died"):
-		# Untyped: get() returns Nil on a zombie's first spawn (the property does not
-		# exist yet) and assigning that to a typed Callable is itself an error.
-		var prev = zombie.get("_died_callable")
-		if prev is Callable and prev.is_valid() and zombie.died.is_connected(prev):
-			zombie.died.disconnect(prev)
+		# Disconnect ANY prior _on_zombie_died connection before reconnecting, so
+		# pooled respawns don't stack handlers ("Signal 'died' is already connected").
+		# The old _died_callable check missed connections whose bound ref had gone
+		# invalid, so the guard never fired and the signal double-connected.
+		for c in zombie.died.get_connections():
+			var cb: Callable = c.callable
+			if cb.is_valid() and cb.get_method() == "_on_zombie_died":
+				zombie.died.disconnect(cb)
 		var bound := _on_zombie_died.bind(zombie, zombie_type)
 		zombie.died.connect(bound)
 		zombie.set("_died_callable", bound)

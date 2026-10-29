@@ -1,0 +1,16 @@
+First read /storage/emulated/0/Games/Muakbank_zombie/VISUAL_CONTEXT.txt for full context.
+
+YOUR TASK (Claude, senior Godot engineer): Make the Old Town streets read as a real, lived-in town — improve road detail and add visual variety so the 220m map doesn't feel empty or repetitive.
+You OWN and may edit ONLY: scripts/world/StreetDetail.gd. Do NOT touch the mini-game .tscn files (another agent is adding beacons there), do NOT touch old_town_enhanced.tscn, HUD.gd, or combat scripts.
+
+GOAL: more visual variety and life along the streets the player actually travels. Current StreetDetail places: 28 backdrop skyline buildings (ring 60-85m, no colliders), 10 cover buildings (25-70m, colliders, with exclusions around mini-games/spawn), 30 cars (15-70m), 24 props, 24 lamps (15-75m).
+
+IMPROVEMENTS to make in StreetDetail.gd (name new values as constants, comment WHY):
+1. MORE cars closer to the travel routes: the playtest showed cars weren't visible on the path the player walks. Add a cluster of ~8 parked cars in the 20-45m band (between spawn and the mini-games) so streets near the player are dressed, not just the far ring. Keep the existing 30-car far ring too.
+2. Road props along the main corridors: scatter more dumpsters/barriers/cones/signs/hydrants in the 15-50m band so streets feel obstructed/lived-in. Bump PROP_COUNT and distribute across the nearer band.
+3. Street lamps nearer the player: ensure a good density of lamps in the 15-45m band (the player needs light where they walk, not just the 75m perimeter). Keep total lamp count reasonable for mobile (each lamp = 1 OmniLight3D; don't exceed ~40 total).
+4. Vary building cover placement so the town isn't a uniform ring — jitter positions more and vary which building model each uses (you have building-a..f + suburban + skyscraper pools).
+
+CONSTRAINTS: Godot 4.7 GDScript, TABS, no god functions, name constants, comments explain WHY. Keep the _spawn ground-align (AABB bottom on ground) and the COVER_EXCLUSIONS around mini-games/spawn intact — do NOT place anything within 12m of spawn (-14,-14) or the 3 mini-game spots (-14,2),(28,20),(30,-24). Mobile budget: total placed nodes should stay under ~180 (currently 116). READ BACK, verify the exclusion logic still holds, then commit:
+git -C /storage/emulated/0/Games/Muakbank_zombie add scripts/world/StreetDetail.gd && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m "feat(level1): dress the near streets — cars/props/lamps along the travel routes"
+Report the new constants + expected total node count as final message.

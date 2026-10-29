@@ -1,0 +1,13 @@
+Muakbank Zombie Godot 4.7. Project root: /storage/emulated/0/Games/Muakbank_zombie. TASK: fix StreetDetail.gd so street dressing appears in the EXPORTED APK. Read scripts/world/StreetDetail.gd fully first.
+
+ROOT CAUSE: StreetDetail._scan() uses DirAccess.open()/list_dir_begin() on res:// paths at runtime. Works in the editor, returns EMPTY in an exported PCK/APK — DirAccess cannot enumerate dirs inside a packed build. So on device all path arrays are empty, 0 nodes placed, town looks empty.
+
+The assets exist and are packed. Use Bash to ls these dirs and get the EXACT .glb filenames:
+- res://assets/models/cc0/city/commercial/Models/ (building-a..f.glb)
+- res://assets/models/cc0/city/suburban/Models/ (building-type-a.glb etc)
+- res://assets/models/cc0/city/roads/Models/ (bridge-pillar-wide.glb etc)
+- res://assets/models/cc0/cars/Models/ (sedan/taxi/police/ambulance.glb etc)
+
+FIX: replace the runtime DirAccess scan with a hardcoded Array of the actual res:// .glb paths (stable committed assets). Keep _scan as an editor-only fallback if you like, but the hardcoded list is the primary source. Guard each with ResourceLoader.exists() and skip missing ones. Keep ALL placement logic (_building_ring, _cover_buildings, _parked_cars, _street_furniture) unchanged — only change how paths are gathered.
+
+RULES: Godot 4.7 GDScript, TABS, no god functions, comment explaining the export DirAccess gotcha. Edit ONLY scripts/world/StreetDetail.gd. After editing READ back, ls-verify every hardcoded path exists, confirm valid GDScript. Then commit: git -C /storage/emulated/0/Games/Muakbank_zombie add scripts/world/StreetDetail.gd && git -C /storage/emulated/0/Games/Muakbank_zombie commit -m \"fix(level1): StreetDetail places 0 nodes in exports - DirAccess cannot scan res:// in PCK, hardcode asset paths\". Report the hardcoded file list + node counts as final message.

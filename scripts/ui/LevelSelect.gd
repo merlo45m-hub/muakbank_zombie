@@ -7,6 +7,7 @@ signal level_selected(level)
 
 const CREEP := preload("res://assets/fonts/Creepster-Regular.ttf")
 const ELITE := preload("res://assets/fonts/SpecialElite-Regular.ttf")
+const BUNGEE := preload("res://assets/fonts/Bungee-Regular.ttf")
 
 const CARD_SIZE := Vector2(292, 262)
 const CARD_BG := Color(0.11, 0.095, 0.14, 0.94)
@@ -34,8 +35,40 @@ var _t := 0.0
 
 func _ready():
 	_cta = $VBoxMain/CtaLabel
+	if _cta != null:
+		_cta.add_theme_font_override("font", BUNGEE)
+		_cta.add_theme_font_size_override("font_size", 32)
+		_cta.add_theme_color_override("font_color", Color(1.0, 0.76, 0.3, 1.0))
+		_cta.add_theme_color_override("font_outline_color", Color(0.05, 0.02, 0.03, 1.0))
+		_cta.add_theme_constant_override("outline_size", 8)
+		_cta.custom_minimum_size = Vector2(0, 42)
+	_setup_navigation_fonts()
 	_build_level_buttons()
 	_update_page()
+
+
+func _setup_navigation_fonts() -> void:
+	if prev_btn != null:
+		prev_btn.add_theme_font_override("font", BUNGEE)
+		prev_btn.add_theme_font_size_override("font_size", 22)
+		prev_btn.add_theme_color_override("font_outline_color", Color(0.04, 0.02, 0.03, 1.0))
+		prev_btn.add_theme_constant_override("outline_size", 5)
+	if next_btn != null:
+		next_btn.add_theme_font_override("font", BUNGEE)
+		next_btn.add_theme_font_size_override("font_size", 22)
+		next_btn.add_theme_color_override("font_outline_color", Color(0.04, 0.02, 0.03, 1.0))
+		next_btn.add_theme_constant_override("outline_size", 5)
+	if page_label != null:
+		page_label.add_theme_font_override("font", BUNGEE)
+		page_label.add_theme_font_size_override("font_size", 22)
+		page_label.add_theme_color_override("font_outline_color", Color(0.04, 0.02, 0.03, 1.0))
+		page_label.add_theme_constant_override("outline_size", 5)
+	var back_btn := get_node_or_null("VBoxMain/ButtonContainer/BackBtn") as Button
+	if back_btn != null:
+		back_btn.add_theme_font_override("font", BUNGEE)
+		back_btn.add_theme_font_size_override("font_size", 26)
+		back_btn.add_theme_color_override("font_outline_color", Color(0.04, 0.02, 0.03, 1.0))
+		back_btn.add_theme_constant_override("outline_size", 6)
 
 
 func _process(delta: float) -> void:
@@ -129,9 +162,16 @@ func _build_level_buttons():
 		var st := Label.new()
 		st.text = status
 		st.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		st.add_theme_font_override("font", ELITE)
-		st.add_theme_font_size_override("font_size", 20)
+		st.add_theme_font_override("font", BUNGEE)
+		var st_size := 32
+		if status == "TAP TO PLAY":
+			st_size = 26
+		elif status == "LOCKED" or status == "REPLAY":
+			st_size = 30
+		st.add_theme_font_size_override("font_size", st_size)
 		st.add_theme_color_override("font_color", status_col)
+		st.add_theme_color_override("font_outline_color", Color(0.04, 0.02, 0.03, 1.0))
+		st.add_theme_constant_override("outline_size", 6)
 		st.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		box.add_child(st)
 

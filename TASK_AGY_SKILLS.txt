@@ -1,0 +1,93 @@
+TASKS FOR AGY — two edits in the Hermes skills tree. Both are non-destructive.
+
+HERMES ROOT: /data/data/com.termux/files/home/.hermes
+VERSION NOTE: agy is v1.3.5, not v1.3.3 (the skill says 1.3.3 — that is stale, see task 3).
+
+=====================================================================
+TASK A — split the auto-loaded agy-delegation skill into SKILL.md + references
+=====================================================================
+FILE: /data/data/com.termux/files/home/.hermes/skills/agy-delegation/SKILL.md
+SIZE: 53,021 bytes / 399 lines. It is AUTO-LOADED every session via
+config.yaml (mcp_servers is not it — it is the skills auto_load list), so all 53KB is paid on
+every single session whether or not agy is ever used.
+
+PROBLEM: the file has grown by accretion into ~15 distinct hard-won lessons stacked in one
+place. It needs splitting so the root file holds only what you need BEFORE dispatching to agy.
+
+DO THIS:
+1. Read the whole file first.
+2. Create references/ inside the same skill dir if it does not exist:
+   /data/data/com.termux/files/home/.hermes/skills/agy-delegation/references/
+3. MOVE (cut from SKILL.md, paste into a reference file — do not leave a copy behind) these
+   topic clusters into sensibly named reference files, e.g.:
+     references/review-protocol.md        the numbered review protocol (the multi-step checklist)
+     references/godot-gotchas.md          RigidBody/HingeJoint motion, animation-clip traps,
+                                          spawn/detection-range coupling, tap coordinate space
+     references/codex.md                  Codex OAuth/browser-auth notes, driving Codex over adb
+     references/failure-modes.md          the "exits 0 but did nothing" family, agy.va39 two-writers,
+                                          quota/429 handling, monitoring a long run
+   Use your judgement on filenames; one file per coherent topic is the goal.
+4. KEEP in SKILL.md only what a dispatch needs up front:
+     - how to invoke agy (the exact command shape, --add-dir, --model)
+     - the model-ID rule (use the LEFT column of `agy models`, never the display name)
+     - what to delegate to agy vs what stays with Hermes
+     - a short pointer list to the reference files you just created, so they are REACHABLE
+     - the standing "dispatch, do not hand-crank" rule
+   Target roughly 120-150 lines / ~16KB. Do not obsess over an exact count — the test is that
+   a reader can dispatch correctly from the root file alone.
+5. CRITICAL: every reference file MUST be linked from SKILL.md. Unlinked references are
+   unreachable and that exact failure already exists elsewhere in this skills tree (7 orphaned
+   references in godot-game-dev). After splitting, grep SKILL.md for each new filename and
+   confirm it appears.
+6. MOVE, DO NOT DELETE. Not one lesson may be lost. Before finishing, verify by grepping the
+   whole skill directory for a distinctive phrase from each cluster you moved and confirming it
+   still exists somewhere on disk.
+7. While you are in the file: correct the stale version claim. The skill says agy is "v1.3.3";
+   it is v1.3.5. Fix that string.
+
+DO NOT: change any other skill, touch config.yaml, delete content, or commit.
+
+=====================================================================
+TASK B — fix the session-start health check
+=====================================================================
+FILE: /data/data/com.termux/files/home/.hermes/skills/hermes/termux-cli-agents/SKILL.md
+The mandated startup check is at roughly lines 14-27.
+
+THREE DEFECTS, ALL VERIFIED:
+1. THE MCP ROW IS BLIND. It uses `hermes mcp list | grep -c enabled` and calls that liveness.
+   It is not — `list` reads CONFIG, not process state. Proven this session:
+       hermes mcp list     -> rea shows "enabled"
+       hermes mcp test rea -> Connection failed (12.0s)
+   So the check reports 5 enabled and green while rea is dead. It also NEVER probes godot-ai at
+   all, which is the one server with a known editor-works/runtime-broken split.
+   FIX: replace the count with a real per-server liveness test, e.g.
+       for s in docs filesystem github godot-ai rea; do
+         echo -n "$s: "; timeout 30 hermes mcp test $s 2>&1 | grep -oE "Connected|Connection failed" | head -1
+       done
+   (Adjust to fit the file's existing style. A per-server `hermes mcp test` is the point.)
+   If you prefer to keep it cheap, the alternative is to DROP the MCP row entirely and state
+   plainly "MCP liveness is not checked by this startup probe" — a false green is worse than no
+   row. Pick one and say which.
+2. THE TIMEOUTS ARE ABSURD. Currently timeout 200 (claude) + 150 (codex) + 90 (agy). A real
+   task returns in seconds, so those long values only ever pay out during a hang — worst case
+   ~450s, while the skill itself claims "~60 seconds". FIX: 200/150/90 -> 60/60/45.
+3. THE "~60 SECONDS" CLAIM IS WRONG. Correct it to reflect reality. Say something like
+   "~60s when healthy; up to ~3.5 min if an agent hangs" (60+60+45 = 165s of agent timeouts,
+   plus gh and the MCP row).
+   Also correct agy v1.3.3 -> v1.3.5 if that version string appears in this file too.
+
+DO NOT: change what the health check TESTS beyond the MCP row fix, touch any other file, or
+commit.
+
+=====================================================================
+VERIFY BOTH TASKS
+=====================================================================
+- Task A: SKILL.md line count dropped substantially; every moved phrase still exists somewhere
+  under the skill dir (grep to prove it); every new reference filename appears in SKILL.md.
+- Task B: read the health-check block back and confirm it now tests liveness, the timeouts are
+  60/60/45, and the timing claim is honest.
+- Run nothing that mutates state. These are file edits only.
+
+REPORT: for each task, what you changed, the before/after line counts, and your verification
+output. End with 'RESULT: DONE <one line>' or 'RESULT: BLOCKED <reason>'.
+DO NOT COMMIT — Hermes reviews and commits.
