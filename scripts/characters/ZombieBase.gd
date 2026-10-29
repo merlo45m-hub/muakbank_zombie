@@ -94,9 +94,45 @@ var vfn_field = null  # Reference to the active VFNField (untyped: addon class m
 @onready var mesh: Node3D = $Mesh
 @onready var attack_timer_node: Timer = $AttackTimer
 
-# === AI STATES ===
+# === AI STATES (statechart-driven by the Godot State Charts addon) ===
+# The enemy AI FSM is built as a StateChart (addons/godot_state_charts, from
+# github.com/derkork/godot-statecharts). ZombieBase keeps `current_state` as a
+# compatibility enum mirror over the chart: the base AI logic AND every subclass
+# assign it directly (that public interface is unchanged), the property setter
+# routes each assignment into the chart as a named event, and the chart's
+# transition graph is the single authority on which state the zombie is really in.
+# Behavior handlers (_idle/_chase/_attack/_special_behavior) run out of that
+# derived state in _physics_process, so spawning / HUD / survivor code sees the
+# exact same signals, functions and variables as before.
 enum AIState { IDLE, CHASE, ATTACK, SPECIAL, DEAD }
-var current_state: AIState = AIState.IDLE
+var _state_current: AIState = AIState.IDLE
+var current_state: AIState:
+	get:
+		return _state_current
+	set(v):
+		v = v as AIState
+		if v == _state_current:
+			return
+		_state_current = v
+		if _chart and _chart.call("is_node_ready"):
+			_chart.call("send_event", _state_event(v))
+
+# The StateChart node that owns the enemy AI transitions. Held as a duck-typed
+# Node and built through load() so ZombieBase still loads even if the addon is
+# ever disabled (it then simply runs on the enum FSM alone).
+var _chart: Node = null
+const STATE_CHART_SCRIPT := "res://addons/godot_state_charts/state_chart.gd"
+const COMPOUND_STATE_SCRIPT := "res://addons/godot_state_charts/compound_state.gd"
+const ATOMIC_STATE_SCRIPT := "res://addons/godot_state_charts/atomic_state.gd"
+const TRANSITION_SCRIPT := "res://addons/godot_state_charts/transition.gd"
+
+func _state_event(s: AIState) -> StringName:
+	match s:
+		AIState.CHASE: return &"chase"
+		AIState.ATTACK: return &"attack"
+		AIState.SPECIAL: return &"special"
+		AIState.DEAD: return &"dead"
+		_: return &"idle"
 
 func _ready() -> void:
 	health = max_health
@@ -137,6 +173,81 @@ func _ready() -> void:
 				var skin: Dictionary = CharacterAnim.ZOMBIE_SKINS.get(skin_key, CharacterAnim.ZOMBIE_SKINS["zombie"])
 				CharacterAnim.setup_rigged(mesh, skin.tex, skin.tint)
 			_post_ready()
+
+	# Build the enemy-AI statechart (Godot State Charts addon). Runs on every
+	# (re)spawn path; see _build_state_chart() for why it is idempotent.
+	_build_state_chart()
+
+
+func _build_state_chart() -> void:
+	# (Re)build the zombie AI StateChart. The chart is rebuilt fresh on every pool
+	# reset (and on first entry) so a zombie coming out of the pool always parks on
+	# IDLE regardless of what state it died in — the addon's transition graph is
+	# the authority, and rebuilding at reset is the cheapest way to guarantee a
+	# clean home state on reuse. Guarded with load()/duck-typing so ZombieBase
+	# keeps loading even if the addon is disabled (it then runs on the enum FSM).
+	if _chart and is_instance_valid(_chart):
+		_chart.free()
+	_chart = null
+	var chart_sc: GDScript = load(STATE_CHART_SCRIPT) as GDScript
+	var compound_sc: GDScript = load(COMPOUND_STATE_SCRIPT) as GDScript
+	var atomic_sc: GDScript = load(ATOMIC_STATE_SCRIPT) as GDScript
+	var transition_sc: GDScript = load(TRANSITION_SCRIPT) as GDScript
+	if not chart_sc or not compound_sc or not atomic_sc or not transition_sc:
+		return  # addon unavailable — the enum FSM in _physics_process still works
+
+	var chart: Node = chart_sc.new()
+	chart.name = "ZombieFSM"
+	chart.set("warn_on_sending_unknown_events", false)
+	var main: Node = compound_sc.new()
+	main.name = "Main"
+	chart.add_child(main)
+
+	var states: Dictionary = {}
+	for entry in [
+		[AIState.IDLE, "Idle"], [AIState.CHASE, "Chase"],
+		[AIState.ATTACK, "Attack"], [AIState.SPECIAL, "Special"],
+		[AIState.DEAD, "Dead"]]:
+		var st: Node = atomic_sc.new()
+		st.name = entry[1]
+		main.add_child(st)
+		states[int(entry[0])] = st
+
+	# Transitions are event-driven; each event name matches the routing event the
+	# current_state setter fires, so send_event("chase"|"attack"|...) lands on the
+	# edge leaving the currently-active state. We add a complete pairwise mesh
+	# (every source -> every other destination, keyed by the destination's event)
+	# so the chart ALWAYS follows the `current_state` mirror no matter which
+	# pathway a subclass drives (e.g. ATTACK<->SPECIAL, CHASE->SPECIAL). Events
+	# only ever fire from the setter on an intentional state change, so extra
+	# edges cannot cause spurious transitions. "_add_transition" computes the
+	# "../../<target>" NodePath because transitions are children of the source
+	# atomic state (siblings under Main) and the addon resolves to via get_node().
+	var by_state: Dictionary = {
+		AIState.IDLE: states[AIState.IDLE], AIState.CHASE: states[AIState.CHASE],
+		AIState.ATTACK: states[AIState.ATTACK], AIState.SPECIAL: states[AIState.SPECIAL],
+		AIState.DEAD: states[AIState.DEAD],
+	}
+	for src_key in by_state:
+		for dst_key in by_state:
+			if int(src_key) == int(dst_key):
+				continue
+			_add_transition(by_state[src_key], by_state[dst_key], _state_event(int(dst_key)))
+
+	main.set("initial_state", NodePath("Idle"))
+	_chart = chart
+	add_child(chart)
+
+
+func _add_transition(src: Node, dst: Node, evt: StringName) -> void:
+	var t: Node = load(TRANSITION_SCRIPT).new()
+	t.set("event", evt)
+	t.set("delay_in_seconds", "0.0")
+	src.add_child(t)
+	# Transition.to is a NodePath resolved relative to the transition node (get_node).
+	# The transition sits one level under its source atomic state, the source sits
+	# under Main, and the target is a sibling under Main → up two, back into the target.
+	t.set("to", NodePath("../../" + str(dst.name)))
 
 
 func _post_ready() -> void:
@@ -572,6 +683,9 @@ func reset_for_pool() -> void:
 	target = null
 	hit_flash_tween = null
 	_lod_timer = 0.0
+	# Rebuild the statechart so a pooled reuse always parks on IDLE (its initial
+	# state), regardless of the state it died in. See _build_state_chart().
+	_build_state_chart()
 	show()
 	process_mode = Node.PROCESS_MODE_INHERIT
 	# Parked instances are taken out of the tree with collisions zeroed (see

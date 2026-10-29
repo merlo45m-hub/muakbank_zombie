@@ -35,7 +35,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/VectorFieldNavigation/plugin.cfg", "res://addons/godotx_health_bar/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/minos_damage_numbers/plugin.cfg", "res://addons/save_system/plugin.cfg", "res://addons/sound_manager/plugin.cfg")
+enabled=PackedStringArray("res://addons/VectorFieldNavigation/plugin.cfg", "res://addons/godotx_health_bar/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/minos_damage_numbers/plugin.cfg", "res://addons/save_system/plugin.cfg", "res://addons/sound_manager/plugin.cfg", "res://addons/godot_state_charts/plugin.cfg")
 
 [gui]
 
