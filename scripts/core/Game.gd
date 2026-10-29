@@ -241,9 +241,13 @@ func _setup_objectives() -> void:
 	objective_manager.add_objective("eat_food", "Eat to stay alive", 3)
 	objective_manager.add_objective("survive", "Survive the shift", 1)
 	# Level 1 also requires its three side challenges; controllers may re-register these ids.
-	objective_manager.add_objective("l1_spoil_and_survive", "Eat 15 fresh buffet dishes", 1)
-	objective_manager.add_objective("l1_generator_fed", "Power the bio-generator", 1)
-	objective_manager.add_objective("l1_last_stand", "Survive 3 checkpoint waves", 1)
+	# Levels 2+ have no mini-game controllers: registering the l1_* set there would keep
+	# _all_minigames_done() from ever seeing registered_count == 0 and deadlock the
+	# campaign (gate loops, clock expires into end_game(false), next level never unlocks).
+	if Save.get_current_level() == 1:
+		objective_manager.add_objective("l1_spoil_and_survive", "Eat 15 fresh buffet dishes", 1)
+		objective_manager.add_objective("l1_generator_fed", "Power the bio-generator", 1)
+		objective_manager.add_objective("l1_last_stand", "Survive 3 checkpoint waves", 1)
 
 func _setup_achievements() -> void:
 	var am = get_node_or_null("AchievementManager")
