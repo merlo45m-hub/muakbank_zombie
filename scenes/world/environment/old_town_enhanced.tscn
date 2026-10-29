@@ -790,7 +790,7 @@ shape = SubResource("CylinderShape3D_fire_hydrant")
 [node name="Cars" type="Node3D" parent="Streets"]
 
 [node name="Car1" type="StaticBody3D" parent="Streets/Cars"]
-transform = Transform3D(2.5000, 0, 0, 0, 2.5000, 0, 0, 0, 2.5000, 4.0, 0, -3.0)
+transform = Transform3D(1.1000, 0, 0, 0, 1.1000, 0, 0, 0, 1.1000, 4.0, 0, -3.0)
 rotation = Vector3(0, 0.15, 0)
 collision_layer = 1
 
@@ -800,7 +800,7 @@ collision_layer = 1
 shape = SubResource("BoxShape3D_car_glb")
 
 [node name="Car2" type="StaticBody3D" parent="Streets/Cars"]
-transform = Transform3D(2.5000, 0, 0, 0, 2.5000, 0, 0, 0, 2.5000, 12.0, 0, -4.5)
+transform = Transform3D(1.0000, 0, 0, 0, 1.0000, 0, 0, 0, 1.0000, 12.0, 0, -4.5)
 rotation = Vector3(0, 0.15, 0)
 collision_layer = 1
 
@@ -810,7 +810,7 @@ collision_layer = 1
 shape = SubResource("BoxShape3D_car_glb")
 
 [node name="Car3" type="StaticBody3D" parent="Streets/Cars"]
-transform = Transform3D(2.5000, 0, 0, 0, 2.5000, 0, 0, 0, 2.5000, 14.0, 0, -3.5)
+transform = Transform3D(1.1000, 0, 0, 0, 1.1000, 0, 0, 0, 1.1000, 14.0, 0, -3.5)
 rotation = Vector3(0, -0.3, 0)
 collision_layer = 1
 
