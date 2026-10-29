@@ -161,17 +161,21 @@ func _ready() -> void:
 			_anim.add_child(mesh)
 			holder.add_child(_anim)
 			_anim.attach(self, mesh)
-			# Skeletal animation is now the visual driver — disable the ProceduralAnimator
-			# so its walk transforms do not fight the rig's idle/run clips. The node stays
-			# alive because _die() / reset_for_pool() / hit-reaction code may reference it.
-			var pa := get_node_or_null("ProceduralAnimator")
-			if pa:
-				pa.set_process(false)
 			# Attach the rigged animation pipeline (idle/run/jump + skin) to the mesh.
+			# Human zombies (rigged model.glb) get real skeletal clips via CharacterAnim;
+			# unrigged animals (dog/cat/...) return null, so their ProceduralAnimator is
+			# kept running and serves as the idle/walk driver instead.
+			var rigged := false
 			if mesh:
 				var skin_key := _get_zombie_skin_key()
 				var skin: Dictionary = CharacterAnim.ZOMBIE_SKINS.get(skin_key, CharacterAnim.ZOMBIE_SKINS["zombie"])
-				CharacterAnim.setup_rigged(mesh, skin.tex, skin.tint)
+				rigged = CharacterAnim.setup_rigged(mesh, skin.tex, skin.tint) != null
+			# Skeletal animation is the visual driver only when a rigged pipeline exists —
+			# disable the ProceduralAnimator so its transforms don't fight skeletal clips.
+			# Unrigged zombies keep it active for their breathing idle + walk/hop bob.
+			var pa := get_node_or_null("ProceduralAnimator")
+			if pa and rigged:
+				pa.set_process(false)
 			_post_ready()
 
 	# Build the enemy-AI statechart (Godot State Charts addon). Runs on every
@@ -257,6 +261,36 @@ func _post_ready() -> void:
 
 func _get_animator() -> ProceduralAnimator:
 	return get_node_or_null("ProceduralAnimator") as ProceduralAnimator
+
+## Resolve the skeletal AnimationPlayer whatever name CharacterAnim used. rigged
+## zombies get a player named "CharacterAnim" added UNDER the Model glb node (it
+## holds the merged idle/run/jump clips); some zombie .tscn files ALSO declare a
+## bare empty "AnimationPlayer" stub under Mesh that has zero clips. We must prefer
+## the rigged player and reject a clip-less stub, or an unguarded play on the stub
+## raises "Animation not found" every frame. Unrigged animal zombies have no player
+## at all and return null — they fall back to the procedural animator for idle.
+func _get_skeletal_ap() -> AnimationPlayer:
+	if not mesh:
+		return null
+	# 1) Prefer the rigged pipeline built by CharacterAnim.setup_rigged().
+	var ap := mesh.get_node_or_null("CharacterAnim") as AnimationPlayer
+	if ap == null:
+		var found := mesh.find_children("CharacterAnim", "AnimationPlayer", true, false)
+		if not found.is_empty():
+			ap = found[0] as AnimationPlayer
+	# 2) Fall back to a directly-named player (rigged setups may name it "AnimationPlayer").
+	if ap == null:
+		ap = mesh.get_node_or_null("AnimationPlayer") as AnimationPlayer
+	if ap == null:
+		var found := mesh.find_children("AnimationPlayer", "AnimationPlayer", true, false)
+		if not found.is_empty():
+			ap = found[0] as AnimationPlayer
+	# 3) A player with no clips is an inert stub — never hand it back for playback
+	#    (the next guarded play would raise "Animation not found"). Unrigged zombies
+	#    fall through to the procedural animator for their idle.
+	if ap != null and ap.get_animation_list().is_empty():
+		return null
+	return ap
 
 ## Derive the zombie skin key from the concrete subclass name when zombie_type
 ## has not been set by the spawner yet (first-spawn path). The four human types
@@ -520,17 +554,19 @@ func _perform_attack() -> void:
 ## time so the transition is smooth. The run clip's playback speed scales with
 ## move_speed (clamped 0.8..1.5) so faster zombies look faster.
 func _drive_anim(delta: float) -> void:
-	var ap := mesh.get_node_or_null("AnimationPlayer")
+	var ap := _get_skeletal_ap()
 	if ap == null or is_dead:
 		return
 	var h_speed := Vector2(velocity.x, velocity.z).length()
-	if current_state == AIState.CHASE and h_speed > 0.2:
+	if current_state == AIState.CHASE and h_speed > 0.2 and ap.has_animation("run"):
 		if ap.get_current_animation() != "run":
 			ap.play("run", 0.15)
-		var speed_factor := clampf(move_speed / 3.0, 0.8, 1.5)
-		ap.set_speed_scale(speed_factor)
+		ap.set_speed_scale(clampf(move_speed / 3.0, 0.8, 1.5))
 	else:
-		if ap.get_current_animation() != "idle":
+		# Guard: an unrigged/legacy player may exist without an "idle" clip — only
+		# request the clip if it is registered, or Godot logs "Animation not found:
+		# idle" on every physics frame. With no clip we leave the default pose.
+		if ap.has_animation("idle") and ap.get_current_animation() != "idle":
 			ap.play("idle", 0.2)
 		ap.set_speed_scale(1.0)
 
@@ -700,13 +736,13 @@ func reset_for_pool() -> void:
 		# Ensure the AnimationPlayer exists — pool-expansion instances (created by
 		# pool.init() after exhaustion) never went through _ready(), so they have no
 		# AP. Create it here rather than duplicating it on every reuse.
-		var ap := mesh.get_node_or_null("AnimationPlayer") as AnimationPlayer
+		var ap := _get_skeletal_ap()
 		if ap == null:
 			var skin_key := _get_zombie_skin_key()
 			var skin: Dictionary = CharacterAnim.ZOMBIE_SKINS.get(skin_key, CharacterAnim.ZOMBIE_SKINS["zombie"])
 			CharacterAnim.setup_rigged(mesh, skin.tex, skin.tint)
-			ap = mesh.get_node_or_null("AnimationPlayer") as AnimationPlayer
-		if ap:
+			ap = _get_skeletal_ap()
+		if ap and ap.has_animation("idle"):
 			ap.stop()
 			ap.play("idle")
 	for mi in _mesh_instances():

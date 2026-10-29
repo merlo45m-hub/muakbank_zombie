@@ -34,18 +34,15 @@ func _physics_process(delta: float) -> void:
 
 	# Drive animations from movement speed (skip if dead — DEAD animation owns the corpse).
 	if not is_dead:
-		var ap: AnimationPlayer = get_node_or_null("Mesh/AnimationPlayer")
+		var ap: AnimationPlayer = _get_skeletal_ap()
 		if ap == null:
 			return
 		var h_speed: float = Vector2(velocity.x, velocity.z).length()
 		if h_speed < 0.2:
-			if ap.get_current_animation() != "idle":
+			if ap.has_animation("idle") and ap.get_current_animation() != "idle":
 				ap.play("idle", 0.2)
-		elif h_speed < move_speed * 0.5:
-			if ap.get_current_animation() != "run":
-				ap.play("run", 0.15)
 		else:
-			if ap.get_current_animation() != "run":
+			if ap.has_animation("run") and ap.get_current_animation() != "run":
 				ap.play("run", 0.15)
 
 func take_damage(amount: int) -> void:
@@ -56,13 +53,13 @@ func take_damage(amount: int) -> void:
 			t.tween_property(mesh, "scale", Vector3(0.7, 1.3, 0.7), 0.08)
 			t.tween_property(mesh, "scale", Vector3(1, 1, 1), 0.12)
 		# Play HIT animation on the rig instead of procedural squash.
-		var ap: AnimationPlayer = get_node_or_null("Mesh/AnimationPlayer")
-		if ap:
+		var ap: AnimationPlayer = _get_skeletal_ap()
+		if ap and ap.has_animation("run"):
 			ap.play("run", 0.15)
 		return
 	# Neutralize procedural hit reaction — the rig's animation handles it.
-	var ap: AnimationPlayer = get_node_or_null("Mesh/AnimationPlayer")
-	if ap:
+	var ap: AnimationPlayer = _get_skeletal_ap()
+	if ap and ap.has_animation("run"):
 		ap.play("run", 0.15)
 	super.take_damage(amount)
 
