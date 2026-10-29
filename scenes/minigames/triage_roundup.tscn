@@ -1,0 +1,242 @@
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/TriageRoundupController.gd" id="1_ctrl"]
+[ext_resource type="Script" path="res://scripts/gameplay/TriageWardPen.gd" id="2_pen"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/triage_animal_body.tscn" id="3_animal"]
+[ext_resource type="PackedScene" path="res://scenes/ui/triage_roundup_hud.tscn" id="4_hud"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(22, 0.5, 44)
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(22, 0.5, 44)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.19, 0.2, 0.2, 1)
+roughness = 0.95
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_zone"]
+size = Vector3(5, 3, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_overrun"]
+size = Vector3(16, 4, 8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pad"]
+size = Vector3(2.4, 0.08, 2.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gate"]
+size = Vector3(2.7, 1.0, 0.12)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp"]
+top_radius = 0.12
+bottom_radius = 0.14
+height = 0.35
+radial_segments = 12
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp"]
+albedo_color = Color(0.15, 0.15, 0.16, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_board"]
+size = Vector3(2.2, 1.5, 0.25)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dog"]
+albedo_color = Color(0.85, 0.15, 0.15, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cat"]
+albedo_color = Color(0.2, 0.35, 0.9, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rabbit"]
+albedo_color = Color(0.95, 0.8, 0.15, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_chicken"]
+albedo_color = Color(0.35, 0.75, 0.3, 1)
+roughness = 0.6
+
+[node name="TriageRoundup" type="Node3D"]
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+
+[node name="Collision" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="Controller" type="Node3D" parent="."]
+script = ExtResource("1_ctrl")
+
+[node name="InteractionZone" type="Area3D" parent="Controller"]
+collision_layer = 0
+collision_mask = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="Controller/InteractionZone"]
+shape = SubResource("BoxShape3D_zone")
+
+[node name="Board" type="Node3D" parent="Controller"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 3)
+
+[node name="BoardMesh" type="MeshInstance3D" parent="Controller/Board"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.78, 0)
+mesh = SubResource("BoxMesh_board")
+
+[node name="Prompt" type="Label3D" parent="Controller/Board"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0.35)
+text = "START TRIAGE — 4 PATIENTS — HALL OVERRUN IN 90s"
+font_size = 40
+outline_size = 8
+no_depth_test = true
+billboard = 1
+
+[node name="TriageHUD" parent="." instance=ExtResource("4_hud")]
+
+[node name="Pens" type="Node3D" parent="."]
+
+[node name="PenDog" type="Node3D" parent="Pens"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -15)
+script = ExtResource("2_pen")
+required_animal_type = "dog"
+
+[node name="Pad" type="MeshInstance3D" parent="Pens/PenDog"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+mesh = SubResource("BoxMesh_pad")
+surface_material_override/0 = SubResource("StandardMaterial3D_dog")
+
+[node name="Gate" type="MeshInstance3D" parent="Pens/PenDog"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 1.35)
+mesh = SubResource("BoxMesh_gate")
+surface_material_override/0 = SubResource("StandardMaterial3D_dog")
+
+[node name="Lamp" type="MeshInstance3D" parent="Pens/PenDog"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 1.35)
+mesh = SubResource("CylinderMesh_lamp")
+surface_material_override/0 = SubResource("StandardMaterial3D_lamp")
+
+[node name="TypeTag" type="Label3D" parent="Pens/PenDog"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.9)
+text = "DOG"
+font_size = 56
+outline_size = 8
+no_depth_test = true
+billboard = 1
+
+[node name="PenCat" type="Node3D" parent="Pens"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -15)
+script = ExtResource("2_pen")
+required_animal_type = "cat"
+
+[node name="Pad" type="MeshInstance3D" parent="Pens/PenCat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+mesh = SubResource("BoxMesh_pad")
+surface_material_override/0 = SubResource("StandardMaterial3D_cat")
+
+[node name="Gate" type="MeshInstance3D" parent="Pens/PenCat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 1.35)
+mesh = SubResource("BoxMesh_gate")
+surface_material_override/0 = SubResource("StandardMaterial3D_cat")
+
+[node name="Lamp" type="MeshInstance3D" parent="Pens/PenCat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 1.35)
+mesh = SubResource("CylinderMesh_lamp")
+surface_material_override/0 = SubResource("StandardMaterial3D_lamp")
+
+[node name="TypeTag" type="Label3D" parent="Pens/PenCat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.9)
+text = "CAT"
+font_size = 56
+outline_size = 8
+no_depth_test = true
+billboard = 1
+
+[node name="PenRabbit" type="Node3D" parent="Pens"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -15)
+script = ExtResource("2_pen")
+required_animal_type = "rabbit"
+
+[node name="Pad" type="MeshInstance3D" parent="Pens/PenRabbit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+mesh = SubResource("BoxMesh_pad")
+surface_material_override/0 = SubResource("StandardMaterial3D_rabbit")
+
+[node name="Gate" type="MeshInstance3D" parent="Pens/PenRabbit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 1.35)
+mesh = SubResource("BoxMesh_gate")
+surface_material_override/0 = SubResource("StandardMaterial3D_rabbit")
+
+[node name="Lamp" type="MeshInstance3D" parent="Pens/PenRabbit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 1.35)
+mesh = SubResource("CylinderMesh_lamp")
+surface_material_override/0 = SubResource("StandardMaterial3D_lamp")
+
+[node name="TypeTag" type="Label3D" parent="Pens/PenRabbit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.9)
+text = "RABBIT"
+font_size = 56
+outline_size = 8
+no_depth_test = true
+billboard = 1
+
+[node name="PenChicken" type="Node3D" parent="Pens"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -15)
+script = ExtResource("2_pen")
+required_animal_type = "chicken"
+
+[node name="Pad" type="MeshInstance3D" parent="Pens/PenChicken"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+mesh = SubResource("BoxMesh_pad")
+surface_material_override/0 = SubResource("StandardMaterial3D_chicken")
+
+[node name="Gate" type="MeshInstance3D" parent="Pens/PenChicken"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 1.35)
+mesh = SubResource("BoxMesh_gate")
+surface_material_override/0 = SubResource("StandardMaterial3D_chicken")
+
+[node name="Lamp" type="MeshInstance3D" parent="Pens/PenChicken"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 1.35)
+mesh = SubResource("CylinderMesh_lamp")
+surface_material_override/0 = SubResource("StandardMaterial3D_lamp")
+
+[node name="TypeTag" type="Label3D" parent="Pens/PenChicken"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.9)
+text = "CHICKEN"
+font_size = 56
+outline_size = 8
+no_depth_test = true
+billboard = 1
+
+[node name="Animals" type="Node3D" parent="."]
+
+[node name="AnimalDog" parent="Animals" instance=ExtResource("3_animal")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 15)
+animal_type = "dog"
+
+[node name="AnimalCat" parent="Animals" instance=ExtResource("3_animal")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 15)
+animal_type = "cat"
+
+[node name="AnimalRabbit" parent="Animals" instance=ExtResource("3_animal")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 15)
+animal_type = "rabbit"
+
+[node name="AnimalChicken" parent="Animals" instance=ExtResource("3_animal")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 15)
+animal_type = "chicken"
+
+[node name="OverrunZone" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 8
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="OverrunZone"]
+shape = SubResource("BoxShape3D_overrun")

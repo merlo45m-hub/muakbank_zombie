@@ -13,7 +13,7 @@ extends GdUnitTestSuite
 ## (Save.get_current_level()), mutated in memory only — save_game() is never called,
 ## so the on-disk savefile is untouched and restored in after_test().
 
-const L1_MINIGAME_IDS: Array[String] = ["l1_spoil_and_survive", "l1_generator_fed", "l1_last_stand"]
+const L1_MINIGAME_IDS: Array[String] = ["l1_spoil_and_survive", "l1_generator_fed", "l1_last_stand", "l1_triage_roundup", "l1_quarantine_breach"]
 
 var _original_level: int = 1
 var _game: Node = null

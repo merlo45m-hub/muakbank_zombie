@@ -5,7 +5,7 @@
 # WHAT THIS IS
 #   A single, deterministic, machine-parseable smoke suite that proves the game
 #   machinery (script compilation, scene boots, player food API + GLoot wiring,
-#   all three mini-game WIN states) is sound after ANY change.
+#   all five mini-game WIN states) is sound after ANY change.
 #
 # HOW TO RUN (human or CI — identical command, identical verdict)
 #       bash tools/regression_smoke.sh
@@ -47,9 +47,10 @@
 #                    PASS = probe prints 'PROBE_RESULT: PASS' and exits 0.
 #   5. minigames   : runs the EXISTING probe tools/minigame_win_probe.tscn
 #                    (reused, not duplicated). Instantiates each REAL controller
-#                    (BioGenerator / SpoilAndSurvive / LastStandStation) and
-#                    drives each state machine to its WIN state within a bounded
-#                    simulation. PASS = probe exits 0 AND prints exactly
+#                    (BioGenerator / SpoilAndSurvive / LastStandStation /
+#                    TriageRoundup / QuarantineBreach) and drives each state
+#                    machine to its WIN state within a bounded simulation.
+#                    PASS = probe exits 0 AND prints exactly
 #                    MINIGAME_COUNT 'WON=true' lines AND 'ALL WIN REACHABLE'.
 #
 # ALLOWLIST — the EXPLICIT set of tolerated lifecycle noise lines (only these
@@ -77,7 +78,7 @@ XVFB_RUN="${XVFB_RUN:-xvfb-run -a}"
 
 BOOT_FRAMES_DEV=180
 BOOT_FRAMES_GAME=240
-MINIGAME_COUNT=3
+MINIGAME_COUNT=5
 MINIGAME_SUMMARY="MINIWIN RESULT ALL WIN REACHABLE"
 
 ALLOWED='resources still in use at exit|RID allocations of type .* were leaked at exit|RID allocations leaked|Pages in use exist at exit in PagedAllocator|ObjectDB instances were leaked at exit|cannot connect to daemon tcp:5037|llvmpipe|libGL error|Mesa|GODOT_SILENCE_ROOT_WARNING'

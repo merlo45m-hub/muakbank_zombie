@@ -28,6 +28,8 @@ func _ready() -> void:
 	await _results_generator()
 	await _results_spoil()
 	await _results_laststand()
+	await _results_triage()
+	await _results_quarantine()
 
 	var any_fail := false
 	for k in results:
@@ -176,5 +178,122 @@ func _results_laststand() -> void:
 				break
 			guard += 1
 		results["laststand"] = {"win": won, "state": int(ctrl.get("state")), "note": "start=%d | %s" % [start_state, last_note]}
+	inst.queue_free()
+	await get_tree().process_frame
+
+# ── TRIAGE ROUNDUP ───────────────────────────────────────────────────────────
+func _results_triage() -> void:
+	var packed := load("res://scenes/minigames/triage_roundup.tscn") as PackedScene
+	if packed == null:
+		results["triage"] = {"win": false, "state": -1, "note": "scene load FAIL"}
+		return
+	var inst := packed.instantiate()
+	get_tree().root.add_child(inst)
+	await get_tree().process_frame
+	var ctrl: Node = inst.get_node_or_null("Controller")
+	var player: Node3D = make_player(inst)
+	player.global_position = inst.global_position
+	await get_tree().process_frame
+
+	if ctrl == null:
+		results["triage"] = {"win": false, "state": -1, "note": "no Controller node"}
+	else:
+		ctrl.set("player", player)
+		ctrl.interact()
+		await get_tree().process_frame
+		var start_state := int(ctrl.get("state"))
+		var pens: Node = inst.get_node_or_null("Pens")
+		var animals: Node = inst.get_node_or_null("Animals")
+		var order := ["dog", "cat", "rabbit", "chicken"]
+		var sguard := 0
+		var won := false
+		var last_note := ""
+		# Park each undelivered animal inside its matching pen; the controller's
+		# real _process drives the pen stable-dwell capture (1.25s per patient).
+		while sguard < 240 and int(ctrl.get("state")) == 1:
+			for pen in pens.get_children():
+				var t := String(pen.get("required_animal_type"))
+				var animal := _animal_of_type(animals, t)
+				if animal and not bool(animal.get("delivered")):
+					animal.global_position = pen.global_position + Vector3(0, 0.4, 0)
+					animal.linear_velocity = Vector3.ZERO
+			ctrl._process(1.0)
+			last_note = "time=%.0f delivered=%d" % [float(ctrl.get("time_remaining")), int(ctrl.get("delivered_types").size())]
+			if int(ctrl.get("state")) == 2:
+				won = true
+				last_note += "  <<WON"
+				break
+			if int(ctrl.get("state")) == 3:
+				last_note += "  <<FAILED"
+				break
+			sguard += 1
+		results["triage"] = {"win": won, "state": int(ctrl.get("state")), "note": "start=%d | %s" % [start_state, last_note]}
+	inst.queue_free()
+	await get_tree().process_frame
+
+func _animal_of_type(animals: Node, t: String) -> Node3D:
+	for a in animals.get_children():
+		if String(a.get("animal_type")) == t:
+			return a
+	return null
+
+# ── QUARANTINE BREACH ─────────────────────────────────────────────────────────
+func _results_quarantine() -> void:
+	var packed := load("res://scenes/minigames/quarantine_breach.tscn") as PackedScene
+	if packed == null:
+		results["quarantine"] = {"win": false, "state": -1, "note": "scene load FAIL"}
+		return
+	var inst := packed.instantiate()
+	get_tree().root.add_child(inst)
+	await get_tree().process_frame
+	var ctrl: Node = inst.get_node_or_null("Controller")
+	var player: Node3D = make_player(inst)
+	player.global_position = inst.global_position
+	await get_tree().process_frame
+
+	if ctrl == null:
+		results["quarantine"] = {"win": false, "state": -1, "note": "no Controller node"}
+	else:
+		ctrl.set("player", player)
+		ctrl.interact()
+		await get_tree().process_frame
+		var start_state := int(ctrl.get("state"))
+		var doors: Node = inst.get_node_or_null("Doors")
+		var cases: Node = inst.get_node_or_null("Cases")
+		var cart: Node3D = inst.get_node_or_null("ServiceCart")
+		var braces := {"A": null, "B": null, "C": null}
+		if cases:
+			for c in cases.get_children():
+				braces[String(c.name).trim_prefix("Case")] = c
+		braces["B"] = cart
+		var guard := 0
+		var won := false
+		var last_note := ""
+		# Seat the active step's brace in its socket, close the door and let the
+		# controller's real seal_tick dwell test (0.75s) lock each breach in order.
+		while guard < 300 and int(ctrl.get("state")) == 1:
+			var step := String(ctrl.get("current_step"))
+			var door: Node = doors.get_node("Door" + step)
+			var brace: Node3D = braces.get(step)
+			if brace and door:
+				brace.global_position = door.get_node("BraceSocket").global_position + Vector3(0, 0.1, 0)
+				brace.linear_velocity = Vector3.ZERO
+				door.toggle_to_closed()
+			ctrl._process(1.0)
+			var sealed_count := 0
+			for s in ["A", "B", "C"]:
+				var d: Node = doors.get_node("Door" + s)
+				if d and bool(d.get("sealed")):
+					sealed_count += 1
+			last_note = "step=%s time=%.0f sealed=%d" % [step, float(ctrl.get("time_remaining")), sealed_count]
+			if int(ctrl.get("state")) == 2:
+				won = true
+				last_note += "  <<WON"
+				break
+			if int(ctrl.get("state")) == 3:
+				last_note += "  <<FAILED"
+				break
+			guard += 1
+		results["quarantine"] = {"win": won, "state": int(ctrl.get("state")), "note": "start=%d | %s" % [start_state, last_note]}
 	inst.queue_free()
 	await get_tree().process_frame

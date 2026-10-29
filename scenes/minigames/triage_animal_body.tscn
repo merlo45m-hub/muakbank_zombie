@@ -1,0 +1,44 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/TriageAnimalBody.gd" id="1_animal"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.4
+height = 1.2
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ring"]
+top_radius = 0.5
+bottom_radius = 0.56
+height = 0.07
+radial_segments = 18
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ring"]
+albedo_color = Color(0.5, 0.5, 0.5, 1)
+roughness = 0.6
+
+[node name="TriageAnimalBody" type="RigidBody3D"]
+collision_layer = 1
+collision_mask = 1
+mass = 24.0
+linear_damp = 2.0
+angular_damp = 6.0
+script = ExtResource("1_animal")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="ColorRing" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = SubResource("CylinderMesh_ring")
+surface_material_override/0 = SubResource("StandardMaterial3D_ring")
+
+[node name="Tag" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+text = "DOG"
+font_size = 72
+outline_size = 10
+no_depth_test = true

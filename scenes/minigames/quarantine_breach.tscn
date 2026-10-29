@@ -1,0 +1,431 @@
+[gd_scene load_steps=29 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/QuarantineBreachController.gd" id="1_ctrl"]
+[ext_resource type="Script" path="res://scripts/gameplay/QuarantineSealDoor.gd" id="2_door"]
+[ext_resource type="Script" path="res://scripts/world/interactive/BreakableSupplyCrate.gd" id="3_crate"]
+[ext_resource type="Script" path="res://scripts/world/interactive/QuarantineSupplyCase.gd" id="4_case"]
+[ext_resource type="Script" path="res://scripts/world/interactive/PushableServiceCart.gd" id="5_cart"]
+[ext_resource type="PackedScene" path="res://scenes/ui/quarantine_breach_hud.tscn" id="6_hud"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(26, 0.5, 44)
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(26, 0.5, 44)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.17, 0.18, 0.19, 1)
+roughness = 0.95
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_zone"]
+size = Vector3(6, 3, 6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_panel"]
+size = Vector3(1.55, 2.5, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_panel"]
+size = Vector3(1.55, 2.5, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_frame"]
+size = Vector3(1.95, 2.7, 0.22)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_frame"]
+size = Vector3(1.95, 2.7, 0.22)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_doorzone"]
+size = Vector3(2.3, 2.7, 1.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_socket"]
+size = Vector3(1.5, 1.6, 1.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crate"]
+size = Vector3(0.95, 0.85, 0.95)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cratebody"]
+size = Vector3(0.95, 0.85, 0.95)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cratezone"]
+size = Vector3(2.4, 2.2, 2.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_case"]
+size = Vector3(0.7, 0.45, 0.55)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_case"]
+size = Vector3(0.7, 0.45, 0.55)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cart"]
+size = Vector3(1.2, 0.95, 0.7)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cart"]
+size = Vector3(1.2, 0.95, 0.7)
+
+[sub_resource type="BoxMesh" id="BoxMesh_board"]
+size = Vector3(2.4, 1.7, 0.25)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp"]
+top_radius = 0.09
+bottom_radius = 0.11
+height = 0.3
+radial_segments = 12
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_redline"]
+size = Vector3(14, 0.05, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_redline"]
+albedo_color = Color(0.9, 0.15, 0.1, 1)
+emission_enabled = true
+emission = Color(0.9, 0.15, 0.1, 1)
+emission_energy_multiplier = 1.5
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_killzone"]
+size = Vector3(14, 4, 10)
+
+[node name="QuarantineBreach" type="Node3D"]
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+
+[node name="Collision" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="Controller" type="Node3D" parent="."]
+script = ExtResource("1_ctrl")
+
+[node name="InteractionZone" type="Area3D" parent="Controller"]
+collision_layer = 0
+collision_mask = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="Controller/InteractionZone"]
+shape = SubResource("BoxShape3D_zone")
+
+[node name="Board" type="Node3D" parent="Controller"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, -14)
+
+[node name="BoardMesh" type="MeshInstance3D" parent="Controller/Board"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
+mesh = SubResource("BoxMesh_board")
+
+[node name="Prompt" type="Label3D" parent="Controller/Board"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0.35)
+text = "START SEALDOWN — 3 BREACHES — 120s"
+font_size = 40
+outline_size = 8
+no_depth_test = true
+billboard = 1
+
+[node name="LampA" type="MeshInstance3D" parent="Controller/Board"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0, 1.4, 0.3)
+mesh = SubResource("CylinderMesh_lamp")
+
+[node name="LampB" type="MeshInstance3D" parent="Controller/Board"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0.3)
+mesh = SubResource("CylinderMesh_lamp")
+
+[node name="LampC" type="MeshInstance3D" parent="Controller/Board"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 1.4, 0.3)
+mesh = SubResource("CylinderMesh_lamp")
+
+[node name="QuarantineHUD" parent="." instance=ExtResource("6_hud")]
+
+[node name="RedLine" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 6)
+mesh = SubResource("BoxMesh_redline")
+surface_material_override/0 = SubResource("StandardMaterial3D_redline")
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="DoorA" type="Node3D" parent="Doors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+script = ExtResource("2_door")
+seal_step = "A"
+assigned_brace = "case"
+
+[node name="PanelA" type="RigidBody3D" parent="Doors/DoorA"]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 1.25, 0)
+
+[node name="PanelAMesh" type="MeshInstance3D" parent="Doors/DoorA/PanelA"]
+mesh = SubResource("BoxMesh_panel")
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorA/PanelA"]
+shape = SubResource("BoxShape3D_panel")
+
+[node name="PanelB" type="RigidBody3D" parent="Doors/DoorA"]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 1.25, 0)
+
+[node name="PanelBMesh" type="MeshInstance3D" parent="Doors/DoorA/PanelB"]
+mesh = SubResource("BoxMesh_panel")
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorA/PanelB"]
+shape = SubResource("BoxShape3D_panel")
+
+[node name="DoorFrame" type="StaticBody3D" parent="Doors/DoorA"]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0.15)
+
+[node name="FrameMesh" type="MeshInstance3D" parent="Doors/DoorA/DoorFrame"]
+mesh = SubResource("BoxMesh_frame")
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorA/DoorFrame"]
+shape = SubResource("BoxShape3D_frame")
+
+[node name="DoorInteractionZone" type="Area3D" parent="Doors/DoorA"]
+collision_layer = 0
+collision_mask = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.3)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorA/DoorInteractionZone"]
+shape = SubResource("BoxShape3D_doorzone")
+
+[node name="BraceSocket" type="Area3D" parent="Doors/DoorA"]
+collision_layer = 0
+collision_mask = 8
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 2.6)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorA/BraceSocket"]
+shape = SubResource("BoxShape3D_socket")
+
+[node name="DoorB" type="Node3D" parent="Doors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+script = ExtResource("2_door")
+seal_step = "B"
+assigned_brace = "cart"
+
+[node name="PanelA" type="RigidBody3D" parent="Doors/DoorB"]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 1.25, 0)
+
+[node name="PanelAMesh" type="MeshInstance3D" parent="Doors/DoorB/PanelA"]
+mesh = SubResource("BoxMesh_panel")
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorB/PanelA"]
+shape = SubResource("BoxShape3D_panel")
+
+[node name="PanelB" type="RigidBody3D" parent="Doors/DoorB"]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 1.25, 0)
+
+[node name="PanelBMesh" type="MeshInstance3D" parent="Doors/DoorB/PanelB"]
+mesh = SubResource("BoxMesh_panel")
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorB/PanelB"]
+shape = SubResource("BoxShape3D_panel")
+
+[node name="DoorFrame" type="StaticBody3D" parent="Doors/DoorB"]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0.15)
+
+[node name="FrameMesh" type="MeshInstance3D" parent="Doors/DoorB/DoorFrame"]
+mesh = SubResource("BoxMesh_frame")
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorB/DoorFrame"]
+shape = SubResource("BoxShape3D_frame")
+
+[node name="DoorInteractionZone" type="Area3D" parent="Doors/DoorB"]
+collision_layer = 0
+collision_mask = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.3)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorB/DoorInteractionZone"]
+shape = SubResource("BoxShape3D_doorzone")
+
+[node name="BraceSocket" type="Area3D" parent="Doors/DoorB"]
+collision_layer = 0
+collision_mask = 8
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 2.6)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorB/BraceSocket"]
+shape = SubResource("BoxShape3D_socket")
+
+[node name="DoorC" type="Node3D" parent="Doors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+script = ExtResource("2_door")
+seal_step = "C"
+assigned_brace = "case"
+
+[node name="PanelA" type="RigidBody3D" parent="Doors/DoorC"]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 1.25, 0)
+
+[node name="PanelAMesh" type="MeshInstance3D" parent="Doors/DoorC/PanelA"]
+mesh = SubResource("BoxMesh_panel")
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorC/PanelA"]
+shape = SubResource("BoxShape3D_panel")
+
+[node name="PanelB" type="RigidBody3D" parent="Doors/DoorC"]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 1.25, 0)
+
+[node name="PanelBMesh" type="MeshInstance3D" parent="Doors/DoorC/PanelB"]
+mesh = SubResource("BoxMesh_panel")
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorC/PanelB"]
+shape = SubResource("BoxShape3D_panel")
+
+[node name="DoorFrame" type="StaticBody3D" parent="Doors/DoorC"]
+collision_layer = 1
+collision_mask = 9
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0.15)
+
+[node name="FrameMesh" type="MeshInstance3D" parent="Doors/DoorC/DoorFrame"]
+mesh = SubResource("BoxMesh_frame")
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorC/DoorFrame"]
+shape = SubResource("BoxShape3D_frame")
+
+[node name="DoorInteractionZone" type="Area3D" parent="Doors/DoorC"]
+collision_layer = 0
+collision_mask = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.3)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorC/DoorInteractionZone"]
+shape = SubResource("BoxShape3D_doorzone")
+
+[node name="BraceSocket" type="Area3D" parent="Doors/DoorC"]
+collision_layer = 0
+collision_mask = 8
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 2.6)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="Doors/DoorC/BraceSocket"]
+shape = SubResource("BoxShape3D_socket")
+
+[node name="Crates" type="Node3D" parent="."]
+
+[node name="CrateA" type="Node3D" parent="Crates"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0.35, -14)
+script = ExtResource("3_crate")
+supply_case_path = NodePath("../../Cases/CaseA")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="Crates/CrateA"]
+mesh = SubResource("BoxMesh_crate")
+
+[node name="Lid" type="MeshInstance3D" parent="Crates/CrateA"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("BoxMesh_crate")
+
+[node name="CrateCollision" type="StaticBody3D" parent="Crates/CrateA"]
+collision_layer = 1
+collision_mask = 9
+
+[node name="Collision" type="CollisionShape3D" parent="Crates/CrateA/CrateCollision"]
+shape = SubResource("BoxShape3D_cratebody")
+
+[node name="CrateInteractionZone" type="Area3D" parent="Crates/CrateA"]
+collision_layer = 0
+collision_mask = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="Crates/CrateA/CrateInteractionZone"]
+shape = SubResource("BoxShape3D_cratezone")
+
+[node name="CrateC" type="Node3D" parent="Crates"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0.35, 2)
+script = ExtResource("3_crate")
+supply_case_path = NodePath("../../Cases/CaseC")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="Crates/CrateC"]
+mesh = SubResource("BoxMesh_crate")
+
+[node name="Lid" type="MeshInstance3D" parent="Crates/CrateC"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("BoxMesh_crate")
+
+[node name="CrateCollision" type="StaticBody3D" parent="Crates/CrateC"]
+collision_layer = 1
+collision_mask = 9
+
+[node name="Collision" type="CollisionShape3D" parent="Crates/CrateC/CrateCollision"]
+shape = SubResource("BoxShape3D_cratebody")
+
+[node name="CrateInteractionZone" type="Area3D" parent="Crates/CrateC"]
+collision_layer = 0
+collision_mask = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="Crates/CrateC/CrateInteractionZone"]
+shape = SubResource("BoxShape3D_cratezone")
+
+[node name="Cases" type="Node3D" parent="."]
+
+[node name="CaseA" type="RigidBody3D" parent="Cases"]
+collision_layer = 8
+collision_mask = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -13.5)
+script = ExtResource("4_case")
+
+[node name="Mesh" type="MeshInstance3D" parent="Cases/CaseA"]
+mesh = SubResource("BoxMesh_case")
+
+[node name="Collision" type="CollisionShape3D" parent="Cases/CaseA"]
+shape = SubResource("BoxShape3D_case")
+
+[node name="CaseC" type="RigidBody3D" parent="Cases"]
+collision_layer = 8
+collision_mask = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 3)
+script = ExtResource("4_case")
+
+[node name="Mesh" type="MeshInstance3D" parent="Cases/CaseC"]
+mesh = SubResource("BoxMesh_case")
+
+[node name="Collision" type="CollisionShape3D" parent="Cases/CaseC"]
+shape = SubResource("BoxShape3D_case")
+
+[node name="ServiceCart" type="RigidBody3D" parent="."]
+collision_layer = 8
+collision_mask = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+script = ExtResource("5_cart")
+
+[node name="Mesh" type="MeshInstance3D" parent="ServiceCart"]
+mesh = SubResource("BoxMesh_cart")
+
+[node name="Collision" type="CollisionShape3D" parent="ServiceCart"]
+shape = SubResource("BoxShape3D_cart")
+
+[node name="Lanes" type="Node3D" parent="."]
+
+[node name="A" type="Marker3D" parent="Lanes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18)
+
+[node name="B" type="Marker3D" parent="Lanes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+
+[node name="C" type="Marker3D" parent="Lanes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="BreachKillZone" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 8
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 10)
+monitoring = true
+
+[node name="Collision" type="CollisionShape3D" parent="BreachKillZone"]
+shape = SubResource("BoxShape3D_killzone")

@@ -248,6 +248,8 @@ func _setup_objectives() -> void:
 		objective_manager.add_objective("l1_spoil_and_survive", "Eat 15 fresh buffet dishes", 1)
 		objective_manager.add_objective("l1_generator_fed", "Power the bio-generator", 1)
 		objective_manager.add_objective("l1_last_stand", "Survive 3 checkpoint waves", 1)
+		objective_manager.add_objective("l1_triage_roundup", "Return escaped animals", 1)
+		objective_manager.add_objective("l1_quarantine_breach", "Seal the service route", 1)
 
 func _setup_achievements() -> void:
 	var am = get_node_or_null("AchievementManager")
@@ -412,7 +414,7 @@ func _all_minigames_done() -> bool:
 	var objectives = objective_manager.get("objectives")
 	if typeof(objectives) != TYPE_DICTIONARY:
 		return true
-	var minigame_ids: Array[String] = ["l1_spoil_and_survive", "l1_generator_fed", "l1_last_stand"]
+	var minigame_ids: Array[String] = ["l1_spoil_and_survive", "l1_generator_fed", "l1_last_stand", "l1_triage_roundup", "l1_quarantine_breach"]
 	var registered_count := 0
 	for id in minigame_ids:
 		if objectives.has(id):
