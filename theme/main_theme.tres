@@ -1,12 +1,86 @@
-[gd_resource type="Theme" load_steps=4 format=3]
+[gd_resource type="Theme" format=3]
 
+[ext_resource type="StyleBox" path="res://theme/style_wood_plank_hover.tres" id="1_a7tdx"]
 [ext_resource type="FontFile" path="res://assets/fonts/NotoSans.ttf" id="1_text"]
-[ext_resource type="FontFile" path="res://assets/fonts/NotoColorEmoji.ttf" id="2_emoji"]
+[ext_resource type="StyleBox" path="res://theme/style_wood_plank.tres" id="2_75705"]
+[ext_resource type="StyleBox" path="res://theme/style_panel.tres" id="3_6sc48"]
+[ext_resource type="StyleBox" path="res://theme/pedestaldoctor.tres" id="4_ftk8o"]
+[ext_resource type="StyleBox" path="res://theme/pedestalgamer.tres" id="5_4xa5k"]
+[ext_resource type="StyleBox" path="res://theme/pedestalhunter.tres" id="6_fqy7u"]
+[ext_resource type="StyleBox" path="res://theme/pedestalstreamer.tres" id="7_1g5yx"]
+[ext_resource type="FontFile" path="res://assets/fonts/Creepster-Regular.ttf" id="8_dkcgw"]
 
-[sub_resource type="FontVariation" id="MainFont"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a7tdx"]
+bg_color = Color(0.28, 0.25, 0.31, 0.6)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_75705"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.8392157, 0.039215688, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6sc48"]
+bg_color = Color(0.24, 0.15, 0.09, 1)
+border_width_left = 2
+border_width_top = 4
+border_width_right = 2
+border_width_bottom = 4
+border_color = Color(0.42, 0.27, 0.15, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="FontVariation" id="FontVariation_ftk8o"]
+base_font = ExtResource("8_dkcgw")
+
+[sub_resource type="FontVariation" id="FontVariation_4xa5k"]
 base_font = ExtResource("1_text")
-fallbacks = Array[Font]([ExtResource("2_emoji")])
 
 [resource]
-default_font = SubResource("MainFont")
+default_font = SubResource("FontVariation_4xa5k")
 default_font_size = 20
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_disabled_color = Color(0.65882355, 0.6117647, 0.76862746, 1)
+Button/colors/font_focus_color = Color(1, 0.8392157, 0.039215688, 1)
+Button/colors/font_hover_color = Color(0.9098039, 0.9254902, 0.9607843, 1)
+Button/colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
+Button/constants/outline_size = 3
+Button/font_sizes/font_size = 24
+Button/styles/disabled = SubResource("StyleBoxFlat_a7tdx")
+Button/styles/focus = SubResource("StyleBoxFlat_75705")
+Button/styles/hover = ExtResource("1_a7tdx")
+Button/styles/normal = ExtResource("2_75705")
+Button/styles/pressed = SubResource("StyleBoxFlat_6sc48")
+Label/colors/font_color = Color(1, 1, 1, 1)
+Panel/colors/font_color = Color(1, 1, 1, 1)
+Panel/font_sizes/font_size = 20
+Panel/styles/panel = ExtResource("3_6sc48")
+PanelContainer/colors/font_color = Color(1, 1, 1, 1)
+PanelContainer/font_sizes/font_size = 20
+PanelContainer/styles/panel = ExtResource("3_6sc48")
+PedestalDoctor/base_type = &"PanelContainer"
+PedestalDoctor/styles/panel = ExtResource("4_ftk8o")
+PedestalGamer/base_type = &"PanelContainer"
+PedestalGamer/styles/panel = ExtResource("5_4xa5k")
+PedestalHunter/base_type = &"PanelContainer"
+PedestalHunter/styles/panel = ExtResource("6_fqy7u")
+PedestalStreamer/base_type = &"PanelContainer"
+PedestalStreamer/styles/panel = ExtResource("7_1g5yx")
+RichTextLabel/colors/font_color = Color(1, 1, 1, 1)
+TitleLabel/base_type = &"Label"
+TitleLabel/colors/font_color = Color(1, 1, 1, 1)
+TitleLabel/colors/font_outline_color = Color(0.78431374, 0.0627451, 0.18039216, 1)
+TitleLabel/constants/outline_size = 6
+TitleLabel/font_sizes/font_size = 52
+TitleLabel/fonts/font = SubResource("FontVariation_ftk8o")
