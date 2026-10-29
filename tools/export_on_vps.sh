@@ -1,7 +1,7 @@
 #!/bin/bash
 # One-command VPS export wrapper (Muakbank Zombie)
 # Edit on phone -> push rescue/muakbank-work -> VPS pulls -> Godot exports Android APK -> APK copied to phone Download
-# Usage: bash tools/export_on_vps.sh [push|pull|export|copy|full]
+# Usage: bash tools/export_on_vps.sh [push|pull|export|release|copy|full]
 # Default: full (push + pull + export + copy)
 #
 # Canonical branch is rescue/muakbank-work while main stays clean (see docs/BRANCH_WORKFLOW.md).
@@ -51,6 +51,21 @@ case "$ACTION" in
         echo "--- [3/4] Exporting Android APK on VPS ---"
         vps "mkdir -p /root/builds && cd $VPS_PROJECT && $VPS_GODOT --headless --import --path $VPS_PROJECT 2>&1 | tail -3 && $VPS_GODOT --headless --export-debug 'Android' --export-path /root/builds/muakbank_latest.apk" 2>&1
         echo "OK exported"
+        ;;
+    release)
+        # Store-release-signed export. Uses the recovered release keystore
+        # (alias "muakbank"; password from the MKB_RELEASE_PASS env var, never
+        # committed — matches export_presets.cfg's blank release_password design).
+        # The keystore must exist at the res:// path the preset references:
+        #   cp /root/.local/share/godot/keystores/release.keystore /root/muakbank_zombie/muakbank-release.keystore
+        echo "--- [3/4] Exporting RELEASE-signed Android APK on VPS ---"
+        if [ -z "$MKB_RELEASE_PASS" ]; then
+            echo "ERROR: MKB_RELEASE_PASS not set (release keystore password)." >&2
+            echo "  Run: MKB_RELEASE_PASS='<pass>' bash tools/export_on_vps.sh release" >&2
+            exit 1
+        fi
+        vps "mkdir -p /root/builds && cd $VPS_PROJECT && $VPS_GODOT --headless --import --path $VPS_PROJECT 2>&1 | tail -3 && GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD='$MKB_RELEASE_PASS' $VPS_GODOT --headless --export-release 'Android' --export-path /root/builds/muakbank_release_$(date +%Y%m%d).apk" 2>&1
+        echo "OK release-exported (see /root/builds/muakbank_release_*.apk on VPS)"
         ;;
     copy)
         echo "--- [4/4] Copying APK to phone ---"
