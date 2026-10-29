@@ -352,6 +352,8 @@ func _scatter_pumpkins() -> void:
 			l.omni_range = 3.2
 			l.position = Vector3(0, 0.6, 0)
 			inst.add_child(l)
+			l.visible = false  # DESIGN §6: gated by LampGate until the player is near
+			l.add_to_group("gated_light")
 
 
 func _scatter_small() -> void:
@@ -398,6 +400,8 @@ func _lamps() -> void:
 			l.omni_range = 7.0
 			l.position = Vector3(0, 1.7, 0)
 			inst.add_child(l)
+			l.visible = false  # DESIGN §6: gated by LampGate until the player is near
+			l.add_to_group("gated_light")
 	_place("kaykit/post_lantern.gltf", Vector3(2.9, 0.0, 13.0), 0.0, 2.2)
 	_place("kaykit/post_lantern.gltf", Vector3(-2.9, 0.0, 13.0), 0.0, 2.2)
 
@@ -511,6 +515,8 @@ func _street_lamps() -> void:
 			l.omni_range = 7.0
 			l.position = Vector3(0, 1.7, 0)
 			inst.add_child(l)
+			l.visible = false  # DESIGN §6: gated by LampGate until the player is near
+			l.add_to_group("gated_light")
 			count += 1
 
 # ── infrastructure ─────────────────────────────────────────────────────────

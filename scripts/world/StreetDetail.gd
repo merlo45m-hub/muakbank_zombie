@@ -476,6 +476,8 @@ func _street_furniture() -> void:
 		lamp.light_color = Color(1.0, 0.86, 0.66)
 		lamp.position = Vector3(0, 3.0, 0)
 		node.add_child(lamp)
+		lamp.visible = false  # DESIGN §6: gated by LampGate until the player is near
+		lamp.add_to_group("gated_light")
 	# Near band lamps: player needs light where they walk (15-45m), not just the perimeter.
 	for i in range(NEAR_LIGHT_COUNT):
 		if lamps.is_empty():
@@ -495,6 +497,8 @@ func _street_furniture() -> void:
 		lamp.light_color = Color(1.0, 0.86, 0.66)
 		lamp.position = Vector3(0, 3.0, 0)
 		node.add_child(lamp)
+		lamp.visible = false  # DESIGN §6: gated by LampGate until the player is near
+		lamp.add_to_group("gated_light")
 
 ## Vehicle models only: the car kit also ships loose debris/wheel/cone parts.
 func _is_vehicle(path: String) -> bool:
