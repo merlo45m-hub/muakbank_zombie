@@ -1,6 +1,6 @@
 extends SceneTree
 
-func _init() -> void:
+func _initialize() -> void:
 	var dry_run := false
 	var allow_delete := false
 	var patch_path := ""

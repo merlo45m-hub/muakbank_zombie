@@ -49,6 +49,14 @@ func try_interact() -> bool:
 		Input.vibrate_handheld(12)
 		return true
 
+	if nearest.has_method("process_capture"):
+		nearest.process_capture(0.0)
+		return true
+
+	if nearest.has_method("seal_tick"):
+		nearest.seal_tick(0.0)
+		return true
+
 	# Fallback: if prop has a generic trigger method
 	if nearest.has_method("trigger"):
 		nearest.trigger()
@@ -66,22 +74,28 @@ func _find_nearest_interactive_prop() -> Node3D:
 	for prop in get_tree().get_nodes_in_group("interactive_prop"):
 		if not prop.is_inside_tree() or not is_instance_valid(prop):
 			continue
-		# Skip if prop is too far
-		var dist := player_pos.distance_to(prop.global_transform.origin)
-		if dist > nearest_dist:
-			continue
 		# Check if prop has an interaction zone the player is inside
-		var zone := prop.get_node_or_null("InteractionZone")
-		if zone and zone.has_method("has_overlapping_bodies"):
-			# Only interact if player is actually in the zone
+		var zone: Area3D = null
+		for child in prop.get_children():
+			if child is Area3D and str(child.name).contains("InteractionZone"):
+				zone = child
+				break
+		var check_pos: Vector3 = zone.global_transform.origin if zone != null else prop.global_transform.origin
+		var dist := player_pos.distance_to(check_pos)
+		var player_in_zone := false
+		if zone:
 			var overlapping: Array[Node3D] = zone.get_overlapping_bodies()
-			var player_in_zone := false
 			for body in overlapping:
 				if body.is_in_group("player"):
 					player_in_zone = true
 					break
+			if not player_in_zone and dist <= 3.5:
+				player_in_zone = true
 			if not player_in_zone:
 				continue
+		elif dist > nearest_dist:
+			continue
+
 		# Found a candidate
 		if nearest == null or dist < nearest_dist:
 			nearest = prop

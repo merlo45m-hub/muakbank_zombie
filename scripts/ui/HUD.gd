@@ -39,7 +39,9 @@ var waypoint_markers: Dictionary = {}
 const WAYPOINT_POSITIONS: Dictionary = {
 	"l1_spoil_and_survive": Vector3(-14, 0, 2),
 	"l1_generator_fed":   Vector3(28, 0, 20),
-	"l1_last_stand":      Vector3(30, 0, -24)
+	"l1_last_stand":      Vector3(30, 0, -24),
+	"l1_triage_roundup":  Vector3(-9, 0, -45),
+	"l1_quarantine_breach": Vector3(-44, 0, -25)
 }  # Match scene instance transforms exactly so markers point to the right world positions
 
 # Throttle waypoint updates to ~10Hz to avoid per-frame churn

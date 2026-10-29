@@ -228,6 +228,8 @@ const COVER_EXCLUSIONS: Array[Vector2] = [
 	Vector2(-14.0, 2.0),   # Mini-game 1: SpoilAndSurvive (current position)
 	Vector2(28.0, 20.0),   # Mini-game 2: KeepGeneratorFed (current position)
 	Vector2(30.0, -24.0),  # Mini-game 3: LastStandStation (current position)
+	Vector2(-9.0, -45.0),  # Mini-game 4: TriageRoundup (current position)
+	Vector2(-44.0, -25.0), # Mini-game 5: QuarantineBreach (current position)
 ]
 
 # Parked cars: ringed across the expanded town (15-70m).

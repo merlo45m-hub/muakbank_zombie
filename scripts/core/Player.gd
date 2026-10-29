@@ -825,6 +825,34 @@ func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 					var dmg_type: int = MinosDamageNumbers3D.DamageType.CRITICAL_HIT if is_crit else MinosDamageNumbers3D.DamageType.NORMAL
 					damage_numbers.display_number(damage, enemy.global_transform.origin, dmg_type)
 
+	# Shove triage animals (Triage Roundup)
+	for animal in get_tree().get_nodes_in_group("triage_animal"):
+		if not is_instance_valid(animal) or bool(animal.get("delivered")):
+			continue
+		var dist: float = global_transform.origin.distance_to(animal.global_transform.origin)
+		var hit_range: float = weapon_range * 1.5
+		if dist < hit_range:
+			var shove_dir: Vector3 = (animal.global_transform.origin - global_transform.origin).normalized()
+			if shove_dir.length_squared() < 0.001:
+				shove_dir = -global_transform.basis.z
+			if animal.has_method("apply_shove"):
+				animal.apply_shove(shove_dir * 12.0)
+			Input.vibrate_handheld(12)
+
+	# Push quarantine braces (Quarantine Breach)
+	for brace in get_tree().get_nodes_in_group("quarantine_brace"):
+		if not is_instance_valid(brace) or (brace is RigidBody3D and brace.freeze):
+			continue
+		var dist: float = global_transform.origin.distance_to(brace.global_transform.origin)
+		var hit_range: float = weapon_range * 1.5
+		if dist < hit_range:
+			var push_dir: Vector3 = (brace.global_transform.origin - global_transform.origin).normalized()
+			if push_dir.length_squared() < 0.001:
+				push_dir = -global_transform.basis.z
+			if brace is RigidBody3D:
+				brace.apply_central_impulse(Vector3(push_dir.x, 0.0, push_dir.z) * 15.0)
+			Input.vibrate_handheld(12)
+
 
 # ──────────────────────────────────────────────
 #  SPECIAL ABILITIES (preserved exactly)
@@ -1127,24 +1155,28 @@ func _try_prop_interaction() -> bool:
 	for prop in get_tree().get_nodes_in_group("interactive_prop"):
 		if not is_instance_valid(prop) or not prop.is_inside_tree():
 			continue
-		var dist := player_pos.distance_to(prop.global_transform.origin)
-		if dist > nearest_dist:
-			continue
 		# Check player is in the prop's interaction zone
 		var zone: Area3D = null
 		for child in prop.get_children():
 			if child is Area3D and str(child.name).contains("InteractionZone"):
 				zone = child
 				break
+		var check_pos: Vector3 = zone.global_transform.origin if zone != null else prop.global_transform.origin
+		var dist := player_pos.distance_to(check_pos)
+		var player_in_zone := false
 		if zone:
 			var overlapping: Array = zone.get_overlapping_bodies()
-			var player_in_zone := false
 			for body in overlapping:
 				if body.is_in_group("player"):
 					player_in_zone = true
 					break
+			if not player_in_zone and dist <= 3.5:
+				player_in_zone = true
 			if not player_in_zone:
 				continue
+		elif dist > nearest_dist:
+			continue
+
 		# Found a candidate
 		if nearest_prop == null or dist < nearest_dist:
 			nearest_prop = prop
@@ -1161,6 +1193,14 @@ func _try_prop_interaction() -> bool:
 		if hf and hf.has_method("emit_pickup"):
 			hf.emit_pickup(nearest_prop.global_transform.origin)
 		Input.vibrate_handheld(12)
+		return true
+
+	if nearest_prop.has_method("process_capture"):
+		nearest_prop.process_capture(0.0)
+		return true
+
+	if nearest_prop.has_method("seal_tick"):
+		nearest_prop.seal_tick(0.0)
 		return true
 
 	# Special case: wall punch
