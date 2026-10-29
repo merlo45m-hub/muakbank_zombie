@@ -16,7 +16,7 @@ Eat food to restore health, fight off zombie animals, survive the shift.
 | Move | WASD | Left joystick |
 | Look | Mouse | Drag |
 | Attack | Left click | ⚔ button |
-| Special ability | G | ✨ button |
+| Special ability | G | ✨ SPECIAL button |
 | Jump | Space | — |
 | Swap weapon | Tab | — |
 | Pause | Esc | — |

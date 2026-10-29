@@ -184,6 +184,8 @@ func _ready() -> void:
 			mobile_controls.jump_pressed.connect(_on_mobile_jump)
 		if mobile_controls.has_signal("weapon_switch_pressed"):
 			mobile_controls.weapon_switch_pressed.connect(_on_mobile_weapon_switch)
+		if mobile_controls.has_signal("special_pressed"):
+			mobile_controls.special_pressed.connect(_on_mobile_special)
 
 	# Mouse capture on desktop; mobile keeps touch-visible mode
 	if OS.has_feature("android") or OS.has_feature("ios"):
@@ -615,6 +617,15 @@ func _on_mobile_jump() -> void:
 func _on_mobile_weapon_switch() -> void:
 	if weapon_system and weapon_system.has_method("switch_to_next_weapon"):
 		weapon_system.switch_to_next_weapon()
+
+func _on_mobile_special() -> void:
+	# Mobile SPECIAL button routes into the EXACT same handler the keyboard
+	# 'special' action (G key) drives in _handle_attack(): use_special_ability().
+	# The is_dead gate mirrors the keyboard check; the ability itself (heal/rage/
+	# stealth/shield) lives only in use_special_ability(), no duplicated logic.
+	if is_dead:
+		return
+	use_special_ability()
 
 
 # ──────────────────────────────────────────────

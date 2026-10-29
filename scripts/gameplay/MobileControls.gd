@@ -10,6 +10,7 @@ signal punch_pickup_pressed
 signal sprint_pressed(active: bool)
 signal jump_pressed
 signal weapon_switch_pressed
+signal special_pressed
 
 # === NODE REFS ===
 @onready var joystick_area = $JoystickArea
@@ -20,6 +21,7 @@ var sprint_btn: Button = null
 var jump_btn: Button = null
 var weapon_btn: Button = null
 var attack_btn: Button = null
+var special_btn: Button = null
 var sprint_active: bool = false
 
 # === STATE ===
@@ -45,6 +47,11 @@ const SPRINT_BTN_RECT := Rect2(30.0, -760.0, 270.0, 360.0)
 # offsets overlapped), so SPECIAL was half-eaten and the labels rendered on top of
 # each other. Park JUMP left of the VS attack button — same bottom band, no overlap.
 const JUMP_BTN_RECT := Rect2(-510.0, -250.0, -310.0, -50.0)
+# SPECIAL sits in the right column directly ABOVE SWAP (SWAP spans y -490..-290):
+# top -730, bottom -530 leaves a 40px gap to SWAP's -490 top edge, same 200x200
+# size and x column (-510..-310) as SWAP/JUMP, clear of ATTACK (-250..-50) and
+# the left-side SPRINT/joystick. The old SPECIAL rect overlapped JUMP here.
+const SPECIAL_BTN_RECT := Rect2(-510.0, -730.0, 200.0, 200.0)
 const BTN_FONT_SIZE: int = 34
 const BTN_BG_COLOR := Color(0.08, 0.08, 0.10, 0.85)
 const BTN_BG_ACTIVE := Color(0.2, 0.45, 0.2, 0.9)
@@ -74,8 +81,9 @@ func _ready() -> void:
 	_build_jump_button()
 	_build_weapon_button()
 	_build_attack_button()
+	_build_special_button()
 	# Every action button gets the same press pop.
-	for b in [sprint_btn, jump_btn, weapon_btn, attack_btn]:
+	for b in [sprint_btn, jump_btn, weapon_btn, attack_btn, special_btn]:
 		if b is Control:
 			(b as Control).button_down.connect(_punch.bind(b))
 
@@ -172,6 +180,40 @@ func _build_weapon_button() -> void:
 	weapon_btn.add_theme_stylebox_override("normal", style)
 	weapon_btn.pressed.connect(func(): emit_signal("weapon_switch_pressed"))
 	add_child(weapon_btn)
+
+func _build_special_button() -> void:
+	# Mobile SPECIAL (ability) button — mirrors the keyboard 'special' input
+	# (project.godot maps it to G; Player._handle_attack() polls it) by emitting
+	# special_pressed, which Player.gd routes into use_special_ability(), the
+	# exact same handler the G key drives. Purple tint to tell it apart from the
+	# red ATTACK button; same size/anchors/style as the other action buttons.
+	special_btn = Button.new()
+	special_btn.text = "SPECIAL"
+	special_btn.add_theme_font_size_override("font_size", BTN_FONT_SIZE)
+	special_btn.anchor_left = 1.0
+	special_btn.anchor_right = 1.0
+	special_btn.anchor_top = 1.0
+	special_btn.anchor_bottom = 1.0
+	special_btn.offset_left = SPECIAL_BTN_RECT.position.x
+	special_btn.offset_top = SPECIAL_BTN_RECT.position.y
+	special_btn.offset_right = SPECIAL_BTN_RECT.end.x
+	special_btn.offset_bottom = SPECIAL_BTN_RECT.end.y
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.35, 0.15, 0.45, 0.85)
+	style.set_border_width_all(3)
+	style.border_color = Color(1, 1, 1, 0.28)
+	style.set_corner_radius_all(BTN_CORNER_RADIUS)
+	special_btn.add_theme_stylebox_override("normal", style)
+	var active_style = StyleBoxFlat.new()
+	active_style.bg_color = Color(0.55, 0.25, 0.7, 0.95)
+	active_style.set_border_width_all(3)
+	active_style.border_color = Color(1, 1, 1, 0.5)
+	active_style.set_corner_radius_all(BTN_CORNER_RADIUS)
+	special_btn.add_theme_stylebox_override("pressed", active_style)
+	special_btn.pressed.connect(func():
+		emit_signal("special_pressed")
+		Input.vibrate_handheld(35))
+	add_child(special_btn)
 
 func _build_attack_button() -> void:
 	# Mobile attack control. The old AttackBtn (mislabeled \"VS\") was removed at the
