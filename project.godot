@@ -26,6 +26,7 @@ DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 SoundManager="*uid://6q1wagejt60k"
 MinosDamageNumbers2D="*uid://cmstxlu50gkl7"
 MinosDamageNumbers3D="*uid://bqk86tyyf62lx"
+Tutorial="*res://scripts/ui/tutorial.gd"
 
 [display]
 
@@ -60,6 +61,10 @@ special={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":71,"physical_keycode":0,"key_label":0,"unicode":103,"location":0,"echo":false,"script":null)
 ]
 }
+
+[internationalization]
+
+locale/translations_pot_files=PackedStringArray("res://resources/dialogue/tutorial_intro.dialogue")
 
 [physics]
 

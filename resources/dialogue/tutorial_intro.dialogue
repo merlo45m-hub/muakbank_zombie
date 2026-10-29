@@ -1,0 +1,19 @@
+~ start
+Narrator: "Welcome to Muakbank Zombie! [KYR: Мукбанк Зомбиге кош келиңиз!]"
+- "Tell me more" => intro_more
+- "Skip the intro" => END
+
+~ intro_more
+Narrator: "Feed the zombies before the buffet runs out. [KYR: Бүфөт бүтө электе зомбилерди тойгузуңуз.]"
+- "How do I move?" => how_move
+- "How do I fight?" => how_fight
+- "Let's play!" => END
+
+~ how_move
+Narrator: "Use the joystick on the left to move, the camera drag to look around. [KYR: Сол жактагы джойстик менен кыймылдаңыз.]"
+- "Got it, and fighting?" => how_fight
+- "Let's play!" => END
+
+~ how_fight
+Narrator: "Tap the attack button to swing at zombies, and collect food to heal. [KYR: Зомбилерге кол салыңыз жана азык жыйнап ден соолукту калыбына келтириңиз.]"
+- "Perfect, let's play!" => END

@@ -1,0 +1,65 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/tutorial_dialogue.gd" id="1_dialog"]
+[ext_resource type="FontFile" path="res://assets/fonts/NotoSans.ttf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="BalloonStyle"]
+content_margin_left = 24.0
+content_margin_top = 18.0
+content_margin_right = 24.0
+content_margin_bottom = 18.0
+bg_color = Color(0.08, 0.06, 0.05, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.72, 0.1, 0.07, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="TutorialDialogue" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_dialog")
+
+[node name="Balloon" type="Panel" parent="."]
+visible = false
+offset_left = 56.0
+offset_top = 480.0
+offset_right = 1384.0
+offset_bottom = 920.0
+theme_override_styles/panel = SubResource("BalloonStyle")
+
+[node name="Character" type="RichTextLabel" parent="Balloon"]
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 1304.0
+offset_bottom = 64.0
+text = "Narrator"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.35, 1)
+theme_override_fonts/normal_font = ExtResource("2_font")
+theme_override_font_sizes/normal_font_size = 22
+
+[node name="Text" type="RichTextLabel" parent="Balloon"]
+offset_left = 24.0
+offset_top = 70.0
+offset_right = 1304.0
+offset_bottom = 300.0
+theme_override_colors/font_color = Color(0.95, 0.93, 0.9, 1)
+theme_override_fonts/normal_font = ExtResource("2_font")
+theme_override_font_sizes/normal_font_size = 26
+text = ""
+
+[node name="Responses" type="VBoxContainer" parent="Balloon"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -640.0
+offset_top = -280.0
+offset_right = 640.0
+offset_bottom = -24.0
+theme_override_constants/separation = 12

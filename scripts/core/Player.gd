@@ -58,7 +58,12 @@ var current_weapon: String = "bat"
 # it (food_burger.tscn declares health_amount = 35). A second hard-coded table in
 # Game.consume_food() disagreed with the scenes on every type, so the same burger
 # healed 35 when walked over and 25 when eaten from the bar.
-var _inventory: Dictionary = {}
+# Food inventory, now backed by a GLoot Inventory (addons/gloot). Each food type
+# is one stacked InventoryItem, keyed by the "food_type" item property (no
+# protoset is used, so we cannot rely on GLoot's prototype_id lookup). The public
+# API below (get_food_count / has_food / get_food_heal / add_food /
+# consume_food_type) is unchanged for external callers.
+var _inventory: Inventory = null
 var attack_timer: float = 0.0
 var weapon_tween: Tween = null
 var special_timer: float = 0.0
@@ -121,6 +126,11 @@ var _applied_visual: Node3D = null
 
 
 func _ready() -> void:
+	# Initialize the GLoot inventory node. Each food type is one stacked item.
+	_inventory = Inventory.new()
+	_inventory.name = "GootInventory"
+	add_child(_inventory)
+
 	if camera_arm:
 		# Preserve the authored camera height while detaching the arm from player motion.
 		_camera_follow_offset = global_basis * camera_arm.position
@@ -929,38 +939,54 @@ func eat(food_type: String, amount: int) -> void:
 	is_eating = false
 
 
-# ── INVENTORY (food) ───────────────────────────────────────────
+# ── INVENTORY (food, GLoot-backed) ─────────────────────────────
+# Storage lives in a GLoot Inventory node (_inventory). Each food type is one
+# stacked InventoryItem keyed by the "food_type" item property (no protoset is
+# used, so GLoot's prototype_id lookup cannot match; we match on the property).
+# The heal value rides on the "heal" item property. Public API unchanged.
+
+const FOOD_MAX_STACK: int = 99
+
+func _food_item(food_type: String) -> InventoryItem:
+	for it in _inventory.get_items():
+		if it.has_property("food_type") and it.get_property("food_type") == food_type:
+			return it
+	return null
 
 func get_food_count(food_type: String) -> int:
-	var entry = _inventory.get(food_type)
-	return int(entry.get("count", 0)) if entry is Dictionary else 0
+	var it := _food_item(food_type)
+	return it.get_stack_size() if it != null else 0
 
 func has_food(food_type: String) -> bool:
 	return get_food_count(food_type) > 0
 
 func get_food_heal(food_type: String) -> int:
 	# The heal the scene declared for this type, remembered at pickup time.
-	var entry = _inventory.get(food_type)
-	return int(entry.get("heal", 0)) if entry is Dictionary else 0
+	var it := _food_item(food_type)
+	return int(it.get_property("heal", 0)) if it != null else 0
 
 func add_food(food_type: String, heal: int) -> void:
-	var entry = _inventory.get(food_type)
-	if entry is Dictionary:
-		entry["count"] = int(entry["count"]) + 1
-		entry["heal"] = heal
+	var it := _food_item(food_type)
+	if it == null:
+		it = _inventory.create_item(food_type)
+		it.set_property("food_type", food_type)
+		it.set_max_stack_size(FOOD_MAX_STACK)
+		it.set_property("heal", heal)
+		_inventory.add_item(it)
 	else:
-		_inventory[food_type] = {"count": 1, "heal": heal}
+		it.set_property("heal", heal)
+		it.set_stack_size(it.get_stack_size() + 1)
 	emit_signal("food_picked_up", food_type)
 
 func consume_food_type(food_type: String) -> bool:
-	var entry = _inventory.get(food_type)
-	if not entry is Dictionary or int(entry.get("count", 0)) <= 0:
+	var it := _food_item(food_type)
+	if it == null or it.get_stack_size() <= 0:
 		return false
-	var remaining: int = int(entry["count"]) - 1
+	var remaining: int = it.get_stack_size() - 1
 	if remaining > 0:
-		entry["count"] = remaining
+		it.set_stack_size(remaining)
 	else:
-		_inventory.erase(food_type)
+		_inventory.remove_item(it)
 	emit_signal("food_picked_up", food_type)
 	return true
 

@@ -91,6 +91,9 @@ func _on_play_pressed() -> void:
 	"""Go to character select first."""
 	Audio.play_click()
 	Audio.stop_music()
+	# First-run bilingual (EN/KYR) tutorial via Dialogue Manager. It self-guards
+	# on Save.is_tutorial_completed(), so it only shows once.
+	Tutorial.start_tutorial()
 	get_tree().change_scene_to_file("res://scenes/ui/character_select.tscn")
 
 

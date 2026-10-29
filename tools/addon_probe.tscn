@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/character_hunter.tscn" id="1_ch"]
+[ext_resource type="Script" path="res://tools/addon_probe.gd" id="2_probe"]
+
+[node name="AddonProbeRoot" type="Node3D"]
+
+[node name="Player" parent="." instance=ExtResource("1_ch")]
+
+[node name="Probe" type="Node" parent="."]
+script = ExtResource("2_probe")
