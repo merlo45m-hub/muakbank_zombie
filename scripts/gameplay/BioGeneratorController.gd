@@ -4,7 +4,7 @@ class_name BioGeneratorController
 const OBJECTIVE_ID := "l1_generator_fed"
 const OBJECTIVE_TITLE := "Power the Safe Zone Generator (90s)"
 const RUN_DURATION := 90.0
-const STARTING_FUEL := 40.0
+const STARTING_FUEL := 60.0
 const FUEL_DRAIN_PER_SECOND := 2.2
 const BLACKOUT_RESERVE := 12.0
 const FAILURE_RESET_DELAY := 5.0
