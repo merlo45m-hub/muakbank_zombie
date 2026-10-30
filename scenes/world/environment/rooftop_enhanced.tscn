@@ -1,14 +1,11 @@
-[gd_scene load_steps=93 format=3]
-[sub_resource type="BoxMesh" id="BoxMesh_floor"]
-size = Vector3(100, 0.3, 100)
+[gd_scene format=3]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
-size = Vector3(100, 0.3, 100)
+[ext_resource type="Script" path="res://scripts/world/Sand3RooftopScatter.gd" id="1_p4ng3"]
 
-[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
-albedo_color = Color(0.25, 0.22, 0.2, 1.0)
-roughness = 0.92
-metallic = 0.05
+[sub_resource type="StandardMaterial3D" id="BuildingMaterial"]
+albedo_color = Color(0.35, 0.32, 0.3, 1)
+metallic = 0.1
+roughness = 0.85
 
 [sub_resource type="BoxMesh" id="BoxMesh_building"]
 size = Vector3(50, 3, 50)
@@ -16,13 +13,21 @@ size = Vector3(50, 3, 50)
 [sub_resource type="BoxShape3D" id="BoxShape3D_building"]
 size = Vector3(50, 3, 50)
 
-[sub_resource type="StandardMaterial3D" id="BuildingMaterial"]
-albedo_color = Color(0.35, 0.32, 0.3, 1.0)
-roughness = 0.85
-metallic = 0.1
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.25, 0.22, 0.2, 1)
+metallic = 0.05
+roughness = 0.92
 
-[sub_resource type="BoxMesh" id="BoxMesh_wall"]
-size = Vector3(50, 3, 0.3)
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(100, 0.3, 100)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(100, 0.3, 100)
+
+[sub_resource type="StandardMaterial3D" id="ParapetMaterial"]
+albedo_color = Color(0.4, 0.38, 0.35, 1)
+metallic = 0.1
+roughness = 0.85
 
 [sub_resource type="BoxMesh" id="BoxMesh_parapet"]
 size = Vector3(50, 1, 0.4)
@@ -30,156 +35,91 @@ size = Vector3(50, 1, 0.4)
 [sub_resource type="BoxShape3D" id="BoxShape3D_parapet"]
 size = Vector3(50, 1, 0.4)
 
-[sub_resource type="StandardMaterial3D" id="ParapetMaterial"]
-albedo_color = Color(0.4, 0.38, 0.35, 1.0)
-roughness = 0.85
-metallic = 0.1
-
-[sub_resource type="BoxMesh" id="BoxMesh_ac_unit"]
-size = Vector3(2, 1.5, 2)
-
-[sub_resource type="StandardMaterial3D" id="ACMaterial"]
-albedo_color = Color(0.5, 0.52, 0.55, 1.0)
-roughness = 0.5
-metallic = 0.6
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ac"]
-size = Vector3(2, 1.5, 2)
-
-[sub_resource type="BoxMesh" id="BoxMesh_vent"]
-size = Vector3(1.5, 0.8, 1.5)
-
-[sub_resource type="StandardMaterial3D" id="VentMaterial"]
-albedo_color = Color(0.45, 0.42, 0.4, 1.0)
-roughness = 0.6
-metallic = 0.5
-
-[sub_resource type="BoxMesh" id="BoxMesh_door"]
-size = Vector3(1.2, 2.5, 0.1)
-
-[sub_resource type="StandardMaterial3D" id="DoorMaterial"]
-albedo_color = Color(0.2, 0.2, 0.22, 1.0)
-roughness = 0.4
-metallic = 0.6
-
-[sub_resource type="BoxMesh" id="BoxMesh_chimney"]
-size = Vector3(1.5, 4, 1.5)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_chimney"]
-size = Vector3(1.5, 4, 1.5)
-
-[sub_resource type="StandardMaterial3D" id="ChimneyMaterial"]
-albedo_color = Color(0.3, 0.25, 0.22, 1.0)
-roughness = 0.9
-metallic = 0.05
-
-[sub_resource type="BoxMesh" id="BoxMesh_antenna"]
-size = Vector3(0.15, 6, 0.15)
-
-[sub_resource type="StandardMaterial3D" id="AntennaMaterial"]
-albedo_color = Color(0.6, 0.55, 0.5, 1.0)
-roughness = 0.4
-metallic = 0.7
-
-[sub_resource type="BoxMesh" id="BoxMesh_satellite"]
-size = Vector3(1.5, 0.3, 1.5)
-
-[sub_resource type="StandardMaterial3D" id="SatelliteMaterial"]
-albedo_color = Color(0.7, 0.72, 0.75, 1.0)
-roughness = 0.3
-metallic = 0.6
-
-[sub_resource type="BoxMesh" id="BoxMesh_barrel"]
-size = Vector3(0.8, 1.2, 0.8)
-
-[sub_resource type="StandardMaterial3D" id="BarrelMaterial"]
-albedo_color = Color(0.35, 0.3, 0.25, 1.0)
-roughness = 0.7
-metallic = 0.4
-
-[sub_resource type="BoxMesh" id="BoxMesh_crate"]
-size = Vector3(1.5, 1.5, 1.5)
-
-[sub_resource type="StandardMaterial3D" id="CrateMaterial"]
-albedo_color = Color(0.45, 0.35, 0.22, 1.0)
-roughness = 0.8
-metallic = 0.05
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_crate"]
-size = Vector3(1.5, 1.5, 1.5)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_tank"]
-radius = 0.6
-height = 2
-
-[sub_resource type="StandardMaterial3D" id="TankMaterial"]
-albedo_color = Color(0.3, 0.35, 0.4, 1.0)
-roughness = 0.5
-metallic = 0.6
-
-[sub_resource type="SphereMesh" id="SphereMesh_sky"]
-radius = 80
-
-[sub_resource type="StandardMaterial3D" id="SkyMaterial"]
-albedo_color = Color(0.15, 0.12, 0.1, 0.3)
-cull_mode = 1
-no_depth_test = false
-
 [sub_resource type="BoxMesh" id="BoxMesh_parapet_short"]
 size = Vector3(0.4, 1, 50)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_parapet_short"]
 size = Vector3(0.4, 1, 50)
 
+[sub_resource type="StandardMaterial3D" id="HelipadMaterial"]
+albedo_color = Color(0.15, 0.15, 0.15, 1)
+metallic = 0.3
+roughness = 0.7
+
 [sub_resource type="BoxMesh" id="BoxMesh_helipad"]
 size = Vector3(8, 0.1, 8)
 
-[sub_resource type="StandardMaterial3D" id="HelipadMaterial"]
-albedo_color = Color(0.15, 0.15, 0.15, 1.0)
-roughness = 0.7
-metallic = 0.3
+[sub_resource type="StandardMaterial3D" id="HelipadMarkMaterial"]
+albedo_color = Color(0.8, 0.1, 0.1, 1)
+metallic = 0.1
+roughness = 0.5
 
 [sub_resource type="BoxMesh" id="BoxMesh_helipad_mark"]
 size = Vector3(7.5, 0.05, 7.5)
 
-[sub_resource type="StandardMaterial3D" id="HelipadMarkMaterial"]
-albedo_color = Color(0.8, 0.1, 0.1, 1.0)
-roughness = 0.5
-metallic = 0.1
+[sub_resource type="StandardMaterial3D" id="HelipadCenterMaterial"]
+albedo_color = Color(1, 1, 0, 1)
+metallic = 0.2
+roughness = 0.3
 
 [sub_resource type="BoxMesh" id="BoxMesh_helipad_center"]
 size = Vector3(0.3, 0.05, 0.3)
 
-[sub_resource type="StandardMaterial3D" id="HelipadCenterMaterial"]
-albedo_color = Color(1.0, 1.0, 0.0, 1.0)
-roughness = 0.3
-metallic = 0.2
+[sub_resource type="StandardMaterial3D" id="ACMaterial"]
+albedo_color = Color(0.5, 0.52, 0.55, 1)
+metallic = 0.6
+roughness = 0.5
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_ac_duct"]
-radius = 0.5
-height = 3
+[sub_resource type="BoxMesh" id="BoxMesh_ac_unit"]
+size = Vector3(2, 1.5, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ac"]
+size = Vector3(2, 1.5, 2)
 
 [sub_resource type="StandardMaterial3D" id="DuctMaterial"]
-albedo_color = Color(0.4, 0.42, 0.45, 1.0)
-roughness = 0.6
+albedo_color = Color(0.4, 0.42, 0.45, 1)
 metallic = 0.5
+roughness = 0.6
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ac_duct"]
+height = 3.0
+
+[sub_resource type="StandardMaterial3D" id="HVACPipeHorizontalMaterial"]
+albedo_color = Color(0.32, 0.34, 0.37, 1)
+metallic = 0.7
+roughness = 0.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hvac_pipe_horizontal"]
+height = 8.0
+
+[sub_resource type="StandardMaterial3D" id="ExhaustFanMaterial"]
+albedo_color = Color(0.55, 0.55, 0.58, 1)
+metallic = 0.7
+roughness = 0.4
 
 [sub_resource type="BoxMesh" id="BoxMesh_exhaust_fan"]
 size = Vector3(1.2, 0.2, 1.2)
 
-[sub_resource type="StandardMaterial3D" id="ExhaustFanMaterial"]
-albedo_color = Color(0.55, 0.55, 0.58, 1.0)
-roughness = 0.4
-metallic = 0.7
+[sub_resource type="StandardMaterial3D" id="FanBladeMaterial"]
+albedo_color = Color(0.5, 0.5, 0.52, 1)
+metallic = 0.8
+roughness = 0.3
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_exhaust_fan_blade"]
-radius = 0.5
 height = 0.05
 
-[sub_resource type="StandardMaterial3D" id="FanBladeMaterial"]
-albedo_color = Color(0.5, 0.5, 0.52, 1.0)
-roughness = 0.3
-metallic = 0.8
+[sub_resource type="StandardMaterial3D" id="HVACPipeMaterial"]
+albedo_color = Color(0.3, 0.32, 0.35, 1)
+metallic = 0.7
+roughness = 0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_hvac_pipe"]
+size = Vector3(0.3, 2.5, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="WaterTowerMaterial"]
+albedo_color = Color(0.35, 0.4, 0.45, 1)
+metallic = 0.3
+roughness = 0.5
 
 [sub_resource type="BoxMesh" id="BoxMesh_water_tower"]
 size = Vector3(3, 5, 3)
@@ -187,19 +127,105 @@ size = Vector3(3, 5, 3)
 [sub_resource type="BoxShape3D" id="BoxShape3D_water_tower"]
 size = Vector3(3, 5, 3)
 
-[sub_resource type="StandardMaterial3D" id="WaterTowerMaterial"]
-albedo_color = Color(0.35, 0.4, 0.45, 1.0)
+[sub_resource type="StandardMaterial3D" id="WaterTankRoundedMaterial"]
+albedo_color = Color(0.38, 0.42, 0.47, 1)
+metallic = 0.4
 roughness = 0.5
-metallic = 0.3
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_water_tank_rounded"]
-radius = 1.2
 height = 3.5
 
-[sub_resource type="StandardMaterial3D" id="WaterTankRoundedMaterial"]
-albedo_color = Color(0.38, 0.42, 0.47, 1.0)
-roughness = 0.5
+[sub_resource type="StandardMaterial3D" id="SatelliteDishStandMaterial"]
+albedo_color = Color(0.4, 0.4, 0.42, 1)
+metallic = 0.6
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_satellite_dish_stand"]
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="SatelliteDishMaterial"]
+albedo_color = Color(0.65, 0.65, 0.7, 1)
+metallic = 0.9
+roughness = 0.2
+
+[sub_resource type="SphereMesh" id="SphereMesh_satellite_dish"]
+radius = 0.8
+
+[sub_resource type="StandardMaterial3D" id="AntennaMastMaterial"]
+albedo_color = Color(0.55, 0.5, 0.45, 1)
+metallic = 0.8
+roughness = 0.3
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_antenna_mast"]
+height = 8.0
+
+[sub_resource type="StandardMaterial3D" id="AntennaMaterial"]
+albedo_color = Color(0.6, 0.55, 0.5, 1)
+metallic = 0.7
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_antenna"]
+size = Vector3(0.15, 6, 0.15)
+
+[sub_resource type="StandardMaterial3D" id="CrateMaterial"]
+albedo_color = Color(0.45, 0.35, 0.22, 1)
+metallic = 0.05
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_crate"]
+size = Vector3(1.5, 1.5, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_crate"]
+size = Vector3(1.5, 1.5, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="BarrelMaterial"]
+albedo_color = Color(0.35, 0.3, 0.25, 1)
 metallic = 0.4
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_barrel"]
+size = Vector3(0.8, 1.2, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="DeadBushMaterial"]
+albedo_color = Color(0.15, 0.2, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_bush_dead"]
+size = Vector3(1.5, 1, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="DeadPlantMaterial"]
+albedo_color = Color(0.12, 0.18, 0.05, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_plant_dead"]
+size = Vector3(0.4, 1.2, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="DeadTreeMaterial"]
+albedo_color = Color(0.1, 0.12, 0.06, 1)
+roughness = 0.95
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_dead_tree"]
+height = 3.0
+
+[sub_resource type="StandardMaterial3D" id="TankMaterial"]
+albedo_color = Color(0.3, 0.35, 0.4, 1)
+metallic = 0.6
+roughness = 0.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tank"]
+
+[sub_resource type="StandardMaterial3D" id="ShedDoorMaterial"]
+albedo_color = Color(0.15, 0.15, 0.18, 1)
+metallic = 0.6
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_shed_door"]
+size = Vector3(1, 2, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="ShedMaterial"]
+albedo_color = Color(0.32, 0.28, 0.25, 1)
+metallic = 0.05
+roughness = 0.85
 
 [sub_resource type="BoxMesh" id="BoxMesh_shed"]
 size = Vector3(4, 2.5, 3)
@@ -207,142 +233,42 @@ size = Vector3(4, 2.5, 3)
 [sub_resource type="BoxShape3D" id="BoxShape3D_shed"]
 size = Vector3(4, 2.5, 3)
 
-[sub_resource type="StandardMaterial3D" id="ShedMaterial"]
-albedo_color = Color(0.32, 0.28, 0.25, 1.0)
-roughness = 0.85
-metallic = 0.05
+[sub_resource type="StandardMaterial3D" id="ShedRoofMaterial"]
+albedo_color = Color(0.25, 0.22, 0.2, 1)
+metallic = 0.02
+roughness = 0.9
 
 [sub_resource type="BoxMesh" id="BoxMesh_shed_roof"]
 size = Vector3(4.2, 0.15, 3.2)
 
-[sub_resource type="StandardMaterial3D" id="ShedRoofMaterial"]
-albedo_color = Color(0.25, 0.22, 0.2, 1.0)
-roughness = 0.9
-metallic = 0.02
-
-[sub_resource type="BoxMesh" id="BoxMesh_shed_door"]
-size = Vector3(1, 2, 0.05)
-
-[sub_resource type="StandardMaterial3D" id="ShedDoorMaterial"]
-albedo_color = Color(0.15, 0.15, 0.18, 1.0)
-roughness = 0.4
+[sub_resource type="StandardMaterial3D" id="SolarPanelMountMaterial"]
+albedo_color = Color(0.3, 0.3, 0.32, 1)
 metallic = 0.6
-
-[sub_resource type="BoxMesh" id="BoxMesh_hvac_pipe"]
-size = Vector3(0.3, 2.5, 0.3)
-
-[sub_resource type="StandardMaterial3D" id="HVACPipeMaterial"]
-albedo_color = Color(0.3, 0.32, 0.35, 1.0)
-roughness = 0.5
-metallic = 0.7
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_hvac_pipe_horizontal"]
-radius = 0.25
-height = 8
-
-[sub_resource type="StandardMaterial3D" id="HVACPipeHorizontalMaterial"]
-albedo_color = Color(0.32, 0.34, 0.37, 1.0)
-roughness = 0.5
-metallic = 0.7
-
-[sub_resource type="BoxMesh" id="BoxMesh_solar_panel"]
-size = Vector3(2, 0.05, 1)
-
-[sub_resource type="StandardMaterial3D" id="SolarPanelMaterial"]
-albedo_color = Color(0.05, 0.05, 0.15, 1.0)
-roughness = 0.1
-metallic = 0.9
-
-[sub_resource type="StandardMaterial3D" id="SolarPanelFrameMaterial"]
-albedo_color = Color(0.2, 0.2, 0.22, 1.0)
-roughness = 0.5
-metallic = 0.4
+roughness = 0.4
 
 [sub_resource type="BoxMesh" id="BoxMesh_solar_panel_mount"]
 size = Vector3(0.1, 0.5, 0.1)
 
-[sub_resource type="StandardMaterial3D" id="SolarPanelMountMaterial"]
-albedo_color = Color(0.3, 0.3, 0.32, 1.0)
-roughness = 0.4
-metallic = 0.6
-
-[sub_resource type="BoxMesh" id="BoxMesh_bush_dead"]
-size = Vector3(1.5, 1, 1.5)
-
-[sub_resource type="StandardMaterial3D" id="DeadBushMaterial"]
-albedo_color = Color(0.15, 0.2, 0.08, 1.0)
-roughness = 0.9
-metallic = 0.0
-
-[sub_resource type="BoxMesh" id="BoxMesh_plant_dead"]
-size = Vector3(0.4, 1.2, 0.4)
-
-[sub_resource type="StandardMaterial3D" id="DeadPlantMaterial"]
-albedo_color = Color(0.12, 0.18, 0.05, 1.0)
-roughness = 0.9
-metallic = 0.0
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_dead_tree"]
-radius = 0.3
-height = 3
-
-[sub_resource type="StandardMaterial3D" id="DeadTreeMaterial"]
-albedo_color = Color(0.1, 0.12, 0.06, 1.0)
-roughness = 0.95
-metallic = 0.0
-
-[sub_resource type="SphereMesh" id="SphereMesh_billboard"]
-radius = 0.1
-
-[sub_resource type="BoxMesh" id="BoxMesh_billboard_frame"]
-size = Vector3(6, 3, 0.2)
-
-[sub_resource type="StandardMaterial3D" id="BillboardFrameMaterial"]
-albedo_color = Color(0.2, 0.2, 0.22, 1.0)
-roughness = 0.5
-metallic = 0.3
-
-[sub_resource type="BoxMesh" id="BoxMesh_billboard_ad"]
-size = Vector3(5.8, 2.8, 0.05)
-
-[sub_resource type="StandardMaterial3D" id="BillboardAdMaterial"]
-albedo_color = Color(0.85, 0.05, 0.05, 1.0)
-roughness = 0.3
-metallic = 0.1
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_antenna_mast"]
-radius = 0.08
-height = 8
-
-[sub_resource type="StandardMaterial3D" id="AntennaMastMaterial"]
-albedo_color = Color(0.55, 0.5, 0.45, 1.0)
-roughness = 0.3
-metallic = 0.8
-
-[sub_resource type="SphereMesh" id="SphereMesh_satellite_dish"]
-radius = 0.8
-
-[sub_resource type="StandardMaterial3D" id="SatelliteDishMaterial"]
-albedo_color = Color(0.65, 0.65, 0.7, 1.0)
-roughness = 0.2
+[sub_resource type="StandardMaterial3D" id="SolarPanelMaterial"]
+albedo_color = Color(0.05, 0.05, 0.15, 1)
 metallic = 0.9
+roughness = 0.1
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_satellite_dish_stand"]
-radius = 0.1
-height = 1
+[sub_resource type="BoxMesh" id="BoxMesh_solar_panel"]
+size = Vector3(2, 0.05, 1)
 
-[sub_resource type="StandardMaterial3D" id="SatelliteDishStandMaterial"]
-albedo_color = Color(0.4, 0.4, 0.42, 1.0)
-roughness = 0.4
-metallic = 0.6
+[sub_resource type="StandardMaterial3D" id="SolarPanelFrameMaterial"]
+albedo_color = Color(0.2, 0.2, 0.22, 1)
+metallic = 0.4
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="DistantBuildingMaterial"]
+albedo_color = Color(0.18, 0.18, 0.22, 1)
+metallic = 0.05
+roughness = 0.9
 
 [sub_resource type="BoxMesh" id="BoxMesh_distant_building_1"]
 size = Vector3(8, 12, 8)
-
-[sub_resource type="StandardMaterial3D" id="DistantBuildingMaterial"]
-albedo_color = Color(0.18, 0.18, 0.22, 1.0)
-roughness = 0.9
-metallic = 0.05
 
 [sub_resource type="BoxMesh" id="BoxMesh_distant_building_2"]
 size = Vector3(6, 20, 6)
@@ -359,1008 +285,1002 @@ size = Vector3(7, 10, 7)
 [sub_resource type="BoxMesh" id="BoxMesh_distant_building_6"]
 size = Vector3(9, 18, 9)
 
-[node name="Rooftop" type="Node3D"]
+[sub_resource type="StandardMaterial3D" id="BillboardFrameMaterial"]
+albedo_color = Color(0.2, 0.2, 0.22, 1)
+metallic = 0.3
+roughness = 0.5
 
-[node name="Building" type="StaticBody3D" parent="."]
+[sub_resource type="BoxMesh" id="BoxMesh_billboard_frame"]
+size = Vector3(6, 3, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="BillboardAdMaterial"]
+albedo_color = Color(0.85, 0.05, 0.05, 1)
+metallic = 0.1
+roughness = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_billboard_ad"]
+size = Vector3(5.8, 2.8, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="SatelliteMaterial"]
+albedo_color = Color(0.7, 0.72, 0.75, 1)
+metallic = 0.6
+roughness = 0.3
+
+[sub_resource type="BoxMesh" id="BoxMesh_satellite"]
+size = Vector3(1.5, 0.3, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="DoorMaterial"]
+albedo_color = Color(0.2, 0.2, 0.22, 1)
+metallic = 0.6
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_door"]
+size = Vector3(1.2, 2.5, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="ChimneyMaterial"]
+albedo_color = Color(0.3, 0.25, 0.22, 1)
+metallic = 0.05
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_chimney"]
+size = Vector3(1.5, 4, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_chimney"]
+size = Vector3(1.5, 4, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="SkyMaterial"]
+cull_mode = 1
+albedo_color = Color(0.15, 0.12, 0.1, 0.3)
+
+[sub_resource type="SphereMesh" id="SphereMesh_sky"]
+radius = 80.0
+
+[node name="Rooftop" type="Node3D" unique_id=330265269]
+script = ExtResource("1_p4ng3")
+
+[node name="Building" type="StaticBody3D" parent="." unique_id=760510684]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
-collision_layer = 1
 
-[node name="BuildingMesh" type="MeshInstance3D" parent="Building"]
-mesh = SubResource("BoxMesh_building")
+[node name="BuildingMesh" type="MeshInstance3D" parent="Building" unique_id=1659660931]
 material_override = SubResource("BuildingMaterial")
+mesh = SubResource("BoxMesh_building")
 
-[node name="BuildingCol" type="CollisionShape3D" parent="Building"]
+[node name="BuildingCol" type="CollisionShape3D" parent="Building" unique_id=7011608]
 shape = SubResource("BoxShape3D_building")
 
-[node name="Floor" type="StaticBody3D" parent="."]
-collision_layer = 1
+[node name="Floor" type="StaticBody3D" parent="." unique_id=2118912310]
 
-[node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
-mesh = SubResource("BoxMesh_floor")
+[node name="FloorMesh" type="MeshInstance3D" parent="Floor" unique_id=2065322304]
 material_override = SubResource("GroundMaterial")
+mesh = SubResource("BoxMesh_floor")
 
-[node name="FloorCol" type="CollisionShape3D" parent="Floor"]
+[node name="FloorCol" type="CollisionShape3D" parent="Floor" unique_id=69521358]
 shape = SubResource("BoxShape3D_floor")
 
-[node name="Parapets" type="Node3D" parent="."]
+[node name="Parapets" type="Node3D" parent="." unique_id=1039907683]
 
-[node name="ParapetN" type="StaticBody3D" parent="Parapets"]
+[node name="ParapetN" type="StaticBody3D" parent="Parapets" unique_id=1385953113]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -50)
-collision_layer = 1
 
-[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetN"]
-mesh = SubResource("BoxMesh_parapet")
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetN" unique_id=63599886]
 material_override = SubResource("ParapetMaterial")
+mesh = SubResource("BoxMesh_parapet")
 
-[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetN"]
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetN" unique_id=1525377885]
 shape = SubResource("BoxShape3D_parapet")
 
-[node name="ParapetS" type="StaticBody3D" parent="Parapets"]
+[node name="ParapetS" type="StaticBody3D" parent="Parapets" unique_id=1137174553]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 50)
-collision_layer = 1
 
-[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetS"]
-mesh = SubResource("BoxMesh_parapet")
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetS" unique_id=1028259478]
 material_override = SubResource("ParapetMaterial")
+mesh = SubResource("BoxMesh_parapet")
 
-[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetS"]
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetS" unique_id=431915576]
 shape = SubResource("BoxShape3D_parapet")
 
-[node name="ParapetE" type="StaticBody3D" parent="Parapets"]
+[node name="ParapetE" type="StaticBody3D" parent="Parapets" unique_id=1493163544]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 50, 0.5, 0)
-collision_layer = 1
 
-[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetE"]
-mesh = SubResource("BoxMesh_parapet")
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetE" unique_id=1403787498]
 material_override = SubResource("ParapetMaterial")
+mesh = SubResource("BoxMesh_parapet")
 
-[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetE"]
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetE" unique_id=1239694336]
 shape = SubResource("BoxShape3D_parapet")
 
-[node name="ParapetW" type="StaticBody3D" parent="Parapets"]
+[node name="ParapetW" type="StaticBody3D" parent="Parapets" unique_id=1431314041]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -50, 0.5, 0)
-collision_layer = 1
 
-[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetW"]
-mesh = SubResource("BoxMesh_parapet")
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetW" unique_id=729306229]
 material_override = SubResource("ParapetMaterial")
+mesh = SubResource("BoxMesh_parapet")
 
-[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetW"]
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetW" unique_id=225732134]
 shape = SubResource("BoxShape3D_parapet")
 
-[node name="ParapetShortE" type="StaticBody3D" parent="Parapets"]
+[node name="ParapetShortE" type="StaticBody3D" parent="Parapets" unique_id=1431960508]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 50, 0.5, -49.8)
-collision_layer = 1
 
-[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetShortE"]
-mesh = SubResource("BoxMesh_parapet_short")
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetShortE" unique_id=1297280079]
 material_override = SubResource("ParapetMaterial")
+mesh = SubResource("BoxMesh_parapet_short")
 
-[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetShortE"]
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetShortE" unique_id=1608931531]
 shape = SubResource("BoxShape3D_parapet_short")
 
-[node name="ParapetShortW" type="StaticBody3D" parent="Parapets"]
+[node name="ParapetShortW" type="StaticBody3D" parent="Parapets" unique_id=1077876273]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -50, 0.5, 49.8)
-collision_layer = 1
 
-[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetShortW"]
-mesh = SubResource("BoxMesh_parapet_short")
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetShortW" unique_id=1261908966]
 material_override = SubResource("ParapetMaterial")
+mesh = SubResource("BoxMesh_parapet_short")
 
-[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetShortW"]
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetShortW" unique_id=1946234214]
 shape = SubResource("BoxShape3D_parapet_short")
 
-[node name="ParapetShortN" type="StaticBody3D" parent="Parapets"]
+[node name="ParapetShortN" type="StaticBody3D" parent="Parapets" unique_id=1104658621]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.8, 0.5, -50)
-collision_layer = 1
 
-[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetShortN"]
-mesh = SubResource("BoxMesh_parapet_short")
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetShortN" unique_id=623740897]
 material_override = SubResource("ParapetMaterial")
+mesh = SubResource("BoxMesh_parapet_short")
 
-[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetShortN"]
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetShortN" unique_id=2017022261]
 shape = SubResource("BoxShape3D_parapet_short")
 
-[node name="ParapetShortS" type="StaticBody3D" parent="Parapets"]
+[node name="ParapetShortS" type="StaticBody3D" parent="Parapets" unique_id=1742555721]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49.8, 0.5, 50)
-collision_layer = 1
 
-[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetShortS"]
-mesh = SubResource("BoxMesh_parapet_short")
+[node name="ParapetMesh" type="MeshInstance3D" parent="Parapets/ParapetShortS" unique_id=813364751]
 material_override = SubResource("ParapetMaterial")
+mesh = SubResource("BoxMesh_parapet_short")
 
-[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetShortS"]
+[node name="ParapetCol" type="CollisionShape3D" parent="Parapets/ParapetShortS" unique_id=955736167]
 shape = SubResource("BoxShape3D_parapet_short")
 
-[node name="Helipad" type="Node3D" parent="."]
+[node name="Helipad" type="Node3D" parent="." unique_id=1113562517]
 
-[node name="HelipadBase" type="MeshInstance3D" parent="Helipad"]
+[node name="HelipadBase" type="MeshInstance3D" parent="Helipad" unique_id=1249511949]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 0.15, -35)
-mesh = SubResource("BoxMesh_helipad")
 material_override = SubResource("HelipadMaterial")
+mesh = SubResource("BoxMesh_helipad")
 
-[node name="HelipadMark" type="MeshInstance3D" parent="Helipad"]
+[node name="HelipadMark" type="MeshInstance3D" parent="Helipad" unique_id=1240557505]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 0.2, -35)
-mesh = SubResource("BoxMesh_helipad_mark")
 material_override = SubResource("HelipadMarkMaterial")
+mesh = SubResource("BoxMesh_helipad_mark")
 
-[node name="HelipadCenter" type="MeshInstance3D" parent="Helipad"]
+[node name="HelipadCenter" type="MeshInstance3D" parent="Helipad" unique_id=411440807]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 0.22, -35)
-mesh = SubResource("BoxMesh_helipad_center")
 material_override = SubResource("HelipadCenterMaterial")
+mesh = SubResource("BoxMesh_helipad_center")
 
-[node name="HelipadH" type="StaticBody3D" parent="Helipad"]
+[node name="HelipadH" type="StaticBody3D" parent="Helipad" unique_id=1729570966]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 0.15, -35)
-collision_layer = 1
 
-[node name="HelipadCol" type="CollisionShape3D" parent="Helipad/HelipadH"]
+[node name="HelipadCol" type="CollisionShape3D" parent="Helipad/HelipadH" unique_id=1331005489]
 shape = SubResource("BoxShape3D_floor")
 
-[node name="ACUnits" type="Node3D" parent="."]
+[node name="ACUnits" type="Node3D" parent="." unique_id=681804655]
 
-[node name="AC1" type="StaticBody3D" parent="ACUnits"]
+[node name="AC1" type="StaticBody3D" parent="ACUnits" unique_id=1563144824]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.75, -15)
-collision_layer = 1
 
-[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC1"]
-mesh = SubResource("BoxMesh_ac_unit")
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC1" unique_id=1658486914]
 material_override = SubResource("ACMaterial")
+mesh = SubResource("BoxMesh_ac_unit")
 
-[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC1"]
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC1" unique_id=832644311]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AC2" type="StaticBody3D" parent="ACUnits"]
+[node name="AC2" type="StaticBody3D" parent="ACUnits" unique_id=511701592]
 transform = Transform3D(0.9, 0.4, 0, -0.4, 0.9, 0, 0, 0, 1, 15, 0.75, -12)
-collision_layer = 1
 
-[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC2"]
-mesh = SubResource("BoxMesh_ac_unit")
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC2" unique_id=1007891536]
 material_override = SubResource("ACMaterial")
+mesh = SubResource("BoxMesh_ac_unit")
 
-[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC2"]
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC2" unique_id=1227693263]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AC3" type="StaticBody3D" parent="ACUnits"]
+[node name="AC3" type="StaticBody3D" parent="ACUnits" unique_id=139084385]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 18)
-collision_layer = 1
 
-[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC3"]
-mesh = SubResource("BoxMesh_ac_unit")
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC3" unique_id=1862162603]
 material_override = SubResource("ACMaterial")
+mesh = SubResource("BoxMesh_ac_unit")
 
-[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC3"]
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC3" unique_id=1164556170]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AC4" type="StaticBody3D" parent="ACUnits"]
+[node name="AC4" type="StaticBody3D" parent="ACUnits" unique_id=1223087584]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.75, 30)
-collision_layer = 1
 
-[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC4"]
-mesh = SubResource("BoxMesh_ac_unit")
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC4" unique_id=1580469489]
 material_override = SubResource("ACMaterial")
+mesh = SubResource("BoxMesh_ac_unit")
 
-[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC4"]
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC4" unique_id=1881082111]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AC5" type="StaticBody3D" parent="ACUnits"]
+[node name="AC5" type="StaticBody3D" parent="ACUnits" unique_id=1867284499]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0.75, -30)
-collision_layer = 1
 
-[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC5"]
-mesh = SubResource("BoxMesh_ac_unit")
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC5" unique_id=47425876]
 material_override = SubResource("ACMaterial")
+mesh = SubResource("BoxMesh_ac_unit")
 
-[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC5"]
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC5" unique_id=995434379]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AC6" type="StaticBody3D" parent="ACUnits"]
+[node name="AC6" type="StaticBody3D" parent="ACUnits" unique_id=1408415996]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0.75, 5)
-collision_layer = 1
 
-[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC6"]
-mesh = SubResource("BoxMesh_ac_unit")
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC6" unique_id=1312363708]
 material_override = SubResource("ACMaterial")
+mesh = SubResource("BoxMesh_ac_unit")
 
-[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC6"]
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC6" unique_id=1104389203]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AC7" type="StaticBody3D" parent="ACUnits"]
+[node name="AC7" type="StaticBody3D" parent="ACUnits" unique_id=491181250]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.75, 10)
-collision_layer = 1
 
-[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC7"]
-mesh = SubResource("BoxMesh_ac_unit")
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC7" unique_id=1261887679]
 material_override = SubResource("ACMaterial")
+mesh = SubResource("BoxMesh_ac_unit")
 
-[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC7"]
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC7" unique_id=1319274966]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AC8" type="StaticBody3D" parent="ACUnits"]
+[node name="AC8" type="StaticBody3D" parent="ACUnits" unique_id=483306293]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.75, -40)
-collision_layer = 1
 
-[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC8"]
-mesh = SubResource("BoxMesh_ac_unit")
+[node name="ACMesh" type="MeshInstance3D" parent="ACUnits/AC8" unique_id=1284363706]
 material_override = SubResource("ACMaterial")
+mesh = SubResource("BoxMesh_ac_unit")
 
-[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC8"]
+[node name="ACCol" type="CollisionShape3D" parent="ACUnits/AC8" unique_id=1417524822]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="VentilationDucts" type="Node3D" parent="."]
+[node name="VentilationDucts" type="Node3D" parent="." unique_id=2146653984]
 
-[node name="MainDuct1" type="StaticBody3D" parent="VentilationDucts"]
+[node name="MainDuct1" type="StaticBody3D" parent="VentilationDucts" unique_id=415197088]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 1.5, -20)
-collision_layer = 1
 
-[node name="DuctMesh" type="MeshInstance3D" parent="VentilationDucts/MainDuct1"]
-mesh = SubResource("CylinderMesh_ac_duct")
+[node name="DuctMesh" type="MeshInstance3D" parent="VentilationDucts/MainDuct1" unique_id=100155209]
 material_override = SubResource("DuctMaterial")
+mesh = SubResource("CylinderMesh_ac_duct")
 
-[node name="DuctCol" type="CollisionShape3D" parent="VentilationDucts/MainDuct1"]
+[node name="DuctCol" type="CollisionShape3D" parent="VentilationDucts/MainDuct1" unique_id=1773568119]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="MainDuct2" type="StaticBody3D" parent="VentilationDucts"]
+[node name="MainDuct2" type="StaticBody3D" parent="VentilationDucts" unique_id=25020685]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 1.5, 25)
-collision_layer = 1
 
-[node name="DuctMesh" type="MeshInstance3D" parent="VentilationDucts/MainDuct2"]
-mesh = SubResource("CylinderMesh_ac_duct")
+[node name="DuctMesh" type="MeshInstance3D" parent="VentilationDucts/MainDuct2" unique_id=1349557841]
 material_override = SubResource("DuctMaterial")
+mesh = SubResource("CylinderMesh_ac_duct")
 
-[node name="DuctCol" type="CollisionShape3D" parent="VentilationDucts/MainDuct2"]
+[node name="DuctCol" type="CollisionShape3D" parent="VentilationDucts/MainDuct2" unique_id=1930241373]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="BranchDuct1" type="MeshInstance3D" parent="VentilationDucts"]
+[node name="BranchDuct1" type="MeshInstance3D" parent="VentilationDucts" unique_id=1483008677]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -20, 1.5, 15)
-mesh = SubResource("CylinderMesh_hvac_pipe_horizontal")
 material_override = SubResource("HVACPipeHorizontalMaterial")
+mesh = SubResource("CylinderMesh_hvac_pipe_horizontal")
 
-[node name="BranchDuct2" type="MeshInstance3D" parent="VentilationDucts"]
+[node name="BranchDuct2" type="MeshInstance3D" parent="VentilationDucts" unique_id=1496033454]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 20, 1.5, -15)
-mesh = SubResource("CylinderMesh_hvac_pipe_horizontal")
 material_override = SubResource("HVACPipeHorizontalMaterial")
+mesh = SubResource("CylinderMesh_hvac_pipe_horizontal")
 
-[node name="ExhaustFans" type="Node3D" parent="."]
+[node name="ExhaustFans" type="Node3D" parent="." unique_id=154659710]
 
-[node name="ExhaustFan1" type="StaticBody3D" parent="ExhaustFans"]
+[node name="ExhaustFan1" type="StaticBody3D" parent="ExhaustFans" unique_id=1636566296]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 3.1, -20)
-collision_layer = 1
 
-[node name="FanBase" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("BoxMesh_exhaust_fan")
+[node name="FanBase" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan1" unique_id=344146582]
 material_override = SubResource("ExhaustFanMaterial")
+mesh = SubResource("BoxMesh_exhaust_fan")
 
-[node name="FanBlade" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan1"]
+[node name="FanBlade" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan1" unique_id=265417249]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-mesh = SubResource("CylinderMesh_exhaust_fan_blade")
 material_override = SubResource("FanBladeMaterial")
+mesh = SubResource("CylinderMesh_exhaust_fan_blade")
 
-[node name="FanCol" type="CollisionShape3D" parent="ExhaustFans/ExhaustFan1"]
+[node name="FanCol" type="CollisionShape3D" parent="ExhaustFans/ExhaustFan1" unique_id=1249241780]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="ExhaustFan2" type="StaticBody3D" parent="ExhaustFans"]
+[node name="ExhaustFan2" type="StaticBody3D" parent="ExhaustFans" unique_id=218243719]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 3.1, 25)
-collision_layer = 1
 
-[node name="FanBase" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("BoxMesh_exhaust_fan")
+[node name="FanBase" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan2" unique_id=616976888]
 material_override = SubResource("ExhaustFanMaterial")
+mesh = SubResource("BoxMesh_exhaust_fan")
 
-[node name="FanBlade" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan2"]
+[node name="FanBlade" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan2" unique_id=897338189]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-mesh = SubResource("CylinderMesh_exhaust_fan_blade")
 material_override = SubResource("FanBladeMaterial")
+mesh = SubResource("CylinderMesh_exhaust_fan_blade")
 
-[node name="FanCol" type="CollisionShape3D" parent="ExhaustFans/ExhaustFan2"]
+[node name="FanCol" type="CollisionShape3D" parent="ExhaustFans/ExhaustFan2" unique_id=456077972]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="ExhaustFan3" type="StaticBody3D" parent="ExhaustFans"]
+[node name="ExhaustFan3" type="StaticBody3D" parent="ExhaustFans" unique_id=1853476685]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 3.1, -30)
-collision_layer = 1
 
-[node name="FanBase" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("BoxMesh_exhaust_fan")
+[node name="FanBase" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan3" unique_id=1130798050]
 material_override = SubResource("ExhaustFanMaterial")
+mesh = SubResource("BoxMesh_exhaust_fan")
 
-[node name="FanBlade" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan3"]
+[node name="FanBlade" type="MeshInstance3D" parent="ExhaustFans/ExhaustFan3" unique_id=1755402241]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-mesh = SubResource("CylinderMesh_exhaust_fan_blade")
 material_override = SubResource("FanBladeMaterial")
+mesh = SubResource("CylinderMesh_exhaust_fan_blade")
 
-[node name="FanCol" type="CollisionShape3D" parent="ExhaustFans/ExhaustFan3"]
+[node name="FanCol" type="CollisionShape3D" parent="ExhaustFans/ExhaustFan3" unique_id=1245367181]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="HVACPipes" type="Node3D" parent="."]
+[node name="HVACPipes" type="Node3D" parent="." unique_id=550858899]
 
-[node name="HVACPipe1" type="StaticBody3D" parent="HVACPipes"]
+[node name="HVACPipe1" type="StaticBody3D" parent="HVACPipes" unique_id=364123932]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.25, -30)
-collision_layer = 1
 
-[node name="PipeMesh" type="MeshInstance3D" parent="HVACPipes/HVACPipe1"]
-mesh = SubResource("BoxMesh_hvac_pipe")
+[node name="PipeMesh" type="MeshInstance3D" parent="HVACPipes/HVACPipe1" unique_id=2007929155]
 material_override = SubResource("HVACPipeMaterial")
+mesh = SubResource("BoxMesh_hvac_pipe")
 
-[node name="PipeCol" type="CollisionShape3D" parent="HVACPipes/HVACPipe1"]
+[node name="PipeCol" type="CollisionShape3D" parent="HVACPipes/HVACPipe1" unique_id=48788464]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="HVACPipe2" type="StaticBody3D" parent="HVACPipes"]
+[node name="HVACPipe2" type="StaticBody3D" parent="HVACPipes" unique_id=997149508]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.25, 30)
-collision_layer = 1
 
-[node name="PipeMesh" type="MeshInstance3D" parent="HVACPipes/HVACPipe2"]
-mesh = SubResource("BoxMesh_hvac_pipe")
+[node name="PipeMesh" type="MeshInstance3D" parent="HVACPipes/HVACPipe2" unique_id=409158748]
 material_override = SubResource("HVACPipeMaterial")
+mesh = SubResource("BoxMesh_hvac_pipe")
 
-[node name="PipeCol" type="CollisionShape3D" parent="HVACPipes/HVACPipe2"]
+[node name="PipeCol" type="CollisionShape3D" parent="HVACPipes/HVACPipe2" unique_id=809574235]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="HVACPipe3" type="StaticBody3D" parent="HVACPipes"]
+[node name="HVACPipe3" type="StaticBody3D" parent="HVACPipes" unique_id=1849595966]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1.25, -10)
-collision_layer = 1
 
-[node name="PipeMesh" type="MeshInstance3D" parent="HVACPipes/HVACPipe3"]
-mesh = SubResource("BoxMesh_hvac_pipe")
+[node name="PipeMesh" type="MeshInstance3D" parent="HVACPipes/HVACPipe3" unique_id=101543773]
 material_override = SubResource("HVACPipeMaterial")
+mesh = SubResource("BoxMesh_hvac_pipe")
 
-[node name="PipeCol" type="CollisionShape3D" parent="HVACPipes/HVACPipe3"]
+[node name="PipeCol" type="CollisionShape3D" parent="HVACPipes/HVACPipe3" unique_id=1261833151]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="HVACPipe4" type="StaticBody3D" parent="HVACPipes"]
+[node name="HVACPipe4" type="StaticBody3D" parent="HVACPipes" unique_id=577227916]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 1.25, 10)
-collision_layer = 1
 
-[node name="PipeMesh" type="MeshInstance3D" parent="HVACPipes/HVACPipe4"]
-mesh = SubResource("BoxMesh_hvac_pipe")
+[node name="PipeMesh" type="MeshInstance3D" parent="HVACPipes/HVACPipe4" unique_id=305755623]
 material_override = SubResource("HVACPipeMaterial")
+mesh = SubResource("BoxMesh_hvac_pipe")
 
-[node name="PipeCol" type="CollisionShape3D" parent="HVACPipes/HVACPipe4"]
+[node name="PipeCol" type="CollisionShape3D" parent="HVACPipes/HVACPipe4" unique_id=1485213626]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="WaterTowers" type="Node3D" parent="."]
+[node name="WaterTowers" type="Node3D" parent="." unique_id=1041219155]
 
-[node name="WaterTower1" type="StaticBody3D" parent="WaterTowers"]
+[node name="WaterTower1" type="StaticBody3D" parent="WaterTowers" unique_id=394666321]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 2.5, -42)
-collision_layer = 1
 
-[node name="TowerMesh" type="MeshInstance3D" parent="WaterTowers/WaterTower1"]
-mesh = SubResource("BoxMesh_water_tower")
+[node name="TowerMesh" type="MeshInstance3D" parent="WaterTowers/WaterTower1" unique_id=1712217088]
 material_override = SubResource("WaterTowerMaterial")
+mesh = SubResource("BoxMesh_water_tower")
 
-[node name="TowerCol" type="CollisionShape3D" parent="WaterTowers/WaterTower1"]
+[node name="TowerCol" type="CollisionShape3D" parent="WaterTowers/WaterTower1" unique_id=2124210219]
 shape = SubResource("BoxShape3D_water_tower")
 
-[node name="TowerTop1" type="MeshInstance3D" parent="WaterTowers/WaterTower1"]
+[node name="TowerTop1" type="MeshInstance3D" parent="WaterTowers/WaterTower1" unique_id=55406676]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-mesh = SubResource("CylinderMesh_water_tank_rounded")
 material_override = SubResource("WaterTankRoundedMaterial")
+mesh = SubResource("CylinderMesh_water_tank_rounded")
 
-[node name="WaterTower2" type="StaticBody3D" parent="WaterTowers"]
+[node name="WaterTower2" type="StaticBody3D" parent="WaterTowers" unique_id=1733655605]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 2.5, 42)
-collision_layer = 1
 
-[node name="TowerMesh" type="MeshInstance3D" parent="WaterTowers/WaterTower2"]
-mesh = SubResource("BoxMesh_water_tower")
+[node name="TowerMesh" type="MeshInstance3D" parent="WaterTowers/WaterTower2" unique_id=980514422]
 material_override = SubResource("WaterTowerMaterial")
+mesh = SubResource("BoxMesh_water_tower")
 
-[node name="TowerCol" type="CollisionShape3D" parent="WaterTowers/WaterTower2"]
+[node name="TowerCol" type="CollisionShape3D" parent="WaterTowers/WaterTower2" unique_id=226643708]
 shape = SubResource("BoxShape3D_water_tower")
 
-[node name="TowerTop2" type="MeshInstance3D" parent="WaterTowers/WaterTower2"]
+[node name="TowerTop2" type="MeshInstance3D" parent="WaterTowers/WaterTower2" unique_id=869794581]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-mesh = SubResource("CylinderMesh_water_tank_rounded")
 material_override = SubResource("WaterTankRoundedMaterial")
+mesh = SubResource("CylinderMesh_water_tank_rounded")
 
-[node name="WaterTower3" type="StaticBody3D" parent="WaterTowers"]
+[node name="WaterTower3" type="StaticBody3D" parent="WaterTowers" unique_id=137501625]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 2.5, 45)
-collision_layer = 1
 
-[node name="TowerMesh" type="MeshInstance3D" parent="WaterTowers/WaterTower3"]
-mesh = SubResource("BoxMesh_water_tower")
+[node name="TowerMesh" type="MeshInstance3D" parent="WaterTowers/WaterTower3" unique_id=1977752551]
 material_override = SubResource("WaterTowerMaterial")
+mesh = SubResource("BoxMesh_water_tower")
 
-[node name="TowerCol" type="CollisionShape3D" parent="WaterTowers/WaterTower3"]
+[node name="TowerCol" type="CollisionShape3D" parent="WaterTowers/WaterTower3" unique_id=2083633445]
 shape = SubResource("BoxShape3D_water_tower")
 
-[node name="TowerTop3" type="MeshInstance3D" parent="WaterTowers/WaterTower3"]
+[node name="TowerTop3" type="MeshInstance3D" parent="WaterTowers/WaterTower3" unique_id=2135796750]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-mesh = SubResource("CylinderMesh_water_tank_rounded")
 material_override = SubResource("WaterTankRoundedMaterial")
+mesh = SubResource("CylinderMesh_water_tank_rounded")
 
-[node name="SatelliteDishes" type="Node3D" parent="."]
+[node name="SatelliteDishes" type="Node3D" parent="." unique_id=182073930]
 
-[node name="SatelliteDish1" type="StaticBody3D" parent="SatelliteDishes"]
+[node name="SatelliteDish1" type="StaticBody3D" parent="SatelliteDishes" unique_id=1700505721]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0.5, -35)
-collision_layer = 1
 
-[node name="DishStand" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish1"]
-mesh = SubResource("CylinderMesh_satellite_dish_stand")
+[node name="DishStand" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish1" unique_id=1667985325]
 material_override = SubResource("SatelliteDishStandMaterial")
+mesh = SubResource("CylinderMesh_satellite_dish_stand")
 
-[node name="Dish" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish1"]
+[node name="Dish" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish1" unique_id=1670532250]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
-mesh = SubResource("SphereMesh_satellite_dish")
 material_override = SubResource("SatelliteDishMaterial")
+mesh = SubResource("SphereMesh_satellite_dish")
 
-[node name="DishCol" type="CollisionShape3D" parent="SatelliteDishes/SatelliteDish1"]
+[node name="DishCol" type="CollisionShape3D" parent="SatelliteDishes/SatelliteDish1" unique_id=1494682040]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="SatelliteDish2" type="StaticBody3D" parent="SatelliteDishes"]
+[node name="SatelliteDish2" type="StaticBody3D" parent="SatelliteDishes" unique_id=1771441937]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.5, 35)
-collision_layer = 1
 
-[node name="DishStand" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish2"]
-mesh = SubResource("CylinderMesh_satellite_dish_stand")
+[node name="DishStand" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish2" unique_id=2014251617]
 material_override = SubResource("SatelliteDishStandMaterial")
+mesh = SubResource("CylinderMesh_satellite_dish_stand")
 
-[node name="Dish" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish2"]
+[node name="Dish" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish2" unique_id=396385883]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
-mesh = SubResource("SphereMesh_satellite_dish")
 material_override = SubResource("SatelliteDishMaterial")
+mesh = SubResource("SphereMesh_satellite_dish")
 
-[node name="DishCol" type="CollisionShape3D" parent="SatelliteDishes/SatelliteDish2"]
+[node name="DishCol" type="CollisionShape3D" parent="SatelliteDishes/SatelliteDish2" unique_id=684971892]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="SatelliteDish3" type="StaticBody3D" parent="SatelliteDishes"]
+[node name="SatelliteDish3" type="StaticBody3D" parent="SatelliteDishes" unique_id=1577036754]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -45)
-collision_layer = 1
 
-[node name="DishStand" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish3"]
-mesh = SubResource("CylinderMesh_satellite_dish_stand")
+[node name="DishStand" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish3" unique_id=1169057847]
 material_override = SubResource("SatelliteDishStandMaterial")
+mesh = SubResource("CylinderMesh_satellite_dish_stand")
 
-[node name="Dish" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish3"]
+[node name="Dish" type="MeshInstance3D" parent="SatelliteDishes/SatelliteDish3" unique_id=560936562]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
-mesh = SubResource("SphereMesh_satellite_dish")
 material_override = SubResource("SatelliteDishMaterial")
+mesh = SubResource("SphereMesh_satellite_dish")
 
-[node name="DishCol" type="CollisionShape3D" parent="SatelliteDishes/SatelliteDish3"]
+[node name="DishCol" type="CollisionShape3D" parent="SatelliteDishes/SatelliteDish3" unique_id=460412466]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AntennaArrays" type="Node3D" parent="."]
+[node name="AntennaArrays" type="Node3D" parent="." unique_id=548617800]
 
-[node name="AntennaArray1" type="StaticBody3D" parent="AntennaArrays"]
+[node name="AntennaArray1" type="StaticBody3D" parent="AntennaArrays" unique_id=821646102]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 0.5, -5)
-collision_layer = 1
 
-[node name="Mast" type="MeshInstance3D" parent="AntennaArrays/AntennaArray1"]
-mesh = SubResource("CylinderMesh_antenna_mast")
+[node name="Mast" type="MeshInstance3D" parent="AntennaArrays/AntennaArray1" unique_id=1242328779]
 material_override = SubResource("AntennaMastMaterial")
+mesh = SubResource("CylinderMesh_antenna_mast")
 
-[node name="ArrayCol" type="CollisionShape3D" parent="AntennaArrays/AntennaArray1"]
+[node name="ArrayCol" type="CollisionShape3D" parent="AntennaArrays/AntennaArray1" unique_id=1960225067]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AntennaEl1" type="MeshInstance3D" parent="AntennaArrays/AntennaArray1"]
+[node name="AntennaEl1" type="MeshInstance3D" parent="AntennaArrays/AntennaArray1" unique_id=1198158425]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-mesh = SubResource("BoxMesh_antenna")
 material_override = SubResource("AntennaMaterial")
+mesh = SubResource("BoxMesh_antenna")
 
-[node name="AntennaEl2" type="MeshInstance3D" parent="AntennaArrays/AntennaArray1"]
+[node name="AntennaEl2" type="MeshInstance3D" parent="AntennaArrays/AntennaArray1" unique_id=1957049323]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
-mesh = SubResource("BoxMesh_antenna")
 material_override = SubResource("AntennaMaterial")
+mesh = SubResource("BoxMesh_antenna")
 
-[node name="AntennaEl3" type="MeshInstance3D" parent="AntennaArrays/AntennaArray1"]
+[node name="AntennaEl3" type="MeshInstance3D" parent="AntennaArrays/AntennaArray1" unique_id=1230178811]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
-mesh = SubResource("BoxMesh_antenna")
 material_override = SubResource("AntennaMaterial")
+mesh = SubResource("BoxMesh_antenna")
 
-[node name="AntennaArray2" type="StaticBody3D" parent="AntennaArrays"]
+[node name="AntennaArray2" type="StaticBody3D" parent="AntennaArrays" unique_id=426226619]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 0.5, 5)
-collision_layer = 1
 
-[node name="Mast" type="MeshInstance3D" parent="AntennaArrays/AntennaArray2"]
-mesh = SubResource("CylinderMesh_antenna_mast")
+[node name="Mast" type="MeshInstance3D" parent="AntennaArrays/AntennaArray2" unique_id=1379530322]
 material_override = SubResource("AntennaMastMaterial")
+mesh = SubResource("CylinderMesh_antenna_mast")
 
-[node name="ArrayCol" type="CollisionShape3D" parent="AntennaArrays/AntennaArray2"]
+[node name="ArrayCol" type="CollisionShape3D" parent="AntennaArrays/AntennaArray2" unique_id=379386833]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AntennaEl1" type="MeshInstance3D" parent="AntennaArrays/AntennaArray2"]
+[node name="AntennaEl1" type="MeshInstance3D" parent="AntennaArrays/AntennaArray2" unique_id=381583649]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-mesh = SubResource("BoxMesh_antenna")
 material_override = SubResource("AntennaMaterial")
+mesh = SubResource("BoxMesh_antenna")
 
-[node name="AntennaEl2" type="MeshInstance3D" parent="AntennaArrays/AntennaArray2"]
+[node name="AntennaEl2" type="MeshInstance3D" parent="AntennaArrays/AntennaArray2" unique_id=285147920]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
-mesh = SubResource("BoxMesh_antenna")
 material_override = SubResource("AntennaMaterial")
+mesh = SubResource("BoxMesh_antenna")
 
-[node name="AntennaEl3" type="MeshInstance3D" parent="AntennaArrays/AntennaArray2"]
+[node name="AntennaEl3" type="MeshInstance3D" parent="AntennaArrays/AntennaArray2" unique_id=1591021874]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
-mesh = SubResource("BoxMesh_antenna")
 material_override = SubResource("AntennaMaterial")
+mesh = SubResource("BoxMesh_antenna")
 
-[node name="AntennaArray3" type="StaticBody3D" parent="AntennaArrays"]
+[node name="AntennaArray3" type="StaticBody3D" parent="AntennaArrays" unique_id=1024290910]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.5, 42)
-collision_layer = 1
 
-[node name="Mast" type="MeshInstance3D" parent="AntennaArrays/AntennaArray3"]
-mesh = SubResource("CylinderMesh_antenna_mast")
+[node name="Mast" type="MeshInstance3D" parent="AntennaArrays/AntennaArray3" unique_id=165023047]
 material_override = SubResource("AntennaMastMaterial")
+mesh = SubResource("CylinderMesh_antenna_mast")
 
-[node name="ArrayCol" type="CollisionShape3D" parent="AntennaArrays/AntennaArray3"]
+[node name="ArrayCol" type="CollisionShape3D" parent="AntennaArrays/AntennaArray3" unique_id=1708193056]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="AntennaEl1" type="MeshInstance3D" parent="AntennaArrays/AntennaArray3"]
+[node name="AntennaEl1" type="MeshInstance3D" parent="AntennaArrays/AntennaArray3" unique_id=557086380]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-mesh = SubResource("BoxMesh_antenna")
 material_override = SubResource("AntennaMaterial")
+mesh = SubResource("BoxMesh_antenna")
 
-[node name="AntennaEl2" type="MeshInstance3D" parent="AntennaArrays/AntennaArray3"]
+[node name="AntennaEl2" type="MeshInstance3D" parent="AntennaArrays/AntennaArray3" unique_id=642361728]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
-mesh = SubResource("BoxMesh_antenna")
 material_override = SubResource("AntennaMaterial")
+mesh = SubResource("BoxMesh_antenna")
 
-[node name="StorageCrates" type="Node3D" parent="."]
+[node name="StorageCrates" type="Node3D" parent="." unique_id=1673861739]
 
-[node name="Crate1" type="StaticBody3D" parent="StorageCrates"]
+[node name="Crate1" type="StaticBody3D" parent="StorageCrates" unique_id=148742813]
 transform = Transform3D(0.95, 0.3, 0, -0.3, 0.95, 0, 0, 0, 1, -10, 0.75, -20)
-collision_layer = 1
 
-[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate1"]
-mesh = SubResource("BoxMesh_crate")
+[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate1" unique_id=720489154]
 material_override = SubResource("CrateMaterial")
+mesh = SubResource("BoxMesh_crate")
 
-[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate1"]
+[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate1" unique_id=859442981]
 shape = SubResource("BoxShape3D_crate")
 
-[node name="Crate2" type="StaticBody3D" parent="StorageCrates"]
+[node name="Crate2" type="StaticBody3D" parent="StorageCrates" unique_id=1577484968]
 transform = Transform3D(0.98, -0.17, 0, 0.17, 0.98, 0, 0, 0, 1, -8, 0.75, -20)
-collision_layer = 1
 
-[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate2"]
-mesh = SubResource("BoxMesh_crate")
+[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate2" unique_id=890353345]
 material_override = SubResource("CrateMaterial")
+mesh = SubResource("BoxMesh_crate")
 
-[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate2"]
+[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate2" unique_id=43593769]
 shape = SubResource("BoxShape3D_crate")
 
-[node name="Crate3" type="StaticBody3D" parent="StorageCrates"]
+[node name="Crate3" type="StaticBody3D" parent="StorageCrates" unique_id=1169329329]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.75, 15)
-collision_layer = 1
 
-[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate3"]
-mesh = SubResource("BoxMesh_crate")
+[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate3" unique_id=1687828589]
 material_override = SubResource("CrateMaterial")
+mesh = SubResource("BoxMesh_crate")
 
-[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate3"]
+[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate3" unique_id=2163262]
 shape = SubResource("BoxShape3D_crate")
 
-[node name="Crate4" type="StaticBody3D" parent="StorageCrates"]
+[node name="Crate4" type="StaticBody3D" parent="StorageCrates" unique_id=1437144409]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.75, -18)
-collision_layer = 1
 
-[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate4"]
-mesh = SubResource("BoxMesh_crate")
+[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate4" unique_id=1748318419]
 material_override = SubResource("CrateMaterial")
+mesh = SubResource("BoxMesh_crate")
 
-[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate4"]
+[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate4" unique_id=457594730]
 shape = SubResource("BoxShape3D_crate")
 
-[node name="Crate5" type="StaticBody3D" parent="StorageCrates"]
+[node name="Crate5" type="StaticBody3D" parent="StorageCrates" unique_id=1705737377]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0.75, 18)
-collision_layer = 1
 
-[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate5"]
-mesh = SubResource("BoxMesh_crate")
+[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate5" unique_id=787191194]
 material_override = SubResource("CrateMaterial")
+mesh = SubResource("BoxMesh_crate")
 
-[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate5"]
+[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate5" unique_id=1072894526]
 shape = SubResource("BoxShape3D_crate")
 
-[node name="Crate6" type="StaticBody3D" parent="StorageCrates"]
+[node name="Crate6" type="StaticBody3D" parent="StorageCrates" unique_id=730811440]
 transform = Transform3D(0.95, 0.3, 0, -0.3, 0.95, 0, 0, 0, 1, 15, 0.75, 22)
-collision_layer = 1
 
-[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate6"]
-mesh = SubResource("BoxMesh_crate")
+[node name="CrateMesh" type="MeshInstance3D" parent="StorageCrates/Crate6" unique_id=1057404155]
 material_override = SubResource("CrateMaterial")
+mesh = SubResource("BoxMesh_crate")
 
-[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate6"]
+[node name="CrateCol" type="CollisionShape3D" parent="StorageCrates/Crate6" unique_id=1347512706]
 shape = SubResource("BoxShape3D_crate")
 
-[node name="Barrels" type="Node3D" parent="."]
+[node name="Barrels" type="Node3D" parent="." unique_id=1382681123]
 
-[node name="Barrel1" type="MeshInstance3D" parent="Barrels"]
+[node name="Barrel1" type="MeshInstance3D" parent="Barrels" unique_id=1226606494]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.6, 0)
-mesh = SubResource("BoxMesh_barrel")
 material_override = SubResource("BarrelMaterial")
+mesh = SubResource("BoxMesh_barrel")
 
-[node name="Barrel2" type="MeshInstance3D" parent="Barrels"]
+[node name="Barrel2" type="MeshInstance3D" parent="Barrels" unique_id=1979646740]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 0.6, 1)
-mesh = SubResource("BoxMesh_barrel")
 material_override = SubResource("BarrelMaterial")
+mesh = SubResource("BoxMesh_barrel")
 
-[node name="Barrel3" type="MeshInstance3D" parent="Barrels"]
+[node name="Barrel3" type="MeshInstance3D" parent="Barrels" unique_id=1816540842]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.6, -20)
-mesh = SubResource("BoxMesh_barrel")
 material_override = SubResource("BarrelMaterial")
+mesh = SubResource("BoxMesh_barrel")
 
-[node name="Barrel4" type="MeshInstance3D" parent="Barrels"]
+[node name="Barrel4" type="MeshInstance3D" parent="Barrels" unique_id=1319088577]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0.6, -18)
-mesh = SubResource("BoxMesh_barrel")
 material_override = SubResource("BarrelMaterial")
+mesh = SubResource("BoxMesh_barrel")
 
-[node name="Barrel5" type="MeshInstance3D" parent="Barrels"]
+[node name="Barrel5" type="MeshInstance3D" parent="Barrels" unique_id=1684477987]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0.6, -22)
-mesh = SubResource("BoxMesh_barrel")
 material_override = SubResource("BarrelMaterial")
+mesh = SubResource("BoxMesh_barrel")
 
-[node name="Barrel6" type="MeshInstance3D" parent="Barrels"]
+[node name="Barrel6" type="MeshInstance3D" parent="Barrels" unique_id=1039427968]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0.6, 20)
-mesh = SubResource("BoxMesh_barrel")
 material_override = SubResource("BarrelMaterial")
+mesh = SubResource("BoxMesh_barrel")
 
-[node name="RooftopGarden" type="Node3D" parent="."]
+[node name="RooftopGarden" type="Node3D" parent="." unique_id=1097566682]
 
-[node name="GardenBase" type="MeshInstance3D" parent="RooftopGarden"]
+[node name="GardenBase" type="MeshInstance3D" parent="RooftopGarden" unique_id=23859323]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.15, 38)
-mesh = SubResource("BoxMesh_helipad")
 material_override = SubResource("HelipadMaterial")
+mesh = SubResource("BoxMesh_helipad")
 
-[node name="DeadBush1" type="MeshInstance3D" parent="RooftopGarden"]
+[node name="DeadBush1" type="MeshInstance3D" parent="RooftopGarden" unique_id=167266398]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-mesh = SubResource("BoxMesh_bush_dead")
 material_override = SubResource("DeadBushMaterial")
+mesh = SubResource("BoxMesh_bush_dead")
 
-[node name="DeadBush2" type="MeshInstance3D" parent="RooftopGarden"]
+[node name="DeadBush2" type="MeshInstance3D" parent="RooftopGarden" unique_id=225385861]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0.5, -0.5)
-mesh = SubResource("BoxMesh_bush_dead")
 material_override = SubResource("DeadBushMaterial")
+mesh = SubResource("BoxMesh_bush_dead")
 
-[node name="DeadBush3" type="MeshInstance3D" parent="RooftopGarden"]
+[node name="DeadBush3" type="MeshInstance3D" parent="RooftopGarden" unique_id=151435191]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 0.5, 0.6)
-mesh = SubResource("BoxMesh_bush_dead")
 material_override = SubResource("DeadBushMaterial")
+mesh = SubResource("BoxMesh_bush_dead")
 
-[node name="DeadPlant1" type="MeshInstance3D" parent="RooftopGarden"]
+[node name="DeadPlant1" type="MeshInstance3D" parent="RooftopGarden" unique_id=889044061]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.6, -0.8)
-mesh = SubResource("BoxMesh_plant_dead")
 material_override = SubResource("DeadPlantMaterial")
+mesh = SubResource("BoxMesh_plant_dead")
 
-[node name="DeadPlant2" type="MeshInstance3D" parent="RooftopGarden"]
+[node name="DeadPlant2" type="MeshInstance3D" parent="RooftopGarden" unique_id=368839084]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.6, 0.7)
-mesh = SubResource("BoxMesh_plant_dead")
 material_override = SubResource("DeadPlantMaterial")
+mesh = SubResource("BoxMesh_plant_dead")
 
-[node name="DeadTree1" type="MeshInstance3D" parent="RooftopGarden"]
+[node name="DeadTree1" type="MeshInstance3D" parent="RooftopGarden" unique_id=900615976]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.5, -0.3)
-mesh = SubResource("CylinderMesh_dead_tree")
 material_override = SubResource("DeadTreeMaterial")
+mesh = SubResource("CylinderMesh_dead_tree")
 
-[node name="WaterTankMain" type="Node3D" parent="."]
+[node name="WaterTankMain" type="Node3D" parent="." unique_id=1298734481]
 
-[node name="WaterTank" type="StaticBody3D" parent="WaterTankMain"]
+[node name="WaterTank" type="StaticBody3D" parent="WaterTankMain" unique_id=592982813]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 1, 45)
-collision_layer = 1
 
-[node name="TankMesh" type="MeshInstance3D" parent="WaterTankMain/WaterTank"]
-mesh = SubResource("CylinderMesh_tank")
+[node name="TankMesh" type="MeshInstance3D" parent="WaterTankMain/WaterTank" unique_id=1517118186]
 material_override = SubResource("TankMaterial")
+mesh = SubResource("CylinderMesh_tank")
 
-[node name="TankCol" type="CollisionShape3D" parent="WaterTankMain/WaterTank"]
+[node name="TankCol" type="CollisionShape3D" parent="WaterTankMain/WaterTank" unique_id=1901185954]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="MaintenanceDoor" type="Node3D" parent="."]
+[node name="MaintenanceDoor" type="Node3D" parent="." unique_id=919994818]
 
-[node name="MaintDoorBase" type="StaticBody3D" parent="MaintenanceDoor"]
+[node name="MaintDoorBase" type="StaticBody3D" parent="MaintenanceDoor" unique_id=629763825]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 1.25, -48)
-collision_layer = 1
 
-[node name="DoorFrame" type="MeshInstance3D" parent="MaintenanceDoor/MaintDoorBase"]
-mesh = SubResource("BoxMesh_shed_door")
+[node name="DoorFrame" type="MeshInstance3D" parent="MaintenanceDoor/MaintDoorBase" unique_id=1342017932]
 material_override = SubResource("ShedDoorMaterial")
+mesh = SubResource("BoxMesh_shed_door")
 
-[node name="DoorCol" type="CollisionShape3D" parent="MaintenanceDoor/MaintDoorBase"]
+[node name="DoorCol" type="CollisionShape3D" parent="MaintenanceDoor/MaintDoorBase" unique_id=849567644]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="RooftopShed" type="Node3D" parent="."]
+[node name="RooftopShed" type="Node3D" parent="." unique_id=35689559]
 
-[node name="ShedStatic" type="StaticBody3D" parent="RooftopShed"]
+[node name="ShedStatic" type="StaticBody3D" parent="RooftopShed" unique_id=731762374]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 1.25, 42)
-collision_layer = 1
 
-[node name="ShedBody" type="MeshInstance3D" parent="RooftopShed/ShedStatic"]
-mesh = SubResource("BoxMesh_shed")
+[node name="ShedBody" type="MeshInstance3D" parent="RooftopShed/ShedStatic" unique_id=1581432853]
 material_override = SubResource("ShedMaterial")
+mesh = SubResource("BoxMesh_shed")
 
-[node name="ShedCol" type="CollisionShape3D" parent="RooftopShed/ShedStatic"]
+[node name="ShedCol" type="CollisionShape3D" parent="RooftopShed/ShedStatic" unique_id=1131775471]
 shape = SubResource("BoxShape3D_shed")
 
-[node name="ShedRoof" type="MeshInstance3D" parent="RooftopShed"]
+[node name="ShedRoof" type="MeshInstance3D" parent="RooftopShed" unique_id=2006690623]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 2.5, 42)
-mesh = SubResource("BoxMesh_shed_roof")
 material_override = SubResource("ShedRoofMaterial")
+mesh = SubResource("BoxMesh_shed_roof")
 
-[node name="ShedDoor" type="MeshInstance3D" parent="RooftopShed"]
+[node name="ShedDoor" type="MeshInstance3D" parent="RooftopShed" unique_id=352415293]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 1.25, 40.5)
-mesh = SubResource("BoxMesh_shed_door")
 material_override = SubResource("ShedDoorMaterial")
+mesh = SubResource("BoxMesh_shed_door")
 
-[node name="SolarPanels" type="Node3D" parent="."]
+[node name="SolarPanels" type="Node3D" parent="." unique_id=839445751]
 
-[node name="PanelRow1" type="StaticBody3D" parent="SolarPanels"]
+[node name="PanelRow1" type="StaticBody3D" parent="SolarPanels" unique_id=336962949]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.1, -45)
-collision_layer = 1
 
-[node name="PanelMount1" type="MeshInstance3D" parent="SolarPanels/PanelRow1"]
+[node name="PanelMount1" type="MeshInstance3D" parent="SolarPanels/PanelRow1" unique_id=971417634]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.25, 0)
-mesh = SubResource("BoxMesh_solar_panel_mount")
 material_override = SubResource("SolarPanelMountMaterial")
+mesh = SubResource("BoxMesh_solar_panel_mount")
 
-[node name="PanelMount2" type="MeshInstance3D" parent="SolarPanels/PanelRow1"]
+[node name="PanelMount2" type="MeshInstance3D" parent="SolarPanels/PanelRow1" unique_id=1137170763]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.25, 0)
-mesh = SubResource("BoxMesh_solar_panel_mount")
 material_override = SubResource("SolarPanelMountMaterial")
+mesh = SubResource("BoxMesh_solar_panel_mount")
 
-[node name="Panel1" type="MeshInstance3D" parent="SolarPanels/PanelRow1"]
+[node name="Panel1" type="MeshInstance3D" parent="SolarPanels/PanelRow1" unique_id=1069654631]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.3, 0)
-mesh = SubResource("BoxMesh_solar_panel")
 material_override = SubResource("SolarPanelMaterial")
+mesh = SubResource("BoxMesh_solar_panel")
 
-[node name="PanelFrame1" type="MeshInstance3D" parent="SolarPanels/PanelRow1"]
+[node name="PanelFrame1" type="MeshInstance3D" parent="SolarPanels/PanelRow1" unique_id=2003088987]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.31, 0)
-mesh = SubResource("BoxMesh_solar_panel")
 material_override = SubResource("SolarPanelFrameMaterial")
+mesh = SubResource("BoxMesh_solar_panel")
 
-[node name="Panel2" type="MeshInstance3D" parent="SolarPanels/PanelRow1"]
+[node name="Panel2" type="MeshInstance3D" parent="SolarPanels/PanelRow1" unique_id=950497185]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.3, 0)
-mesh = SubResource("BoxMesh_solar_panel")
 material_override = SubResource("SolarPanelMaterial")
-
-[node name="PanelFrame2" type="MeshInstance3D" parent="SolarPanels/PanelRow1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.31, 0)
 mesh = SubResource("BoxMesh_solar_panel")
-material_override = SubResource("SolarPanelFrameMaterial")
 
-[node name="PanelRow1Col" type="CollisionShape3D" parent="SolarPanels/PanelRow1"]
+[node name="PanelFrame2" type="MeshInstance3D" parent="SolarPanels/PanelRow1" unique_id=1174216993]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.31, 0)
+material_override = SubResource("SolarPanelFrameMaterial")
+mesh = SubResource("BoxMesh_solar_panel")
+
+[node name="PanelRow1Col" type="CollisionShape3D" parent="SolarPanels/PanelRow1" unique_id=499363789]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="PanelRow2" type="StaticBody3D" parent="SolarPanels"]
+[node name="PanelRow2" type="StaticBody3D" parent="SolarPanels" unique_id=940714391]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.1, 45)
-collision_layer = 1
 
-[node name="PanelMount1" type="MeshInstance3D" parent="SolarPanels/PanelRow2"]
+[node name="PanelMount1" type="MeshInstance3D" parent="SolarPanels/PanelRow2" unique_id=1869203171]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.25, 0)
-mesh = SubResource("BoxMesh_solar_panel_mount")
 material_override = SubResource("SolarPanelMountMaterial")
+mesh = SubResource("BoxMesh_solar_panel_mount")
 
-[node name="PanelMount2" type="MeshInstance3D" parent="SolarPanels/PanelRow2"]
+[node name="PanelMount2" type="MeshInstance3D" parent="SolarPanels/PanelRow2" unique_id=66827539]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.25, 0)
-mesh = SubResource("BoxMesh_solar_panel_mount")
 material_override = SubResource("SolarPanelMountMaterial")
+mesh = SubResource("BoxMesh_solar_panel_mount")
 
-[node name="Panel1" type="MeshInstance3D" parent="SolarPanels/PanelRow2"]
+[node name="Panel1" type="MeshInstance3D" parent="SolarPanels/PanelRow2" unique_id=449086376]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.3, 0)
-mesh = SubResource("BoxMesh_solar_panel")
 material_override = SubResource("SolarPanelMaterial")
+mesh = SubResource("BoxMesh_solar_panel")
 
-[node name="PanelFrame1" type="MeshInstance3D" parent="SolarPanels/PanelRow2"]
+[node name="PanelFrame1" type="MeshInstance3D" parent="SolarPanels/PanelRow2" unique_id=778373364]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.31, 0)
-mesh = SubResource("BoxMesh_solar_panel")
 material_override = SubResource("SolarPanelFrameMaterial")
+mesh = SubResource("BoxMesh_solar_panel")
 
-[node name="Panel2" type="MeshInstance3D" parent="SolarPanels/PanelRow2"]
+[node name="Panel2" type="MeshInstance3D" parent="SolarPanels/PanelRow2" unique_id=1618259788]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.3, 0)
-mesh = SubResource("BoxMesh_solar_panel")
 material_override = SubResource("SolarPanelMaterial")
-
-[node name="PanelFrame2" type="MeshInstance3D" parent="SolarPanels/PanelRow2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.31, 0)
 mesh = SubResource("BoxMesh_solar_panel")
+
+[node name="PanelFrame2" type="MeshInstance3D" parent="SolarPanels/PanelRow2" unique_id=1404065721]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.31, 0)
 material_override = SubResource("SolarPanelFrameMaterial")
+mesh = SubResource("BoxMesh_solar_panel")
 
-[node name="PanelRow2Col" type="CollisionShape3D" parent="SolarPanels/PanelRow2"]
+[node name="PanelRow2Col" type="CollisionShape3D" parent="SolarPanels/PanelRow2" unique_id=1730038190]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="DistantCity" type="Node3D" parent="."]
+[node name="DistantCity" type="Node3D" parent="." unique_id=627362858]
 
-[node name="DistantBuilding1" type="MeshInstance3D" parent="DistantCity"]
+[node name="DistantBuilding1" type="MeshInstance3D" parent="DistantCity" unique_id=219239463]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 6, -60)
-mesh = SubResource("BoxMesh_distant_building_1")
 material_override = SubResource("DistantBuildingMaterial")
+mesh = SubResource("BoxMesh_distant_building_1")
 
-[node name="DistantBuilding2" type="MeshInstance3D" parent="DistantCity"]
+[node name="DistantBuilding2" type="MeshInstance3D" parent="DistantCity" unique_id=1036036093]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 10, -55)
-mesh = SubResource("BoxMesh_distant_building_2")
 material_override = SubResource("DistantBuildingMaterial")
+mesh = SubResource("BoxMesh_distant_building_2")
 
-[node name="DistantBuilding3" type="MeshInstance3D" parent="DistantCity"]
+[node name="DistantBuilding3" type="MeshInstance3D" parent="DistantCity" unique_id=832967947]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60, 7.5, -50)
-mesh = SubResource("BoxMesh_distant_building_3")
 material_override = SubResource("DistantBuildingMaterial")
+mesh = SubResource("BoxMesh_distant_building_3")
 
-[node name="DistantBuilding4" type="MeshInstance3D" parent="DistantCity"]
+[node name="DistantBuilding4" type="MeshInstance3D" parent="DistantCity" unique_id=1365022953]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 12.5, -65)
+material_override = SubResource("DistantBuildingMaterial")
 mesh = SubResource("BoxMesh_distant_building_4")
-material_override = SubResource("DistantBuildingMaterial")
 
-[node name="DistantBuilding5" type="MeshInstance3D" parent="DistantCity"]
+[node name="DistantBuilding5" type="MeshInstance3D" parent="DistantCity" unique_id=204279477]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 65, 5, -58)
+material_override = SubResource("DistantBuildingMaterial")
 mesh = SubResource("BoxMesh_distant_building_5")
-material_override = SubResource("DistantBuildingMaterial")
 
-[node name="DistantBuilding6" type="MeshInstance3D" parent="DistantCity"]
+[node name="DistantBuilding6" type="MeshInstance3D" parent="DistantCity" unique_id=1860247637]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, 9, -52)
+material_override = SubResource("DistantBuildingMaterial")
 mesh = SubResource("BoxMesh_distant_building_6")
-material_override = SubResource("DistantBuildingMaterial")
 
-[node name="DistantBuilding7" type="MeshInstance3D" parent="DistantCity"]
+[node name="DistantBuilding7" type="MeshInstance3D" parent="DistantCity" unique_id=1233279084]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75, 8, 65)
+material_override = SubResource("DistantBuildingMaterial")
 mesh = SubResource("BoxMesh_distant_building_3")
-material_override = SubResource("DistantBuildingMaterial")
 
-[node name="DistantBuilding8" type="MeshInstance3D" parent="DistantCity"]
+[node name="DistantBuilding8" type="MeshInstance3D" parent="DistantCity" unique_id=136403479]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 6, 60)
+material_override = SubResource("DistantBuildingMaterial")
 mesh = SubResource("BoxMesh_distant_building_2")
-material_override = SubResource("DistantBuildingMaterial")
 
-[node name="DistantBuilding9" type="MeshInstance3D" parent="DistantCity"]
+[node name="DistantBuilding9" type="MeshInstance3D" parent="DistantCity" unique_id=761224399]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 12, 55)
-mesh = SubResource("BoxMesh_distant_building_1")
 material_override = SubResource("DistantBuildingMaterial")
+mesh = SubResource("BoxMesh_distant_building_1")
 
-[node name="Billboard" type="Node3D" parent="."]
+[node name="Billboard" type="Node3D" parent="." unique_id=1172971633]
 
-[node name="BillboardStatic" type="StaticBody3D" parent="Billboard"]
+[node name="BillboardStatic" type="StaticBody3D" parent="Billboard" unique_id=2027868874]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 1.5, -50)
-collision_layer = 1
 
-[node name="BillboardFrame" type="MeshInstance3D" parent="Billboard/BillboardStatic"]
-mesh = SubResource("BoxMesh_billboard_frame")
+[node name="BillboardFrame" type="MeshInstance3D" parent="Billboard/BillboardStatic" unique_id=76988036]
 material_override = SubResource("BillboardFrameMaterial")
+mesh = SubResource("BoxMesh_billboard_frame")
 
-[node name="BillboardAd" type="MeshInstance3D" parent="Billboard/BillboardStatic"]
+[node name="BillboardAd" type="MeshInstance3D" parent="Billboard/BillboardStatic" unique_id=695215321]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
-mesh = SubResource("BoxMesh_billboard_ad")
 material_override = SubResource("BillboardAdMaterial")
+mesh = SubResource("BoxMesh_billboard_ad")
 
-[node name="BillboardCol" type="CollisionShape3D" parent="Billboard/BillboardStatic"]
+[node name="BillboardCol" type="CollisionShape3D" parent="Billboard/BillboardStatic" unique_id=1093236798]
 shape = SubResource("BoxShape3D_ac")
 
-[node name="ExistingAntennas" type="Node3D" parent="."]
+[node name="ExistingAntennas" type="Node3D" parent="." unique_id=2006734520]
 
-[node name="Antenna1" type="MeshInstance3D" parent="ExistingAntennas"]
+[node name="Antenna1" type="MeshInstance3D" parent="ExistingAntennas" unique_id=587870516]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 3, -5)
-mesh = SubResource("BoxMesh_antenna")
 material_override = SubResource("AntennaMaterial")
+mesh = SubResource("BoxMesh_antenna")
 
-[node name="Satellite1" type="MeshInstance3D" parent="ExistingAntennas/Antenna1"]
+[node name="Satellite1" type="MeshInstance3D" parent="ExistingAntennas/Antenna1" unique_id=1907541495]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-mesh = SubResource("BoxMesh_satellite")
 material_override = SubResource("SatelliteMaterial")
+mesh = SubResource("BoxMesh_satellite")
 
-[node name="Antenna2" type="MeshInstance3D" parent="ExistingAntennas"]
+[node name="Antenna2" type="MeshInstance3D" parent="ExistingAntennas" unique_id=2105462321]
 transform = Transform3D(0.7, 0, -0.7, 0, 1, 0, 0.7, 0, 0.7, -12, 3, 8)
-mesh = SubResource("BoxMesh_antenna")
 material_override = SubResource("AntennaMaterial")
+mesh = SubResource("BoxMesh_antenna")
 
-[node name="Stairwell" type="Node3D" parent="."]
+[node name="Stairwell" type="Node3D" parent="." unique_id=735103098]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
 
-[node name="StairwellMesh" type="MeshInstance3D" parent="Stairwell"]
-mesh = SubResource("BoxMesh_building")
+[node name="StairwellMesh" type="MeshInstance3D" parent="Stairwell" unique_id=44494673]
 material_override = SubResource("BuildingMaterial")
+mesh = SubResource("BoxMesh_building")
 
-[node name="Door" type="MeshInstance3D" parent="Stairwell"]
+[node name="Door" type="MeshInstance3D" parent="Stairwell" unique_id=1429099699]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -2.6)
-mesh = SubResource("BoxMesh_door")
 material_override = SubResource("DoorMaterial")
+mesh = SubResource("BoxMesh_door")
 
-[node name="Chimneys" type="Node3D" parent="."]
+[node name="Chimneys" type="Node3D" parent="." unique_id=875746008]
 
-[node name="Chimney1" type="StaticBody3D" parent="Chimneys"]
+[node name="Chimney1" type="StaticBody3D" parent="Chimneys" unique_id=557823418]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 2, -18)
-collision_layer = 1
 
-[node name="ChimneyMesh" type="MeshInstance3D" parent="Chimneys/Chimney1"]
-mesh = SubResource("BoxMesh_chimney")
+[node name="ChimneyMesh" type="MeshInstance3D" parent="Chimneys/Chimney1" unique_id=1952464310]
 material_override = SubResource("ChimneyMaterial")
+mesh = SubResource("BoxMesh_chimney")
 
-[node name="ChimneyCol" type="CollisionShape3D" parent="Chimneys/Chimney1"]
+[node name="ChimneyCol" type="CollisionShape3D" parent="Chimneys/Chimney1" unique_id=328575210]
 shape = SubResource("BoxShape3D_chimney")
 
-[node name="Chimney2" type="StaticBody3D" parent="Chimneys"]
+[node name="Chimney2" type="StaticBody3D" parent="Chimneys" unique_id=1947551393]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 2, 18)
-collision_layer = 1
 
-[node name="ChimneyMesh" type="MeshInstance3D" parent="Chimneys/Chimney2"]
-mesh = SubResource("BoxMesh_chimney")
+[node name="ChimneyMesh" type="MeshInstance3D" parent="Chimneys/Chimney2" unique_id=511204470]
 material_override = SubResource("ChimneyMaterial")
+mesh = SubResource("BoxMesh_chimney")
 
-[node name="ChimneyCol" type="CollisionShape3D" parent="Chimneys/Chimney2"]
+[node name="ChimneyCol" type="CollisionShape3D" parent="Chimneys/Chimney2" unique_id=983048323]
 shape = SubResource("BoxShape3D_chimney")
 
-[node name="Barrels_Orig" type="Node3D" parent="."]
+[node name="Barrels_Orig" type="Node3D" parent="." unique_id=88443832]
 
-[node name="Barrel1_Orig" type="MeshInstance3D" parent="Barrels_Orig"]
+[node name="Barrel1_Orig" type="MeshInstance3D" parent="Barrels_Orig" unique_id=1426996710]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.6, 0)
-mesh = SubResource("BoxMesh_barrel")
 material_override = SubResource("BarrelMaterial")
+mesh = SubResource("BoxMesh_barrel")
 
-[node name="Barrel2_Orig" type="MeshInstance3D" parent="Barrels_Orig"]
+[node name="Barrel2_Orig" type="MeshInstance3D" parent="Barrels_Orig" unique_id=1579469568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 0.6, 1)
-mesh = SubResource("BoxMesh_barrel")
 material_override = SubResource("BarrelMaterial")
+mesh = SubResource("BoxMesh_barrel")
 
-[node name="Barrel3_Orig" type="MeshInstance3D" parent="Barrels_Orig"]
+[node name="Barrel3_Orig" type="MeshInstance3D" parent="Barrels_Orig" unique_id=1602413923]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.6, -20)
-mesh = SubResource("BoxMesh_barrel")
 material_override = SubResource("BarrelMaterial")
+mesh = SubResource("BoxMesh_barrel")
 
-[node name="Crates_Orig" type="Node3D" parent="."]
+[node name="Crates_Orig" type="Node3D" parent="." unique_id=1901861081]
 
-[node name="Crate1_Orig" type="StaticBody3D" parent="Crates_Orig"]
+[node name="Crate1_Orig" type="StaticBody3D" parent="Crates_Orig" unique_id=355305623]
 transform = Transform3D(0.95, 0.3, 0, -0.3, 0.95, 0, 0, 0, 1, -10, 0.75, -20)
-collision_layer = 1
 
-[node name="CrateMesh" type="MeshInstance3D" parent="Crates_Orig/Crate1_Orig"]
-mesh = SubResource("BoxMesh_crate")
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates_Orig/Crate1_Orig" unique_id=347856936]
 material_override = SubResource("CrateMaterial")
+mesh = SubResource("BoxMesh_crate")
 
-[node name="CrateCol" type="CollisionShape3D" parent="Crates_Orig/Crate1_Orig"]
+[node name="CrateCol" type="CollisionShape3D" parent="Crates_Orig/Crate1_Orig" unique_id=1594820776]
 shape = SubResource("BoxShape3D_crate")
 
-[node name="Crate2_Orig" type="StaticBody3D" parent="Crates_Orig"]
+[node name="Crate2_Orig" type="StaticBody3D" parent="Crates_Orig" unique_id=2080575758]
 transform = Transform3D(0.98, -0.17, 0, 0.17, 0.98, 0, 0, 0, 1, -8, 0.75, -20)
-collision_layer = 1
 
-[node name="CrateMesh" type="MeshInstance3D" parent="Crates_Orig/Crate2_Orig"]
-mesh = SubResource("BoxMesh_crate")
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates_Orig/Crate2_Orig" unique_id=665848631]
 material_override = SubResource("CrateMaterial")
+mesh = SubResource("BoxMesh_crate")
 
-[node name="CrateCol" type="CollisionShape3D" parent="Crates_Orig/Crate2_Orig"]
+[node name="CrateCol" type="CollisionShape3D" parent="Crates_Orig/Crate2_Orig" unique_id=1746589277]
 shape = SubResource("BoxShape3D_crate")
 
-[node name="Crate3_Orig" type="StaticBody3D" parent="Crates_Orig"]
+[node name="Crate3_Orig" type="StaticBody3D" parent="Crates_Orig" unique_id=516897907]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.75, 15)
-collision_layer = 1
 
-[node name="CrateMesh" type="MeshInstance3D" parent="Crates_Orig/Crate3_Orig"]
-mesh = SubResource("BoxMesh_crate")
+[node name="CrateMesh" type="MeshInstance3D" parent="Crates_Orig/Crate3_Orig" unique_id=1896739773]
 material_override = SubResource("CrateMaterial")
+mesh = SubResource("BoxMesh_crate")
 
-[node name="CrateCol" type="CollisionShape3D" parent="Crates_Orig/Crate3_Orig"]
+[node name="CrateCol" type="CollisionShape3D" parent="Crates_Orig/Crate3_Orig" unique_id=1167308259]
 shape = SubResource("BoxShape3D_crate")
 
-[node name="Tanks_Orig" type="Node3D" parent="."]
+[node name="Tanks_Orig" type="Node3D" parent="." unique_id=161622098]
 
-[node name="Tank1_Orig" type="MeshInstance3D" parent="Tanks_Orig"]
+[node name="Tank1_Orig" type="MeshInstance3D" parent="Tanks_Orig" unique_id=1848008646]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1, 10)
-mesh = SubResource("CylinderMesh_tank")
 material_override = SubResource("TankMaterial")
+mesh = SubResource("CylinderMesh_tank")
 
-[node name="Tank2_Orig" type="MeshInstance3D" parent="Tanks_Orig"]
+[node name="Tank2_Orig" type="MeshInstance3D" parent="Tanks_Orig" unique_id=1111053027]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1, 12)
-mesh = SubResource("CylinderMesh_tank")
 material_override = SubResource("TankMaterial")
+mesh = SubResource("CylinderMesh_tank")
 
-[node name="Lighting" type="Node3D" parent="."]
+[node name="Lighting" type="Node3D" parent="." unique_id=1827546970]
 
-[node name="AmbientLight" type="OmniLight3D" parent="Lighting"]
+[node name="AmbientLight" type="OmniLight3D" parent="Lighting" unique_id=1806606626]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
-light_color = Color(0.6, 0.55, 0.5, 1.0)
+light_color = Color(0.6, 0.55, 0.5, 1)
 light_energy = 0.5
 omni_range = 100.0
 omni_attenuation = 2.0
 
-[node name="DirectionalLight" type="DirectionalLight3D" parent="Lighting"]
+[node name="DirectionalLight" type="DirectionalLight3D" parent="Lighting" unique_id=308531864]
 transform = Transform3D(0.6, -0.65, 0.43, 0.1, 0.55, 0.83, -0.8, -0.52, 0.3, 15, 18, 10)
-light_color = Color(0.85, 0.8, 0.75, 1.0)
+light_color = Color(0.85, 0.8, 0.75, 1)
 light_energy = 1.2
 shadow_enabled = true
 directional_shadow_mode = 0
 
-[node name="VignetteLight" type="OmniLight3D" parent="Lighting"]
+[node name="VignetteLight" type="OmniLight3D" parent="Lighting" unique_id=736495658]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
-light_color = Color(0.9, 0.6, 0.4, 1.0)
+light_color = Color(0.9, 0.6, 0.4, 1)
 light_energy = 0.8
 omni_range = 50.0
 omni_attenuation = 2.0
 
-[node name="Sky" type="MeshInstance3D" parent="."]
-mesh = SubResource("SphereMesh_sky")
+[node name="Sky" type="MeshInstance3D" parent="." unique_id=403568874]
 material_override = SubResource("SkyMaterial")
+mesh = SubResource("SphereMesh_sky")

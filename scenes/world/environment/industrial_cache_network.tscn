@@ -1,5 +1,6 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scripts/world/Sand2IndustrialScatter.gd" id="1_4a5xj"]
 [ext_resource type="Script" path="res://scripts/world/interactive/BreakableSupplyCrate.gd" id="1_gbtvc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4a5xj"]
@@ -363,6 +364,7 @@ size = Vector3(1.12, 0.14, 0.92)
 size = Vector3(3.2, 2.4, 3.2)
 
 [node name="CacheNetwork" type="Node3D" unique_id=1234799681]
+script = ExtResource("1_4a5xj")
 
 [node name="BreakableSupplyCache01" type="Node3D" parent="." unique_id=759403913]
 transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, -82, 0, -13)
