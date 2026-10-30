@@ -9,6 +9,21 @@ and this project aims for [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- **3-sandbox restructure (v0.3.0)** — the campaign is now exactly three big
+  open-world sandbox levels, each with embedded mini-games that must all clear
+  to advance:
+  - **SAND1 Old Town** — five embedded mini-games: Keep the Generator Fed,
+    Spoil & Survive, Last Stand Station, Triage Roundup, Quarantine Breach.
+  - **SAND2 Industrial District** — hospital + warehouse folded in; adds the
+    **Armory Lockdown** mini-game (`ArmoryLockdownController`, `l2_armory_salvage`).
+  - **SAND3 Endgame Heights** — rooftop + sewers + mall folded in; adds the
+    **Endgame Extraction** mini-game (`EndgameExtractionController`, `l3_rooftop_extraction`).
+  - Difficulty / enemy pool / ambient escalate 1.0 → 1.6 → 2.5
+    (`scripts/core/LevelManager.gd`). Level completion is gated on all embedded
+    mini-games clearing (`Game.gd._all_minigames_done()` scoped per level).
+- **Smoke-gate coverage for the new sandboxes** — `tools/minigame_win_probe.gd`
+  now also drives Armory Lockdown + Endgame Extraction to WON; the regression
+  gate enumerates all 7 embedded mini-games.
 - **GDUnit4 unit-test framework** (`addons/gdUnit4`, v6.2.2 — the maintained
   Godot 4.x fork, verified on 4.7) with an editable-driven suite under
   `tests/`:
@@ -33,7 +48,7 @@ xvfb-run -a /root/Godot_v4.7-stable_linux.x86_64 --headless \
 (or `./addons/gdUnit4/runtest.sh -a res://tests` with `GODOT_BIN` set).
 The suite must print a green count and exit 0.
 
-## 2026-10-29 — Level 1 foundations
+## 2026-10-29 — v0.2.0 — Level 1 foundations
 
 ### Added
 

@@ -30,6 +30,8 @@ func _ready() -> void:
 	await _results_laststand()
 	await _results_triage()
 	await _results_quarantine()
+	await _results_armory()
+	await _results_endgame()
 
 	var any_fail := false
 	for k in results:
@@ -295,5 +297,105 @@ func _results_quarantine() -> void:
 				break
 			guard += 1
 		results["quarantine"] = {"win": won, "state": int(ctrl.get("state")), "note": "start=%d | %s" % [start_state, last_note]}
+	inst.queue_free()
+	await get_tree().process_frame
+
+
+# ── ARMORY LOCKDOWN (SAND2) ────────────────────────────────────────────────────
+func _results_armory() -> void:
+	var packed := load("res://scenes/minigames/armory_lockdown.tscn") as PackedScene
+	if packed == null:
+		results["armory"] = {"win": false, "state": -1, "note": "scene load FAIL"}
+		return
+	var inst := packed.instantiate()
+	get_tree().root.add_child(inst)
+	await get_tree().process_frame
+	var ctrl: Node = inst.get_node_or_null("Controller")
+	var player: Node3D = make_player(inst)
+	player.global_position = inst.global_position
+	await get_tree().process_frame
+
+	if ctrl == null:
+		results["armory"] = {"win": false, "state": -1, "note": "no Controller node"}
+	else:
+		ctrl.interact()
+		await get_tree().process_frame
+		var start_state := int(ctrl.get("state"))
+		# Crack both supply crates through the REAL interact path (player parked in zone).
+		var crates: Array[Node] = []
+		for crate_name in ["Crate1", "Crate2"]:
+			var crate: Node = inst.get_node_or_null(crate_name)
+			if crate:
+				crate.set("player_near", true)
+				crate.interact()
+				crates.append(crate)
+		# Breach the armory door via its real open path (no player_near gate).
+		var door: Node = inst.get_node_or_null("ArmoryDoor")
+		if door and door.has_method("open_fully"):
+			door.open_fully()
+		var guard := 0
+		var won := false
+		var last_note := ""
+		while guard < 60 and int(ctrl.get("state")) == 1:
+			ctrl._process(1.0)
+			var c1: bool = bool(crates[0].get("is_cracked")) if crates.size() > 0 else false
+			var c2: bool = bool(crates[1].get("is_cracked")) if crates.size() > 1 else false
+			last_note = "time=%.0f c1_cracked=%s c2_cracked=%s door_open=%s" % [float(ctrl.get("time_remaining")), str(c1), str(c2), str(bool(door.get("is_open")))]
+			if int(ctrl.get("state")) == 2:
+				won = true
+				last_note += "  <<WON"
+				break
+			if int(ctrl.get("state")) == 3:
+				last_note += "  <<FAILED"
+				break
+			guard += 1
+		results["armory"] = {"win": won, "state": int(ctrl.get("state")), "note": "start=%d | %s" % [start_state, last_note]}
+	inst.queue_free()
+	await get_tree().process_frame
+
+# ── ENDGAME EXTRACTION (SAND3) ─────────────────────────────────────────────────
+func _results_endgame() -> void:
+	var packed := load("res://scenes/minigames/endgame_extraction.tscn") as PackedScene
+	if packed == null:
+		results["endgame"] = {"win": false, "state": -1, "note": "scene load FAIL"}
+		return
+	var inst := packed.instantiate()
+	get_tree().root.add_child(inst)
+	await get_tree().process_frame
+	var ctrl: Node = inst.get_node_or_null("Controller")
+	var player: Node3D = make_player(inst)
+	player.global_position = inst.global_position
+	await get_tree().process_frame
+
+	if ctrl == null:
+		results["endgame"] = {"win": false, "state": -1, "note": "no Controller node"}
+	else:
+		ctrl.interact()
+		await get_tree().process_frame
+		var start_state := int(ctrl.get("state"))
+		# Crack the flare crate through the REAL interact path (player parked in zone).
+		var crate: Node = inst.get_node_or_null("FlareCrate")
+		if crate:
+			crate.set("player_near", true)
+			crate.interact()
+		# Breach the maintenance door via its real open path (no player_near gate).
+		var door: Node = inst.get_node_or_null("MaintenanceDoor")
+		if door and door.has_method("open_fully"):
+			door.open_fully()
+		var guard := 0
+		var won := false
+		var last_note := ""
+		while guard < 60 and int(ctrl.get("state")) == 1:
+			ctrl._process(1.0)
+			last_note = "time=%.0f crate_cracked=%s door_open=%s" % [float(ctrl.get("time_remaining")), str(bool(crate.get("is_cracked"))), str(bool(door.get("is_open")))]
+			if int(ctrl.get("state")) == 2:
+				won = true
+				last_note += "  <<WON"
+				break
+			if int(ctrl.get("state")) == 3:
+				last_note += "  <<FAILED"
+				break
+			guard += 1
+		results["endgame"] = {"win": won, "state": int(ctrl.get("state")), "note": "start=%d | %s" % [start_state, last_note]}
 	inst.queue_free()
 	await get_tree().process_frame

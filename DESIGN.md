@@ -60,7 +60,8 @@ cyan/purple/green are reserved for character lanes and threat — never chrome.
 
 **Stack**
 - Display (wordmark, screen titles): distressed slab, uppercase, tight tracking.
-  Shipped substitute: NotoSans at heavy weight + outline, until a display face is chosen.
+  Shipped faces: `Nosifer` for the blood-drip wordmark and `Creepster` for
+  screen headers — both registered in `theme/main_theme.tres`.
 - Text/UI: `NotoSans` — fallback `NotoColorEmoji` for icon glyphs.
 
 Both shipped at `assets/fonts/`, registered in `theme/main_theme.tres` as a
@@ -91,14 +92,14 @@ render instead of a tofu box.
 
 | Surface | Mockup | Built | Gap |
 |---|---|---|---|
-| Wordmark / splash | blood-drip display | flat red label | display face + drip |
+| Wordmark / splash | blood-drip display | ✅ `shaders/title_blood_drip.gdshader` + Nosifer label | — |
 | Menu buttons | wooden planks | ✅ WoodPlank StyleBox applied | — |
 | Character select | neon pedestals | ✅ PedestalGamer/Doctor/Nurse/Streamer/Hunter sub-resources | — |
 | HUD bars | HYPE (pink→orange), OVERWHELM (green→yellow) | ✅ Gradient-enabled GodotxHealthBarStyle | — |
 | HUD labels | `🔥 HYPE` / `⚠ OVERWHELM` | matched | — |
 | HUD food bar | 6 round food buttons | ✅ 6 TextureButton slots with generated icons | — |
 | Center message banner | bordered banner | ✅ Panel + Label with fade tween | — |
-| Fonts | n/a | NotoSans + NotoColorEmoji | — |
+| Fonts | n/a | NotoSans + NotoColorEmoji fallback; Creepster/Nosifer display faces | — |
 
 Owner for the remaining gaps: frontend/godot UI lane. Rendered verification
 belongs to visual QA on device — **not claimed here**.
@@ -108,7 +109,8 @@ belongs to visual QA on device — **not claimed here**.
 ## 6. Performance budget (Android)
 
 Targets are set so a regression is *detectable*, not so a number looks good. The
-game is a 6-level 3D survival brawler with procedural (non-skeletal) animation and
+game is a 3-sandbox 3D survival brawler (Old Town / Industrial District / Endgame Heights — each an open-world level with embedded mini-games), with
+procedural (non-skeletal) animation and
 no baked lightmaps — the expensive things are real-time lights, shadows, and the
 number of live `CharacterBody3D` zombies.
 
