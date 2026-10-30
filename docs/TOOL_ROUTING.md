@@ -11,7 +11,7 @@ declare its tools isn't a wave — it's improvisation.
 | agy | VPS `/snap/bin/agy` (in-place) + phone | Level/scene architecture, Godot build work | LevelManager, env scenes, minigame placement, wiring |
 | codex | phone (ChatGPT) — **verified headless**: `codex exec --skip-git-repo-check "<prompt>"` from Hermes' shell (glibc-runner + DNS/CA fix active; must pass --skip-git-repo-check when outside a repo) | Backend/logic, docs & test reconciliation, GDUnit, ANY prompt-as-file task — a solid parallel workhorse | DESIGN/GAME_DESIGN/README normalization, test gate, VPS service builds |
 | claude | phone (OpenRouter) | Design specs, content pipelines, second coder/researcher | SAND3 specs, domain content, reviews |
-| Hermes | — | Curator ONLY — dispatch, verify real state, GitHub, user comms | never builds in-house |
+| Hermes | — | Curator ONLY — dispatch, verify real state, GitHub (via the GitHub MCP, gh-CLI fallback for repo-create/workflow-scope/multi-file pushes), user comms | never builds in-house |
 
 ## Tools — best use (the routing table)
 

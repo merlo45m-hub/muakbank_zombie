@@ -22,6 +22,13 @@ Controllers: `scripts/gameplay/*Controller.gd`. Level map + difficulty/enemy/amb
 `scripts/core/LevelManager.gd`. Crown: `scripts/core/Game.gd`.
 
 ## Tools and what they're FOR (routing policy — use the right lane)
+- **GitHub MCP** — the PREFERRED tool for GitHub work (issues, PRs, single-file edits
+  in existing repos). You (the agent) request it via the Hermes gate; if it is not in
+  your toolset, do NOT fabricate a GitHub call — report that you need the gate to
+  expose it. The **gh CLI** is the fallback ONLY for what the MCP cannot do: repo
+  create with explicit visibility, `workflow`-scope pushes, and multi-file fresh
+  branch pushes. Hermes owns commit/push for this repo; you work the VPS tree and
+  Hermes commits — see AGENTS.md.
 - **asset_grabber MCP** — source CC0 meshes/textures (Kenney / os3a / Quaternius /
   Poly Haven / CC0Tree sources) for ANY new prop or dressing. This is the volume
   engine for content. Do NOT hand-make art you can source.
