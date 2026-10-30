@@ -1,0 +1,77 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/environment/hospital_enhanced.tscn" id="1_8jbmg"]
+[ext_resource type="PackedScene" path="res://scenes/world/environment/warehouse_enhanced.tscn" id="2_dw78b"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/armory_lockdown.tscn" id="3_s3ps5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ytlrm"]
+albedo_color = Color(0.22, 0.23, 0.25, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_b5vbg"]
+material = SubResource("StandardMaterial3D_ytlrm")
+size = Vector3(35, 0.3, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5grnj"]
+size = Vector3(35, 0.3, 24)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_18lub"]
+albedo_color = Color(0.35, 0.36, 0.38, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_dyhwa"]
+material = SubResource("StandardMaterial3D_18lub")
+size = Vector3(35, 4, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bm2em"]
+size = Vector3(35, 4, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_b1d2i"]
+material = SubResource("StandardMaterial3D_18lub")
+size = Vector3(35, 4, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1tbes"]
+size = Vector3(35, 4, 0.6)
+
+[node name="IndustrialDistrict" type="Node3D" unique_id=1979731881]
+
+[node name="HospitalDistrict" type="Node3D" parent="." unique_id=2137143592 instance=ExtResource("1_8jbmg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 0, 0)
+
+[node name="WarehouseDistrict" type="Node3D" parent="." unique_id=1861105773 instance=ExtResource("2_dw78b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 65, 0, 0)
+
+[node name="TransitionCorridor" type="Node3D" parent="." unique_id=876888108]
+
+[node name="Floor" type="StaticBody3D" parent="TransitionCorridor" unique_id=1550809857]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.15, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="TransitionCorridor/Floor" unique_id=1090936809]
+mesh = SubResource("BoxMesh_b5vbg")
+
+[node name="Collision" type="CollisionShape3D" parent="TransitionCorridor/Floor" unique_id=2074939749]
+shape = SubResource("BoxShape3D_5grnj")
+
+[node name="WallNorth" type="StaticBody3D" parent="TransitionCorridor" unique_id=2118780075]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -12)
+
+[node name="Mesh" type="MeshInstance3D" parent="TransitionCorridor/WallNorth" unique_id=286920416]
+mesh = SubResource("BoxMesh_dyhwa")
+
+[node name="Collision" type="CollisionShape3D" parent="TransitionCorridor/WallNorth" unique_id=1856639642]
+shape = SubResource("BoxShape3D_bm2em")
+
+[node name="WallSouth" type="StaticBody3D" parent="TransitionCorridor" unique_id=649545257]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12)
+
+[node name="Mesh" type="MeshInstance3D" parent="TransitionCorridor/WallSouth" unique_id=1531138133]
+mesh = SubResource("BoxMesh_b1d2i")
+
+[node name="Collision" type="CollisionShape3D" parent="TransitionCorridor/WallSouth" unique_id=1080778764]
+shape = SubResource("BoxShape3D_1tbes")
+
+[node name="CorridorLights" type="Node3D" parent="TransitionCorridor" unique_id=181137553]
+
+[node name="CorridorDressing" type="Node3D" parent="TransitionCorridor" unique_id=1165853270]
+
+[node name="ArmoryLockdown" type="Node3D" parent="." unique_id=1417753049 instance=ExtResource("3_s3ps5")]

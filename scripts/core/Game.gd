@@ -123,11 +123,10 @@ const SPAWN_HINTS := {
 	# score 33) — the previous (-2,-18) was boxed in by Building1/2/5 (only the 135°
 	# diagonal was open), so forward movement hit a building wall.
 	1: Vector3(-14.0, 0.15, -14.0),
-	# Cemetery: the centre IS the mausoleum. Census showed its arch filling 7.26% of
-	# the frame from 6.6 m with the pillars adding another 5%, because the probe used
-	# to settle ~2 m from it. Start on the western edge of the grave ring instead and
-	# let the auto-yaw face the field - the mausoleum reads as a landmark, not a wall.
-	2: Vector3(-24.0, 0.12, 0.0),
+	# Industrial District: transition open ground between hospital and warehouse.
+	2: Vector3(0.0, 0.15, 0.0),
+	# Endgame Heights: central atrium of the grand mall district.
+	3: Vector3(0.0, 0.15, 0.0),
 }
 
 func _place_player(p: CharacterBody3D) -> void:
@@ -408,13 +407,33 @@ func _on_objective_updated(_id: String, _progress: int, _target: int) -> void:
 func _on_objective_completed(_id: String) -> void:
 	_check_level_complete()
 
+func _get_minigame_ids_for_level(level: int) -> Array[String]:
+	match level:
+		1:
+			return [
+				"l1_spoil_and_survive",
+				"l1_generator_fed",
+				"l1_last_stand",
+				"l1_triage_roundup",
+				"l1_quarantine_breach"
+			]
+		2:
+			return ["l2_armory_salvage"]
+		3:
+			return ["l3_rooftop_extraction"]
+		_:
+			return []
+
 func _all_minigames_done() -> bool:
 	if not objective_manager:
 		return true
 	var objectives = objective_manager.get("objectives")
 	if typeof(objectives) != TYPE_DICTIONARY:
 		return true
-	var minigame_ids: Array[String] = ["l1_spoil_and_survive", "l1_generator_fed", "l1_last_stand", "l1_triage_roundup", "l1_quarantine_breach"]
+	var current_level: int = Save.get_current_level() if Save else 1
+	var minigame_ids: Array[String] = _get_minigame_ids_for_level(current_level)
+	if minigame_ids.is_empty():
+		return true
 	var registered_count := 0
 	for id in minigame_ids:
 		if objectives.has(id):
@@ -428,6 +447,7 @@ func _all_minigames_done() -> bool:
 		if not objective_manager.is_objective_completed(id):
 			return false
 	return true
+
 
 func _check_level_complete() -> void:
 	if not _waves_cleared or not game_active:

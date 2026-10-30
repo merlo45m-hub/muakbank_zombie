@@ -1,0 +1,177 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/ArmoryLockdownController.gd" id="1_rufbm"]
+[ext_resource type="Script" path="res://scripts/world/interactive/CheckpointArmoryTerminal.gd" id="2_wektp"]
+[ext_resource type="Script" path="res://scripts/world/interactive/InteractiveDoor.gd" id="3_nclk4"]
+[ext_resource type="Script" path="res://scripts/world/interactive/BreakableSupplyCrate.gd" id="4_35rst"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_qab6h"]
+size = Vector3(0.8, 1.1, 0.45)
+
+[sub_resource type="SphereMesh" id="SphereMesh_jkddm"]
+radius = 0.12
+height = 0.24
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mp1k5"]
+size = Vector3(4, 3, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_l0hra"]
+size = Vector3(3.2, 2.8, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dm6se"]
+size = Vector3(3.2, 2.8, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2wh0m"]
+size = Vector3(1.4, 2.4, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_760o5"]
+size = Vector3(1.4, 2.4, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l4m0w"]
+size = Vector3(3.5, 2.5, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_c64hb"]
+size = Vector3(1.1, 0.8, 1.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_o1r6i"]
+size = Vector3(1.15, 0.15, 1.15)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ebit2"]
+size = Vector3(1.1, 0.8, 1.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l6rsl"]
+size = Vector3(2.5, 1.8, 2.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gtv13"]
+size = Vector3(1.1, 0.8, 1.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_f6glb"]
+size = Vector3(1.15, 0.15, 1.15)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k201g"]
+size = Vector3(1.1, 0.8, 1.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qlej5"]
+size = Vector3(2.5, 1.8, 2.5)
+
+[node name="ArmoryLockdown" type="Node3D" unique_id=1417753049]
+
+[node name="Controller" type="Node3D" parent="." unique_id=395916176]
+script = ExtResource("1_rufbm")
+
+[node name="Terminal" type="Node3D" parent="." unique_id=1329771254]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+script = ExtResource("2_wektp")
+
+[node name="TerminalBody" type="MeshInstance3D" parent="Terminal" unique_id=1898128983]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+mesh = SubResource("BoxMesh_qab6h")
+
+[node name="StatusLight" type="MeshInstance3D" parent="Terminal" unique_id=96518073]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+mesh = SubResource("SphereMesh_jkddm")
+
+[node name="InteractionZone" type="Area3D" parent="Terminal" unique_id=1783868203]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_layer = 0
+collision_mask = 2
+
+[node name="@CollisionShape3D@25" type="CollisionShape3D" parent="Terminal/InteractionZone" unique_id=580858920]
+shape = SubResource("BoxShape3D_mp1k5")
+
+[node name="Prompt" type="Label3D" parent="Terminal" unique_id=1646127797]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
+visible = false
+text = "ACTIVATE ARMORY BREACH"
+font_size = 44
+outline_size = 8
+
+[node name="ArmoryDoor" type="Node3D" parent="." unique_id=1125555189]
+script = ExtResource("3_nclk4")
+
+[node name="DoorFrame" type="StaticBody3D" parent="ArmoryDoor" unique_id=1876585990]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
+
+[node name="FrameMesh" type="MeshInstance3D" parent="ArmoryDoor/DoorFrame" unique_id=20434224]
+mesh = SubResource("BoxMesh_l0hra")
+
+[node name="Collision" type="CollisionShape3D" parent="ArmoryDoor/DoorFrame" unique_id=368521073]
+shape = SubResource("BoxShape3D_dm6se")
+
+[node name="PanelA" type="RigidBody3D" parent="ArmoryDoor" unique_id=1471817148]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 1.25, 0)
+collision_mask = 9
+
+[node name="PanelAMesh" type="MeshInstance3D" parent="ArmoryDoor/PanelA" unique_id=217453949]
+mesh = SubResource("BoxMesh_2wh0m")
+
+[node name="Collision" type="CollisionShape3D" parent="ArmoryDoor/PanelA" unique_id=504068477]
+shape = SubResource("BoxShape3D_760o5")
+
+[node name="PanelB" type="RigidBody3D" parent="ArmoryDoor" unique_id=1624903590]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1.25, 0)
+collision_mask = 9
+
+[node name="PanelBMesh" type="MeshInstance3D" parent="ArmoryDoor/PanelB" unique_id=1516545830]
+mesh = SubResource("BoxMesh_2wh0m")
+
+[node name="Collision" type="CollisionShape3D" parent="ArmoryDoor/PanelB" unique_id=1238478731]
+shape = SubResource("BoxShape3D_760o5")
+
+[node name="DoorInteractionZone" type="Area3D" parent="ArmoryDoor" unique_id=788777648]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+collision_layer = 0
+collision_mask = 3
+
+[node name="Collision" type="CollisionShape3D" parent="ArmoryDoor/DoorInteractionZone" unique_id=789513318]
+shape = SubResource("BoxShape3D_l4m0w")
+
+[node name="Crate1" type="Node3D" parent="." unique_id=2098596016]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.4, 2)
+script = ExtResource("4_35rst")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="Crate1" unique_id=2137508990]
+mesh = SubResource("BoxMesh_c64hb")
+
+[node name="Lid" type="MeshInstance3D" parent="Crate1" unique_id=2057187992]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+mesh = SubResource("BoxMesh_o1r6i")
+
+[node name="CrateCollision" type="StaticBody3D" parent="Crate1" unique_id=468752100]
+collision_mask = 9
+
+[node name="Collision" type="CollisionShape3D" parent="Crate1/CrateCollision" unique_id=662162431]
+shape = SubResource("BoxShape3D_ebit2")
+
+[node name="CrateInteractionZone" type="Area3D" parent="Crate1" unique_id=1708922923]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+collision_layer = 0
+collision_mask = 3
+
+[node name="Collision" type="CollisionShape3D" parent="Crate1/CrateInteractionZone" unique_id=1591375891]
+shape = SubResource("BoxShape3D_l6rsl")
+
+[node name="Crate2" type="Node3D" parent="." unique_id=1426736491]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.4, 2)
+script = ExtResource("4_35rst")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="Crate2" unique_id=1570118247]
+mesh = SubResource("BoxMesh_gtv13")
+
+[node name="Lid" type="MeshInstance3D" parent="Crate2" unique_id=1097131328]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+mesh = SubResource("BoxMesh_f6glb")
+
+[node name="CrateCollision" type="StaticBody3D" parent="Crate2" unique_id=1364930877]
+collision_mask = 9
+
+[node name="Collision" type="CollisionShape3D" parent="Crate2/CrateCollision" unique_id=567143051]
+shape = SubResource("BoxShape3D_k201g")
+
+[node name="CrateInteractionZone" type="Area3D" parent="Crate2" unique_id=481606828]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+collision_layer = 0
+collision_mask = 3
+
+[node name="Collision" type="CollisionShape3D" parent="Crate2/CrateInteractionZone" unique_id=1611497175]
+shape = SubResource("BoxShape3D_qlej5")

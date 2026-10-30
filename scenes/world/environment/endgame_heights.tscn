@@ -1,0 +1,129 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/environment/sewer_enhanced.tscn" id="1_487vu"]
+[ext_resource type="PackedScene" path="res://scenes/world/environment/mall_enhanced.tscn" id="2_i5oq1"]
+[ext_resource type="PackedScene" path="res://scenes/world/environment/rooftop_enhanced.tscn" id="3_xqj40"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/endgame_extraction.tscn" id="4_sqrqr"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ytlrm"]
+albedo_color = Color(0.22, 0.23, 0.25, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_1elff"]
+material = SubResource("StandardMaterial3D_ytlrm")
+size = Vector3(35, 0.3, 18)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vy8h3"]
+size = Vector3(35, 0.3, 18)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_18lub"]
+albedo_color = Color(0.35, 0.36, 0.38, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_qjg7x"]
+material = SubResource("StandardMaterial3D_18lub")
+size = Vector3(35, 4, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8v34a"]
+size = Vector3(35, 4, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mpxhc"]
+material = SubResource("StandardMaterial3D_18lub")
+size = Vector3(35, 4, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5at54"]
+size = Vector3(35, 4, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7tsmh"]
+material = SubResource("StandardMaterial3D_ytlrm")
+size = Vector3(35, 0.3, 18)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mo62x"]
+size = Vector3(35, 0.3, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_r0ibk"]
+material = SubResource("StandardMaterial3D_18lub")
+size = Vector3(35, 2.4, 0.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0857m"]
+size = Vector3(35, 2.4, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jciay"]
+material = SubResource("StandardMaterial3D_18lub")
+size = Vector3(35, 2.4, 0.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_skyx0"]
+size = Vector3(35, 2.4, 0.4)
+
+[node name="EndgameHeights" type="Node3D" unique_id=1316231610]
+
+[node name="SewerDistrict" type="Node3D" parent="." unique_id=2082495694 instance=ExtResource("1_487vu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -130, 0, 0)
+
+[node name="MallDistrict" type="Node3D" parent="." unique_id=1464508466 instance=ExtResource("2_i5oq1")]
+
+[node name="RooftopDistrict" type="Node3D" parent="." unique_id=900427963 instance=ExtResource("3_xqj40")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 140, 0, 0)
+
+[node name="TransitionSewerMall" type="Node3D" parent="." unique_id=1841707808]
+
+[node name="Floor" type="StaticBody3D" parent="TransitionSewerMall" unique_id=258636599]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, -0.15, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="TransitionSewerMall/Floor" unique_id=780522408]
+mesh = SubResource("BoxMesh_1elff")
+
+[node name="Collision" type="CollisionShape3D" parent="TransitionSewerMall/Floor" unique_id=1815200200]
+shape = SubResource("BoxShape3D_vy8h3")
+
+[node name="TunnelWallNorth" type="StaticBody3D" parent="TransitionSewerMall" unique_id=1235146428]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 2, -9)
+
+[node name="Mesh" type="MeshInstance3D" parent="TransitionSewerMall/TunnelWallNorth" unique_id=901930636]
+mesh = SubResource("BoxMesh_qjg7x")
+
+[node name="Collision" type="CollisionShape3D" parent="TransitionSewerMall/TunnelWallNorth" unique_id=136164080]
+shape = SubResource("BoxShape3D_8v34a")
+
+[node name="TunnelWallSouth" type="StaticBody3D" parent="TransitionSewerMall" unique_id=1674053518]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 2, 9)
+
+[node name="Mesh" type="MeshInstance3D" parent="TransitionSewerMall/TunnelWallSouth" unique_id=1407719610]
+mesh = SubResource("BoxMesh_mpxhc")
+
+[node name="Collision" type="CollisionShape3D" parent="TransitionSewerMall/TunnelWallSouth" unique_id=2103067380]
+shape = SubResource("BoxShape3D_5at54")
+
+[node name="TransitionMallRooftop" type="Node3D" parent="." unique_id=1645135324]
+
+[node name="Floor" type="StaticBody3D" parent="TransitionMallRooftop" unique_id=231039003]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, -0.15, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="TransitionMallRooftop/Floor" unique_id=515590008]
+mesh = SubResource("BoxMesh_7tsmh")
+
+[node name="Collision" type="CollisionShape3D" parent="TransitionMallRooftop/Floor" unique_id=1711070857]
+shape = SubResource("BoxShape3D_mo62x")
+
+[node name="SkywalkRailingNorth" type="StaticBody3D" parent="TransitionMallRooftop" unique_id=261420831]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 1.2, -9)
+
+[node name="Mesh" type="MeshInstance3D" parent="TransitionMallRooftop/SkywalkRailingNorth" unique_id=672609348]
+mesh = SubResource("BoxMesh_r0ibk")
+
+[node name="Collision" type="CollisionShape3D" parent="TransitionMallRooftop/SkywalkRailingNorth" unique_id=1596769957]
+shape = SubResource("BoxShape3D_0857m")
+
+[node name="SkywalkRailingSouth" type="StaticBody3D" parent="TransitionMallRooftop" unique_id=709135462]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 1.2, 9)
+
+[node name="Mesh" type="MeshInstance3D" parent="TransitionMallRooftop/SkywalkRailingSouth" unique_id=1255374070]
+mesh = SubResource("BoxMesh_jciay")
+
+[node name="Collision" type="CollisionShape3D" parent="TransitionMallRooftop/SkywalkRailingSouth" unique_id=1201981347]
+shape = SubResource("BoxShape3D_skyx0")
+
+[node name="HeightsDressing" type="Node3D" parent="." unique_id=856372379]
+
+[node name="EndgameExtraction" type="Node3D" parent="." unique_id=559797099 instance=ExtResource("4_sqrqr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 140, 0, 0)
