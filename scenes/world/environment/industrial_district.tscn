@@ -3,6 +3,26 @@
 [ext_resource type="PackedScene" path="res://scenes/world/environment/hospital_enhanced.tscn" id="1_8jbmg"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/warehouse_enhanced.tscn" id="2_dw78b"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/armory_lockdown.tscn" id="3_s3ps5"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-a.glb" id="3_ytlrm"]
+[ext_resource type="PackedScene" path="res://scenes/world/environment/industrial_cache_network.tscn" id="4_dw78b"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-b.glb" id="4_g8aqx"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-c.glb" id="5_t3hu5"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-d.glb" id="6_lrbbv"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/low-detail-building-wide-a.glb" id="7_07rag"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-e.glb" id="8_bw7tu"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/low-detail-building-wide-b.glb" id="9_tahly"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-f.glb" id="10_baj1o"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-g.glb" id="11_haxiw"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-h.glb" id="12_3g33e"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/construction-fence.glb" id="13_a611b"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-i.glb" id="14_baj1o"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-j.glb" id="15_haxiw"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-k.glb" id="16_3g33e"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-l.glb" id="17_a611b"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-m.glb" id="18_ydsy0"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-n.glb" id="19_abpno"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/construction-barrier.glb" id="20_3g33e"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/electricity-pole-single.glb" id="21_a611b"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ytlrm"]
 albedo_color = Color(0.22, 0.23, 0.25, 1)
@@ -74,4 +94,147 @@ shape = SubResource("BoxShape3D_1tbes")
 
 [node name="CorridorDressing" type="Node3D" parent="TransitionCorridor" unique_id=1165853270]
 
+[node name="HospitalOuterBlockA" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=5228401 instance=ExtResource("3_ytlrm")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -92, 0, -30)
+
+[node name="HospitalBlockA" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1610014767 instance=ExtResource("3_ytlrm")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -91, 0, -31)
+
+[node name="HospitalBlockB" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1569932624 instance=ExtResource("4_g8aqx")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -55, 0, -33)
+
+[node name="HospitalBlockC" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=248404181 instance=ExtResource("5_t3hu5")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -91, 0, 31)
+
+[node name="HospitalBlockD" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=478049370 instance=ExtResource("6_lrbbv")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, -55, 0, 33)
+
+[node name="WarehouseBlockA" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1119816857 instance=ExtResource("7_07rag")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 44, 0, -31)
+
+[node name="WarehouseBlockB" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=755428178 instance=ExtResource("8_bw7tu")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 82, 0, -32)
+
+[node name="WarehouseBlockC" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=800386496 instance=ExtResource("9_tahly")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 44, 0, 31)
+
+[node name="WarehouseBlockD" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=2032151814 instance=ExtResource("10_baj1o")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 82, 0, 32)
+
+[node name="TransitFacadeA" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1645771697 instance=ExtResource("11_haxiw")]
+transform = Transform3D(3.5, 0, 0, 0, 3.5, 0, 0, 0, 3.5, -20, 0, -17)
+
+[node name="TransitFacadeB" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=106158678 instance=ExtResource("12_3g33e")]
+transform = Transform3D(3.5, 0, 0, 0, 3.5, 0, 0, 0, 3.5, 20, 0, 17)
+
+[node name="NorthWorkFenceA" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1246426234 instance=ExtResource("13_a611b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 0, -10)
+
+[node name="NorthWorkFenceB" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1569725243 instance=ExtResource("13_a611b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, -10)
+
+[node name="SouthWorkFenceA" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1236853080 instance=ExtResource("13_a611b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 0, 10)
+
+[node name="SouthWorkFenceB" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1206802875 instance=ExtResource("13_a611b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 10)
+
+[node name="ClinicBlockInnerA" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=56678433 instance=ExtResource("14_baj1o")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, -82, 0, -20)
+
+[node name="ClinicBlockInnerB" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=929274790 instance=ExtResource("15_haxiw")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, -65, 0, -20)
+
+[node name="ClinicBlockInnerC" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1355170445 instance=ExtResource("16_3g33e")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, -48, 0, -20)
+
+[node name="ClinicBlockInnerD" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=295864718 instance=ExtResource("17_a611b")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, -82, 0, 20)
+
+[node name="ClinicBlockInnerE" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=667097033 instance=ExtResource("18_ydsy0")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, -65, 0, 20)
+
+[node name="ClinicBlockInnerF" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1334361984 instance=ExtResource("19_abpno")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, -48, 0, 20)
+
+[node name="WarehouseBlockInnerA" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1633821257 instance=ExtResource("3_ytlrm")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, 48, 0, -20)
+
+[node name="WarehouseBlockInnerB" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1444331939 instance=ExtResource("4_g8aqx")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, 65, 0, -20)
+
+[node name="WarehouseBlockInnerC" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=129709097 instance=ExtResource("5_t3hu5")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, 82, 0, -20)
+
+[node name="WarehouseBlockInnerD" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=2068941433 instance=ExtResource("6_lrbbv")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, 48, 0, 20)
+
+[node name="WarehouseBlockInnerE" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1812142374 instance=ExtResource("8_bw7tu")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, 65, 0, 20)
+
+[node name="WarehouseBlockInnerF" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=733662617 instance=ExtResource("10_baj1o")]
+transform = Transform3D(4.2, 0, 0, 0, 4.2, 0, 0, 0, 4.2, 82, 0, 20)
+
+[node name="DistrictBarrier01" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=681297083 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -82, 0, -14)
+
+[node name="DistrictBarrier02" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=260248140 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -65, 0, -14)
+
+[node name="DistrictBarrier03" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1563821581 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -48, 0, -14)
+
+[node name="DistrictBarrier04" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=50869994 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -82, 0, 14)
+
+[node name="DistrictBarrier05" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1441700278 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -65, 0, 14)
+
+[node name="DistrictBarrier06" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1006109310 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -48, 0, 14)
+
+[node name="DistrictBarrier07" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=518707195 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 48, 0, -14)
+
+[node name="DistrictBarrier08" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=110349699 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 65, 0, -14)
+
+[node name="DistrictBarrier09" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1285600802 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 82, 0, -14)
+
+[node name="DistrictBarrier10" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=494968502 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 48, 0, 14)
+
+[node name="DistrictBarrier11" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1856285725 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 65, 0, 14)
+
+[node name="DistrictBarrier12" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1051288638 instance=ExtResource("20_3g33e")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 82, 0, 14)
+
+[node name="UtilityPole01" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=248020155 instance=ExtResource("21_a611b")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -90, 0, -8)
+
+[node name="UtilityPole02" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1227401457 instance=ExtResource("21_a611b")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -78, 0, 8)
+
+[node name="UtilityPole03" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=941905897 instance=ExtResource("21_a611b")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -55, 0, -8)
+
+[node name="UtilityPole04" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1405525124 instance=ExtResource("21_a611b")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -43, 0, 8)
+
+[node name="UtilityPole05" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1617053204 instance=ExtResource("21_a611b")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 43, 0, -8)
+
+[node name="UtilityPole06" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=784339170 instance=ExtResource("21_a611b")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 55, 0, 8)
+
+[node name="UtilityPole07" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1328171770 instance=ExtResource("21_a611b")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 78, 0, -8)
+
+[node name="UtilityPole08" type="Node3D" parent="TransitionCorridor/CorridorDressing" unique_id=1917664260 instance=ExtResource("21_a611b")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 90, 0, 8)
+
 [node name="ArmoryLockdown" type="Node3D" parent="." unique_id=1417753049 instance=ExtResource("3_s3ps5")]
+
+[node name="IndustrialSupplyCacheNetwork" type="Node3D" parent="." unique_id=1234799681 instance=ExtResource("4_dw78b")]

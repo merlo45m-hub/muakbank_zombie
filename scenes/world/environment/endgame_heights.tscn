@@ -3,7 +3,29 @@
 [ext_resource type="PackedScene" path="res://scenes/world/environment/sewer_enhanced.tscn" id="1_487vu"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/mall_enhanced.tscn" id="2_i5oq1"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/rooftop_enhanced.tscn" id="3_xqj40"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-skyscraper-a.glb" id="4_r0ibk"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/endgame_extraction.tscn" id="4_sqrqr"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-skyscraper-b.glb" id="5_0857m"]
+[ext_resource type="PackedScene" path="res://scenes/world/environment/endgame_cache_network.tscn" id="5_i5oq1"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-skyscraper-c.glb" id="6_jciay"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-skyscraper-d.glb" id="7_skyx0"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-skyscraper-e.glb" id="8_x60a5"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-i.glb" id="9_osygr"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-j.glb" id="10_x8pt2"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-k.glb" id="11_wd1h0"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-l.glb" id="12_im1yn"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/road-sign-warning.glb" id="13_o31wx"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/road-sign-street.glb" id="14_g2mc4"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-a.glb" id="15_im1yn"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-b.glb" id="16_o31wx"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-c.glb" id="17_g2mc4"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-d.glb" id="18_4na5t"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-e.glb" id="19_xcmnl"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-f.glb" id="20_2qpwu"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-g.glb" id="21_ly67a"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-h.glb" id="22_glf83"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/construction-barrier.glb" id="23_g2mc4"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/construction-cone.glb" id="24_4na5t"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ytlrm"]
 albedo_color = Color(0.22, 0.23, 0.25, 1)
@@ -125,5 +147,154 @@ shape = SubResource("BoxShape3D_skyx0")
 
 [node name="HeightsDressing" type="Node3D" parent="." unique_id=856372379]
 
+[node name="SewerSkylineA" type="Node3D" parent="HeightsDressing" unique_id=857720678 instance=ExtResource("4_r0ibk")]
+transform = Transform3D(2.8, 0, 0, 0, 2.8, 0, 0, 0, 2.8, -164, 0, -36)
+
+[node name="SewerSkylineB" type="Node3D" parent="HeightsDressing" unique_id=328541725 instance=ExtResource("5_0857m")]
+transform = Transform3D(2.8, 0, 0, 0, 2.8, 0, 0, 0, 2.8, -108, 0, 36)
+
+[node name="MallSkylineA" type="Node3D" parent="HeightsDressing" unique_id=1895441949 instance=ExtResource("6_jciay")]
+transform = Transform3D(2.8, 0, 0, 0, 2.8, 0, 0, 0, 2.8, -25, 0, -38)
+
+[node name="MallSkylineB" type="Node3D" parent="HeightsDressing" unique_id=1258977002 instance=ExtResource("7_skyx0")]
+transform = Transform3D(2.8, 0, 0, 0, 2.8, 0, 0, 0, 2.8, 35, 0, 38)
+
+[node name="RooftopSkylineA" type="Node3D" parent="HeightsDressing" unique_id=680459863 instance=ExtResource("8_x60a5")]
+transform = Transform3D(2.8, 0, 0, 0, 2.8, 0, 0, 0, 2.8, 115, 0, -38)
+
+[node name="RooftopSkylineB" type="Node3D" parent="HeightsDressing" unique_id=171827144 instance=ExtResource("4_r0ibk")]
+transform = Transform3D(2.8, 0, 0, 0, 2.8, 0, 0, 0, 2.8, 175, 0, 38)
+
+[node name="MallEdgeBlockA" type="Node3D" parent="HeightsDressing" unique_id=56678433 instance=ExtResource("9_osygr")]
+transform = Transform3D(3.2, 0, 0, 0, 3.2, 0, 0, 0, 3.2, -27, 0, 30)
+
+[node name="MallEdgeBlockB" type="Node3D" parent="HeightsDressing" unique_id=929274790 instance=ExtResource("10_x8pt2")]
+transform = Transform3D(3.2, 0, 0, 0, 3.2, 0, 0, 0, 3.2, 28, 0, -30)
+
+[node name="SkywalkEdgeBlockA" type="Node3D" parent="HeightsDressing" unique_id=1355170445 instance=ExtResource("11_wd1h0")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 105, 0, 28)
+
+[node name="SkywalkEdgeBlockB" type="Node3D" parent="HeightsDressing" unique_id=295864718 instance=ExtResource("12_im1yn")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 174, 0, -28)
+
+[node name="SewerWarningSign" type="Node3D" parent="HeightsDressing" unique_id=200774856 instance=ExtResource("13_o31wx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -67, 0, -7)
+
+[node name="SkywalkStopSign" type="Node3D" parent="HeightsDressing" unique_id=19352560 instance=ExtResource("14_g2mc4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, 7)
+
+[node name="RooftopWarningSign" type="Node3D" parent="HeightsDressing" unique_id=161556340 instance=ExtResource("13_o31wx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 135, 0, -7)
+
+[node name="SewerEdgeNorthA" type="Node3D" parent="HeightsDressing" unique_id=5228401 instance=ExtResource("15_im1yn")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -146, 0, -23)
+
+[node name="SewerEdgeNorthB" type="Node3D" parent="HeightsDressing" unique_id=1569932624 instance=ExtResource("16_o31wx")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -130, 0, -23)
+
+[node name="SewerEdgeSouthA" type="Node3D" parent="HeightsDressing" unique_id=248404181 instance=ExtResource("17_g2mc4")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -146, 0, 23)
+
+[node name="SewerEdgeSouthB" type="Node3D" parent="HeightsDressing" unique_id=478049370 instance=ExtResource("18_4na5t")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -130, 0, 23)
+
+[node name="MallEdgeNorthA" type="Node3D" parent="HeightsDressing" unique_id=755428178 instance=ExtResource("19_xcmnl")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -16, 0, -22)
+
+[node name="MallEdgeNorthB" type="Node3D" parent="HeightsDressing" unique_id=2032151814 instance=ExtResource("20_2qpwu")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, -22)
+
+[node name="MallEdgeSouthA" type="Node3D" parent="HeightsDressing" unique_id=1645771697 instance=ExtResource("21_ly67a")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 22)
+
+[node name="MallEdgeSouthB" type="Node3D" parent="HeightsDressing" unique_id=106158678 instance=ExtResource("22_glf83")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 16, 0, 22)
+
+[node name="RooftopEdgeNorthA" type="Node3D" parent="HeightsDressing" unique_id=2101844496 instance=ExtResource("5_0857m")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 122, 0, -23)
+
+[node name="RooftopEdgeNorthB" type="Node3D" parent="HeightsDressing" unique_id=903215891 instance=ExtResource("6_jciay")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 140, 0, -23)
+
+[node name="RooftopEdgeSouthA" type="Node3D" parent="HeightsDressing" unique_id=484466096 instance=ExtResource("7_skyx0")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 140, 0, 23)
+
+[node name="RooftopEdgeSouthB" type="Node3D" parent="HeightsDressing" unique_id=410101248 instance=ExtResource("8_x60a5")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 158, 0, 23)
+
+[node name="EndgameBarrier01" type="Node3D" parent="HeightsDressing" unique_id=681297083 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -145, 0, -13)
+
+[node name="EndgameBarrier02" type="Node3D" parent="HeightsDressing" unique_id=760179747 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -130, 0, -13)
+
+[node name="EndgameBarrier03" type="Node3D" parent="HeightsDressing" unique_id=1952789701 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -115, 0, -13)
+
+[node name="EndgameBarrier04" type="Node3D" parent="HeightsDressing" unique_id=739935842 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -145, 0, 13)
+
+[node name="EndgameBarrier05" type="Node3D" parent="HeightsDressing" unique_id=1331623684 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -130, 0, 13)
+
+[node name="EndgameBarrier06" type="Node3D" parent="HeightsDressing" unique_id=518723791 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -115, 0, 13)
+
+[node name="EndgameBarrier07" type="Node3D" parent="HeightsDressing" unique_id=1921508516 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -15, 0, -13)
+
+[node name="EndgameBarrier08" type="Node3D" parent="HeightsDressing" unique_id=1133631691 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 0, 0, -13)
+
+[node name="EndgameBarrier09" type="Node3D" parent="HeightsDressing" unique_id=562305549 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 15, 0, -13)
+
+[node name="EndgameBarrier10" type="Node3D" parent="HeightsDressing" unique_id=178152236 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, -15, 0, 13)
+
+[node name="EndgameBarrier11" type="Node3D" parent="HeightsDressing" unique_id=504153497 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 0, 0, 13)
+
+[node name="EndgameBarrier12" type="Node3D" parent="HeightsDressing" unique_id=1014330242 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 15, 0, 13)
+
+[node name="EndgameBarrier13" type="Node3D" parent="HeightsDressing" unique_id=1458107404 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 125, 0, -13)
+
+[node name="EndgameBarrier14" type="Node3D" parent="HeightsDressing" unique_id=13091909 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 140, 0, -13)
+
+[node name="EndgameBarrier15" type="Node3D" parent="HeightsDressing" unique_id=146232969 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 155, 0, -13)
+
+[node name="EndgameBarrier16" type="Node3D" parent="HeightsDressing" unique_id=618759079 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 125, 0, 13)
+
+[node name="EndgameBarrier17" type="Node3D" parent="HeightsDressing" unique_id=727992989 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 140, 0, 13)
+
+[node name="EndgameBarrier18" type="Node3D" parent="HeightsDressing" unique_id=314996420 instance=ExtResource("23_g2mc4")]
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 155, 0, 13)
+
+[node name="EndgameCone01" type="Node3D" parent="HeightsDressing" unique_id=1558821275 instance=ExtResource("24_4na5t")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -135, 0, -8)
+
+[node name="EndgameCone02" type="Node3D" parent="HeightsDressing" unique_id=786605683 instance=ExtResource("24_4na5t")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -120, 0, 8)
+
+[node name="EndgameCone03" type="Node3D" parent="HeightsDressing" unique_id=1097344265 instance=ExtResource("24_4na5t")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -5, 0, -8)
+
+[node name="EndgameCone04" type="Node3D" parent="HeightsDressing" unique_id=1843814560 instance=ExtResource("24_4na5t")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 10, 0, 8)
+
+[node name="EndgameCone05" type="Node3D" parent="HeightsDressing" unique_id=1751499717 instance=ExtResource("24_4na5t")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 130, 0, -8)
+
+[node name="EndgameCone06" type="Node3D" parent="HeightsDressing" unique_id=940969122 instance=ExtResource("24_4na5t")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 150, 0, 8)
+
 [node name="EndgameExtraction" type="Node3D" parent="." unique_id=559797099 instance=ExtResource("4_sqrqr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 140, 0, 0)
+
+[node name="EndgameSupplyCacheNetwork" type="Node3D" parent="." unique_id=1825956653 instance=ExtResource("5_i5oq1")]
