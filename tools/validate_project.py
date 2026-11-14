@@ -28,7 +28,7 @@ def rel(p):
     return p.replace(PROJ + "/", "")
 
 
-# ── Scenes ────────────────────────────────────────────────────
+# ── Scenes ────────────────────────────────────────────────
 tscn_files = walk_suffix('.tscn')
 for path in sorted(tscn_files):
     with open(path, errors='replace') as fh:
@@ -87,7 +87,7 @@ for path in sorted(tscn_files):
         if late_ext:
             issues.append(f"ext_resource AFTER sub_resource: {r}")
 
-# ── Scripts ───────────────────────────────────────────────────
+# ── Scripts ────────────────────────────────────────────────
 gd_files = walk_suffix('.gd')
 sm = os.path.join(PROJ, "SceneManager.gd")
 if os.path.exists(sm):
@@ -113,6 +113,15 @@ for path in sorted(gd_files):
         st = line.strip()
         if not st or st.startswith("#"):
             continue
+        # Continuation lines are not block openers: a line starting with a bracket or a
+        # logical operator, or whose predecessor ends with an opening bracket, comma or
+        # line continuation, is part of a multi-line expression (e.g. `[AIState.DEAD,
+        # "Dead"]]:` or an `if x \ and y:` condition), not a block header.
+        if st[0] in "[({]).," or st.startswith(("and ", "or ", "not ", "\\")):
+            continue
+        prev = glines[i - 1].rstrip() if i > 0 else ""
+        if prev.endswith(("[", "(", "{", ",", "\\", "=", "+", "-", "*", "/")):
+            continue
         if st.endswith(":"):
             indent = len(line) - len(line.lstrip("\t"))
             j = i + 1
@@ -123,7 +132,7 @@ for path in sorted(gd_files):
                 if len(nxt) - len(nxt.lstrip("\t")) <= indent:
                     issues.append(f"EMPTY BLOCK at {r}:{i+1} ({st[:40]})")
 
-# ── Resources (.tres) ─────────────────────────────────────────
+# ── Resources (.tres) ────────────────────────────────────
 tres_files = walk_suffix('.tres')
 for path in sorted(tres_files):
     with open(path, errors='replace') as fh:
@@ -132,20 +141,21 @@ for path in sorted(tres_files):
     if not content.startswith("[gd_resource"):
         issues.append(f"TRES NO HEADER: {r}")
         continue
-    # Every ExtResource("N") must have a matching [ext_resource ... id="N"]
     declared = set(re.findall(r'^\[ext_resource[^\]]*id="([^"]+)"', content, re.M))
     used = set(re.findall(r'ExtResource\("([^"]+)"\)', content))
     missing = used - declared
     if missing:
         issues.append(f"TRES UNDECLARED ext_resource {sorted(missing)}: {r}")
-    # No stray bracket-only lines other than known tags
     for ln, line in enumerate(content.split("\n"), 1):
         s = line.strip()
         if s.startswith("[") and not re.match(
                 r'^\[(gd_resource|resource|ext_resource|sub_resource)', s):
             issues.append(f"TRES JUNK TAG at {r}:{ln}: {s[:40]}")
 
-# ── Report ────────────────────────────────────────────────────
+# ── Report ────────────────────────────────────────────────
+if len(tscn_files) == 0:
+    print("FATAL: scanned 0 scenes - wrong project_dir; refusing to pass")
+    sys.exit(2)
 print(f"Checked {len(tscn_files)} scenes, {len(gd_files)} scripts, {len(tres_files)} resources")
 print(f"ISSUES: {len(issues)}")
 for i in issues:
