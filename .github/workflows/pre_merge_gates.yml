@@ -1,0 +1,22 @@
+name: pre-merge-gates
+
+# Mandatory pre-merge validation gates from the Muakbank Zombie Standard Operating
+# Protocol (section 4: Git Branching Rules, CLI Workflow & CI/CD Gates).
+#   1. Local / Termux static gate  - tools/validate_project.py
+#   2. VPS headless gate           - tools/regression_smoke.sh (must print REGRESSION: PASS)
+#                                    + the GDUnit4 headless suite (tools/tests/run_tests.gd)
+# Direct commits to main are prohibited for automated agents; all work lands on a scoped
+# branch (feat/<topic>, asset/<asset-name>, fix/<issue-id>) and must pass both gates
+# before a merge is proposed.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: pre-merge-gates-${{ github.ref }}
+  cancel-in-progress: true
+
+jobsstarget: {}
