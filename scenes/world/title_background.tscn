@@ -302,7 +302,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 mesh = SubResource("FogSphere")
 material_override = SubResource("FogMaterial")
 
-[node name="Moon" type="DirectionalLight3D" parent="."]
+[node name="MoonLight" type="DirectionalLight3D" parent="."]
 shadow_enabled = true
 rotation_degrees = Vector3(-55, -35, 0)
 light_color = Color(0.78, 0.84, 0.96, 1.0)
