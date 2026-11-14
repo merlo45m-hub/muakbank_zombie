@@ -4,7 +4,7 @@
 Run inside Blender:
     blender --background --python tools/export_godot_asset.py -- \
         --blend /root/vending_machine_props.blend \
-        --out  assets/models/vending_machine.glb \
+        --out  /root/muakbank_zombie/assets/models/vending_machine.glb \
         --name vending_machine
 
 Why this exists: the SOP's stage 4 is "export .glb + .png and transport to the repo".

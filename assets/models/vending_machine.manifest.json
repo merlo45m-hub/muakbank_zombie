@@ -1,0 +1,12 @@
+{
+  "asset": "vending_machine",
+  "model": "assets/models/vending_machine.glb",
+  "parts": 57,
+  "dimensions_m": [
+    1.134,
+    2.1276,
+    0.835
+  ],
+  "origin": "bottom-centre, sitting on z=0",
+  "up": "+Y in glTF, converted to Godot +Z"
+}
