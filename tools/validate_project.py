@@ -153,6 +153,9 @@ for path in sorted(tres_files):
             issues.append(f"TRES JUNK TAG at {r}:{ln}: {s[:40]}")
 
 # ── Report ────────────────────────────────────────────────
+if len(tscn_files) == 0:
+    print("FATAL: scanned 0 scenes - wrong project_dir; refusing to pass")
+    sys.exit(2)
 print(f"Checked {len(tscn_files)} scenes, {len(gd_files)} scripts, {len(tres_files)} resources")
 print(f"ISSUES: {len(issues)}")
 for i in issues:
