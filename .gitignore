@@ -48,3 +48,6 @@ apk_test/
 
 # Godot's own config dir — holds the debug signing keystore
 godot_root/
+
+# Python bytecode (agent/tool scratch)
+tools/__pycache__/
