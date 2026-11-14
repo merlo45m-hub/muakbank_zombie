@@ -45,8 +45,7 @@ func brace_in_socket() -> bool:
 	if _socket == null:
 		return false
 	for body in _socket.get_overlapping_bodies():
-		if is_instance_valid(body) and body.is_in_group("quarantine_brace") \
-				and body.get("brace_type") == assigned_brace:
+		if is_instance_valid(body) and body.is_in_group("quarantine_brace") and body.get("brace_type") == assigned_brace:
 			return true
 	for body in get_tree().get_nodes_in_group("quarantine_brace"):
 		if not is_instance_valid(body) or body.get("brace_type") != assigned_brace:

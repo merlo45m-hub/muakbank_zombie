@@ -68,8 +68,7 @@ func _ready() -> void:
 	var stack: Array = [game]
 	while not stack.is_empty():
 		var n: Node = stack.pop_back()
-		if n is MobileControls or (n.get_script() != null \
-				and String(n.get_script().resource_path).ends_with("MobileControls.gd")):
+		if n is MobileControls or String(n.get_script().resource_path).ends_with("MobileControls.gd"):
 			mc = n as Control
 			break
 		for c in n.get_children():

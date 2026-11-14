@@ -1,16 +1,18 @@
 #!/bin/bash
 # One-command VPS export wrapper (Muakbank Zombie)
-# Edit on phone -> push rescue/muakbank-work -> VPS pulls -> Godot exports Android APK -> APK copied to phone Download
+# Edit on phone -> push BRANCH (default main) -> VPS pulls -> Godot exports Android APK -> APK copied to phone Download
 # Usage: bash tools/export_on_vps.sh [push|pull|export|release|copy|full]
 # Default: full (push + pull + export + copy)
 #
-# Canonical branch is rescue/muakbank-work while main stays clean (see docs/BRANCH_WORKFLOW.md).
+# Canonical branch is main (per STATE.md and docs/BRANCH_WORKFLOW.md: main is always
+# deployable, feature work merges back via PR). main is protected, so pushing to it
+# requires a PR; override with MKB_BRANCH for a scoped feature branch.
 # Routing uses the `vps` ssh alias (WireGuard 10.9.0.1) with a vpspub (public IP) fallback.
 
 set -e
 
 PROJECT="/storage/emulated/0/Games/Muakbank_zombie"
-BRANCH="rescue/muakbank-work"
+BRANCH="${MKB_BRANCH:-main}"
 
 # ssh routing: prefer the `vps` alias (fast wireguard), fall back to public IP (vpspub)
 if ssh -o ConnectTimeout=5 -o BatchMode=yes vps true 2>/dev/null; then

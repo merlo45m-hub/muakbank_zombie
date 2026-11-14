@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bmuaktruckemiss01"]
+[ext_resource type="Texture2D" uid="uid://cdvco25ulgyqn" path="res://assets/textures/final_truck.png" id="1_emission"]
+[resource]
+albedo_color = Color(1.000, 0.227, 0.102, 1.0)
+albedo_texture = ExtResource("1_emission")
+roughness = 0.500
+metallic = 0.000
+specular = Color(0.05, 0.05, 0.05, 1.0)
+emission_enabled = True
+emission = Color(0.250, 0.250, 0.250, 1.0)
+emission_texture = null
+normal_map_enabled = false
+ambient_light_usage = 2
