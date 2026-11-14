@@ -208,10 +208,12 @@ func _build_state_chart() -> void:
 	chart.add_child(main)
 
 	var states: Dictionary = {}
-	for entry in [
+	var state_entries = [
 		[AIState.IDLE, "Idle"], [AIState.CHASE, "Chase"],
 		[AIState.ATTACK, "Attack"], [AIState.SPECIAL, "Special"],
-		[AIState.DEAD, "Dead"]]:
+		[AIState.DEAD, "Dead"]
+	]
+	for entry in state_entries:
 		var st: Node = atomic_sc.new()
 		st.name = entry[1]
 		main.add_child(st)

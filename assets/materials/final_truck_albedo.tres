@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://66696e616c5f7472"]
+[ext_resource type="Texture2D" uid="uid://66696e616c5f7472" path="res://assets/textures/final_truck.png" id="0_albedo"]
+[resource]
+albedo_color = Color(0.180, 0.353, 0.227, 1.0)
+albedo_texture = ExtResource("0_albedo")
+roughness = 0.700
+metallic = 0.200
+specular = Color(0.05, 0.05, 0.05, 1.0)
+emission_enabled = True
+emission = Color(0.250, 0.250, 0.250, 1.0)
+emission_texture = null
+normal_map_enabled = false
+ambient_light_usage = 2
