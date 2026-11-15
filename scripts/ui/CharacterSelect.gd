@@ -28,12 +28,16 @@ const SURVIVOR_CONFIGS: Array[Dictionary] = [
 	{"id": "hunter", "name": "HUNTER", "scene": "res://scenes/characters/character_hunter.tscn"},
 ]
 
+# Canonical 5-lane palette (DESIGN.md §2 / specs/claude_canonical_roster.md).
+# MUST stay in sync with theme/pedestal*.tres — those bg_color values are the
+# source of truth, reproduced exactly here. Issue #16 resolved the Nurse lane to
+# neon-cyan #2de0ff (the old "Mint Green" value here was the stale outlier).
 const PEDESTAL_COLORS: Dictionary = {
-	"gamer": Color(1.0, 0.08, 0.60),      # Magenta
-	"doctor": Color(0.08, 0.85, 1.0),     # Cyan
-	"nurse": Color(0.18, 0.96, 0.65),     # Mint Green
-	"streamer": Color(0.76, 0.22, 1.0),   # Violet
-	"hunter": Color(1.0, 0.82, 0.18),     # Warm Gold
+	"gamer": Color(1.0, 0.176, 0.482),     # #ff2d7b
+	"doctor": Color(0.435, 0.659, 1.0),    # #6fa8ff clinical-blue
+	"nurse": Color(0.176, 0.878, 1.0),     # #2de0ff neon-cyan
+	"streamer": Color(0.627, 0.361, 1.0),  # #a05cff
+	"hunter": Color(1.0, 0.839, 0.039),    # #ffd60a
 }
 
 var selected_character: int = 2
