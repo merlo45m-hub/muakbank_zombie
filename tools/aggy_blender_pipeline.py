@@ -33,7 +33,11 @@ import bpy
 # --------------------------------------------------------------------------- #
 # Constants / conventions
 # --------------------------------------------------------------------------- #
-REPO_ROOT = "/root/muakbank_zombie"
+# Derive the repo root from this script's location. A hardcoded absolute path
+# silently split outputs between folders when the checkout moves (CI, another
+# host, a git worktree): main() used a script-derived root while write_tres() /
+# write_import() used the constant. One root, one folder contract.
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS_MODELS = os.path.join(REPO_ROOT, "assets", "models")
 ASSETS_TEXTURES = os.path.join(REPO_ROOT, "assets", "textures")
 ASSETS_MATERIALS = os.path.join(REPO_ROOT, "assets", "materials")
@@ -276,7 +280,11 @@ def write_import(asset_id: str, src_rel: str, textures_out: str):
     src_rel = os.path.relpath(src, REPO_ROOT).replace(os.sep, "/")
     ctex = f"{asset_id}-{abs(hash(asset_id)) & 0xFFFFFFFF:x}.ctex"
     ctex_path = os.path.join(textures_out, ctex)
-    import_path = os.path.join(textures_out, f"{asset_id}.import")
+    # Godot names a PNG's import metadata "<source>.png.import". Writing
+    # "<asset_id>.import" produces a file Godot ignores (the shipped assets all
+    # carry the .png.import suffix). Keep the pipeline's output in the folder
+    # contract Godot actually reads.
+    import_path = os.path.join(textures_out, f"{asset_id}.png.import")
     with open(import_path, "w") as f:
         f.write(
             "[remap]\n\n"
@@ -439,7 +447,7 @@ def main(argv=None):
     mapping = {
         "models|.glb": os.path.exists(glb_path),
         "textures|.png": os.path.exists(os.path.join(textures_out, f"{asset_id}.png")),
-        "textures|.png.import": os.path.exists(os.path.join(textures_out, f"{asset_id}.import")),
+        "textures|.png.import": os.path.exists(os.path.join(textures_out, f"{asset_id}.png.import")),
         "materials|.tres": os.path.exists(os.path.join(materials_out, f"{asset_id}_albedo.tres")),
     }
     print("[aggy] V FILES:")
