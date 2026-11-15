@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3]
+[gd_scene load_steps=44 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/world/night_sky.tscn" id="night_sky"]
 [ext_resource type="Script" path="res://scripts/core/Game.gd" id="1"]
@@ -29,6 +29,8 @@
 [ext_resource type="Script" path="res://addons/VectorFieldNavigation/classes/VFNMap.gd" id="vfn_map"]
 [ext_resource type="Script" path="res://scripts/world/StreetDetail.gd" id="street_detail"]
 [ext_resource type="Script" path="res://scripts/world/LampGate.gd" id="lamp_gate"]
+[ext_resource type="ShaderMaterial" path="res://resources/materials/vinyl_rim.tres" id="vinyl_rim"]
+[ext_resource type="Script" path="res://scripts/world/VinylLookController.gd" id="vinyl_look"]
 
 
 [sub_resource type="StyleBoxFlat" id="JoystickBg"]
@@ -154,20 +156,22 @@ omni_range = 5.0
 
 [node name="PlayerRim" type="OmniLight3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 1.5, 1.7)
-light_color = Color(0.62, 0.72, 1, 1)
-light_energy = 0.95
-omni_range = 5.0
+light_color = Color(0.52, 0.70, 1, 1)
+light_energy = 1.25
+omni_range = 3.2
 
 [node name="PlayerVisuals" type="Node3D" parent="Player"]
 
 [node name="Body" type="MeshInstance3D" parent="Player/PlayerVisuals"]
 mesh = SubResource("PlayerMesh")
 material_override = SubResource("PlayerMaterial")
+material_overlay = ExtResource("vinyl_rim")
 
 [node name="Head" type="MeshInstance3D" parent="Player/PlayerVisuals"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
 mesh = SubResource("HeadMesh")
 material_override = SubResource("HeadMaterial")
+material_overlay = ExtResource("vinyl_rim")
 
 [node name="PlayerCollision" type="CollisionShape3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
@@ -311,6 +315,10 @@ script = ExtResource("21")
 
 [node name="AchievementManager" type="Node" parent="."]
 script = ExtResource("22")
+
+[node name="VinylLook" type="Node" parent="."]
+script = ExtResource("vinyl_look")
+tier = 0
 
 [connection signal="health_changed" from="Player" to="HUD" method="update_health"]
 [connection signal="stamina_changed" from="Player" to="HUD" method="update_stamina"]
