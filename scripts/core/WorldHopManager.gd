@@ -21,6 +21,11 @@ var state: HopState = HopState.IDLE
 var generation: int = 0
 var current_region_instance: Node = null
 
+# Issue #18 — structured transient-state snapshot captured BEFORE an old region
+# is unloaded. Player stats + active spawner state are JSON-serializable.
+var last_transient_snapshot: Dictionary = {}
+var snapshot_count: int = 0
+
 var _gen: int = 0
 var _path: String = ""
 var _target_region: int = 0
@@ -139,6 +144,84 @@ func _find_player() -> Node3D:
 	return null
 
 
+func _v3(v: Vector3) -> Array:
+	return [v.x, v.y, v.z]
+
+
+## Issue #18 — structured serialization of transient game state BEFORE the old
+## region is freed. Player stats/position and active spawner flag/timer are
+## captured as plain JSON-safe values (Vector3 -> Array). Spawners are siblings
+## of the region (they survive instancing), so we record their live state rather
+## than reparenting them. The snapshot is kept on the manager and can be applied
+## back with restore_transient_state() after a transition.
+## Resolve the node that owns the spawners. In real runtime current_scene IS the
+## Game scene; in a headless --script probe the game is a child of root named
+## "Game" and current_scene is null. Handle both so the snapshot is not empty.
+func _game_root() -> Node:
+	var scene := get_tree().current_scene
+	if scene != null and (scene.has_node("ZombieSpawner") or scene.has_node("FoodSpawner")):
+		return scene
+	var direct := get_tree().root.get_node_or_null("Game")
+	if direct != null and (direct.has_node("ZombieSpawner") or direct.has_node("FoodSpawner")):
+		return direct
+	for child in get_tree().root.get_children():
+		if child.has_node("ZombieSpawner") or child.has_node("FoodSpawner"):
+			return child
+	return null
+
+
+func snapshot_transient_state() -> Dictionary:
+	var snap: Dictionary = {
+		"from_region": 0,
+		"to_region": _target_region,
+		"ts_msec": Time.get_ticks_msec(),
+		"player": {},
+		"spawners": {},
+	}
+	var wp := _wp()
+	if wp != null:
+		snap["from_region"] = int(wp.current_region)
+
+	var player := _find_player()
+	if player != null:
+		var p: Dictionary = {"position": _v3(player.global_position)}
+		for prop in ["health", "max_health", "stamina", "max_stamina", "score", "kills"]:
+			var v = player.get(prop)
+			if v != null:
+				p[prop] = v
+		snap["player"] = p
+
+	var scene := _game_root()
+	if scene != null:
+		for spawner_name in ["ZombieSpawner", "FoodSpawner"]:
+			var sp := scene.get_node_or_null(spawner_name)
+			if sp == null:
+				continue
+			var s: Dictionary = {}
+			var can = sp.get("can_spawn")
+			if can != null:
+				s["can_spawn"] = bool(can)
+			var timer := sp.get_node_or_null("SpawnTimer") as Timer
+			if timer != null:
+				s["time_left"] = timer.time_left
+			snap["spawners"][spawner_name] = s
+	return snap
+
+
+## Apply a previously captured snapshot back onto live nodes. Returns true when a
+## player was found and restored. Position is intentionally NOT restored: the hop
+## deliberately relocates the player to the new region's spawn point.
+func restore_transient_state(snap: Dictionary) -> bool:
+	var player := _find_player()
+	if player == null:
+		return false
+	var p: Dictionary = snap.get("player", {})
+	for prop in ["health", "max_health", "stamina", "max_stamina", "score", "kills"]:
+		if p.has(prop) and player.get(prop) != null:
+			player.set(prop, p[prop])
+	return true
+
+
 func _on_load_complete(packed: Resource) -> void:
 	state = HopState.RELOCATING_PLAYER
 	var root := _ensure_world_root()
@@ -148,6 +231,10 @@ func _on_load_complete(packed: Resource) -> void:
 	var player := _find_player()
 	if player != null:
 		player.global_position = _spawn
+
+	# Issue #18: serialize transient state BEFORE the old region is unloaded.
+	last_transient_snapshot = snapshot_transient_state()
+	snapshot_count += 1
 
 	# Free the old region only AFTER the new one is in the tree, preserving the
 	# persistent WorldRoot and every sibling (spawners/timers/day-night).
