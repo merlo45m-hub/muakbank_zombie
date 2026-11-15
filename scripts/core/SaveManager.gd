@@ -6,7 +6,7 @@
 extends Node
 
 # === SAVE VERSION (bump to trigger a re-save / migration on load) ===
-const SAVE_VERSION: int = 1
+const SAVE_VERSION: int = 2
 
 # === SAVE DATA ===
 # Filled by _load_game() at startup. _default_save_data() is the single source of
@@ -87,6 +87,16 @@ func _coerce(key: String, value, fallback):
 			return fallback
 		"tutorial_completed", "haptics_enabled":
 			return bool(value)
+		"collection_items", "collection_regions":
+			if value is Dictionary:
+				return value
+			return fallback
+		"museum_seen":
+			if value is Array:
+				return value
+			return fallback
+		"museum_version":
+			return int(value)
 		"unlocked_levels":
 			# JSON stores ints as floats; level ids must compare as ints
 			# (is_level_unlocked uses has(level) against ints).
@@ -159,7 +169,11 @@ func _default_save_data() -> Dictionary:
 			"hunter": 0
 		},
 		"tutorial_completed": false,
-		"haptics_enabled": true
+		"haptics_enabled": true,
+		"collection_items": {},
+		"collection_regions": {},
+		"museum_seen": [],
+		"museum_version": 2
 	}
 
 

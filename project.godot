@@ -27,6 +27,8 @@ SoundManager="*uid://6q1wagejt60k"
 MinosDamageNumbers2D="*uid://cmstxlu50gkl7"
 MinosDamageNumbers3D="*uid://bqk86tyyf62lx"
 Tutorial="*res://scripts/ui/tutorial.gd"
+CollectionManager="*res://scripts/gameplay/CollectionManager.gd"
+ProgressTracker="*res://scripts/gameplay/ProgressTracker.gd"
 
 [display]
 
