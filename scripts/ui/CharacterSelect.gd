@@ -141,7 +141,6 @@ func _ready() -> void:
 	if ResourceLoader.exists(bold_path):
 		_btn_font_bold = load(bold_path)
 
-	call_deferred("_fit_title")
 
 	_build_stage()
 	_build_ui()
@@ -179,16 +178,6 @@ func _ready() -> void:
 	_update_tap_zones.call_deferred()
 
 	Audio.play_menu_music()
-
-
-func _fit_title() -> void:
-	var title := get_node_or_null("UI/TitleLabel") as Label
-	if title != null:
-		title.add_theme_font_size_override("font_size", _fs(44))
-		_fit_label_font(title, 44, 0.94)
-	var subtitle := get_node_or_null("UI/SubtitleLabel") as Label
-	if subtitle != null:
-		subtitle.add_theme_font_size_override("font_size", _fs(18))
 
 
 func _process(delta: float) -> void:
