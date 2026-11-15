@@ -156,6 +156,20 @@ def register_material_to_object(obj: bpy.types.Object, mat: bpy.types.Material):
 # --------------------------------------------------------------------------- #
 # Preview rendering (multi-angle)
 # --------------------------------------------------------------------------- #
+def purge_startup_meshes():
+    """Remove Blender's default startup Cube (and any leftover mesh) before building.
+
+    setup_scene() was defined but never called, and was broken anyway (it deleted
+    ALL objects including the Camera that render_angles()/render_albedo() require).
+    Without this, every exported GLB silently shipped a stray 2x2x2 "Cube" node
+    alongside the real asset — a direct cause of the Issue #9.1 scale/geometry
+    mismatch. Keep cameras and lights; drop only meshes.
+    """
+    for obj in list(bpy.data.objects):
+        if obj.type == "MESH":
+            bpy.data.objects.remove(obj, do_unlink=True)
+
+
 def setup_scene():
     for obj in bpy.data.objects:
         obj.select_set(False)
@@ -354,11 +368,42 @@ def main(argv=None):
         print("[aggy] DRY-RUN: no files written")
         return 0
 
-    # 1) Build mesh
+    # 1) Pin the scene to metres BEFORE building anything. glTF's exporter
+    # defaults are version-dependent; leaving them implicit is what produced the
+    # character-vs-environment scale mismatch (Issue #9.1). Godot imports these
+    # .glb files with nodes/root_scale=1.0, so 1 Blender unit MUST equal 1 metre
+    # and no scaling may be applied at export time.
+    scene = bpy.context.scene
+    scene.unit_settings.system = "METRIC"
+    scene.unit_settings.scale_length = 1.0
+
+    # Remove Blender's default startup Cube BEFORE building, or it ships inside
+    # the GLB as a stray 2x2x2 mesh (see purge_startup_meshes docstring).
+    purge_startup_meshes()
+
+    # 2) Build mesh
     obj = build_mesh(category, dims)
     print(f"[aggy] built {category} mesh (dims {dims})")
 
-    # 2) Apply materials
+    # Assert the built geometry actually matches dimensions_m for the categories
+    # whose mesh builder is dimension-exact (block/building/structure/prop).
+    # vehicle/character deliberately use stylized proportions (unit cube * factor),
+    # so for those we only log — asserting would reject valid stylized builds.
+    expected = (float(dims["x"]), float(dims["y"]), float(dims["z"]))
+    actual = tuple(float(v) for v in obj.dimensions)
+    dimension_exact = category in ("block", "building", "structure", "prop")
+    if dimension_exact:
+        for got, want in zip(actual, expected):
+            if want > 0.0 and abs(got - want) > max(0.01, want * 0.02):
+                raise RuntimeError(
+                    f"[aggy] dimension mismatch: built {actual}, expected {expected} "
+                    "(Issue #9.1 scale guard)"
+                )
+        print(f"[aggy] dimensions verified: {actual} == {expected}")
+    else:
+        print(f"[aggy] built dimensions (stylized {category}): {actual} from {expected}")
+
+    # 3) Apply materials
     for m in mats:
         mat = make_material(m)
         register_material_to_object(obj, mat)
@@ -368,10 +413,21 @@ def main(argv=None):
     render_angles(obj, textures_out, base)
     render_albedo(obj, textures_out, base)
 
-    # 4) glTF (.glb) export
+    # 4) glTF (.glb) export — pin the scale-affecting params that Blender 4.0.2
+    # actually exposes (verified against the operator RNA: global_scale and
+    # apply_unit_scale do NOT exist in this build; the scene unit_settings above
+    # are what the exporter honours). export_yup=True gives the glTF-standard
+    # Y-up conversion Godot expects; export_apply bakes modifiers (not transforms).
+    # Godot imports these with nodes/root_scale=1.0, so 1 Blender unit = 1 metre.
     glb_path = os.path.join(models_out, f"{asset_id}.glb")
-    bpy.ops.export_scene.gltf(filepath=glb_path, export_format="GLB", check_existing=False)
-    print(f"[aggy] glb: {glb_path}")
+    bpy.ops.export_scene.gltf(
+        filepath=glb_path,
+        export_format="GLB",
+        check_existing=False,
+        export_yup=True,
+        export_apply=True,
+    )
+    print(f"[aggy] glb: {glb_path} (METRIC 1BU=1m, y-up, root_scale=1.0 on Godot side)")
 
     # 5) Material registration (.tres -> assets/materials)
     write_tres(asset_id, mats, textures_out)
