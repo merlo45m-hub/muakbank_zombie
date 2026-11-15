@@ -145,9 +145,16 @@ tier (`b4beb7f`), 1:1 metric Blender GLB scale guard (`192b1fb`), threaded
 CI (`b322faa`, `22cab96`), and the AchievementManager-script-assignment
 regression the GDD calls out (found & fixed in `b4beb7f`).
 
-Open workstreams (GitHub): #25 GDD-1 non-linear hopping, #26 GDD-2
-DismantleComponent, #27 GDD-3 world remap, #28 GDD-4 Cure/post-cure,
-#29 GDD-5 CollectionLog/Bestiary. Plus #21 device visual review, #23 headless
+#26 GDD-2 LANDED (`06e9f2c`): `DismantleComponent` (stateless, tool-tier gate,
+joint-disconnect mesh swap, NO CSG), `DebrisPool` autoload (MAX_ACTIVE=48 cap),
+`CollectionLog`/`Bestiary` read-only facades, sole-writer `CollectionManager`
+registries, SAVE_VERSION 4->5, `dismantle_tables.json`, full-chain
+`dismantle_playtest.gd` (GDD26_PASS=true). Split-part GLBs (#9.2) still owed;
+per-prop scene wiring is the art-gated next step.
+
+Open workstreams: #27 GDD-3 world remap, #28 GDD-4 Cure/post-cure,
+#29 GDD-5 (registry exists via #26; catalog-coverage validation owed),
+#21 device visual review (manual pass scheduled 14:32 EST), #23 headless
 rendering to vault, #9.2 asset replacement.
 
 ## 9. Delegation map (curator: Hermes)
