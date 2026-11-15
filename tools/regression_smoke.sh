@@ -16,7 +16,7 @@
 #   Exit code !=0 / final line "REGRESSION: FAIL (...)"    == GATE RED.
 #   In CI: run the same command; the exit code IS the gate.
 #
-# CHECKS (in order — 5 checks total)
+# CHECKS (in order — 7 checks total)
 #   1. import      : headless engine import with a FRESH .godot cache
 #                    (rm -rf .godot), run in up to 3 passes until one pass is
 #                    CLEAN, gated on that pass. Multiple passes are required
@@ -115,7 +115,7 @@ run_scene() {
     local tscn="$1" name="$2" frames="$3" marker="$4" want="$5" rc got logf
     logf="${WORKDIR}/${name}.log"
     CHECK=$((CHECK + 1))
-    log "[check ${CHECK}/5] ${name}: ${tscn} (${frames} frames max, xvfb)"
+    log "[check ${CHECK}/7] ${name}: ${tscn} (${frames} frames max, xvfb)"
     # shellcheck disable=SC2086
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
         --headless --path "$PROJECT_ROOT" "$tscn" --quit-after "$frames" > "$logf" 2>&1
@@ -142,7 +142,7 @@ log "logs    : ${WORKDIR}"
 
 # --- 1/5 fresh headless import (regenerates .godot) ------------------------
 CHECK=$((CHECK + 1))
-log "[check 1/5] import: fresh headless import until stable (max 3 passes)"
+log "[check 1/7] import: fresh headless import until stable (max 3 passes)"
 rm -rf "${PROJECT_ROOT}/.godot"
 
 IMPORT_PASS=""
@@ -183,6 +183,52 @@ run_scene "res://tools/addon_probe.tscn" "player_api" 3000 "PROBE_RESULT: PASS" 
 run_scene "res://tools/minigame_win_probe.tscn" "minigames_win" 3000 "WON=true" "${MINIGAME_COUNT}"
 if ! grep -q "${MINIGAME_SUMMARY}" "${WORKDIR}/minigames_win.log" 2>/dev/null; then
     bad "minigames_win: summary line '${MINIGAME_SUMMARY}' missing from log"
+fi
+
+# --- 6/6 scale-lock drift guard: GLB verifier + in-engine live AABB ----------
+CHECK=$((CHECK + 1))
+log "[check ${CHECK}/7] scale_contract: locked GLB + live gameplay AABB drift guard"
+SCALE_LOG="${WORKDIR}/scale_contract.log"
+if [ -f "${PROJECT_ROOT}/tools/blender/verify_scale_contract.py" ]; then
+    (cd "$PROJECT_ROOT" && python3 tools/blender/verify_scale_contract.py) > "$SCALE_LOG" 2>&1 || true
+    if grep -q "VERIFY_OK True" "$SCALE_LOG"; then
+        log "  scale_contract: GLB lock OK"
+    else
+        bad "scale_contract: verifier did not report VERIFY_OK True ($(grep VERIFY_OK "$SCALE_LOG" | tail -1))"
+    fi
+else
+    bad "scale_contract: verify_scale_contract.py missing"
+fi
+# in-engine: instance the GLB and assert live world AABBs match locked dims
+RUNTIME_LOG="${WORKDIR}/scale_runtime.log"
+if [ -f "${PROJECT_ROOT}/tools/tests/scale_runtime_playtest.gd" ]; then
+    timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
+        --headless --path "$PROJECT_ROOT" --script tools/tests/scale_runtime_playtest.gd > "$RUNTIME_LOG" 2>&1
+    if grep -q "RUNTIME_PASS=true" "$RUNTIME_LOG"; then
+        _drift="$(grep 'LIVE_AABB' "$RUNTIME_LOG" | tail -1)"
+        log "  scale_runtime: live AABB guard OK (${_drift})"
+    else
+        bad "scale_runtime: RUNTIME_PASS=true missing ($(grep -E 'RUNTIME_FAIL|drift=' "$RUNTIME_LOG" | tail -1)"
+    fi
+else
+    bad "scale_runtime: playtest missing"
+fi
+unset _drift
+
+# --- 7/7 runtime perf monitoring with the asset resident --------------------
+CHECK=$((CHECK + 1))
+log "[check ${CHECK}/7] scale_perf: FpsMonitor sampling with GLB instanced"
+PERF_LOG="${WORKDIR}/scale_perf.log"
+if [ -f "${PROJECT_ROOT}/tools/tests/scale_perf_probe.gd" ]; then
+    timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
+        --headless --path "$PROJECT_ROOT" --script tools/tests/scale_perf_probe.gd > "$PERF_LOG" 2>&1
+    if grep -q "PERF_MONITORED=true" "$PERF_LOG"; then
+        log "  scale_perf: FpsMonitor OK ($(grep 'FPSMON_AVG_FPS' "$PERF_LOG" | tail -1))"
+    else
+        bad "scale_perf: PERF_MONITORED=true missing ($(grep -E 'PERF_FAIL|SCRIPT ERROR' "$PERF_LOG" | tail -1)"
+    fi
+else
+    bad "scale_perf: probe missing"
 fi
 
 # ---------------------------------------------------------------------------
