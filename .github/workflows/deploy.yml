@@ -1,12 +1,15 @@
 name: deploy-pipeline
 
-# Issue #20 — automated deployment pipeline.
-# On every push to main (and manual dispatch) this validates the deploy contract
-# and records a GitHub Deployment. The ACTUAL Android APK export is executed by
-# the live VPS systemd timer `muakbank-auto-export.timer` running
-# tools/vps_auto_export.py, which polls origin/main and copies the APK to the
-# phone (issue #3, commit c692858). This workflow does NOT claim to build the
-# APK itself: GitHub-hosted runners have no Android export templates / apksigner.
+# Issue #20 / #3 — automated deployment pipeline.
+# On every push to main (and manual dispatch) this:
+#   1. verifies the deploy contract + the auto-export poller engine,
+#   2. BUILDS the Android APK on the GitHub runner (issue #3 follow-up: CI now
+#      installs Godot's Android export templates via tools/setup_android_ci.sh),
+#   3. uploads the APK as a workflow artifact,
+#   4. records a GitHub Deployment.
+# The VPS systemd timer `muakbank-auto-export.timer` (tools/vps_auto_export.py)
+# remains the channel that copies the APK to the phone; this workflow now also
+# produces the artifact directly in CI so the loop no longer depends on it.
 # Job names are deliberately NOT `static-gate`/`headless-gate` — those contexts
 # are required by main's branch protection and belong to pre_merge_gates.yml.
 
@@ -46,12 +49,15 @@ jobs:
           for f in tools/vps_auto_export.py tools/test_auto_export.sh \
                    tools/export_on_vps.sh tools/muakbank-auto-export.service \
                    tools/muakbank-auto-export.timer export_presets.cfg \
-                   tools/regression_smoke.sh; do
+                   tools/regression_smoke.sh tools/install_android_templates.py \
+                   tools/setup_android_ci.sh; do
             test -f "$f" || { echo "MISSING DEPLOY FILE: $f"; exit 1; }
           done
           python3 -m py_compile tools/vps_auto_export.py
+          python3 -m py_compile tools/install_android_templates.py
           bash -n tools/export_on_vps.sh
           bash -n tools/test_auto_export.sh
+          bash -n tools/setup_android_ci.sh
           python3 tools/validate_project.py .
           grep -q 'name="Android"' export_presets.cfg
           grep -q 'platform="Android"' export_presets.cfg
@@ -79,9 +85,71 @@ jobs:
           export MKB_POLLER="$WORKSPACE/tools/vps_auto_export.py"
           bash "$WORKSPACE/tools/test_auto_export.sh"
 
+  build-apk:
+    name: build-apk
+    needs: verify-deploy-contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GODOT_BIN: /opt/Godot_v4.7-stable_linux.x86_64
+      GODOT_HOME: ${{ github.workspace }}/.ci_godot_home
+      ANDROID_SDK: /usr/local/lib/android/sdk
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Godot engine + xvfb
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb unzip
+          curl -fsSL -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
+          sudo unzip -q /tmp/godot.zip -d /opt
+          test -x "$GODOT_BIN"
+
+      - name: Install Android export templates (ranged, ~232MB) + keystore + editor settings
+        # tools/install_android_templates.py fetches only the 3 Android entries
+        # from the 1.28GB .tpz via HTTP Range; setup_android_ci.sh also seeds
+        # keytool debug keystore and Godot Editor Settings SDK paths.
+        run: bash tools/setup_android_ci.sh
+
+      - name: Export Android APK
+        run: |
+          set -euo pipefail
+          HOME="$GODOT_HOME" xvfb-run -a "$GODOT_BIN" --headless \
+            --export-debug "Android" --export-path "$GITHUB_WORKSPACE/muakbank_zombie.apk" \
+            > /tmp/export.log 2>&1 || true
+          # Godot 4.7 headless can return 134 at shutdown AFTER a valid export,
+          # so validate the ARTIFACT, not the exit code (verified live).
+          grep -q "\[ DONE \] export" /tmp/export.log || { tail -30 /tmp/export.log; exit 1; }
+          test -s "$GITHUB_WORKSPACE/muakbank_zombie.apk"
+
+      - name: Validate APK structure
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import zipfile, os, sys
+          p = "muakbank_zombie.apk"
+          z = zipfile.ZipFile(p)
+          names = set(z.namelist())
+          required = {"AndroidManifest.xml", "classes.dex", "resources.arsc"}
+          ok = required.issubset(names) and z.testzip() is None and os.path.getsize(p) > 1024*1024
+          print("APK bytes:", os.path.getsize(p), "entries:", len(names), "VALID:", ok)
+          sys.exit(0 if ok else 1)
+          PY
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: muakbank-zombie-apk-${{ github.sha }}
+          path: muakbank_zombie.apk
+          if-no-files-found: error
+
   deploy-record:
     name: deploy-record
-    needs: verify-deploy-contract
+    needs: [verify-deploy-contract, build-apk]
     runs-on: ubuntu-latest
     environment:
       name: vps-android
