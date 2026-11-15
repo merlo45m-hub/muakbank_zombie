@@ -1,4 +1,4 @@
-[gd_resource type="Environment" load_steps=3 format=3]
+[gd_resource type="Environment" format=3]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_blood"]
 sky_top_color = Color(0.02, 0.024, 0.055, 1)
@@ -25,15 +25,29 @@ ambient_light_sky_contribution = 0.35
 ; file is what the whole game renders through. NOTE: '#' is NOT a comment here - it silently
 ; discards the rest of the file, leaving every property at its default.
 ambient_light_energy = 0.28
-fog_enabled = true
-fog_light_color = Color(0.19, 0.13, 0.16, 1.0)
-fog_light_energy = 1.0
-; Was 0.1 - a pea-souper that flattened every level to a smooth wash. 0.02 keeps the
-; blood-moon haze on the horizon without dissolving the geometry.
-fog_density = 0.02
 tonemap_mode = 2
 tonemap_white = 6.0
+fog_enabled = true
+fog_light_color = Color(0.19, 0.13, 0.16, 1)
+; Was 0.1 - a pea-souper that flattened every level to a smooth wash. 0.02 keeps the
+; blood-moon haze on the horizon without dissolving the geometry.
+; --- Issue #9 Phase 1: Lighting & Atmosphere (mobile-safe ground mist) ---------------
+; Reference photos #12/#13 call for heavy graveyard fog. Volumetric fog would violate
+; DESIGN.md section 6 (<=3 real-time lights, 60 FPS S26 Ultra, mobile renderer), so
+; Phase 1 uses Godot's cheap height-based fog: ground-hugging mist that fades with
+; altitude, plus moon/sun scatter and aerial perspective. No new lights or draw calls.
+; fog_mode = 0 (EXPONENTIAL) is the engine default, omitted by ResourceSaver.
+; Re-serialized by ResourceSaver so fog_density is genuinely 0.02, not the 1.0 default
+; that a hand-authored property-ordering mistake produced.
+fog_sun_scatter = 0.18
+fog_density = 0.02
+fog_aerial_perspective = 0.25
+fog_sky_affect = 0.3
+fog_height = 1.5
+fog_height_density = 0.42
+fog_depth_curve = 1.2
+fog_depth_begin = 6.0
+fog_depth_end = 90.0
 adjustment_enabled = true
-adjustment_brightness = 1.0
 adjustment_contrast = 1.1
 adjustment_saturation = 0.96
