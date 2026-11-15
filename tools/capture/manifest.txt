@@ -1,0 +1,9 @@
+# scene|name|warmup_frames
+# Tier A (PR gate, fast). Every GDD visual feature maps to >=1 scene.
+res://scenes/dev/dev_room.tscn|dev_room_vinyl|8
+res://scenes/main/title_screen.tscn|title_blood_drip|8
+res://scenes/world/night_sky.tscn|night_sky_moon|8
+res://scenes/world/environment/cemetery_enhanced.tscn|cemetery_fog_t1|8
+res://scenes/world/environment/subway_enhanced.tscn|subway_fog_t2|8
+res://scenes/world/environment/sewer_enhanced.tscn|sewer_fog_t3|8
+res://scenes/main/game.tscn|game_composite|8

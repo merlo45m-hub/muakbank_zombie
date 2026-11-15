@@ -32,3 +32,40 @@ jobs:
         env:
           GODOT_BIN: /opt/Godot_v4.7-stable_linux.x86_64
       - run: xvfb-run -a /opt/Godot_v4.7-stable_linux.x86_64 --headless --path . --script tools/tests/run_tests.gd
+  visual-capture:
+    name: visual-capture-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install engine + xvfb + Pillow
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb unzip
+          python3 -m pip install --quiet Pillow
+          curl -fsSL -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
+          sudo unzip -q /tmp/godot.zip -d /opt
+          test -x /opt/Godot_v4.7-stable_linux.x86_64
+      - name: GDScript typing guard
+        run: python3 tools/check_gdscript_typing.py --changed --base=origin/main .
+      - name: Render + validate captures (CI=1, no vault push)
+        # --headless has no GL context; the script renders under Xvfb with
+        # gl_compatibility/llvmpipe. Captures are a DIFFERENT renderer than the
+        # shipped Vulkan mobile renderer and are NOT device visual sign-off.
+        env:
+          CAP_REPO: ${{ github.workspace }}
+          CAP_GODOT: /opt/Godot_v4.7-stable_linux.x86_64
+        run: CI=1 bash tools/capture/render_and_push.sh
+      - name: Upload captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-captures-${{ github.sha }}
+          path: build/capture/
+          if-no-files-found: error
