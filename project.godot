@@ -33,6 +33,9 @@ WorldProgression="*uid://vjk6l7vdgfhb"
 WorldHopManager="*uid://bacd1k0qdvwnw"
 WorldProgressListeners="*uid://d2pyidsqp2nwk"
 FpsMonitor="*res://scripts/core/FpsMonitor.gd"
+DebrisPool="*res://scripts/core/DebrisPool.gd"
+CollectionLog="*res://scripts/gameplay/CollectionLog.gd"
+Bestiary="*res://scripts/gameplay/Bestiary.gd"
 
 [display]
 

@@ -9,6 +9,8 @@ extends Node
 var _items: Dictionary = {}
 var _regions: Dictionary = {}
 var _seen: Array = []
+var _dismantled_props: Dictionary = {}
+var _bestiary: Dictionary = {}
 
 
 func _ready() -> void:
@@ -29,6 +31,12 @@ func _load() -> void:
 		_regions = raw_regions.duplicate(true)
 	if raw_seen is Array:
 		_seen = raw_seen.duplicate()
+	var raw_props = save.save_data.get("dismantled_props", {})
+	var raw_bestiary = save.save_data.get("bestiary", {})
+	if raw_props is Dictionary:
+		_dismantled_props = (raw_props as Dictionary).duplicate(true)
+	if raw_bestiary is Dictionary:
+		_bestiary = (raw_bestiary as Dictionary).duplicate(true)
 	# Seed the 3 known region ids (LevelManager.environments) on first run.
 	for id in [1, 2, 3]:
 		if not _regions.has(id):
@@ -43,6 +51,8 @@ func _persist() -> void:
 	save.save_data["collection_regions"] = _regions.duplicate(true)
 	save.save_data["museum_seen"] = _seen.duplicate()
 	save.save_data["museum_version"] = 2
+	save.save_data["dismantled_props"] = _dismantled_props.duplicate(true)
+	save.save_data["bestiary"] = _bestiary.duplicate(true)
 	save.save_game()
 
 
@@ -92,3 +102,65 @@ func _on_milestone_reached(region_id: int, milestone_id: StringName) -> void:
 		s.milestones_done += 1
 		_regions[region_id] = s.to_dict()
 		_persist()
+
+
+# ── GDD-2 (#26) registries — CollectionManager remains the SOLE writer ──────
+
+func record_dismantle(prop_asset_id: String, tool_tier: int = 1) -> void:
+	if prop_asset_id.is_empty():
+		return
+	var entry: Dictionary = {}
+	var existing: Variant = _dismantled_props.get(prop_asset_id, {})
+	if existing is Dictionary:
+		entry = (existing as Dictionary).duplicate(true)
+	entry["qty"] = int(entry.get("qty", 0)) + 1
+	if not entry.has("first_tier"):
+		entry["first_tier"] = tool_tier
+	_dismantled_props[prop_asset_id] = entry
+	_persist()
+
+
+func record_defeat(entity_id: String) -> void:
+	if entity_id.is_empty():
+		return
+	var entry: Dictionary = {}
+	var existing: Variant = _bestiary.get(entity_id, {})
+	if existing is Dictionary:
+		entry = (existing as Dictionary).duplicate(true)
+	entry["kills"] = int(entry.get("kills", 0)) + 1
+	entry["first_seen"] = true
+	if not entry.has("lore"):
+		entry["lore"] = false
+	_bestiary[entity_id] = entry
+	_persist()
+
+
+func get_dismantled_props() -> Dictionary:
+	return _dismantled_props.duplicate(true)
+
+
+func get_bestiary() -> Dictionary:
+	return _bestiary.duplicate(true)
+
+
+## Derived deterministically at read time — NEVER stored (no rival state cache).
+func get_bonuses() -> Dictionary:
+	var unique_props: int = _dismantled_props.size()
+	var total_props: int = 0
+	for key in _dismantled_props:
+		var e: Variant = _dismantled_props.get(key)
+		if e is Dictionary:
+			total_props += int((e as Dictionary).get("qty", 0))
+	var total_kills: int = 0
+	for key2 in _bestiary:
+		var e2: Variant = _bestiary.get(key2)
+		if e2 is Dictionary:
+			total_kills += int((e2 as Dictionary).get("kills", 0))
+	return {
+		"scavenge_yield_bonus": minf(0.5, float(unique_props) * 0.02),
+		"bestiary_power_bonus": minf(0.5, float(total_kills) * 0.01),
+		"total_props": total_props,
+		"unique_props": unique_props,
+		"total_kills": total_kills,
+		"recipes_unlocked": unique_props >= 5,
+	}

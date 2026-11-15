@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "note": "Issue #26 / GDD-2 asset-id-keyed dismantle loot tables. Ids are drawn from assets/data/scavenge_catalog.json (no id duplication). Read by DismantleComponent._table_entry().",
+  "tables": {
+    "grave_stone": {
+      "asset_id": "scav_gravestone_broken",
+      "weight": 1.0,
+      "count": 1,
+      "tier": 1,
+      "drops": [
+        "scav_gravestone_bevel"
+      ]
+    },
+    "wood_fence": {
+      "asset_id": "scav_fence_damaged",
+      "weight": 1.0,
+      "count": 1,
+      "tier": 1,
+      "drops": [
+        "scav_fence"
+      ]
+    },
+    "wood_debris": {
+      "asset_id": "scav_debris_wood",
+      "weight": 1.0,
+      "count": 1,
+      "tier": 1,
+      "drops": [
+        "scav_trunk"
+      ]
+    },
+    "wood_cross": {
+      "asset_id": "scav_cross_wood",
+      "weight": 1.0,
+      "count": 1,
+      "tier": 2,
+      "drops": [
+        "scav_cross"
+      ]
+    },
+    "fallen_pine": {
+      "asset_id": "scav_pine_fall",
+      "weight": 1.0,
+      "count": 1,
+      "tier": 2,
+      "drops": [
+        "scav_pine"
+      ]
+    },
+    "stone_crypt": {
+      "asset_id": "scav_crypt_small",
+      "weight": 1.0,
+      "count": 1,
+      "tier": 3,
+      "drops": [
+        "scav_altar_stone"
+      ]
+    }
+  }
+}

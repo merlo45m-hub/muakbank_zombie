@@ -6,7 +6,7 @@
 extends Node
 
 # === SAVE VERSION (bump to trigger a re-save / migration on load) ===
-const SAVE_VERSION: int = 4
+const SAVE_VERSION: int = 5
 
 # === SAVE DATA ===
 # Filled by _load_game() at startup. _default_save_data() is the single source of
@@ -87,7 +87,7 @@ func _coerce(key: String, value, fallback):
 			return fallback
 		"tutorial_completed", "haptics_enabled":
 			return bool(value)
-		"collection_items", "collection_regions":
+		"collection_items", "collection_regions", "dismantled_props", "bestiary":
 			if value is Dictionary:
 				return value
 			return fallback
@@ -186,6 +186,8 @@ func _default_save_data() -> Dictionary:
 		"haptics_enabled": true,
 		"collection_items": {},
 		"collection_regions": {},
+		"dismantled_props": {},
+		"bestiary": {},
 		"museum_seen": [],
 		"museum_version": 2,
 		"world_current_region": 1,
