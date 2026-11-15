@@ -16,7 +16,7 @@
 #   Exit code !=0 / final line "REGRESSION: FAIL (...)"    == GATE RED.
 #   In CI: run the same command; the exit code IS the gate.
 #
-# CHECKS (in order — 7 checks total)
+# CHECKS (in order — 8 checks total)
 #   1. import      : headless engine import with a FRESH .godot cache
 #                    (rm -rf .godot), run in up to 3 passes until one pass is
 #                    CLEAN, gated on that pass. Multiple passes are required
@@ -86,11 +86,22 @@ ALLOWED='resources still in use at exit|RID allocations of type .* were leaked a
 
 CHECK=0
 ERRORS=0
+PYTHON_BIN="${PYTHON_BIN:-python3}"
 DETAILS=""
 WORKDIR="$(mktemp -d /tmp/regression_smoke.XXXXXX)"
 
 log()  { printf '%s\n' "$*"; }
-bad()  { ERRORS=$((ERRORS + 1)); DETAILS="${DETAILS}${DETAILS:+; }$1"; log "  FAIL [$1]"; }
+# Fire a standardized telemetry webhook (type/severity/name/value/ts) on any
+# regression failure. The notifier is fail-open: a webhook outage must NEVER
+# break the build. Value is passed as a plain string; the notifier stores it as
+# the event value. Non-blocking (>/dev/null 2>&1 || true).
+notify_failure() {
+    if [ -f "${PROJECT_ROOT}/tools/asset_registry_notify.py" ]; then
+        "${PYTHON_BIN}" "${PROJECT_ROOT}/tools/asset_registry_notify.py" \
+            --severity error --name "regression_failure" --value "$1" >/dev/null 2>&1 || true
+    fi
+}
+bad()  { ERRORS=$((ERRORS + 1)); DETAILS="${DETAILS}${DETAILS:+; }$1"; log "  FAIL [$1]"; notify_failure "$1"; }
 
 # scan_errors <logfile> <check_name> — the fixed error criteria for a run log:
 # any animation-not-found, script error / parse error, or non-allowlisted ERROR.
@@ -115,7 +126,7 @@ run_scene() {
     local tscn="$1" name="$2" frames="$3" marker="$4" want="$5" rc got logf
     logf="${WORKDIR}/${name}.log"
     CHECK=$((CHECK + 1))
-    log "[check ${CHECK}/7] ${name}: ${tscn} (${frames} frames max, xvfb)"
+    log "[check ${CHECK}/8] ${name}: ${tscn} (${frames} frames max, xvfb)"
     # shellcheck disable=SC2086
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
         --headless --path "$PROJECT_ROOT" "$tscn" --quit-after "$frames" > "$logf" 2>&1
@@ -140,9 +151,24 @@ log "project : ${PROJECT_ROOT}"
 log "engine  : ${GODOT_BIN}"
 log "logs    : ${WORKDIR}"
 
-# --- 1/5 fresh headless import (regenerates .godot) ------------------------
+# --- pre-build asset registry gate (check 0/8) ------------------------------
 CHECK=$((CHECK + 1))
-log "[check 1/7] import: fresh headless import until stable (max 3 passes)"
+log "[check ${CHECK}/8] asset_registry: pre-build referenced-model path integrity"
+REG_LOG="${WORKDIR}/asset_registry.log"
+if [ -f "${PROJECT_ROOT}/tools/check_asset_registry.py" ]; then
+    (cd "$PROJECT_ROOT" && "${PYTHON_BIN}" tools/check_asset_registry.py --no-notify) > "$REG_LOG" 2>&1 || true
+    if grep -q "ASSET_REGISTRY_OK True" "$REG_LOG"; then
+        log "  asset_registry: OK ($(grep 'ASSET_REGISTRY_REFS' "$REG_LOG" | tail -1))"
+    else
+        bad "asset_registry: broken reference ($(grep -E 'ASSET_REGISTRY_BROKEN|ASSET_REGISTRY_SIDECARS_MISSING' "$REG_LOG" | head -1))"
+    fi
+else
+    bad "asset_registry: check_asset_registry.py missing"
+fi
+
+# --- 2/8 fresh headless import (regenerates .godot) ------------------------
+CHECK=$((CHECK + 1))
+log "[check ${CHECK}/8] import: fresh headless import until stable (max 3 passes)"
 rm -rf "${PROJECT_ROOT}/.godot"
 
 IMPORT_PASS=""
@@ -187,7 +213,7 @@ fi
 
 # --- 6/6 scale-lock drift guard: GLB verifier + in-engine live AABB ----------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/7] scale_contract: locked GLB + live gameplay AABB drift guard"
+log "[check ${CHECK}/8] scale_contract: locked GLB + live gameplay AABB drift guard"
 SCALE_LOG="${WORKDIR}/scale_contract.log"
 if [ -f "${PROJECT_ROOT}/tools/blender/verify_scale_contract.py" ]; then
     (cd "$PROJECT_ROOT" && python3 tools/blender/verify_scale_contract.py) > "$SCALE_LOG" 2>&1 || true
@@ -217,7 +243,7 @@ unset _drift
 
 # --- 7/7 runtime perf monitoring with the asset resident --------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/7] scale_perf: FpsMonitor sampling with GLB instanced"
+log "[check ${CHECK}/8] scale_perf: FpsMonitor sampling with GLB instanced"
 PERF_LOG="${WORKDIR}/scale_perf.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/scale_perf_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \

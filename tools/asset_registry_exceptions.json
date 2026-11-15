@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "note": "Explicitly documented non-asset references. Every entry here is a dev-probe subject or template, not a real asset dependency. An exception is counted in the registry report (never silently ignored).",
+  "exceptions": [
+    {
+      "ref": "res://assets/models/zombie_rigged/zombie_rigged.gltf",
+      "reason": "tools/loadtest_zombie.gd is a dev probe that calls ResourceLoader.exists() on this path and intentionally handles absence via a watchdog quit. The source .gltf was never committed (git tracks only its texture). Not a gameplay asset dependency."
+    }
+  ]
+}
