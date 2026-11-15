@@ -1,7 +1,7 @@
 extends SceneTree
 ## Verify every .tscn in the project loads without errors.
 
-func _init():
+func _init() -> void:
 	var scenes := []
 	_collect("res://scenes", scenes)
 	scenes.sort()

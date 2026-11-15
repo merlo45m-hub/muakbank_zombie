@@ -16,7 +16,7 @@
 #   Exit code !=0 / final line "REGRESSION: FAIL (...)"    == GATE RED.
 #   In CI: run the same command; the exit code IS the gate.
 #
-# CHECKS (in order — 8 checks total)
+# CHECKS (in order — 9 checks total)
 #   1. import      : headless engine import with a FRESH .godot cache
 #                    (rm -rf .godot), run in up to 3 passes until one pass is
 #                    CLEAN, gated on that pass. Multiple passes are required
@@ -126,7 +126,7 @@ run_scene() {
     local tscn="$1" name="$2" frames="$3" marker="$4" want="$5" rc got logf
     logf="${WORKDIR}/${name}.log"
     CHECK=$((CHECK + 1))
-    log "[check ${CHECK}/8] ${name}: ${tscn} (${frames} frames max, xvfb)"
+    log "[check ${CHECK}/9] ${name}: ${tscn} (${frames} frames max, xvfb)"
     # shellcheck disable=SC2086
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
         --headless --path "$PROJECT_ROOT" "$tscn" --quit-after "$frames" > "$logf" 2>&1
@@ -153,7 +153,7 @@ log "logs    : ${WORKDIR}"
 
 # --- pre-build asset registry gate (check 0/8) ------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/8] asset_registry: pre-build referenced-model path integrity"
+log "[check ${CHECK}/9] asset_registry: pre-build referenced-model path integrity"
 REG_LOG="${WORKDIR}/asset_registry.log"
 if [ -f "${PROJECT_ROOT}/tools/check_asset_registry.py" ]; then
     (cd "$PROJECT_ROOT" && "${PYTHON_BIN}" tools/check_asset_registry.py --no-notify) > "$REG_LOG" 2>&1 || true
@@ -168,7 +168,7 @@ fi
 
 # --- 2/8 fresh headless import (regenerates .godot) ------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/8] import: fresh headless import until stable (max 3 passes)"
+log "[check ${CHECK}/9] import: fresh headless import until stable (max 3 passes)"
 rm -rf "${PROJECT_ROOT}/.godot"
 
 IMPORT_PASS=""
@@ -213,7 +213,7 @@ fi
 
 # --- 6/6 scale-lock drift guard: GLB verifier + in-engine live AABB ----------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/8] scale_contract: locked GLB + live gameplay AABB drift guard"
+log "[check ${CHECK}/9] scale_contract: locked GLB + live gameplay AABB drift guard"
 SCALE_LOG="${WORKDIR}/scale_contract.log"
 if [ -f "${PROJECT_ROOT}/tools/blender/verify_scale_contract.py" ]; then
     (cd "$PROJECT_ROOT" && python3 tools/blender/verify_scale_contract.py) > "$SCALE_LOG" 2>&1 || true
@@ -243,7 +243,7 @@ unset _drift
 
 # --- 7/7 runtime perf monitoring with the asset resident --------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/8] scale_perf: FpsMonitor sampling with GLB instanced"
+log "[check ${CHECK}/9] scale_perf: FpsMonitor sampling with GLB instanced"
 PERF_LOG="${WORKDIR}/scale_perf.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/scale_perf_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -255,6 +255,16 @@ if [ -f "${PROJECT_ROOT}/tools/tests/scale_perf_probe.gd" ]; then
     fi
 else
     bad "scale_perf: probe missing"
+fi
+
+# --- 9/9 strict typing gate (Issue #32) -------------------------------------
+CHECK=$((CHECK + 1))
+log "[check ${CHECK}/9] strict_typing: explicit return types + typed params"
+STRICT_LOG="${WORKDIR}/strict_typing.log"
+if (cd "$PROJECT_ROOT" && "${PYTHON_BIN}" tools/check_gdscript_strict.py --gate .) > "$STRICT_LOG" 2>&1; then
+    log "  strict_typing: OK ($(grep 'STRICT_GATE' "$STRICT_LOG" | tail -1))"
+else
+    bad "strict_typing: $(grep -E 'STRICT_GATE|  FIX' "$STRICT_LOG" | head -1)"
 fi
 
 # ---------------------------------------------------------------------------

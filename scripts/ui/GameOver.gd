@@ -19,7 +19,7 @@ var likes = 0
 var zombies = 0
 
 
-func _ready():
+func _ready() -> void:
 	restart_btn.pressed.connect(_on_restart)
 	menu_btn.pressed.connect(_on_menu)
 	
@@ -30,7 +30,7 @@ func _ready():
 		Save.pending_results.clear()
 
 
-func set_results(victory, likes_earned, zombies_fed):
+func set_results(victory: bool, likes_earned: int, zombies_fed: int) -> void:
 	"""Called by Main.gd when shift ends."""
 	is_victory = victory
 	likes = likes_earned
@@ -73,13 +73,13 @@ func set_results(victory, likes_earned, zombies_fed):
 		Save.unlock_level(next_level)
 
 
-func _on_restart():
+func _on_restart() -> void:
 	Audio.play_click()
 	emit_signal("restart_requested")
 	get_tree().change_scene_to_file("res://scenes/main/game.tscn")
 
 
-func _on_menu():
+func _on_menu() -> void:
 	Audio.play_click()
 	emit_signal("menu_requested")
 	get_tree().change_scene_to_file("res://scenes/main/title_screen.tscn")

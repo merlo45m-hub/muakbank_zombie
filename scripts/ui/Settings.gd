@@ -12,7 +12,7 @@ extends Control
 @onready var back_btn = $PanelContainer/VBoxMain/BackBtn
 
 
-func _ready():
+func _ready() -> void:
 	# Load values
 	master_slider.value = Audio.master_volume
 	music_slider.value = Audio.music_volume
@@ -30,36 +30,36 @@ func _ready():
 	back_btn.pressed.connect(_on_back)
 
 
-func _play_click():
+func _play_click() -> void:
 	Audio.play_click()
 
 
-func _on_master_changed(val):
+func _on_master_changed(val: float) -> void:
 	Audio.master_volume = val
 
 
-func _on_music_changed(val):
+func _on_music_changed(val: float) -> void:
 	Audio.music_volume = val
 
 
-func _on_sfx_changed(val):
+func _on_sfx_changed(val: float) -> void:
 	Audio.sfx_volume = val
 	_play_click()
 
 
-func _on_haptics_toggled(enabled: bool):
+func _on_haptics_toggled(enabled: bool) -> void:
 	Save.set_haptics_enabled(enabled)
 	if enabled:
 		Audio.haptic_light()
 
 
-func _on_difficulty_selected(idx):
+func _on_difficulty_selected(idx: int) -> void:
 	Save.set_difficulty(idx)
 	_update_difficulty_label()
 	_play_click()
 
 
-func _update_difficulty_label():
+func _update_difficulty_label() -> void:
 	var labels = ["Easy", "Normal", "Hard"]
 	difficulty_btn.clear()
 	for i in range(labels.size()):
@@ -67,12 +67,12 @@ func _update_difficulty_label():
 	difficulty_btn.selected = Save.get_difficulty()
 
 
-func _on_reset_pressed():
+func _on_reset_pressed() -> void:
 	Save.reset_progress()
 	_update_difficulty_label()
 	_play_click()
 
 
-func _on_back():
+func _on_back() -> void:
 	_play_click()
 	get_tree().change_scene_to_file("res://scenes/main/title_screen.tscn")

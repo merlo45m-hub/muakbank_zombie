@@ -74,7 +74,7 @@ func _load_game() -> void:
 		print("[SaveManager] Migrating save v%d -> v%d" % [old_version, SAVE_VERSION])
 		save_game()
 
-func _coerce(key: String, value, fallback):
+func _coerce(key: String, value: Variant, fallback: Variant) -> Variant:
 	"""Keep stored types stable across a JSON round-trip (a save file is JSON)."""
 	if value == null:
 		return fallback

@@ -18,6 +18,8 @@ jobs:
       # GDScript explicit-typing guard (docs/GDSCRIPT_TYPING.md). Scoped to .gd
       # files changed vs main so legacy probes aren't retroactively flagged.
       - run: python3 tools/check_gdscript_typing.py --changed --base=origin/main .
+      - name: GDScript strict-typing gate (Issue #32)
+        run: python3 tools/check_gdscript_strict.py --gate .
   headless-gate:
     runs-on: ubuntu-latest
     timeout-minutes: 60
