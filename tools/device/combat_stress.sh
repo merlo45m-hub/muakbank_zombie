@@ -34,6 +34,7 @@ sleep 8
 echo "FOCUS_AFTER_NAV=$("$ADB" shell dumpsys window 2>/dev/null | grep mCurrentFocus | tail -1)"
 
 "$ADB" shell dumpsys gfxinfo "$PKG" reset >/dev/null 2>&1 || true
+"$ADB" shell logcat -c 2>/dev/null || true   # isolate this run's [FPSMON] lines
 T0=$(date +%s)
 echo "=== $DUR s sustained combat (ATTACK + interior movement) ==="
 i=0
@@ -88,6 +89,34 @@ PY
 
 echo "=== thermal under load ==="
 "$ADB" shell dumpsys thermalservice 2>/dev/null | grep -E 'Thermal Status:|mName=SKIN|mName=BAT|mName=AP' | head -8
+echo "=== in-engine FPS (FpsMonitor / Performance.TIME_FPS) ==="
+# Godot print() lands in logcat; pull this run's [FPSMON] JSON lines.
+FPLOG=$("$ADB" shell logcat -d -v brief 2>/dev/null | grep -F "[FPSMON]" | tail -60)
+echo "$FPLOG" > "$OUT/fpsmon_lines.txt"
+python3 - "$OUT/fpsmon_lines.txt" << 'PY'
+import sys, json, re
+lines=[l for l in open(sys.argv[1],encoding="utf-8",errors="replace") if "[FPSMON]" in l]
+reps=[]
+for l in lines:
+    j=l.split("[FPSMON]",1)[1].strip()
+    try: reps.append(json.loads(j))
+    except Exception: pass
+print("FPSMON_WINDOWS",len(reps))
+if reps:
+    avgs=[r["avg_fps"] for r in reps if "avg_fps" in r]
+    mins=[r["min_fps"] for r in reps if "min_fps" in r]
+    janks=[r["jank_pct"] for r in reps if "jank_pct" in r]
+    budget=reps[0].get("budget_fps",60.0)
+    print("FPSMON_BUDGET",budget)
+    print("FPSMON_AVG_FPS",round(sum(avgs)/len(avgs),1) if avgs else None)
+    print("FPSMON_MIN_FPS",round(min(mins),1) if mins else None)
+    print("FPSMON_MAX_WINDOW_AVG",round(max(avgs),1) if avgs else None)
+    print("FPSMON_MEAN_JANK_PCT",round(sum(janks)/len(janks),1) if janks else None)
+    print("FPSMON_SAMPLE_FRAMES",sum(r.get("samples",0) for r in reps))
+else:
+    print("FPSMON_NO_DATA (autoload not in installed build, or logcat cleared late)")
+PY
+
 echo "=== crash / stability ==="
 PID=$("$ADB" shell pidof "$PKG" 2>/dev/null | tr -d '\r')
 echo "GAME_PID_AT_END=${PID:-DEAD}"
