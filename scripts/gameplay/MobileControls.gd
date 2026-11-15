@@ -6,7 +6,7 @@ class_name MobileControls
 
 signal move_vector_changed(vector: Vector2)
 signal attack_pressed
-signal punch_pickup_pressed
+signal pickup_pressed
 signal sprint_pressed(active: bool)
 signal jump_pressed
 signal weapon_switch_pressed
@@ -23,6 +23,11 @@ var weapon_btn: Button = null
 var attack_btn: Button = null
 var special_btn: Button = null
 var sprint_active: bool = false
+# Issue #30: consolidated ATTACK button — tap = attack, hold = pickup.
+# The old punch_pickup_pressed signal was declared + connected but NEVER emitted
+# (dead second attack path). One button now owns both actions.
+var _attack_press_msec: int = 0
+const LONG_PRESS_MS: int = 380
 
 # === STATE ===
 var joystick_touch_index: int = -1
@@ -137,6 +142,7 @@ func _build_sprint_button() -> void:
 	sprint_btn.button_up.connect(func():
 		emit_signal("sprint_pressed", false)
 	)
+	sprint_btn.tooltip_text = "SPRINT  •  hold to run (uses stamina)"
 	add_child(sprint_btn)
 
 func _build_jump_button() -> void:
@@ -158,6 +164,7 @@ func _build_jump_button() -> void:
 	style.set_corner_radius_all(BTN_CORNER_RADIUS)
 	jump_btn.add_theme_stylebox_override("normal", style)
 	jump_btn.pressed.connect(func(): emit_signal("jump_pressed"))
+	jump_btn.tooltip_text = "JUMP  •  vault (uses stamina)"
 	add_child(jump_btn)
 
 func _build_weapon_button() -> void:
@@ -179,6 +186,7 @@ func _build_weapon_button() -> void:
 	style.set_corner_radius_all(BTN_CORNER_RADIUS)
 	weapon_btn.add_theme_stylebox_override("normal", style)
 	weapon_btn.pressed.connect(func(): emit_signal("weapon_switch_pressed"))
+	weapon_btn.tooltip_text = "SWAP  •  cycle equipped weapon"
 	add_child(weapon_btn)
 
 func _build_special_button() -> void:
@@ -213,6 +221,7 @@ func _build_special_button() -> void:
 	special_btn.pressed.connect(func():
 		emit_signal("special_pressed")
 		Input.vibrate_handheld(35))
+	special_btn.tooltip_text = "SPECIAL  •  character ability (cooldown)"
 	add_child(special_btn)
 
 func _build_attack_button() -> void:
@@ -243,9 +252,20 @@ func _build_attack_button() -> void:
 	active_style.border_color = Color(1, 1, 1, 0.5)
 	active_style.set_corner_radius_all(BTN_CORNER_RADIUS)
 	attack_btn.add_theme_stylebox_override("pressed", active_style)
-	attack_btn.pressed.connect(func():
-		emit_signal("attack_pressed")
+	# Consolidated: short tap -> attack_pressed; long hold -> pickup_pressed.
+	# button_down/up are used instead of `pressed` so a hold does NOT double-fire
+	# an attack. Explicit typed vars (docs/GDSCRIPT_TYPING.md).
+	attack_btn.button_down.connect(func():
+		_attack_press_msec = Time.get_ticks_msec())
+	attack_btn.button_up.connect(func():
+		var held_ms: int = Time.get_ticks_msec() - _attack_press_msec
+		var is_long: bool = held_ms >= LONG_PRESS_MS
+		if is_long:
+			emit_signal("pickup_pressed")
+		else:
+			emit_signal("attack_pressed")
 		Input.vibrate_handheld(35))
+	attack_btn.tooltip_text = "ATTACK  •  tap: strike  •  hold: pick up nearby item"
 	add_child(attack_btn)
 
 func _on_joystick_input(event: InputEvent) -> void:

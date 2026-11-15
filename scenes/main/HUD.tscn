@@ -200,6 +200,20 @@ theme_override_colors/font_color = Color(0.9, 0.15, 0.1, 1.0)
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="FoodBarLabel" type="Label" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -246.0
+offset_top = -122.0
+offset_right = 246.0
+offset_bottom = -92.0
+text = "FOOD  •  TAP A SLOT TO EAT"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 0.9)
+
 [node name="FoodBar" type="HBoxContainer" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -213,6 +227,7 @@ alignment = 1
 theme_override_constants/separation = 12
 
 [node name="FoodSlot1" type="TextureButton" parent="FoodBar"]
+tooltip_text = "BURGER  •  tap to eat (restores health)"
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("2")
 theme_override_styles/normal = SubResource("FoodSlotBg")
@@ -222,6 +237,7 @@ ignore_texture_size = true
 theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot2" type="TextureButton" parent="FoodBar"]
+tooltip_text = "PIZZA  •  tap to eat (restores health)"
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("3")
 theme_override_styles/normal = SubResource("FoodSlotBg")
@@ -231,6 +247,7 @@ ignore_texture_size = true
 theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot3" type="TextureButton" parent="FoodBar"]
+tooltip_text = "SODA  •  tap to eat (restores health)"
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("4")
 theme_override_styles/normal = SubResource("FoodSlotBg")
@@ -240,6 +257,7 @@ ignore_texture_size = true
 theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot4" type="TextureButton" parent="FoodBar"]
+tooltip_text = "FRIES  •  tap to eat (restores health)"
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("5")
 theme_override_styles/normal = SubResource("FoodSlotBg")
@@ -249,6 +267,7 @@ ignore_texture_size = true
 theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot5" type="TextureButton" parent="FoodBar"]
+tooltip_text = "SUSHI  •  tap to eat (restores health)"
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("6")
 theme_override_styles/normal = SubResource("FoodSlotBg")
@@ -258,6 +277,7 @@ ignore_texture_size = true
 theme_override_font_sizes/font_size = 12
 
 [node name="FoodSlot6" type="TextureButton" parent="FoodBar"]
+tooltip_text = "TAKIS  •  tap to eat (restores health)"
 custom_minimum_size = Vector2(72, 72)
 texture_normal = ExtResource("7")
 theme_override_styles/normal = SubResource("FoodSlotBg")
