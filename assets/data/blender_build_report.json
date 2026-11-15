@@ -1,0 +1,31 @@
+{
+  "source": "blender_structure_assets.json",
+  "parts_built": 52,
+  "expected_parts": 52,
+  "dimension_mismatches": [],
+  "scale_calibration": {
+    "note": "DECLARATIVE 2D-screen-to-metre mapping; NOT measured world coords.",
+    "screen_resolution_px": [
+      3120,
+      1440
+    ],
+    "px_per_m": 1000.0,
+    "screen_width_m": 3.12,
+    "screen_height_m": 1.44,
+    "panel_depth_m": 0.02,
+    "explode_axis": "+X",
+    "explode_step_m": 0.35,
+    "up_axis": "+Z",
+    "forward_axis_godot": [
+      0,
+      0,
+      -1
+    ],
+    "gltf_export_yup": true,
+    "godot_root_scale": 1.0
+  },
+  "glb": "screen_structures_exploded.glb",
+  "glb_bytes": 2012872,
+  "metric_scale_ok": true,
+  "build_ok": true
+}
