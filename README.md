@@ -4,6 +4,28 @@ Third-person 3D zombie survival game — **Godot 4.7**, Android target.
 
 Eat food to restore health, fight off zombie animals, survive the shift.
 
+## Current design direction
+
+The canonical master design document lives in the Obsidian vault, not in this repo:
+`hermes_brain/second_brain/Mukbang_Zombie_GDD.pdf` (via the `Master game design
+plan.md` embed, updated 2026-11-15). It reframes the game as a 60 FPS
+**dismantling** action-survival title across three interconnected Miami-themed
+worlds (Suburban / Industrial / Bio-Lab) with a Vinyl Action-Figure aesthetic,
+component-swap destruction, non-linear secret-transport hopping, Cure synthesis
+on a majority achievement threshold, and a post-cure open world.
+
+Already implemented against that GDD: the VinylLook Fresnel rim shader, opt-in
+volumetric fog (OFF by default to protect the 60 FPS budget), 1:1 metric Blender
+GLB exports, the threaded `WorldHopManager` with structured state serialization,
+and the headless/CI validation gates.
+
+**Open conflicts are tracked in GitHub issue #24** — most importantly the shipped
+#11 progression is *linear* (prerequisite-gated) while the master GDD requires
+*non-linear, bidirectional* hopping; and the dismantling / Cure / Bestiary loop is
+spec'd but not yet implemented. Do not treat this README's "Play" / "Systems"
+sections as the current design source of truth until #24 is resolved.
+
+
 ## Play
 
 - **Desktop**: open `project.godot` in Godot 4.7 and press F5.
