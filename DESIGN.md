@@ -43,6 +43,7 @@ dimensions so a reading eye isn't re-learning the layout mid-fight.
 | `accent-pink` | `#ff2d7b` | Primary accent, HYPE bar, Gamer lane |
 | `accent-orange` | `#ff8c2b` | Secondary accent, bar gradient end |
 | `accent-yellow` | `#ffd60a` | Timer, Hunter lane, highlights |
+| `clinical-blue` | `#6fa8ff` | Doctor lane (distinct from Nurse cyan) |
 | `neon-cyan` | `#2de0ff` | Nurse lane |
 | `neon-purple` | `#a05cff` | Streamer lane |
 | `neon-green` | `#37e05a` | Zombie eyes, OVERWHELM bar |
