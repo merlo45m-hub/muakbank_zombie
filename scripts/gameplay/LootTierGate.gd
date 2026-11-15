@@ -8,12 +8,16 @@ static func _wp() -> Node:
 		return (loop as SceneTree).root.get_node_or_null("/root/WorldProgression")
 	return null
 
-static func clamp_tier(requested_tier: int) -> int:
+static func cap() -> int:
+	"""Current loot tier cap = WorldProgression.max_loot_tier (1 when absent)."""
 	var wp := _wp()
-	var cap := 1
 	if wp != null and wp.has_method("get_loot_tier_cap"):
-		cap = int(wp.get_loot_tier_cap())
-	return mini(requested_tier, cap)
+		return int(wp.get_loot_tier_cap())
+	return 1
+
+
+static func clamp_tier(requested_tier: int) -> int:
+	return mini(requested_tier, LootTierGate.cap())
 
 func roll_loot(requested_tier: int) -> Dictionary:
 	var tier := LootTierGate.clamp_tier(requested_tier)
