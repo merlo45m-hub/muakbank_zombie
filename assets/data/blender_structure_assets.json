@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "generator": "tools/export_structure_assets.py",
   "source": "assets/data/screen_visual_state.json (WatchSkill extraction, verified)",
   "source_sha256": "5b8687d464cc190a709d74dba48a6089418bf8d6bb592fccfb544ec8d1be6ee3",
@@ -22,7 +22,18 @@
       -1
     ],
     "gltf_export_yup": true,
-    "godot_root_scale": 1.0
+    "godot_root_scale": 1.0,
+    "scale_lock_policy": {
+      "object_scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "bake_scale_into_mesh": true,
+      "allow_parent_transform": false,
+      "allow_unapplied_modifiers": false,
+      "bbox_tolerance_m": 0.001
+    }
   },
   "materials": {
     "wordmark": "#c8102e",
@@ -88,7 +99,26 @@
               268.4
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "start_00",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.6495,
+              0.2265,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "start_01",
@@ -127,7 +157,26 @@
               662.6
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "start_01",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2139,
+              0.0823,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "start_02",
@@ -166,7 +215,26 @@
               797.6
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "start_02",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1934,
+              0.0528,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "start_03",
@@ -205,7 +273,26 @@
               949.7
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "start_03",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2374,
+              0.0481,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "start_04",
@@ -244,7 +331,26 @@
               1104.8
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "start_04",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2123,
+              0.0527,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "start_05",
@@ -283,7 +389,26 @@
               1261.6
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "start_05",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1305,
+              0.059,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         }
       ]
     },
@@ -338,7 +463,26 @@
               1215.0
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "player_00",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.258,
+              0.0683,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "player_01",
@@ -377,7 +521,26 @@
               1260.0
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "player_01",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.5473,
+              0.0357,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "player_02",
@@ -416,7 +579,26 @@
               1391.9
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "player_02",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1022,
+              0.0435,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "player_03",
@@ -455,7 +637,26 @@
               1381.0
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "player_03",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1997,
+              0.0357,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "player_04",
@@ -494,7 +695,26 @@
               1382.6
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "player_04",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1368,
+              0.0264,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "player_05",
@@ -533,7 +753,26 @@
               1382.6
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "player_05",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1808,
+              0.0388,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "player_06",
@@ -572,7 +811,26 @@
               1399.7
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "player_06",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1337,
+              0.0606,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         }
       ]
     },
@@ -629,7 +887,26 @@
               147.4
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_00",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.7045,
+              0.1024,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_01",
@@ -668,7 +945,26 @@
               240.5
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_01",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.7926,
+              0.0558,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_02",
@@ -707,7 +1003,26 @@
               614.5
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_02",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1336,
+              0.0373,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_03",
@@ -746,7 +1061,26 @@
               623.8
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_03",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1368,
+              0.0419,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_04",
@@ -785,7 +1119,26 @@
               616.0
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_04",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1321,
+              0.0372,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_05",
@@ -824,7 +1177,26 @@
               757.2
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_05",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0519,
+              0.1117,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_06",
@@ -863,7 +1235,26 @@
               761.9
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_06",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0708,
+              0.1148,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_07",
@@ -902,7 +1293,26 @@
               842.6
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_07",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.283,
+              0.0528,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_08",
@@ -941,7 +1351,26 @@
               837.9
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_08",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2862,
+              0.0465,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_09",
@@ -980,7 +1409,26 @@
               841.0
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_09",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2154,
+              0.0527,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_10",
@@ -1019,7 +1467,26 @@
               1252.2
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_10",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2139,
+              0.0372,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_11",
@@ -1058,7 +1525,26 @@
               1256.9
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_11",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1918,
+              0.0466,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_12",
@@ -1097,7 +1583,26 @@
               1256.9
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_12",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2154,
+              0.045,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "level_13",
@@ -1136,7 +1641,26 @@
               1379.5
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "level_13",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1321,
+              0.0497,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         }
       ]
     },
@@ -1193,7 +1717,26 @@
               68.3
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_00",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2863,
+              0.0404,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_01",
@@ -1232,7 +1775,26 @@
               59.0
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_01",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1903,
+              0.0419,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_02",
@@ -1271,7 +1833,26 @@
               69.8
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_02",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0928,
+              0.0434,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_03",
@@ -1310,7 +1891,26 @@
               169.1
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_03",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0959,
+              0.0434,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_04",
@@ -1349,7 +1949,26 @@
               231.2
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_04",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2501,
+              0.0419,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_05",
@@ -1388,7 +2007,26 @@
               270.0
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_05",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.206,
+              0.0419,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_06",
@@ -1427,7 +2065,26 @@
               322.8
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_06",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0645,
+              0.0326,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_07",
@@ -1466,7 +2123,26 @@
               405.0
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_07",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.066,
+              0.0341,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_08",
@@ -1505,7 +2181,26 @@
               460.9
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_08",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2233,
+              0.059,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_09",
@@ -1544,7 +2239,26 @@
               481.0
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_09",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0676,
+              0.0326,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_10",
@@ -1583,7 +2297,26 @@
               543.1
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_10",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2013,
+              0.059,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_11",
@@ -1622,7 +2355,26 @@
               558.6
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_11",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0644,
+              0.0341,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_12",
@@ -1661,7 +2413,26 @@
               588.1
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_12",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0456,
+              0.0279,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_13",
@@ -1700,7 +2471,26 @@
               583.4
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_13",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0331,
+              0.017,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_14",
@@ -1739,7 +2529,26 @@
               585.0
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_14",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0644,
+              0.0217,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_15",
@@ -1778,7 +2587,26 @@
               586.6
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_15",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.077,
+              0.0218,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_16",
@@ -1817,7 +2645,26 @@
               634.7
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_16",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.0771,
+              0.0342,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_17",
@@ -1856,7 +2703,26 @@
               850.3
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_17",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.1683,
+              0.0667,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_18",
@@ -1895,7 +2761,26 @@
               1123.4
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_18",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.162,
+              0.0775,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_19",
@@ -1934,7 +2819,26 @@
               1230.5
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_19",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2076,
+              0.0589,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_20",
@@ -1973,7 +2877,26 @@
               1278.6
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_20",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.3428,
+              0.031,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_21",
@@ -2012,7 +2935,26 @@
               1328.3
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_21",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2532,
+              0.0311,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_22",
@@ -2051,7 +2993,26 @@
               1365.5
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_22",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.2594,
+              0.0357,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_23",
@@ -2090,7 +3051,26 @@
               1404.3
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_23",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.3601,
+              0.0357,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         },
         {
           "part_id": "final_24",
@@ -2129,10 +3109,30 @@
               1438.4
             ]
           ],
-          "collision_suffix": "-convcol"
+          "collision_suffix": "-convcol",
+          "scale_lock": {
+            "part_id": "final_24",
+            "locked_scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "locked_dimensions_m": [
+              0.3476,
+              0.031,
+              0.02
+            ],
+            "apply_transforms": true,
+            "transform_inheritance": "forbidden",
+            "modifier_policy": "bake_and_remeasure",
+            "bbox_tolerance_m": 0.001,
+            "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+            "verify_on_import": "tools/blender/verify_scale_contract.py"
+          }
         }
       ]
     }
   ],
-  "total_parts": 52
+  "total_parts": 52,
+  "scale_contract_sha256": "sha256:79c3d344fccd852a0d7736092d89fa850691e84b548fd9775a09ddce4220e450"
 }

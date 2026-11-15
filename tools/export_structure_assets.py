@@ -1,24 +1,23 @@
 """Export verified screen structures + classifications into Blender-ready asset
-definitions for an exploded-view 3D layout (Muakbank Zombie).
+definitions for an exploded-view 3D layout, WITH A LOCKED SCALE CONTRACT.
 
 Source of truth: assets/data/screen_visual_state.json (WatchSkill-extracted,
 verified in game state at commit 2f01719).
 
 HONEST SCALE NOTE
 The source data is 2D SCREEN-SPACE pixel boxes from 3120x1440 captures, NOT
-world coordinates. We therefore define an EXPLICIT, documented calibration:
-  SCREEN_WIDTH_M  = 3.12 m   (3120 px at 1000 px/m)
-  SCREEN_HEIGHT_M = 1.44 m   (1440 px at 1000 px/m)
-  PX_PER_M        = 1000.0
-  PANEL_DEPTH_M   = 0.02 m   (thin plate thickness)
-These are DECLARATIVE design constants, not measurements of the game world.
-Anyone consuming this file can change them; all derived metres are recomputed.
+world coordinates. We therefore define an EXPLICIT, documented calibration (see
+scale_calibration below). These are DECLARATIVE design constants, not
+measurements of the game world. All derived metres are recomputed from them.
 
-Output: assets/data/blender_structure_assets.json
-  - one assembly per screen (4)
-  - one part per OCR item (52), classified, with:
-      assembled_position_m, dimensions_m, explode_offset_x_m,
-      material color by classification, confidence, label text, source box.
+SCALE LOCK (this revision)
+Each scoped mesh carries an immutable scale contract so that swapping the flat
+plate for a custom sculpted mesh CANNOT silently change its bounding box:
+  - identity object scale (1,1,1), applied/baked into mesh data,
+  - NO parent transform inheritance,
+  - NO unapplied modifiers may alter the evaluated bounding box,
+  - evaluated depsgraph bbox must equal locked_dimensions_m within 0.001 m.
+The contract is hashed (scale_contract_sha256) so post-import drift is detectable.
 """
 from __future__ import annotations
 import hashlib, json, os, sys
@@ -31,9 +30,9 @@ PX_PER_M = 1000.0
 SCREEN_W_M = 3120.0 / PX_PER_M
 SCREEN_H_M = 1440.0 / PX_PER_M
 PANEL_DEPTH_M = 0.02
-EXPLODE_STEP_M = 0.35          # along +X, per part index (assembly order)
+EXPLODE_STEP_M = 0.35
+BBOX_TOLERANCE_M = 0.001
 
-# Classification by detected marker / text semantics.
 CLASS_COLOR = {
     "wordmark":  "#c8102e",
     "button":    "#8a5a2b",
@@ -71,42 +70,63 @@ def box_to_metrics(box):
     x0, x1 = min(xs), max(xs); y0, y1 = min(ys), max(ys)
     cx = (x0 + x1) / 2.0; cy = (y0 + y1) / 2.0
     w = max(x1 - x0, 1.0); h = max(y1 - y0, 1.0)
-    # Screen px -> metres, centred on origin, invert Y (screen Y grows downward).
     return {
         "assembled_position_m": [round((cx - 1560.0) / PX_PER_M, 4),
-                                 round((720.0 - cy) / PX_PER_M, 4),
-                                 0.0],
+                                 round((720.0 - cy) / PX_PER_M, 4), 0.0],
         "dimensions_m": [round(w / PX_PER_M, 4), round(h / PX_PER_M, 4), PANEL_DEPTH_M],
         "source_box_px": box,
+    }
+
+
+def scale_lock_for(part_id, dims):
+    return {
+        "part_id": part_id,
+        "locked_scale": [1.0, 1.0, 1.0],
+        "locked_dimensions_m": dims,
+        "apply_transforms": True,
+        "transform_inheritance": "forbidden",
+        "modifier_policy": "bake_and_remeasure",
+        "bbox_tolerance_m": BBOX_TOLERANCE_M,
+        "unit": "1 Blender unit = 1 metre (METRIC, scale_length=1.0)",
+        "verify_on_import": "tools/blender/verify_scale_contract.py",
     }
 
 
 def main() -> int:
     with open(SRC, encoding="utf-8") as f:
         state = json.load(f)
+    calibration = {
+        "note": "DECLARATIVE 2D-screen-to-metre mapping; NOT measured world coords.",
+        "screen_resolution_px": [3120, 1440],
+        "px_per_m": PX_PER_M,
+        "screen_width_m": SCREEN_W_M,
+        "screen_height_m": SCREEN_H_M,
+        "panel_depth_m": PANEL_DEPTH_M,
+        "explode_axis": "+X",
+        "explode_step_m": EXPLODE_STEP_M,
+        "up_axis": "+Z",
+        "forward_axis_godot": [0, 0, -1],
+        "gltf_export_yup": True,
+        "godot_root_scale": 1.0,
+        "scale_lock_policy": {
+            "object_scale": [1.0, 1.0, 1.0],
+            "bake_scale_into_mesh": True,
+            "allow_parent_transform": False,
+            "allow_unapplied_modifiers": False,
+            "bbox_tolerance_m": BBOX_TOLERANCE_M,
+        },
+    }
     out = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generator": "tools/export_structure_assets.py",
         "source": "assets/data/screen_visual_state.json (WatchSkill extraction, verified)",
         "source_sha256": hashlib.sha256(open(SRC, "rb").read()).hexdigest(),
-        "scale_calibration": {
-            "note": "DECLARATIVE 2D-screen-to-metre mapping; NOT measured world coords.",
-            "screen_resolution_px": [3120, 1440],
-            "px_per_m": PX_PER_M,
-            "screen_width_m": SCREEN_W_M,
-            "screen_height_m": SCREEN_H_M,
-            "panel_depth_m": PANEL_DEPTH_M,
-            "explode_axis": "+X",
-            "explode_step_m": EXPLODE_STEP_M,
-            "up_axis": "+Z",
-            "forward_axis_godot": [0, 0, -1],
-            "gltf_export_yup": True,
-            "godot_root_scale": 1.0,
-        },
+        "scale_calibration": calibration,
         "materials": CLASS_COLOR,
         "assemblies": [],
     }
     total = 0
+    locks = []
     for label in ["start", "player", "level", "final"]:
         scr = state["screens"][label]
         parts = []
@@ -114,8 +134,11 @@ def main() -> int:
             text = item.get("text", "")
             cls = classify(text, label)
             m = box_to_metrics(item["box"])
+            pid = "%s_%02d" % (label, i)
+            lock = scale_lock_for(pid, m["dimensions_m"])
+            locks.append(lock)
             parts.append({
-                "part_id": "%s_%02d" % (label, i),
+                "part_id": pid,
                 "assembly": label,
                 "order": i,
                 "label_text": text,
@@ -127,6 +150,7 @@ def main() -> int:
                 "dimensions_m": m["dimensions_m"],
                 "source_box_px": m["source_box_px"],
                 "collision_suffix": "-convcol",
+                "scale_lock": lock,
             })
         out["assemblies"].append({
             "assembly_id": label,
@@ -140,12 +164,19 @@ def main() -> int:
         })
         total += len(parts)
     out["total_parts"] = total
+    # Canonical lock order (by part_id) so the verifier can recompute the same
+    # hash from the exported JSON alone.
+    locks_canonical = sorted(locks, key=lambda l: l["part_id"])
+    contract = {"calibration": calibration, "locks": locks_canonical}
+    payload = json.dumps(contract, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    out["scale_contract_sha256"] = "sha256:" + hashlib.sha256(payload).hexdigest()
     with open(DST, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2, ensure_ascii=False, sort_keys=False)
     print("EXPORTED", DST, "bytes", os.path.getsize(DST))
     print("ASSEMBLIES", len(out["assemblies"]), "PARTS", total)
+    print("SCALE_CONTRACT_SHA256", out["scale_contract_sha256"])
     for a in out["assemblies"]:
-        print("  ", a["assembly_id"], a["part_count"], "parts", "color classes",
+        print("  ", a["assembly_id"], a["part_count"], "parts",
               sorted({p["classification"] for p in a["parts"]}))
     return 0
 
