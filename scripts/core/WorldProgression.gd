@@ -15,6 +15,7 @@ signal hop_completed(region_id: int)
 signal hop_failed(reason: StringName)
 
 const CATALOG_PATH: String = "res://resources/world/regions.tres"
+const SECRET_LINKS_PATH: String = "res://resources/world/secret_links.tres"
 
 var catalog: RegionCatalog = null
 var current_region: int = 1
@@ -23,6 +24,10 @@ var tech: Dictionary = {}                       # {region_id:int -> {tech_id:Str
 var transport_done: Dictionary = {}             # {region_id:int -> bool} — named to avoid the signal `transport_repaired`
 var milestones: Dictionary = {}                 # {region_id:int -> Array[StringName]}
 var max_loot_tier: int = 1
+# GDD-1 additive state (does NOT alter the monotonic progression ceiling).
+var secret_catalog: SecretLinkCatalog = null
+var visited_regions: Array[int] = [1]
+var region_state: Dictionary = {}   # {region_id:int -> Dictionary} per-region world state
 
 
 func _ready() -> void:
@@ -30,6 +35,9 @@ func _ready() -> void:
 	if catalog == null:
 		push_warning("[WorldProgression] regions.tres missing — progression disabled")
 		return
+	secret_catalog = load(SECRET_LINKS_PATH) as SecretLinkCatalog
+	if secret_catalog == null:
+		push_warning("[WorldProgression] secret_links.tres missing — non-linear hops disabled")
 	hydrate(_read_save_world_state())
 
 
@@ -71,6 +79,12 @@ func hydrate(data: Dictionary) -> void:
 	var m = data.get("world_milestones", {})
 	milestones = m.duplicate(true) if m is Dictionary else {}
 	max_loot_tier = int(data.get("world_max_loot_tier", 1))
+	# GDD-1 additive keys: absent in legacy saves -> safe defaults.
+	var vr: Array[int] = []
+	vr.assign(data.get("world_visited_regions", [1]))
+	visited_regions = vr if not vr.is_empty() else [1]
+	var rs = data.get("world_region_state", {})
+	region_state = rs.duplicate(true) if rs is Dictionary else {}
 	_recompute_max_loot_tier(false)
 
 
@@ -81,7 +95,9 @@ func serialize() -> Dictionary:
 		"world_tech": tech.duplicate(true),
 		"world_transport_repaired": transport_done.duplicate(true),
 		"world_milestones": milestones.duplicate(true),
-		"world_max_loot_tier": max_loot_tier
+		"world_max_loot_tier": max_loot_tier,
+		"world_visited_regions": visited_regions.duplicate(),
+		"world_region_state": region_state.duplicate(true)
 	}
 
 
@@ -171,7 +187,9 @@ func evaluate_gates(region_id: int) -> Dictionary:
 
 
 func can_hop(to_region: int) -> bool:
-	if not unlocked_regions.has(to_region):
+	# GDD-1: linear unlocked path preserved; secret transport adds a parallel
+	# reachability path so players can jump ahead without 100% zone checklists.
+	if not unlocked_regions.has(to_region) and not is_secret_reachable(current_region, to_region):
 		return false
 	return get_def(to_region) != null
 
@@ -215,9 +233,64 @@ func report_hop_started(from_region: int, to_region: int) -> void:
 
 func report_hop_completed(region_id: int) -> void:
 	current_region = region_id
+	if not visited_regions.has(region_id):
+		visited_regions.append(region_id)
+		visited_regions.sort()
 	hop_completed.emit(region_id)
 	_persist()
 
 
 func report_hop_failed(reason: StringName) -> void:
 	hop_failed.emit(reason)
+
+# ── GDD-1: NON-LINEAR SECRET TRANSPORT (#25) ───────────────────
+
+func is_secret_reachable(from_region: int, to_region: int) -> bool:
+	"""True when a directed secret link exists AND its repair gate is met."""
+	if secret_catalog == null or from_region == to_region:
+		return false
+	var edge := secret_catalog.get_edge(from_region, to_region)
+	if edge.is_empty():
+		return false
+	if bool(edge.get("requires_repair", false)) and not bool(transport_done.get(from_region, false)):
+		return false
+	return true
+
+
+func secret_targets(from_region: int) -> Array[int]:
+	return secret_catalog.targets_from(from_region) if secret_catalog != null else []
+
+
+func report_secret_hop(region_id: int) -> bool:
+	"""Jump-ahead unlock that BYPASSES the 4 linear gates (GDD §3). Kept separate
+	from try_unlock so the linear playtest's gate calls are unaffected."""
+	if get_def(region_id) == null or unlocked_regions.has(region_id):
+		return false
+	unlocked_regions.append(region_id)
+	unlocked_regions.sort()
+	var def := get_def(region_id)
+	region_unlocked.emit(region_id, def.loot_tier)
+	_recompute_max_loot_tier(true)
+	_persist()
+	return true
+
+
+func get_active_loot_tier() -> int:
+	"""Location-aware tier (GDD: high-tier gear follows the player's world).
+	Separate from the monotonic progression ceiling get_loot_tier_cap()."""
+	var def := get_def(current_region)
+	return def.loot_tier if def != null else 1
+
+
+func store_region_state(region_id: int, data: Dictionary) -> void:
+	region_state[region_id] = data.duplicate(true)
+
+
+func get_region_state(region_id: int) -> Dictionary:
+	var d = region_state.get(region_id, {})
+	return d.duplicate(true) if d is Dictionary else {}
+
+
+func is_bidirectional(from_region: int, to_region: int) -> bool:
+	return is_secret_reachable(from_region, to_region) and is_secret_reachable(to_region, from_region)
+

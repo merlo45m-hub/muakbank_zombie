@@ -1,5 +1,13 @@
 # DESIGN.md — Muakbank Zombie
 
+> **PRECEDENCE NOTICE (2026-11-15):** The vault master GDD is now the LAW OF
+> TRUTH. See `docs/MASTER_GDD.md` (version-controlled transcription). This file's
+> §2 palette, §3 type/geometry and §6 performance budget remain normative;
+> §1 direction and §5 implementation status are SUPERSEDED by the GDD. Workstreams:
+> GitHub #25-#29, master tracker #24.
+
+# DESIGN.md — Muakbank Zombie
+
 Design contract for the game UI. Derived from the three art-director mockups
 (title/menu, character select, splash). Implementation follows this file; this
 file follows the mockups.

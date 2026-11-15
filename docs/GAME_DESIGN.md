@@ -1,5 +1,13 @@
 # Muakbank Zombie — Game Design North Star
 
+> **SUPERSEDED (2026-11-15):** this doc's "Core Structure" mandates LINEAR
+> all-mini-game gating ("survive + complete ALL embedded mini-games -> advance").
+> The vault master GDD (`docs/MASTER_GDD.md`, LAW OF TRUTH) mandates NON-LINEAR,
+> bidirectional world hopping via secret transport. See GitHub #24 / #25.
+> Retained for historical context only; do not implement from this file.
+
+# Muakbank Zombie — Game Design North Star
+
 ## Core Structure
 - **3 open-world sandbox levels** — SAND1 Old Town, SAND2 Industrial District,
   SAND3 Endgame Heights. No more, no fewer. Each sandbox is BIG, explorable,

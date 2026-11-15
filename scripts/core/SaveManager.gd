@@ -6,7 +6,7 @@
 extends Node
 
 # === SAVE VERSION (bump to trigger a re-save / migration on load) ===
-const SAVE_VERSION: int = 3
+const SAVE_VERSION: int = 4
 
 # === SAVE DATA ===
 # Filled by _load_game() at startup. _default_save_data() is the single source of
@@ -109,10 +109,14 @@ func _coerce(key: String, value, fallback):
 			var regions: Array[int] = []
 			regions.assign(value)
 			return regions
-		"world_tech", "world_transport_repaired", "world_milestones":
+		"world_tech", "world_transport_repaired", "world_milestones", "world_region_state":
 			if value is Dictionary:
 				return value
 			return fallback
+		"world_visited_regions":
+			var regs: Array[int] = []
+			regs.assign(value)
+			return regs
 		_:
 			return value
 
@@ -189,7 +193,9 @@ func _default_save_data() -> Dictionary:
 		"world_tech": {},
 		"world_transport_repaired": {},
 		"world_milestones": {},
-		"world_max_loot_tier": 1
+		"world_max_loot_tier": 1,
+		"world_visited_regions": [1],
+		"world_region_state": {}
 	}
 
 

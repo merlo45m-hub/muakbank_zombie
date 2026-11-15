@@ -32,6 +32,12 @@ var _target_region: int = 0
 var _spawn: Vector3 = Vector3.ZERO
 var _world_root: Node = null
 
+# GDD-1 / FM-A: captured per-request context. A superseded request must NOT
+# mutate these while a threaded load is in flight.
+var _req: Dictionary = {}
+# GDD-1 / FM-B: per-region transient state (was a single overwritable dict).
+var transient_by_region: Dictionary = {}
+
 
 func _wp() -> Node:
 	return get_node_or_null("/root/WorldProgression")
@@ -57,6 +63,10 @@ func request_hop(to_region: int) -> void:
 	if wp == null:
 		_fail(&"no_world_progression")
 		return
+	# GDD-1: reject redundant same-region reloads from bidirectional triggers.
+	var wp_cur: int = int(wp.current_region)
+	if to_region == wp_cur:
+		return
 	if not wp.can_hop(to_region):
 		_fail(&"region_locked")
 		return
@@ -74,8 +84,16 @@ func request_hop(to_region: int) -> void:
 	_target_region = to_region
 	_path = scene_path
 	_spawn = def.spawn_point
+	# FM-A: freeze the request so a stale callback cannot read mutated members.
+	_req = {
+		"gen": generation,
+		"path": scene_path,
+		"target": to_region,
+		"spawn": def.spawn_point,
+		"from": wp_cur,
+	}
 	state = HopState.GATES_CHECKED
-	wp.report_hop_started(wp.current_region, to_region)
+	wp.report_hop_started(wp_cur, to_region)
 
 	var err := ResourceLoader.load_threaded_request(_path)
 	if err != OK:
@@ -87,22 +105,25 @@ func request_hop(to_region: int) -> void:
 func _process(_delta: float) -> void:
 	if state != HopState.LOADING:
 		return
-	var st := ResourceLoader.load_threaded_get_status(_path)
+	# FM-A: use the captured path/gen, NOT the mutable members a newer request
+	# may have overwritten.
+	var req_path: String = String(_req.get("path", _path))
+	var req_gen: int = int(_req.get("gen", _gen))
+	var st := ResourceLoader.load_threaded_get_status(req_path)
 	if st == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 		return
 	if st == ResourceLoader.THREAD_LOAD_LOADED:
-		# A superseded request's callback must not instance a stale region.
-		if _gen != generation:
+		if req_gen != generation:
 			state = HopState.IDLE
 			return
-		var packed: Resource = ResourceLoader.load_threaded_get(_path)
+		var packed: Resource = ResourceLoader.load_threaded_get(req_path)
 		if packed == null:
 			_fail(&"thread_instance_null")
 			return
 		_on_load_complete(packed)
 	elif st == ResourceLoader.THREAD_LOAD_FAILED \
 			or st == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
-		if _gen != generation:
+		if req_gen != generation:
 			state = HopState.IDLE
 			return
 		_fail(&"thread_load_failed")
@@ -232,9 +253,16 @@ func _on_load_complete(packed: Resource) -> void:
 	if player != null:
 		player.global_position = _spawn
 
-	# Issue #18: serialize transient state BEFORE the old region is unloaded.
+	# Issue #18 + GDD-1/FM-B: serialize transient state BEFORE the old region is
+	# unloaded, keyed by the DEPARTING region so a back-hop can restore it.
 	last_transient_snapshot = snapshot_transient_state()
 	snapshot_count += 1
+	var departing: int = int(_req.get("from", 0))
+	if departing > 0:
+		transient_by_region[departing] = last_transient_snapshot.duplicate(true)
+	var arriving: int = int(_req.get("target", _target_region))
+	if transient_by_region.has(arriving):
+		restore_transient_state(transient_by_region[arriving])
 
 	# Free the old region only AFTER the new one is in the tree, preserving the
 	# persistent WorldRoot and every sibling (spawners/timers/day-night).
@@ -246,12 +274,34 @@ func _on_load_complete(packed: Resource) -> void:
 	state = HopState.ACTIVE
 	var wp := _wp()
 	if wp != null:
-		wp.report_hop_completed(_target_region)
+		# FM-A: report the CAPTURED target, not a possibly-overwritten member.
+		wp.report_hop_completed(arriving)
 	state = HopState.IDLE
 
 
 func _fail(reason: StringName) -> void:
+	# FM-A: bump generation so an in-flight callback for the failed request is
+	# recognised as stale (otherwise it could instance a region after failure).
+	generation += 1
 	state = HopState.FAILED
 	var wp := _wp()
 	if wp != null:
 		wp.report_hop_failed(reason)
+
+
+# ── GDD-1: SECRET TRANSPORT ENTRY (#25) ───────────────────────
+
+func request_secret_hop(to_region: int) -> void:
+	"""Jump-ahead via a secret link (GDD §3): unlock WITHOUT the 4 linear gates,
+	then perform the normal threaded hop. Bidirectional back-hops to an already
+	unlocked region skip the unlock step and just hop."""
+	var wp := _wp()
+	if wp == null:
+		_fail(&"no_world_progression")
+		return
+	if not wp.is_secret_reachable(int(wp.current_region), to_region):
+		_fail(&"no_secret_link")
+		return
+	if not wp.unlocked_regions.has(to_region):
+		wp.report_secret_hop(to_region)
+	request_hop(to_region)
