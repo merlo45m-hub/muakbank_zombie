@@ -21,8 +21,6 @@ const TITLE_CAM_TARGET = Vector3(0.0, 1.05, -2.60)
 @onready var settings_btn = $UI/ButtonsBox/SettingsBtn
 @onready var credits_btn = $UI/ButtonsBox/CreditsBtn
 @onready var quit_btn = $UI/ButtonsBox/QuitBtn
-@onready var high_score_label = $UI/StatsContainer/HighScoreLabel
-@onready var total_fed_label = $UI/StatsContainer/TotalFedLabel
 
 
 func _ready() -> void:
@@ -40,7 +38,6 @@ func _ready() -> void:
 	if quit_btn and not quit_btn.pressed.is_connected(_on_quit_pressed):
 		quit_btn.pressed.connect(_on_quit_pressed)
 
-	_update_stats()
 	Audio.play_menu_music()
 
 	# Install dev menu if dev mode is active
@@ -78,11 +75,6 @@ func _add_title_lighting_polish() -> void:
 	jack_light2.omni_range = 3.4
 	jack_light2.shadow_enabled = false
 	bg.add_child(jack_light2)
-
-
-func _update_stats() -> void:
-	high_score_label.text = "HIGH SCORE: %d" % Save.get_high_score()
-	total_fed_label.text = "FED: %d" % Save.get_total_zombies_fed()
 
 
 # -- BUTTON HANDLERS -------------------------------------------
