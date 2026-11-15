@@ -6,7 +6,7 @@
 extends Node
 
 # === SAVE VERSION (bump to trigger a re-save / migration on load) ===
-const SAVE_VERSION: int = 2
+const SAVE_VERSION: int = 3
 
 # === SAVE DATA ===
 # Filled by _load_game() at startup. _default_save_data() is the single source of
@@ -103,6 +103,16 @@ func _coerce(key: String, value, fallback):
 			var levels: Array[int] = []
 			levels.assign(value)
 			return levels
+		"world_current_region", "world_max_loot_tier":
+			return int(value)
+		"world_unlocked_regions":
+			var regions: Array[int] = []
+			regions.assign(value)
+			return regions
+		"world_tech", "world_transport_repaired", "world_milestones":
+			if value is Dictionary:
+				return value
+			return fallback
 		_:
 			return value
 
@@ -173,7 +183,13 @@ func _default_save_data() -> Dictionary:
 		"collection_items": {},
 		"collection_regions": {},
 		"museum_seen": [],
-		"museum_version": 2
+		"museum_version": 2,
+		"world_current_region": 1,
+		"world_unlocked_regions": [1],
+		"world_tech": {},
+		"world_transport_repaired": {},
+		"world_milestones": {},
+		"world_max_loot_tier": 1
 	}
 
 
@@ -281,3 +297,24 @@ func set_unlocked_achievements(ids: Array) -> void:
 
 func get_unlocked_achievements() -> Array:
 	return save_data.get("unlocked_achievements", [])
+
+
+# ── WORLD STATE (Issue #11) ───────────────────────────────────
+
+func get_world_state() -> Dictionary:
+	"""Read-only snapshot of the world_* save keys for WorldProgression.hydrate()."""
+	var out: Dictionary = {}
+	var defaults := _default_save_data()
+	for key in defaults:
+		if key.begins_with("world_"):
+			var v = save_data.get(key, defaults[key])
+			out[key] = v.duplicate(true) if v is Dictionary or v is Array else v
+	return out
+
+func set_world_state(data: Dictionary) -> void:
+	"""Single writer for world_* state; persists once via save_game()."""
+	var defaults := _default_save_data()
+	for key in data:
+		if key.begins_with("world_"):
+			save_data[key] = _coerce(key, data[key], defaults.get(key))
+	save_game()
