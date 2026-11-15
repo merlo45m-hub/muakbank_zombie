@@ -1,0 +1,101 @@
+name: deploy-pipeline
+
+# Issue #20 — automated deployment pipeline.
+# On every push to main (and manual dispatch) this validates the deploy contract
+# and records a GitHub Deployment. The ACTUAL Android APK export is executed by
+# the live VPS systemd timer `muakbank-auto-export.timer` running
+# tools/vps_auto_export.py, which polls origin/main and copies the APK to the
+# phone (issue #3, commit c692858). This workflow does NOT claim to build the
+# APK itself: GitHub-hosted runners have no Android export templates / apksigner.
+# Job names are deliberately NOT `static-gate`/`headless-gate` — those contexts
+# are required by main's branch protection and belong to pre_merge_gates.yml.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: Reason for this deployment
+        required: false
+        default: manual
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify-deploy-contract:
+    name: verify-deploy-contract
+    runs-on: ubuntu-latest
+    env:
+      WORKSPACE: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deploy tooling present + syntactically valid
+        run: |
+          set -euo pipefail
+          for f in tools/vps_auto_export.py tools/test_auto_export.sh \
+                   tools/export_on_vps.sh tools/muakbank-auto-export.service \
+                   tools/muakbank-auto-export.timer export_presets.cfg \
+                   tools/regression_smoke.sh; do
+            test -f "$f" || { echo "MISSING DEPLOY FILE: $f"; exit 1; }
+          done
+          python3 -m py_compile tools/vps_auto_export.py
+          bash -n tools/export_on_vps.sh
+          bash -n tools/test_auto_export.sh
+          python3 tools/validate_project.py .
+          grep -q 'name="Android"' export_presets.cfg
+          grep -q 'platform="Android"' export_presets.cfg
+          echo "DEPLOY_CONTRACT_OK"
+
+      - name: Auto-export poller engine — 5-case harness (local bare origin, no network)
+        # Uses a local bare git repo so git ls-remote/clone need no credentials.
+        env:
+          SCRATCH: ${{ runner.temp }}/mkb_export_test
+        run: |
+          set -euo pipefail
+          mkdir -p "$SCRATCH"
+          git init --bare -q "$SCRATCH/origin.git"
+          git clone -q "$SCRATCH/origin.git" "$SCRATCH/seed"
+          cd "$SCRATCH/seed"
+          git config user.email ci@local
+          git config user.name ci
+          cp "$WORKSPACE/project.godot" .
+          git add project.godot
+          git commit -qm seed
+          git branch -M main
+          git push -q origin main
+          export MKB_DEV_REPO="$SCRATCH/seed"
+          export MKB_TEST_SCRATCH="$SCRATCH"
+          export MKB_POLLER="$WORKSPACE/tools/vps_auto_export.py"
+          bash "$WORKSPACE/tools/test_auto_export.sh"
+
+  deploy-record:
+    name: deploy-record
+    needs: verify-deploy-contract
+    runs-on: ubuntu-latest
+    environment:
+      name: vps-android
+    steps:
+      - name: Record deployment + success status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          payload="{\"ref\":\"$SHA\",\"environment\":\"vps-android\",\"description\":\"VPS auto-export (tools/vps_auto_export.py systemd timer)\",\"required_contexts\":[]}"
+          dep_id=$(printf '%s' "$payload" | gh api "repos/$REPO/deployments" --method POST --input - --jq '.id')
+          gh api "repos/$REPO/deployments/$dep_id/statuses" --method POST \
+            -f state=success -f environment=vps-android \
+            -f description="Deploy contract verified; VPS timer exports origin/main" > /dev/null
+          echo "DEPLOYMENT_ID=$dep_id"

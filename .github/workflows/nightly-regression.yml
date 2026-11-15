@@ -1,0 +1,67 @@
+name: nightly-regression
+
+# Issue #20 — nightly regression test runs.
+# Runs the FULL gate suite every night (03:00 UTC) plus the world-progression
+# 1->2->3 acceptance playtest, which is deliberately NOT part of the fast PR
+# gates. Also manually dispatchable. Job names avoid the branch-protection
+# contexts `static-gate`/`headless-gate` owned by pre_merge_gates.yml.
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-regression
+  cancel-in-progress: true
+
+jobs:
+  nightly:
+    name: nightly-full-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GODOT_BIN: /opt/Godot_v4.7-stable_linux.x86_64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install engine + xvfb
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb unzip
+          curl -fsSL -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
+          sudo unzip -q /tmp/godot.zip -d /opt
+          test -x "$GODOT_BIN"
+
+      - name: Static project validation
+        run: python3 tools/validate_project.py .
+
+      - name: Fresh headless import
+        run: xvfb-run -a "$GODOT_BIN" --headless --import --path .
+
+      - name: Canonical regression smoke (5 checks)
+        run: bash tools/regression_smoke.sh
+
+      - name: GDUnit suite (12 checks)
+        run: xvfb-run -a "$GODOT_BIN" --headless --path . --script tools/tests/run_tests.gd
+
+      - name: World-progression 1->2->3 acceptance playtest
+        run: |
+          set -euo pipefail
+          xvfb-run -a "$GODOT_BIN" --headless --path . --script tools/tests/world_progression_playtest.gd | tee /tmp/playtest.log
+          grep -q "FULL_PROGRESSION_PASS=true" /tmp/playtest.log
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-logs-${{ github.run_id }}
+          path: /tmp/playtest.log
+          if-no-files-found: ignore
