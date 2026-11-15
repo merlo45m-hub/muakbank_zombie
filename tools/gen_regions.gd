@@ -6,9 +6,12 @@ func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute("res://resources/world")
 	var catalog := RegionCatalog.new()
 	var rows := [
-		[1, "Old Town", "res://scenes/world/environment/old_town_enhanced.tscn", 1, 0, 0, [], 0, Vector3(0, 0, 0)],
-		[2, "Industrial District", "res://scenes/world/environment/industrial_district.tscn", 2, 3, 2, [StringName("first_shift"), StringName("boss_defeated")], 1, Vector3(0, 0, 0)],
-		[3, "Endgame Heights", "res://scenes/world/environment/endgame_heights.tscn", 3, 5, 3, [StringName("survivors_saved"), StringName("extraction_ready")], 2, Vector3(0, 0, 0)],
+		# spawn_point mirrors Game.gd SPAWN_HINTS (level-local, ground-probed).
+		# ZERO would drop the player at the world origin INSIDE level geometry —
+		# the exact catastrophe documented in Game.gd's SPAWN_HINTS comment.
+		[1, "Old Town", "res://scenes/world/environment/old_town_enhanced.tscn", 1, 0, 0, [], 0, Vector3(-14.0, 0.15, -14.0)],
+		[2, "Industrial District", "res://scenes/world/environment/industrial_district.tscn", 2, 3, 2, [StringName("first_shift"), StringName("boss_defeated")], 1, Vector3(0.0, 0.15, 0.0)],
+		[3, "Endgame Heights", "res://scenes/world/environment/endgame_heights.tscn", 3, 5, 3, [StringName("survivors_saved"), StringName("extraction_ready")], 2, Vector3(0.0, 0.15, 0.0)],
 	]
 	for row in rows:
 		var def := RegionDef.new()

@@ -116,3 +116,15 @@ func _reset_transition() -> void:
 
 func is_transitioning() -> bool:
 	return _is_transitioning
+
+
+## Issue #11 P3 — world-region transitions go through WorldHopManager's threaded
+## instancing, NOT change_scene_to_file. This keeps autoloads, spawners, timers
+## and DayNightCycle alive across a hop and avoids a rival scene loader.
+## Non-world transitions (menus, game over) still use change_scene()/FADE.
+func change_region(region_id: int) -> void:
+	var hop = get_node_or_null("/root/WorldHopManager")
+	if hop == null:
+		push_warning("[SceneManager] WorldHopManager missing — region hop ignored")
+		return
+	hop.request_hop(region_id)

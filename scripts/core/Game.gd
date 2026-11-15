@@ -104,6 +104,11 @@ func _load_environment() -> void:
 	var env_scene = Level.get_environment_scene(level)
 	var env = load(env_scene).instantiate()
 	add_child(env)
+	# Issue #11 P3: hand the startup environment to the single world loader so
+	# the first hop frees it instead of stacking a second region on top.
+	var hop = get_node_or_null("/root/WorldHopManager")
+	if hop != null and hop.has_method("adopt"):
+		hop.adopt(env)
 	print("[Game] Loaded environment: ", env_scene)
 	
 	# Play ambient layer for this environment

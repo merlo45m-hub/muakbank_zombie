@@ -30,6 +30,7 @@ Tutorial="*res://scripts/ui/tutorial.gd"
 CollectionManager="*res://scripts/gameplay/CollectionManager.gd"
 ProgressTracker="*res://scripts/gameplay/ProgressTracker.gd"
 WorldProgression="*uid://vjk6l7vdgfhb"
+WorldHopManager="*uid://bacd1k0qdvwnw"
 
 [display]
 
