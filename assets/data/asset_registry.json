@@ -1,23 +1,13 @@
 {
-  "generated_at": "2026-11-15T23:00:52Z",
+  "generated_at": "2026-11-15T23:20:22Z",
   "generator": "tools/check_asset_registry.py",
-  "unique_refs": 281,
-  "total_ref_occurrences": 424,
+  "unique_refs": 280,
+  "total_ref_occurrences": 422,
   "static_ok": 276,
   "dynamic_ok": 4,
-  "excepted": 1,
+  "excepted": 0,
   "broken": [],
-  "exceptions": [
-    {
-      "ref": "res://assets/models/zombie_rigged/zombie_rigged.gltf",
-      "count": 2,
-      "sources": [
-        "tools/loadtest_zombie.gd:10",
-        "tools/asset_registry_exceptions.json:6"
-      ],
-      "reason": "tools/loadtest_zombie.gd is a dev probe that calls ResourceLoader.exists() on this path and intentionally handles absence via a watchdog quit. The source .gltf was never committed (git tracks only its texture). Not a gameplay asset dependency."
-    }
-  ],
+  "exceptions": [],
   "dynamic": [
     {
       "ref": "res://assets/models/${mdl}.glb",
@@ -89,17 +79,7 @@
   ],
   "on_disk_glb": 339,
   "missing_import_sidecars": [],
-  "orphan_imports": [
-    "assets/burger.png",
-    "assets/donut.png",
-    "assets/noodles.png",
-    "assets/pizza.png",
-    "assets/soda.png",
-    "assets/taco.png",
-    "assets/zombie_spritesheet.png",
-    "assets/models/cc0/kenney/colormap.png",
-    "assets/models/zombie_rigged/zombie_rigged.gltf"
-  ],
-  "sha256": "970878177563cd2b",
+  "orphan_imports": [],
+  "sha256": "1334e3c5f68a9421",
   "ok": true
 }
