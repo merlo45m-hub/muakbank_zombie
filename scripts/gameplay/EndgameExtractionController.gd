@@ -1,7 +1,7 @@
 extends Node3D
 class_name EndgameExtractionController
 
-## EndgameExtractionController — Campaign finale mini-game cluster controller for SAND3 (Endgame Heights).
+## EndgameExtractionController — Campaign finale mini-game cluster controller for SAND3 (Bio-Lab).
 ## Embeds CheckpointArmoryTerminal, BreakableSupplyCrate, and InteractiveDoor.
 ## Player activates the emergency extraction terminal on the rooftop, breaches the maintenance door,
 ## and cracks the flare supply crate to signal the extraction chopper.

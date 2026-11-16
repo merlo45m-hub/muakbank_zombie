@@ -14,7 +14,7 @@ sky_material = SubResource("ProceduralSkyMaterial_k8nl8")
 ; they actually render with. It used to be a procedural SKY at 0.646 grey with
 ; ambient_light_source = 3 (sky) - daylight - and it was never wired into project.godot, so
 ; those levels rendered with nothing at all. It is now a dark night matching the Pet
-; Cemetery and Old Town: near-black background, a low cool ambient so geometry stays
+; Cemetery and Suburban: near-black background, a low cool ambient so geometry stays
 ; readable, and fog that fades into darkness rather than pastel.
 ; Levels with their own environment (cemetery, old town) are unaffected.
 background_mode = 1

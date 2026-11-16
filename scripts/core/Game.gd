@@ -121,16 +121,16 @@ func _load_environment() -> void:
 ## coordinate: the world origin sits inside Building6 in old_town, and the cemetery's
 ## centre now has broken headstones on it.
 const SPAWN_HINTS := {
-	# Old Town: the old hint (-2, 0.15, -25) sat in a pocket boxed in by Building1
+	# Suburban (old_town_enhanced): the old hint (-2, 0.15, -25) sat in a pocket boxed in by Building1
 	# (left, 5.8m), Building2 (2.6m) and Building5. A far-corner spawn (34,-34) was
 	# open but put every building out of fog-range view. (-14, 0.15, -14) is open
 	# ground with 40m clear forward view + camera clearance on all sides (VPS scan
 	# score 33) — the previous (-2,-18) was boxed in by Building1/2/5 (only the 135°
 	# diagonal was open), so forward movement hit a building wall.
 	1: Vector3(-14.0, 0.15, -14.0),
-	# Industrial District: transition open ground between hospital and warehouse.
+	# Industrial (industrial_district): transition open ground between hospital and warehouse.
 	2: Vector3(0.0, 0.15, 0.0),
-	# Endgame Heights: central atrium of the grand mall district.
+	# Bio-Lab (endgame_heights): central atrium of the grand mall district.
 	3: Vector3(0.0, 0.15, 0.0),
 }
 

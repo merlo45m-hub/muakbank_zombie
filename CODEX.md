@@ -15,9 +15,9 @@ here, it exists; if a task needs it, reach for it.
 
 ## The game's architecture (summary)
 3 open-world sandbox levels, each with embedded minigames that must all clear to advance:
-- SAND1 Old Town (`scenes/world/environment/old_town_enhanced.tscn`) — 5 minigames
-- SAND2 Industrial District (`.../industrial_district.tscn`) — armory_lockdown
-- SAND3 Endgame Heights (`.../endgame_heights.tscn`) — endgame_extraction
+- SAND1 Suburban (`scenes/world/environment/old_town_enhanced.tscn`) — 5 minigames
+- SAND2 Industrial (`.../industrial_district.tscn`) — armory_lockdown
+- SAND3 Bio-Lab (`.../endgame_heights.tscn`) — endgame_extraction
 Controllers: `scripts/gameplay/*Controller.gd`. Level map + difficulty/enemy/ambient:
 `scripts/core/LevelManager.gd`. Crown: `scripts/core/Game.gd`.
 

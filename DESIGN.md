@@ -118,7 +118,7 @@ belongs to visual QA on device — **not claimed here**.
 ## 6. Performance budget (Android)
 
 Targets are set so a regression is *detectable*, not so a number looks good. The
-game is a 3-sandbox 3D survival brawler (Old Town / Industrial District / Endgame Heights — each an open-world level with embedded mini-games), with
+game is a 3-sandbox 3D survival brawler (Suburban / Industrial / Bio-Lab — each an open-world level with embedded mini-games), with
 procedural (non-skeletal) animation and
 no baked lightmaps — the expensive things are real-time lights, shadows, and the
 number of live `CharacterBody3D` zombies.
