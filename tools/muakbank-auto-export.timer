@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Muakbank auto-export every 10 minutes (Issue #3)
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=10min
+Persistent=true
+Unit=muakbank-auto-export.service
+
+[Install]
+WantedBy=timers.target

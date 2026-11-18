@@ -1,0 +1,15 @@
+[Unit]
+Description=Muakbank Zombie auto-export on new origin/main commit (Issue #3)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /root/bin/vps_auto_export.py
+# Silent when healthy; the script prints one line only on a new commit or failure.
+StandardOutput=append:/root/.hermes/muakbank_auto_export.log
+StandardError=append:/root/.hermes/muakbank_auto_export.log
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target

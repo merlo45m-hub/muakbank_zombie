@@ -176,8 +176,8 @@ func _ready() -> void:
 	if mobile_controls:
 		mobile_controls.move_vector_changed.connect(_on_mobile_move)
 		mobile_controls.attack_pressed.connect(_on_mobile_attack)
-		if mobile_controls.has_signal("punch_pickup_pressed"):
-			mobile_controls.punch_pickup_pressed.connect(_on_mobile_punch_pickup)
+		if mobile_controls.has_signal("pickup_pressed"):
+			mobile_controls.pickup_pressed.connect(_on_mobile_pickup)
 		if mobile_controls.has_signal("sprint_pressed"):
 			mobile_controls.sprint_pressed.connect(_on_mobile_sprint)
 		if mobile_controls.has_signal("jump_pressed"):
@@ -551,17 +551,10 @@ func _on_mobile_attack() -> void:
 		return
 	_perform_attack()
 
-func _on_mobile_punch_pickup(grab: bool) -> void:
-	"""PUNCH/PICKUP button handler.
-	grab=false: short press -> punch attack.
-	grab=true: long press -> attempt to pick up nearby food/weapon."""
+func _on_mobile_pickup() -> void:
+	"""Consolidated ATTACK long-press: pick up nearby food or weapon."""
 	if not is_dead:
-		if grab:
-			# Long press: try to pick up nearby items
-			_pickup_nearby()
-		else:
-			# Short press: punch attack
-			_perform_attack()
+		_pickup_nearby()
 
 func _pickup_nearby() -> void:
 	"""Detect and pick up nearby food or weapon pickups within range."""
@@ -1359,8 +1352,8 @@ func _apply_model_material(mesh_nodes: Array[MeshInstance3D]) -> void:
 
 func _play_model_animations(mdl: Node3D) -> void:
 	for n in mdl.find_children("*", "AnimationPlayer", true, false):
-		var ap := n as AnimationPlayer
-		var list := ap.get_animation_list()
+		var ap: AnimationPlayer = n as AnimationPlayer
+		var list: PackedStringArray = ap.get_animation_list()
 		if list.size() > 0 and not ap.is_playing():
 			ap.play(list[0])
 

@@ -1,15 +1,23 @@
 # Muakbank Zombie — Game Design North Star
 
+> **SUPERSEDED (2026-11-15):** this doc's "Core Structure" mandates LINEAR
+> all-mini-game gating ("survive + complete ALL embedded mini-games -> advance").
+> The vault master GDD (`docs/MASTER_GDD.md`, LAW OF TRUTH) mandates NON-LINEAR,
+> bidirectional world hopping via secret transport. See GitHub #24 / #25.
+> Retained for historical context only; do not implement from this file.
+
+# Muakbank Zombie — Game Design North Star
+
 ## Core Structure
-- **3 open-world sandbox levels** — SAND1 Old Town, SAND2 Industrial District,
-  SAND3 Endgame Heights. No more, no fewer. Each sandbox is BIG, explorable,
+- **3 open-world sandbox levels** — SAND1 Suburban, SAND2 Industrial,
+  SAND3 Bio-Lab. No more, no fewer. Each sandbox is BIG, explorable,
   free-roam (not linear corridors), and embeds its mini-games.
 - Each sandbox contains **mini-games** the player must complete to unlock the next level:
-  - SAND1 Old Town embeds **five**: Spoil & Survive, Triage Roundup, Keep the
+  - SAND1 Suburban embeds **five**: Spoil & Survive, Triage Roundup, Keep the
     Generator Fed, Quarantine Breach, Last Stand Station.
-  - SAND2 Industrial District folds in hospital + warehouse and embeds
+  - SAND2 Industrial folds in hospital + warehouse and embeds
     **Armory Lockdown**.
-  - SAND3 Endgame Heights folds in rooftop + sewers + mall and embeds
+  - SAND3 Bio-Lab folds in rooftop + sewers + mall and embeds
     **Endgame Extraction**.
 - Core loop per level: **survive + complete ALL embedded mini-game(s) → advance to the next level.**
 - Difficulty / enemy pool / ambient escalate across sandboxes **1.0 → 1.6 → 2.5**
@@ -30,7 +38,7 @@
 - Specific to THIS game — nothing generic.
 - Make it **fun and functional** — a game people want to play, not a tech demo.
 
-## SAND1 mini-games (Old Town — all 5 embedded; each ACTIVATABLE — clear in-world start trigger, not auto-firing)
+## SAND1 mini-games (Suburban — all 5 embedded; each ACTIVATABLE — clear in-world start trigger, not auto-firing)
 1. **Spoil & Survive** (eating): a food table spawns a spread, some tainted (wrong glow/color);
    chain-eat the good ones fast for a combo before the timer; one bad bite costs health + breaks
    the chain. Uses the existing food system.
@@ -50,14 +58,14 @@ Design principles for all: diegetic (live in the world using existing systems), 
 needs a START trigger the player activates. Progression gated by ObjectiveManager.all_objectives_completed.
 
 ## SAND2 / SAND3 mini-games
-- **Armory Lockdown** (SAND2 — Industrial District): activate the armory terminal
+- **Armory Lockdown** (SAND2 — Industrial): activate the armory terminal
   (`CheckpointArmoryTerminal`), crack the two supply crates, and breach the armory
   door to restore facility access. `ArmoryLockdownController` (objective `l2_armory_salvage`).
-- **Endgame Extraction** (SAND3 — Endgame Heights): activate the rooftop extraction
+- **Endgame Extraction** (SAND3 — Bio-Lab): activate the rooftop extraction
   terminal, breach the maintenance door, and crack the flare crate to signal the
   extraction chopper. `EndgameExtractionController` (objective `l3_rooftop_extraction`).
 
 ## Current focus
-- The 3-sandbox build is live: Old Town / Industrial District / Endgame Heights each
+- The 3-sandbox build is live: Suburban / Industrial / Bio-Lab each
   embed their mini-game set. Current focus: sandbox polish and gate correctness across
   all three levels.

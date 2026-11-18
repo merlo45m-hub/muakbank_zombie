@@ -803,7 +803,7 @@ func set_target(new_target: Node3D) -> void:
 		current_state = AIState.CHASE
 
 
-func set_vfn_field(field) -> void:
+func set_vfn_field(field: Variant) -> void:
 	"""Inject a VectorFieldNavigation field for horde-style movement."""
 	vfn_field = field
 

@@ -51,3 +51,6 @@ godot_root/
 
 # Python bytecode (agent/tool scratch)
 tools/__pycache__/
+
+__pycache__/
+*.pyc

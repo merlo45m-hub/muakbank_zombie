@@ -1,5 +1,13 @@
 # DESIGN.md — Muakbank Zombie
 
+> **PRECEDENCE NOTICE (2026-11-15):** The vault master GDD is now the LAW OF
+> TRUTH. See `docs/MASTER_GDD.md` (version-controlled transcription). This file's
+> §2 palette, §3 type/geometry and §6 performance budget remain normative;
+> §1 direction and §5 implementation status are SUPERSEDED by the GDD. Workstreams:
+> GitHub #25-#29, master tracker #24.
+
+# DESIGN.md — Muakbank Zombie
+
 Design contract for the game UI. Derived from the three art-director mockups
 (title/menu, character select, splash). Implementation follows this file; this
 file follows the mockups.
@@ -43,6 +51,7 @@ dimensions so a reading eye isn't re-learning the layout mid-fight.
 | `accent-pink` | `#ff2d7b` | Primary accent, HYPE bar, Gamer lane |
 | `accent-orange` | `#ff8c2b` | Secondary accent, bar gradient end |
 | `accent-yellow` | `#ffd60a` | Timer, Hunter lane, highlights |
+| `clinical-blue` | `#6fa8ff` | Doctor lane (distinct from Nurse cyan) |
 | `neon-cyan` | `#2de0ff` | Nurse lane |
 | `neon-purple` | `#a05cff` | Streamer lane |
 | `neon-green` | `#37e05a` | Zombie eyes, OVERWHELM bar |
@@ -109,7 +118,7 @@ belongs to visual QA on device — **not claimed here**.
 ## 6. Performance budget (Android)
 
 Targets are set so a regression is *detectable*, not so a number looks good. The
-game is a 3-sandbox 3D survival brawler (Old Town / Industrial District / Endgame Heights — each an open-world level with embedded mini-games), with
+game is a 3-sandbox 3D survival brawler (Suburban / Industrial / Bio-Lab — each an open-world level with embedded mini-games), with
 procedural (non-skeletal) animation and
 no baked lightmaps — the expensive things are real-time lights, shadows, and the
 number of live `CharacterBody3D` zombies.

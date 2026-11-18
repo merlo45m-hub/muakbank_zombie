@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-11-16T00:01:05Z",
+  "generator": "tools/check_asset_registry.py",
+  "unique_refs": 280,
+  "total_ref_occurrences": 422,
+  "static_ok": 276,
+  "dynamic_ok": 4,
+  "excepted": 0,
+  "broken": [],
+  "exceptions": [],
+  "dynamic": [
+    {
+      "ref": "res://assets/models/${mdl}.glb",
+      "count": 1,
+      "sources": [
+        "tools/charshots.sh:19"
+      ],
+      "kind": "dynamic",
+      "pattern": "assets/models/*.glb",
+      "matches": 36,
+      "sample": [
+        "assets/models/aggy_voxel_hero_hunter.glb",
+        "assets/models/aggy_voxel_zombie_skeleton_dog.glb",
+        "assets/models/character_doctor.glb",
+        "assets/models/character_gamer.glb"
+      ]
+    },
+    {
+      "ref": "res://assets/models/cc0/blocks/character-<x>.glb",
+      "count": 1,
+      "sources": [
+        "docs/CHARACTER_WIRING_AUDIT.md:565"
+      ],
+      "kind": "dynamic",
+      "pattern": "assets/models/cc0/blocks/character-*.glb",
+      "matches": 18,
+      "sample": [
+        "assets/models/cc0/blocks/character-a.glb",
+        "assets/models/cc0/blocks/character-b.glb",
+        "assets/models/cc0/blocks/character-c.glb",
+        "assets/models/cc0/blocks/character-d.glb"
+      ]
+    },
+    {
+      "ref": "res://assets/models/cc0/kenney_anim/%s.glb",
+      "count": 1,
+      "sources": [
+        "tools/loadtest_anim.gd:37"
+      ],
+      "kind": "dynamic",
+      "pattern": "assets/models/cc0/kenney_anim/*.glb",
+      "matches": 4,
+      "sample": [
+        "assets/models/cc0/kenney_anim/idle.glb",
+        "assets/models/cc0/kenney_anim/jump.glb",
+        "assets/models/cc0/kenney_anim/model.glb",
+        "assets/models/cc0/kenney_anim/run.glb"
+      ]
+    },
+    {
+      "ref": "res://assets/models/character_%s.glb",
+      "count": 4,
+      "sources": [
+        "docs/CHARACTER_WIRING_AUDIT.md:46",
+        "docs/CHARACTER_WIRING_AUDIT.md:77",
+        "docs/CHARACTER_WIRING_AUDIT.md:121",
+        "scripts/core/Player.gd:1224"
+      ],
+      "kind": "dynamic",
+      "pattern": "assets/models/character_*.glb",
+      "matches": 5,
+      "sample": [
+        "assets/models/character_doctor.glb",
+        "assets/models/character_gamer.glb",
+        "assets/models/character_hunter.glb",
+        "assets/models/character_nurse.glb"
+      ]
+    }
+  ],
+  "on_disk_glb": 339,
+  "missing_import_sidecars": [],
+  "orphan_imports": [],
+  "sha256": "1334e3c5f68a9421",
+  "ok": true
+}

@@ -3,9 +3,9 @@ class_name ZombieRunner
 
 ## Zombie Runner — Fast skirmisher that dodges sideways between charges
 ## Low HP, high speed, erratic strafing. Extends ZombieBase.
-## Uses the rigged zombie model (zombie_rigged.gltf) with baked animations.
-## The procedural animator is neutralized for this subtype — all movement and
-## combat visuals come from the AnimationPlayer instead.
+## Uses the Kenney rigged model.glb pipeline via CharacterAnim.setup_rigged()
+## (idle/run/jump skeletal clips). The procedural animator is neutralized for
+## this subtype — all movement and combat visuals come from the AnimationPlayer.
 
 @export var strafe_speed: float = 6.0
 @export var strafe_interval: float = 1.2
@@ -25,7 +25,7 @@ func _post_ready() -> void:
 
 	# The base class already disabled the ProceduralAnimator and attached the
 	# rigged AnimationPlayer (idle/run/jump) via CharacterAnim.setup_rigged().
-	# This subtype no longer loads the old zombie_rigged.gltf library.
+	# The retired zombie_rigged.gltf library is no longer part of this build.
 
 func _physics_process(delta: float) -> void:
 	if strafe_timer > 0:

@@ -33,7 +33,7 @@ var _t := 0.0
 @onready var next_btn = $VBoxMain/PaginationContainer/NextBtn
 
 
-func _ready():
+func _ready() -> void:
 	_cta = $VBoxMain/CtaLabel
 	if _cta != null:
 		_cta.add_theme_font_override("font", BUNGEE)
@@ -80,7 +80,7 @@ func _process(delta: float) -> void:
 			lb.modulate = Color(1, 1, 1, 0.72 + 0.28 * (0.5 + 0.5 * sin(_t * 3.2)))
 
 
-func _play_click():
+func _play_click() -> void:
 	Audio.play_click()
 
 
@@ -96,7 +96,7 @@ func _card_style(bg: Color, border: Color, bw: int = 2) -> StyleBoxFlat:
 	return sb
 
 
-func _build_level_buttons():
+func _build_level_buttons() -> void:
 	"""One themed card per level: number, status line, hover glow."""
 	for i in range(1, Level.get_level_count() + 1):
 		var btn := Button.new()
@@ -188,7 +188,7 @@ func _build_level_buttons():
 		grid.add_child(btn)
 
 
-func _update_page():
+func _update_page() -> void:
 	"""Show only buttons for current page."""
 	var start = current_page * levels_per_page
 	var end = min(start + levels_per_page, buttons.size())
@@ -201,24 +201,24 @@ func _update_page():
 	next_btn.disabled = (end >= buttons.size())
 
 
-func _on_level_pressed(level):
+func _on_level_pressed(level: int) -> void:
 	"""Start selected level."""
 	_play_click()
 	Save.set_current_level(level)
 	get_tree().change_scene_to_file("res://scenes/main/game.tscn")
 
 
-func _on_back():
+func _on_back() -> void:
 	_play_click()
 	get_tree().change_scene_to_file("res://scenes/main/title_screen.tscn")
 
 
-func _on_prev():
+func _on_prev() -> void:
 	if current_page > 0:
 		current_page -= 1
 		_update_page()
 
 
-func _on_next():
+func _on_next() -> void:
 	current_page += 1
 	_update_page()

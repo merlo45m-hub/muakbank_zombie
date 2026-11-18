@@ -1,7 +1,7 @@
 extends Node3D
 class_name ArmoryLockdownController
 
-## ArmoryLockdownController — Mini-game cluster controller for SAND2 (Industrial District).
+## ArmoryLockdownController — Mini-game cluster controller for SAND2 (Industrial).
 ## Embeds BreakableSupplyCrate, CheckpointArmoryTerminal, and InteractiveDoor.
 ## Player activates the armory terminal, cracks the supply crates for gear/braces,
 ## and breaches/opens the security door to restore facility access.

@@ -28,12 +28,16 @@ const SURVIVOR_CONFIGS: Array[Dictionary] = [
 	{"id": "hunter", "name": "HUNTER", "scene": "res://scenes/characters/character_hunter.tscn"},
 ]
 
+# Canonical 5-lane palette (DESIGN.md §2 / specs/claude_canonical_roster.md).
+# MUST stay in sync with theme/pedestal*.tres — those bg_color values are the
+# source of truth, reproduced exactly here. Issue #16 resolved the Nurse lane to
+# neon-cyan #2de0ff (the old "Mint Green" value here was the stale outlier).
 const PEDESTAL_COLORS: Dictionary = {
-	"gamer": Color(1.0, 0.08, 0.60),      # Magenta
-	"doctor": Color(0.08, 0.85, 1.0),     # Cyan
-	"nurse": Color(0.18, 0.96, 0.65),     # Mint Green
-	"streamer": Color(0.76, 0.22, 1.0),   # Violet
-	"hunter": Color(1.0, 0.82, 0.18),     # Warm Gold
+	"gamer": Color(1.0, 0.176, 0.482),     # #ff2d7b
+	"doctor": Color(0.435, 0.659, 1.0),    # #6fa8ff clinical-blue
+	"nurse": Color(0.176, 0.878, 1.0),     # #2de0ff neon-cyan
+	"streamer": Color(0.627, 0.361, 1.0),  # #a05cff
+	"hunter": Color(1.0, 0.839, 0.039),    # #ffd60a
 }
 
 var selected_character: int = 2
@@ -141,7 +145,6 @@ func _ready() -> void:
 	if ResourceLoader.exists(bold_path):
 		_btn_font_bold = load(bold_path)
 
-	call_deferred("_fit_title")
 
 	_build_stage()
 	_build_ui()
@@ -179,16 +182,6 @@ func _ready() -> void:
 	_update_tap_zones.call_deferred()
 
 	Audio.play_menu_music()
-
-
-func _fit_title() -> void:
-	var title := get_node_or_null("UI/TitleLabel") as Label
-	if title != null:
-		title.add_theme_font_size_override("font_size", _fs(44))
-		_fit_label_font(title, 44, 0.94)
-	var subtitle := get_node_or_null("UI/SubtitleLabel") as Label
-	if subtitle != null:
-		subtitle.add_theme_font_size_override("font_size", _fs(18))
 
 
 func _process(delta: float) -> void:

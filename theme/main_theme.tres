@@ -8,6 +8,7 @@
 [ext_resource type="StyleBox" path="res://theme/pedestalgamer.tres" id="5_4xa5k"]
 [ext_resource type="StyleBox" path="res://theme/pedestalhunter.tres" id="6_fqy7u"]
 [ext_resource type="StyleBox" path="res://theme/pedestalstreamer.tres" id="7_1g5yx"]
+[ext_resource type="StyleBox" path="res://theme/pedestalnurse.tres" id="8_pednurse"]
 [ext_resource type="FontFile" path="res://assets/fonts/Creepster-Regular.ttf" id="8_dkcgw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a7tdx"]
@@ -77,6 +78,8 @@ PedestalHunter/base_type = &"PanelContainer"
 PedestalHunter/styles/panel = ExtResource("6_fqy7u")
 PedestalStreamer/base_type = &"PanelContainer"
 PedestalStreamer/styles/panel = ExtResource("7_1g5yx")
+PedestalNurse/base_type = &"PanelContainer"
+PedestalNurse/styles/panel = ExtResource("8_pednurse")
 RichTextLabel/colors/font_color = Color(1, 1, 1, 1)
 TitleLabel/base_type = &"Label"
 TitleLabel/colors/font_color = Color(1, 1, 1, 1)

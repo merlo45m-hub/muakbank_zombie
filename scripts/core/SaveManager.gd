@@ -6,7 +6,7 @@
 extends Node
 
 # === SAVE VERSION (bump to trigger a re-save / migration on load) ===
-const SAVE_VERSION: int = 1
+const SAVE_VERSION: int = 6
 
 # === SAVE DATA ===
 # Filled by _load_game() at startup. _default_save_data() is the single source of
@@ -74,7 +74,7 @@ func _load_game() -> void:
 		print("[SaveManager] Migrating save v%d -> v%d" % [old_version, SAVE_VERSION])
 		save_game()
 
-func _coerce(key: String, value, fallback):
+func _coerce(key: String, value: Variant, fallback: Variant) -> Variant:
 	"""Keep stored types stable across a JSON round-trip (a save file is JSON)."""
 	if value == null:
 		return fallback
@@ -85,14 +85,40 @@ func _coerce(key: String, value, fallback):
 			if value is Dictionary:
 				return value
 			return fallback
-		"tutorial_completed", "haptics_enabled":
+		"tutorial_completed", "haptics_enabled", "post_cure":
 			return bool(value)
+		"collection_items", "collection_regions", "dismantled_props", "bestiary", "world_bosses_defeated":
+			if value is Dictionary:
+				return value
+			return fallback
+		"museum_seen":
+			if value is Array:
+				return value
+			return fallback
+		"museum_version":
+			return int(value)
+		"cure_synthesized_at":
+			return str(value)
 		"unlocked_levels":
 			# JSON stores ints as floats; level ids must compare as ints
 			# (is_level_unlocked uses has(level) against ints).
 			var levels: Array[int] = []
 			levels.assign(value)
 			return levels
+		"world_current_region", "world_max_loot_tier":
+			return int(value)
+		"world_unlocked_regions":
+			var regions: Array[int] = []
+			regions.assign(value)
+			return regions
+		"world_tech", "world_transport_repaired", "world_milestones", "world_region_state":
+			if value is Dictionary:
+				return value
+			return fallback
+		"world_visited_regions":
+			var regs: Array[int] = []
+			regs.assign(value)
+			return regs
 		_:
 			return value
 
@@ -159,7 +185,24 @@ func _default_save_data() -> Dictionary:
 			"hunter": 0
 		},
 		"tutorial_completed": false,
-		"haptics_enabled": true
+		"haptics_enabled": true,
+		"collection_items": {},
+		"collection_regions": {},
+		"dismantled_props": {},
+		"bestiary": {},
+		"museum_seen": [],
+		"museum_version": 2,
+		"world_current_region": 1,
+		"world_unlocked_regions": [1],
+		"world_tech": {},
+		"world_transport_repaired": {},
+		"world_milestones": {},
+		"world_max_loot_tier": 1,
+		"world_visited_regions": [1],
+		"world_region_state": {},
+		"post_cure": false,
+		"world_bosses_defeated": {1: false, 2: false, 3: false},
+		"cure_synthesized_at": ""
 	}
 
 
@@ -267,3 +310,46 @@ func set_unlocked_achievements(ids: Array) -> void:
 
 func get_unlocked_achievements() -> Array:
 	return save_data.get("unlocked_achievements", [])
+
+
+# ── WORLD STATE (Issue #11) ───────────────────────────────────
+
+func get_world_state() -> Dictionary:
+	"""Read-only snapshot of the world_* save keys for WorldProgression.hydrate()."""
+	var out: Dictionary = {}
+	var defaults := _default_save_data()
+	for key in defaults:
+		if key.begins_with("world_"):
+			var v = save_data.get(key, defaults[key])
+			out[key] = v.duplicate(true) if v is Dictionary or v is Array else v
+	return out
+
+func set_world_state(data: Dictionary) -> void:
+	"""Single writer for world_* state; persists once via save_game()."""
+	var defaults := _default_save_data()
+	for key in data:
+		if key.begins_with("world_"):
+			save_data[key] = _coerce(key, data[key], defaults.get(key))
+	save_game()
+
+
+# ── POST-CURE & WORLD BOSSES (GDD §5, §7 / Issue #28) ────────
+
+func set_post_cure(val: bool) -> void:
+	save_data["post_cure"] = val
+	if val and str(save_data.get("cure_synthesized_at", "")).is_empty():
+		save_data["cure_synthesized_at"] = Time.get_datetime_string_from_system(true)
+	save_game()
+
+func is_post_cure() -> bool:
+	return bool(save_data.get("post_cure", false))
+
+func set_world_bosses_defeated(data: Dictionary) -> void:
+	save_data["world_bosses_defeated"] = data.duplicate(true)
+	save_game()
+
+func get_world_bosses_defeated() -> Dictionary:
+	var d = save_data.get("world_bosses_defeated", {})
+	if d is Dictionary:
+		return d.duplicate(true)
+	return {1: false, 2: false, 3: false}

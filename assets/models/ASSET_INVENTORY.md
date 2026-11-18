@@ -29,11 +29,19 @@ future assets.
 | Graveyard stones | 2 | **UNKNOWN** | Kenney "graveyard kit" *(unverified — no license file)* | `assets/models/cc0/kenney/` |
 | Animals | 4 | **UNKNOWN** | unnamed CC0 animal models *(no license file)* | `assets/models/cc0/animals/` |
 | Graveyard (glTF) | 0 (24 .gltf) | **UNKNOWN** | KayKit *Halloween Bits* *(unverified — no license file)* | `assets/models/cc0/kaykit/` |
-| **Total staged .glb** | **275** | | | `assets/models/cc0/` |
+| Graveyard Kit (GLB) | 28 | CC0 | Kenney *Graveyard Kit (5.0)* — `LICENSE.txt` in pack dir | `assets/models/cc0/graveyard/` |
+| **Total staged .glb** | **303** | | | `assets/models/cc0/` |
 
 Generated in-project (no external license): `assets/models/*.glb` — 13 blocky
 models (`character_*.glb` ×5, `weapon_*.glb` ×3, `zombie_*.glb` ×5), built with
 trimesh. See `CREDITS.md` → "3D Models".
+
+Generated in-project (no external license): `assets/models/props/gravestone_split_parts.tscn`
+— pre-authored split-part PackedScene for one prop (gravestone), 2 primitive BoxMesh
+parts (base + top) at 1:1 metric scale, generated in Godot 4.7 headless. Wired to
+`DismantleComponent` via `scenes/world/props/gravestone_dismantle.tscn` with joint
+markers `JointA`/`JointB`, loot table id `grave_stone`, and `max_debris_per_prop = 6`.
+License: in-project generated, CC0-equivalent (no external dependency).
 
 ## Per-pack licenses
 
@@ -49,6 +57,14 @@ Packs with a license file verified in-tree:
 
 All five are CC0 (public domain, no attribution required); the license files
 invite — but do not require — crediting `Kenney` / `www.kenney.nl`.
+
+**Sixth verified pack (added 2026-11-15):**
+
+| Pack | Version | Author | License | Source | Directory | License file |
+|------|---------|--------|---------|--------|-----------|--------------|
+| Graveyard Kit | 5.0 | Kenney | CC0 | [kenney.nl](https://kenney.nl/assets/graveyard-kit) | `assets/models/cc0/graveyard/` | `LICENSE.txt` — verified from the downloaded zip, "Graveyard Kit (5.0), Created/distributed by Kenney, License: Creative Commons Zero, CC0, personal/educational/commercial use".
+
+> Note: `assets/models/cc0/kenney/` (2 graveyard stones) remains **UNKNOWN** — it is a different, older pack with no license file. Do not conflate it with the verified `cc0/graveyard/` pack.
 
 Packs **without** a license file — license **UNKNOWN**, not verifiable from the
 repository. Provenance notes below are hints from commit history and script

@@ -1,0 +1,846 @@
+{
+  "schema_version": 1,
+  "generated_from": "assets/models/cc0/graveyard/*.glb (Kenney Graveyard Kit 5.0, CC0) + 2 custom voxel GLBs",
+  "license": "CC0 — LICENSE.txt in assets/models/cc0/graveyard/",
+  "source_of_truth": "projects/muakbank-zombie/ASSET-REVIEW-INDEX.md; GitHub #15",
+  "note": "SOP Stage-2 fields (asset_id/category/dimensions_m/materials/export_target) plus collection extension fields (role/region_id/tier/display_name). region_id/tier are draft assignments, verify against #11 RegionCatalog before gameplay wiring.",
+  "item_count": 30,
+  "items": [
+    {
+      "asset_id": "scav_altar_stone",
+      "category": "tech",
+      "display_name": "Altar Stone",
+      "role": "marker",
+      "region_id": 2,
+      "tier": 2,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/altar-stone.glb",
+        "texture_dir": "res://assets/textures/scav_altar_stone/"
+      }
+    },
+    {
+      "asset_id": "scav_brick_wall",
+      "category": "resource",
+      "display_name": "Brick Wall",
+      "role": "fence",
+      "region_id": 2,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/brick-wall.glb",
+        "texture_dir": "res://assets/textures/scav_brick_wall/"
+      }
+    },
+    {
+      "asset_id": "scav_cross",
+      "category": "tech",
+      "display_name": "Cross",
+      "role": "marker",
+      "region_id": 2,
+      "tier": 2,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/cross.glb",
+        "texture_dir": "res://assets/textures/scav_cross/"
+      }
+    },
+    {
+      "asset_id": "scav_cross_wood",
+      "category": "tech",
+      "display_name": "Cross Wood",
+      "role": "marker",
+      "region_id": 2,
+      "tier": 2,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/cross-wood.glb",
+        "texture_dir": "res://assets/textures/scav_cross_wood/"
+      }
+    },
+    {
+      "asset_id": "scav_crypt_small",
+      "category": "artifact",
+      "display_name": "Crypt Small",
+      "role": "structure",
+      "region_id": 2,
+      "tier": 3,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/crypt-small.glb",
+        "texture_dir": "res://assets/textures/scav_crypt_small/"
+      }
+    },
+    {
+      "asset_id": "scav_debris",
+      "category": "resource",
+      "display_name": "Debris",
+      "role": "scavenge",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/debris.glb",
+        "texture_dir": "res://assets/textures/scav_debris/"
+      }
+    },
+    {
+      "asset_id": "scav_debris_wood",
+      "category": "resource",
+      "display_name": "Debris Wood",
+      "role": "scavenge",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/debris-wood.glb",
+        "texture_dir": "res://assets/textures/scav_debris_wood/"
+      }
+    },
+    {
+      "asset_id": "scav_fence",
+      "category": "resource",
+      "display_name": "Fence",
+      "role": "fence",
+      "region_id": 2,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/fence.glb",
+        "texture_dir": "res://assets/textures/scav_fence/"
+      }
+    },
+    {
+      "asset_id": "scav_fence_damaged",
+      "category": "resource",
+      "display_name": "Fence Damaged",
+      "role": "fence",
+      "region_id": 2,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/fence-damaged.glb",
+        "texture_dir": "res://assets/textures/scav_fence_damaged/"
+      }
+    },
+    {
+      "asset_id": "scav_grave",
+      "category": "resource",
+      "display_name": "Grave",
+      "role": "gravestone",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/grave.glb",
+        "texture_dir": "res://assets/textures/scav_grave/"
+      }
+    },
+    {
+      "asset_id": "scav_grave_border",
+      "category": "resource",
+      "display_name": "Grave Border",
+      "role": "gravestone",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/grave-border.glb",
+        "texture_dir": "res://assets/textures/scav_grave_border/"
+      }
+    },
+    {
+      "asset_id": "scav_gravestone_bevel",
+      "category": "resource",
+      "display_name": "Gravestone Bevel",
+      "role": "gravestone",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/gravestone-bevel.glb",
+        "texture_dir": "res://assets/textures/scav_gravestone_bevel/"
+      }
+    },
+    {
+      "asset_id": "scav_gravestone_broken",
+      "category": "resource",
+      "display_name": "Gravestone Broken",
+      "role": "gravestone",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/gravestone-broken.glb",
+        "texture_dir": "res://assets/textures/scav_gravestone_broken/"
+      }
+    },
+    {
+      "asset_id": "scav_gravestone_cross",
+      "category": "resource",
+      "display_name": "Gravestone Cross",
+      "role": "gravestone",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/gravestone-cross.glb",
+        "texture_dir": "res://assets/textures/scav_gravestone_cross/"
+      }
+    },
+    {
+      "asset_id": "scav_gravestone_cross_large",
+      "category": "resource",
+      "display_name": "Gravestone Cross Large",
+      "role": "gravestone",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/gravestone-cross-large.glb",
+        "texture_dir": "res://assets/textures/scav_gravestone_cross_large/"
+      }
+    },
+    {
+      "asset_id": "scav_gravestone_decorative",
+      "category": "resource",
+      "display_name": "Gravestone Decorative",
+      "role": "gravestone",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/gravestone-decorative.glb",
+        "texture_dir": "res://assets/textures/scav_gravestone_decorative/"
+      }
+    },
+    {
+      "asset_id": "scav_gravestone_round",
+      "category": "resource",
+      "display_name": "Gravestone Round",
+      "role": "gravestone",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/gravestone-round.glb",
+        "texture_dir": "res://assets/textures/scav_gravestone_round/"
+      }
+    },
+    {
+      "asset_id": "scav_gravestone_wide",
+      "category": "resource",
+      "display_name": "Gravestone Wide",
+      "role": "gravestone",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/gravestone-wide.glb",
+        "texture_dir": "res://assets/textures/scav_gravestone_wide/"
+      }
+    },
+    {
+      "asset_id": "scav_iron_fence",
+      "category": "resource",
+      "display_name": "Iron Fence",
+      "role": "fence",
+      "region_id": 2,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/iron-fence.glb",
+        "texture_dir": "res://assets/textures/scav_iron_fence/"
+      }
+    },
+    {
+      "asset_id": "scav_lantern_candle",
+      "category": "tech",
+      "display_name": "Lantern Candle",
+      "role": "light",
+      "region_id": 1,
+      "tier": 2,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/lantern-candle.glb",
+        "texture_dir": "res://assets/textures/scav_lantern_candle/"
+      }
+    },
+    {
+      "asset_id": "scav_pine",
+      "category": "resource",
+      "display_name": "Pine",
+      "role": "tree",
+      "region_id": 3,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/pine.glb",
+        "texture_dir": "res://assets/textures/scav_pine/"
+      }
+    },
+    {
+      "asset_id": "scav_pine_crooked",
+      "category": "resource",
+      "display_name": "Pine Crooked",
+      "role": "tree",
+      "region_id": 3,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/pine-crooked.glb",
+        "texture_dir": "res://assets/textures/scav_pine_crooked/"
+      }
+    },
+    {
+      "asset_id": "scav_pine_fall",
+      "category": "resource",
+      "display_name": "Pine Fall",
+      "role": "tree",
+      "region_id": 3,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/pine-fall.glb",
+        "texture_dir": "res://assets/textures/scav_pine_fall/"
+      }
+    },
+    {
+      "asset_id": "scav_pumpkin",
+      "category": "resource",
+      "display_name": "Pumpkin",
+      "role": "seasonal",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/pumpkin.glb",
+        "texture_dir": "res://assets/textures/scav_pumpkin/"
+      }
+    },
+    {
+      "asset_id": "scav_pumpkin_carved",
+      "category": "resource",
+      "display_name": "Pumpkin Carved",
+      "role": "seasonal",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/pumpkin-carved.glb",
+        "texture_dir": "res://assets/textures/scav_pumpkin_carved/"
+      }
+    },
+    {
+      "asset_id": "scav_road",
+      "category": "resource",
+      "display_name": "Road",
+      "role": "ground",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/road.glb",
+        "texture_dir": "res://assets/textures/scav_road/"
+      }
+    },
+    {
+      "asset_id": "scav_rocks",
+      "category": "resource",
+      "display_name": "Rocks",
+      "role": "scavenge",
+      "region_id": 1,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/rocks.glb",
+        "texture_dir": "res://assets/textures/scav_rocks/"
+      }
+    },
+    {
+      "asset_id": "scav_trunk",
+      "category": "resource",
+      "display_name": "Trunk",
+      "role": "tree",
+      "region_id": 3,
+      "tier": 1,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#8a8a8a",
+          "roughness": 0.9,
+          "metallic": 0.0,
+          "wear_passes": [
+            "surface_dust"
+          ]
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/cc0/graveyard/trunk.glb",
+        "texture_dir": "res://assets/textures/scav_trunk/"
+      }
+    },
+    {
+      "asset_id": "collectible_aggy_voxel_hero_hunter",
+      "category": "artifact",
+      "display_name": "Aggy Voxel Hero Hunter",
+      "role": "character",
+      "region_id": 1,
+      "tier": 3,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.8,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#ffd60a",
+          "roughness": 0.7,
+          "metallic": 0.0,
+          "wear_passes": []
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/aggy_voxel_hero_hunter.glb",
+        "texture_dir": "res://assets/textures/aggy_voxel_hero_hunter/"
+      }
+    },
+    {
+      "asset_id": "collectible_aggy_voxel_zombie_skeleton_dog",
+      "category": "artifact",
+      "display_name": "Aggy Voxel Zombie Skeleton Dog",
+      "role": "character",
+      "region_id": 1,
+      "tier": 3,
+      "dimensions_m": {
+        "x": 1.0,
+        "y": 1.8,
+        "z": 1.0
+      },
+      "materials": [
+        {
+          "slot": "albedo",
+          "base_color_hex": "#ffd60a",
+          "roughness": 0.7,
+          "metallic": 0.0,
+          "wear_passes": []
+        }
+      ],
+      "export_target": {
+        "model_path": "res://assets/models/aggy_voxel_zombie_skeleton_dog.glb",
+        "texture_dir": "res://assets/textures/aggy_voxel_zombie_skeleton_dog/"
+      }
+    }
+  ]
+}

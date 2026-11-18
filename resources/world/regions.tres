@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="RegionCatalog" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/RegionDef.gd" id="1_ovcwh"]
+[ext_resource type="Script" path="res://scripts/core/RegionCatalog.gd" id="2_5ec24"]
+
+[sub_resource type="Resource" id="Resource_m2h17"]
+script = ExtResource("1_ovcwh")
+id = 1
+display_name = "Suburban"
+scene_path = "res://scenes/world/environment/old_town_enhanced.tscn"
+spawn_point = Vector3(-14, 0.15, -14)
+
+[sub_resource type="Resource" id="Resource_ki0b0"]
+script = ExtResource("1_ovcwh")
+id = 2
+display_name = "Industrial"
+scene_path = "res://scenes/world/environment/industrial_district.tscn"
+loot_tier = 2
+tech_required = 3
+transport_parts_required = 2
+milestones_required = Array[StringName]([&"first_shift", &"boss_defeated"])
+prerequisite_region = 1
+spawn_point = Vector3(0, 0.15, 0)
+
+[sub_resource type="Resource" id="Resource_14lbn"]
+script = ExtResource("1_ovcwh")
+id = 3
+display_name = "Bio-Lab"
+scene_path = "res://scenes/world/environment/endgame_heights.tscn"
+loot_tier = 3
+tech_required = 5
+transport_parts_required = 3
+milestones_required = Array[StringName]([&"survivors_saved", &"extraction_ready"])
+prerequisite_region = 2
+spawn_point = Vector3(0, 0.15, 0)
+
+[resource]
+script = ExtResource("2_5ec24")
+regions = Array[ExtResource("1_ovcwh")]([SubResource("Resource_m2h17"), SubResource("Resource_ki0b0"), SubResource("Resource_14lbn")])

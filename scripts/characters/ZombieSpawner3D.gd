@@ -119,7 +119,7 @@ func _init_pools() -> void:
 			push_warning("[ZombieSpawner] Failed to create pool for '" + prefix + "'")
 
 
-func _create_pool(size: int, prefix: String, scene) -> Object:
+func _create_pool(size: int, prefix: String, scene: PackedScene) -> Object:
 	# The godot-object-pool pool.gd expects (size, prefix, scene) in _init
 	# Instancing a script resource directly works in Godot 4.x
 	var pool_script = preload("res://addons/godot-object-pool/pool.gd")

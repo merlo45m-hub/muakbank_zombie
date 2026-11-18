@@ -13,9 +13,11 @@ var environments = {
 
 # Level → display name
 var level_names = {
-	1: "Old Town",
-	2: "Industrial District",
-	3: "Endgame Heights",
+	# GDD-3 (#27) canonical world display names. Scene paths in `environments`
+	# remain authoritative and unchanged — these are DISPLAY-NAME ALIASES only.
+	1: "Suburban",
+	2: "Industrial",
+	3: "Bio-Lab",
 }
 
 # Level → ambient sound name

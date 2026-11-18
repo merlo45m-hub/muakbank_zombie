@@ -1,0 +1,12 @@
+{
+  "source": "blender_structure_assets.json",
+  "parts_built": 52,
+  "expected_parts": 52,
+  "scale_locked_parts": 52,
+  "bbox_mismatches": [],
+  "bbox_tolerance_m": 0.001,
+  "scale_contract_sha256": "sha256:79c3d344fccd852a0d7736092d89fa850691e84b548fd9775a09ddce4220e450",
+  "glb": "screen_structures_exploded.glb",
+  "glb_bytes": 2041208,
+  "build_ok": true
+}

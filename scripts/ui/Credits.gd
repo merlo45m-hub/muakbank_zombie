@@ -6,10 +6,10 @@ extends Control
 @onready var back_btn = $VBoxMain/BackBtn
 
 
-func _ready():
+func _ready() -> void:
 	back_btn.pressed.connect(_on_back)
 
 
-func _on_back():
+func _on_back() -> void:
 	Audio.play_click()
 	get_tree().change_scene_to_file("res://scenes/main/title_screen.tscn")

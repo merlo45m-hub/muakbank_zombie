@@ -4,6 +4,41 @@ Third-person 3D zombie survival game — **Godot 4.7**, Android target.
 
 Eat food to restore health, fight off zombie animals, survive the shift.
 
+## Current design direction — LAW OF TRUTH
+
+**Adopted 2026-11-15:** the vault master GDD is the canonical game design.
+Version-controlled transcription + precedence contract: `docs/MASTER_GDD.md`.
+Source: `hermes_brain/second_brain/Mukbang_Zombie_GDD.pdf` (via the `Master game
+design plan.md` embed). Master tracker: GitHub #24; roadmap #15.
+
+The game is a 60 FPS **dismantling** action-survival title across three
+interconnected Miami-themed worlds (Suburban / Industrial / Bio-Lab) with a
+Vinyl Action-Figure aesthetic, component-swap destruction, **non-linear
+bidirectional** secret-transport hopping, Cure synthesis on a *majority*
+achievement threshold, and a post-cure open world.
+
+Implementation plan (GitHub workstreams, all documented):
+1. **#25 GDD-1** — non-linear bidirectional hopping + secret transport (critical path).
+2. **#26 GDD-2** — `DismantleComponent` + component-swap destruction loop.
+3. **#27 GDD-3** — remap world names/settings to Suburban / Industrial / Bio-Lab.
+4. **#28 GDD-4** — Cure synthesis, majority threshold, post-cure `AchievementManager`.
+5. **#29 GDD-5** — `CollectionLog & Bestiary` persistent registry.
+Supporting: #23 headless rendering to vault, #21 device visual review, #9.2 assets.
+
+Delegation (curator: Hermes): three bounded spec lanes — architecture/failure
+modes, concrete patch/state, and validation/CI — each with an explicit STOP and
+no repo/GitHub writes; the curator verifies every premise before applying.
+
+Already implemented against the GDD: VinylLook Fresnel rim shader, opt-in
+volumetric fog (OFF by default to protect 60 FPS), 1:1 metric Blender GLB
+exports, threaded `WorldHopManager` + structured state serialization, and the
+headless/CI validation gates.
+
+The "Play" / "Systems" sections below describe the LEGACY loop and are retained
+only until the workstreams above land. Do not treat them as the design source of
+truth.
+
+
 ## Play
 
 - **Desktop**: open `project.godot` in Godot 4.7 and press F5.

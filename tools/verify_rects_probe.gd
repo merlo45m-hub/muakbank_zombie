@@ -20,9 +20,9 @@ func _ready() -> void:
 	await get_tree().process_frame
 	await get_tree().create_timer(0.3).timeout
 
-	var VW: float = float(get_viewport_rect().size.x)
-	var VH: float = float(get_viewport_rect().size.y)
-	print(TAG, " viewport=", get_viewport_rect().size)
+	var VW: float = float(get_viewport().get_visible_rect().size.x)
+	var VH: float = float(get_viewport().get_visible_rect().size.y)
+	print(TAG, " viewport=", get_viewport().get_visible_rect().size)
 
 	var controls: Array = []
 	for b in [mc.sprint_btn, mc.jump_btn, mc.weapon_btn, mc.attack_btn]:

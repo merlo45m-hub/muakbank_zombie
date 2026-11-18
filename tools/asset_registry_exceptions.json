@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "note": "Explicitly documented non-asset references (dev-probe subjects, templates). Every entry is counted in the registry report, never silently ignored. Currently empty: no broken model references remain.",
+  "exceptions": []
+}

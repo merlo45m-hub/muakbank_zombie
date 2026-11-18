@@ -27,6 +27,26 @@ SoundManager="*uid://6q1wagejt60k"
 MinosDamageNumbers2D="*uid://cmstxlu50gkl7"
 MinosDamageNumbers3D="*uid://bqk86tyyf62lx"
 Tutorial="*res://scripts/ui/tutorial.gd"
+CollectionManager="*res://scripts/gameplay/CollectionManager.gd"
+ProgressTracker="*res://scripts/gameplay/ProgressTracker.gd"
+WorldProgression="*uid://vjk6l7vdgfhb"
+WorldHopManager="*uid://bacd1k0qdvwnw"
+WorldProgressListeners="*uid://d2pyidsqp2nwk"
+FpsMonitor="*res://scripts/core/FpsMonitor.gd"
+DebrisPool="*res://scripts/core/DebrisPool.gd"
+CollectionLog="*res://scripts/gameplay/CollectionLog.gd"
+Bestiary="*res://scripts/gameplay/Bestiary.gd"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/inferred_declaration=1
+gdscript/warnings/unsafe_property_access=1
+gdscript/warnings/unsafe_method_access=1
+gdscript/warnings/unsafe_cast=1
+gdscript/warnings/unsafe_call_argument=1
+gdscript/warnings/return_value_discarded=1
+gdscript/warnings/missing_await=1
 
 [display]
 

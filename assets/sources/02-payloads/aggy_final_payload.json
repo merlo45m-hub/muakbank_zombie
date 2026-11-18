@@ -1,0 +1,10 @@
+{
+  "asset_id": "final_truck",
+  "category": "vehicle",
+  "dimensions_m": {"x": 3.0, "y": 2.0, "z": 5.0},
+  "export_target": "assets/models",
+  "materials": [
+    {"slot": "albedo", "base_color_hex": "#2e5a3a", "roughness": 0.7, "metallic": 0.2, "wear_passes": 1},
+    {"slot": "emission", "base_color_hex": "#ff3a1a", "roughness": 0.5, "metallic": 0.0, "wear_passes": 1}
+  ]
+}
