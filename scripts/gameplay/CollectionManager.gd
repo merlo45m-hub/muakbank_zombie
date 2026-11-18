@@ -22,17 +22,17 @@ func _load() -> void:
 	var save := get_node_or_null("/root/Save")
 	if save == null:
 		return
-	var raw_items = save.save_data.get("collection_items", {})
-	var raw_regions = save.save_data.get("collection_regions", {})
-	var raw_seen = save.save_data.get("museum_seen", [])
+	var raw_items = save.get_registry("collection_items")
+	var raw_regions = save.get_registry("collection_regions")
+	var raw_seen = save.get_registry("museum_seen")
 	if raw_items is Dictionary:
 		_items = raw_items.duplicate(true)
 	if raw_regions is Dictionary:
 		_regions = raw_regions.duplicate(true)
 	if raw_seen is Array:
 		_seen = raw_seen.duplicate()
-	var raw_props = save.save_data.get("dismantled_props", {})
-	var raw_bestiary = save.save_data.get("bestiary", {})
+	var raw_props = save.get_registry("dismantled_props")
+	var raw_bestiary = save.get_registry("bestiary")
 	if raw_props is Dictionary:
 		_dismantled_props = (raw_props as Dictionary).duplicate(true)
 	if raw_bestiary is Dictionary:
@@ -47,12 +47,12 @@ func _persist() -> void:
 	var save := get_node_or_null("/root/Save")
 	if save == null:
 		return
-	save.save_data["collection_items"] = _items.duplicate(true)
-	save.save_data["collection_regions"] = _regions.duplicate(true)
-	save.save_data["museum_seen"] = _seen.duplicate()
-	save.save_data["museum_version"] = 2
-	save.save_data["dismantled_props"] = _dismantled_props.duplicate(true)
-	save.save_data["bestiary"] = _bestiary.duplicate(true)
+	save.set_registry("collection_items", _items.duplicate(true))
+	save.set_registry("collection_regions", _regions.duplicate(true))
+	save.set_registry("museum_seen", _seen.duplicate())
+	save.set_registry("museum_version", 2)
+	save.set_registry("dismantled_props", _dismantled_props.duplicate(true))
+	save.set_registry("bestiary", _bestiary.duplicate(true))
 	save.save_game()
 
 

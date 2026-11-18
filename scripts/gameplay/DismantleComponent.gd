@@ -123,11 +123,22 @@ func _swap_to_split_meshes() -> void:
 		if pool != null and pool.has_method("acquire"):
 			acquired = pool.call("acquire", split_parts_scene, marker.global_position)
 		else:
+			push_warning("[DismantleComponent] DebrisPool unavailable — fallback debris self-despawns after %ss" % [str(despawn_delay)])
 			var inst: Node = split_parts_scene.instantiate()
 			parent_node.add_child(inst)
 			if inst is Node3D:
 				(inst as Node3D).global_position = marker.global_position
-			acquired = inst
+			if despawn_delay <= 0.0:
+				inst.queue_free()
+				acquired = null
+			else:
+				var t: Timer = Timer.new()
+				t.one_shot = true
+				t.wait_time = despawn_delay
+				t.timeout.connect(_on_fallback_despawn.bind(inst))
+				inst.add_child(t)
+				t.start()
+				acquired = inst
 		if acquired is Node:
 			_spawned_debris.append(acquired as Node)
 
@@ -195,6 +206,12 @@ func _on_despawn_timeout() -> void:
 		pool.call("recycle_all", _spawned_debris)
 	_spawned_debris.clear()
 	despawned.emit()
+
+
+func _on_fallback_despawn(node: Node) -> void:
+	"""Self-despawn for fallback debris when DebrisPool cannot recycle it."""
+	if is_instance_valid(node):
+		node.queue_free()
 
 
 func recycle() -> void:
