@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="BoxMesh" id="BaseMesh"]
+size = Vector3(0.4, 0.9, 0.2)
+
+[sub_resource type="BoxMesh" id="TopMesh"]
+size = Vector3(0.34, 0.45, 0.16)
+
+[sub_resource type="StandardMaterial3D" id="BaseMaterial"]
+albedo_color = Color(0.62, 0.58, 0.5, 1.0)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="TopMaterial"]
+albedo_color = Color(0.58, 0.54, 0.46, 1.0)
+roughness = 0.9
+
+[node name="GravestoneParts" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+mesh = SubResource("BaseMesh")
+material_override = SubResource("BaseMaterial")
+global_position = Vector3(0, 0.45, 0)
+
+[node name="Top" type="MeshInstance3D" parent="."]
+mesh = SubResource("TopMesh")
+material_override = SubResource("TopMaterial")
+global_position = Vector3(0, 1.1, 0)

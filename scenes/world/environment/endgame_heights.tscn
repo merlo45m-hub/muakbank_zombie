@@ -1,4 +1,5 @@
 [gd_scene format=3]
+[ext_resource type="Script" path="res://scripts/world/asset_blockout.gd" id="blockout_kenney"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/environment/sewer_enhanced.tscn" id="1_487vu"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/mall_enhanced.tscn" id="2_i5oq1"]
@@ -298,3 +299,10 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 150, 0, 8)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 140, 0, 0)
 
 [node name="EndgameSupplyCacheNetwork" type="Node3D" parent="." unique_id=1825956653 instance=ExtResource("5_i5oq1")]
+
+[node name="KenneySurvivalBlockout" type="Node3D" parent="."]
+script = ExtResource("blockout_kenney")
+world_id = "EndgameHeights"
+prop_count = 28
+seed_value = 20261118
+

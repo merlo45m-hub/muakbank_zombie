@@ -58,8 +58,10 @@ const SURVIVOR_CONFIGS: Array[Dictionary] = [
 	},
 ]
 
-# Canonical 5-lane palette (DESIGN.md §2 / specs/claude_canonical_roster.md)
-# Nurse = neon-cyan (#2de0ff), Doctor = clinical-blue (#6fa8ff)
+# Canonical 5-lane palette (DESIGN.md §2 / specs/claude_canonical_roster.md).
+# MUST stay in sync with theme/pedestal*.tres — those bg_color values are the
+# source of truth, reproduced exactly here. Issue #16 resolved the Nurse lane to
+# neon-cyan #2de0ff (the old "Mint Green" value here was the stale outlier).
 const PEDESTAL_COLORS: Dictionary = {
 	"gamer": Color(1.0, 0.176, 0.482),     # #ff2d7b
 	"doctor": Color(0.435, 0.659, 1.0),    # #6fa8ff clinical-blue

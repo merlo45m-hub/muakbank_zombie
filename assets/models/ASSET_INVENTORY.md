@@ -36,6 +36,13 @@ Generated in-project (no external license): `assets/models/*.glb` — 13 blocky
 models (`character_*.glb` ×5, `weapon_*.glb` ×3, `zombie_*.glb` ×5), built with
 trimesh. See `CREDITS.md` → "3D Models".
 
+Generated in-project (no external license): `assets/models/props/gravestone_split_parts.tscn`
+— pre-authored split-part PackedScene for one prop (gravestone), 2 primitive BoxMesh
+parts (base + top) at 1:1 metric scale, generated in Godot 4.7 headless. Wired to
+`DismantleComponent` via `scenes/world/props/gravestone_dismantle.tscn` with joint
+markers `JointA`/`JointB`, loot table id `grave_stone`, and `max_debris_per_prop = 6`.
+License: in-project generated, CC0-equivalent (no external dependency).
+
 ## Per-pack licenses
 
 Packs with a license file verified in-tree:
