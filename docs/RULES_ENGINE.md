@@ -304,3 +304,18 @@ Asserts:
 - Upward neon lighting and pedestal emission matching canonical colors.
 - 2D unprojected tap zones across full viewport resolution.
 - UI button selection state transitions and persistence.
+
+
+### 3. Character Interchangeability & Reproducibility Test Harness
+
+Run headless via Godot on VPS:
+```bash
+xvfb-run -a /usr/local/bin/godot --headless --path . --script tools/tests/test_character_interchangeability.gd
+```
+Asserts:
+- Canonical 5-character roster availability.
+- Dynamic registration of custom reproducible characters (`Rules.register_character()`).
+- In-memory `CharacterStats` construction and scaling without `.tres` asset files.
+- `Player.gd` dynamic scene/model extraction and base stat application (`max_health`, `move_speed`, abilities).
+- Run lifecycle tracking (`record_run_started`, kills, `record_run_completed`).
+- Dynamic unlock rule evaluation with live-updated stats.
