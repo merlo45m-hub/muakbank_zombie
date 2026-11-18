@@ -1,0 +1,40 @@
+{
+  "rules_engine_enabled": true,
+  "description": "Rules Engine feature flags and parameter toggles. Allows independently toggling any subsystem, category, or parameter (0-157).",
+  "subsystem_flags": {
+    "stat_tracking": true,
+    "ab_testing": false,
+    "telemetry": false,
+    "remote_config": false,
+    "iap_rules": false,
+    "ad_rules": false,
+    "dynamic_spawns": true,
+    "dynamic_run_config": true,
+    "character_rules": true
+  },
+  "category_toggles": {
+    "General": true,
+    "UserStats": true,
+    "Monetization": false,
+    "Platform": true,
+    "LiveOps": false,
+    "Rewards": true,
+    "Challenges": true,
+    "Device": true,
+    "Gameplay": true,
+    "Extended": true
+  },
+  "parameter_toggles": {
+    "0": true,
+    "1": true,
+    "4": true,
+    "6": true,
+    "14": true,
+    "17": true,
+    "18": true,
+    "20": true,
+    "21": true,
+    "93": true,
+    "94": true
+  }
+}

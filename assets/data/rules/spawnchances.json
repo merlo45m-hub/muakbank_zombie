@@ -1,0 +1,8 @@
+{
+  "description": "Dynamic enemy and loot spawn rate modifiers.",
+  "zombie_runner_chance": 0.20,
+  "zombie_spitter_chance": 0.15,
+  "snack_drop_chance": 0.35,
+  "ammo_drop_chance": 0.25,
+  "special_crate_chance": 0.10
+}
