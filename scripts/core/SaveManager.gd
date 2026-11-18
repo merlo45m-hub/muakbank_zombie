@@ -333,6 +333,25 @@ func set_world_state(data: Dictionary) -> void:
 	save_game()
 
 
+# ── COLLECTION REGISTRY (sole-writer path) ─────────────────────
+
+func get_registry(key: String) -> Variant:
+	"""Read one registry key through the save layer (values are coerced on load)."""
+	return save_data.get(key, _default_save_data().get(key))
+
+func set_registry(key: String, value: Variant) -> void:
+	"""Coerce one registry key against its default; caller persists via save_game().
+	
+	CollectionManager (sole writer of collection_*/museum_*/dismantled_props/
+	bestiary) writes through this instead of mutating save_data directly.
+	"""
+	var defaults := _default_save_data()
+	if not defaults.has(key):
+		push_warning("[SaveManager] set_registry: unknown key %s" % key)
+		return
+	save_data[key] = _coerce(key, value, defaults.get(key))
+
+
 # ── POST-CURE & WORLD BOSSES (GDD §5, §7 / Issue #28) ────────
 
 func set_post_cure(val: bool) -> void:
