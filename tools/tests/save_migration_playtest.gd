@@ -94,7 +94,7 @@ func _initialize() -> void:
 		var actual = sd.get(key)
 		if present.has(key):
 			var stored = v5_payload[KEY_PREFIX + key]
-			if typeof(actual) != typeof(stored) or actual != stored:
+			if _canonicalize(actual) != _canonicalize(stored):
 				printerr("FAIL: key '", key, "' overwritten or mangled by round-trip; expected ", stored, " (", type_string(typeof(stored)), ") got ", actual, " (", type_string(typeof(actual)), ")")
 				ok = false
 			continue
@@ -129,3 +129,30 @@ func _initialize() -> void:
 	else:
 		printerr("MIGRATION_ROUNDTRIP_FAIL")
 		quit(1)
+
+
+func _canonicalize(v: Variant) -> Variant:
+	# JSON-equivalent comparison: JSON files carry floats and string object
+	# keys, so a stored Dictionary[int, Variant] legitimately comes back as
+	# Dictionary[String, float]. Canonicalize BOTH sides before comparing;
+	# semantic loss (a key/value actually changed) still fails the check.
+	match typeof(v):
+		TYPE_DICTIONARY:
+			var out := {}
+			for k in v:
+				var nk = k
+				if typeof(nk) == TYPE_STRING and String(nk).is_valid_int():
+					nk = int(nk)
+				out[str(nk)] = _canonicalize(v[k])
+			return out
+		TYPE_ARRAY:
+			var arr: Array = []
+			for x in v:
+				arr.append(_canonicalize(x))
+			return arr
+		TYPE_FLOAT:
+			if floorf(v) == v:
+				return int(v)
+			return v
+		_:
+			return v
