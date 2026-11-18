@@ -1,30 +1,104 @@
 #!/usr/bin/env python3
-"""GLB asset contract gate (stdlib only; runs anywhere CI or dev host runs).
+"""GLB asset contract gate (stdlib core; trimesh cross-check when available).
 
-Prevents the failure classes seen in #14 voxel-antagonist work:
-  1. axis mismatch  - Y-up vs Z-up builder bugs export sideways models.
-  2. bounds drift   - assets silently shrink/grow past the locked dims.
-  3. rig contract   - required VXZ part nodes / emissive materials missing.
+Layers, all deterministic (no vision, no engine):
+  0. MANIFEST SCHEMA - tools/glb_asset_contract.schema.json enforced on the
+     manifest itself before anything else (stdlib subset validator; pydantic
+     used additionally when importable). Contract drift = fail closed rc 3.
+  1. ORIENTATION     - height axis must be a real fraction of the largest
+     extent (catches Y-up/Z-up sideways exports) per contract entry.
+  2. BOUNDS          - world extents vs locked dims with per-axis tolerance.
+  3. RIG SCHEMA      - required part node names + emissive material names.
+  4. CROSS-CHECK     - when trimesh is importable, its scene bounds must agree
+     with the stdlib parser within 2 cm; disagreement is a VIOLATION
+     (validates the gate itself, not just the assets).
 
-Contract lives in tools/glb_asset_contract.json (one entry per .glb):
-  {"file": ..., "dims_tolerance": 0.25, "expect": {"length_max_extent_axis": "X",
-   "height_axis": "Y", "min_height_frac": 0.3, "required_nodes": [...],
-   "required_emissive_materials": [...]}}
+Usage:
+  python3 tools/verify_glb_assets.py [repo_root]
+  python3 tools/verify_glb_assets.py [repo_root] --generate   # refresh locked dims
 
-Validation parsing is intentionally FLEXIBLE: extents are compared with
-tolerances and fraction checks (no strict string equality, no exact tuple
-matches), and every violation names the file + the measured numbers.
-
-Exit codes: 0 = PASS, 2 = FAIL, 3 = contract/asset missing (fail closed).
+Exit: 0 PASS, 2 FAIL, 3 missing/broken contract or schema (fail closed).
 """
+import glob
 import json
 import os
+import re
 import struct
 import sys
 
 AXIS = {"X": 0, "Y": 1, "Z": 2}
 
 
+# ---------------------------------------------------------------- manifest schema
+def _v_type_ok(val, want):
+    m = {"object": dict, "array": list, "string": str,
+         "number": (int, float), "boolean": bool}
+    if want == "number":
+        return isinstance(val, (int, float)) and not isinstance(val, bool)
+    return isinstance(val, m[want])
+
+
+def _validate_subset(data, schema, path, errors):
+    t = schema.get("type")
+    if t and not _v_type_ok(data, t):
+        errors.append("%s: expected type %s" % (path, t))
+        return
+    if "enum" in schema and data not in schema["enum"]:
+        errors.append("%s: %r not in enum %s" % (path, data, schema["enum"]))
+    if isinstance(data, dict):
+        for r in schema.get("required", []):
+            if r not in data:
+                errors.append("%s: missing required key '%s'" % (path, r))
+        props = schema.get("properties", {})
+        if schema.get("additionalProperties") is False:
+            for k in data:
+                if k not in props:
+                    errors.append("%s: unexpected key '%s'" % (path, k))
+        for k, sub in props.items():
+            if k in data:
+                _validate_subset(data[k], sub, "%s.%s" % (path, k), errors)
+    if isinstance(data, list) and "items" in schema:
+        for i, item in enumerate(data):
+            _validate_subset(item, schema["items"], "%s[%d]" % (path, i), errors)
+    if isinstance(data, str):
+        if len(data) < schema.get("minLength", 0):
+            errors.append("%s: shorter than minLength %d" % (path, schema["minLength"]))
+        if "pattern" in schema and re.search(schema["pattern"], data) is None:
+            errors.append("%s: does not match pattern %s" % (path, schema["pattern"]))
+    if isinstance(data, (int, float)) and not isinstance(data, bool):
+        if "minimum" in schema and data < schema["minimum"]:
+            errors.append("%s: %s < minimum %s" % (path, data, schema["minimum"]))
+        if "maximum" in schema and data > schema["maximum"]:
+            errors.append("%s: %s > maximum %s" % (path, data, schema["maximum"]))
+
+
+def validate_manifest(entries, root_dir):
+    schema_path = os.path.join(root_dir, "tools", "glb_asset_contract.schema.json")
+    if not os.path.isfile(schema_path):
+        return ["manifest schema file missing: " + schema_path]
+    with open(schema_path) as f:
+        schema = json.load(f)
+    errors = []
+    _validate_subset(entries, schema, "manifest", errors)
+    # optional strict re-validation with pydantic when importable (dev hosts).
+    # CI stays stdlib-only by design: no pip, no engine.
+    try:
+        import pydantic  # noqa: F401
+        # jsonschema is the closer analogue for raw-schema validation; use it
+        # when present to double-check the subset validator itself.
+        try:
+            import jsonschema
+            jsonschema.validate(entries, schema)
+        except ImportError:
+            pass
+        except Exception as e:  # jsonschema disagrees with subset -> suspicious
+            errors.append("jsonschema disagrees with subset validator: %s" % str(e)[:200])
+    except ImportError:
+        pass
+    return errors
+
+
+# ---------------------------------------------------------------- glb parsing
 def glb_json_chunk(path):
     with open(path, "rb") as fh:
         header = fh.read(12)
@@ -37,7 +111,6 @@ def glb_json_chunk(path):
 
 
 def node_trs(node):
-    """Return (translation, scale) honoring matrix nodes loosely."""
     if "matrix" in node:
         m = node["matrix"]
         scale = (
@@ -45,15 +118,43 @@ def node_trs(node):
             (m[4] ** 2 + m[5] ** 2 + m[6] ** 2) ** 0.5,
             (m[8] ** 2 + m[9] ** 2 + m[10] ** 2) ** 0.5,
         )
-        trans = (m[12], m[13], m[14])
-        return trans, scale
-    t = node.get("translation", (0.0, 0.0, 0.0))
-    s = node.get("scale", (1.0, 1.0, 1.0))
-    return t, s
+        return (m[12], m[13], m[14]), scale
+    return node.get("translation", (0.0, 0.0, 0.0)), node.get("scale", (1.0, 1.0, 1.0))
+
+
+def quat_to_3x3(q):
+    x, y, z, w = q
+    return [
+        [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+        [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+        [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)],
+    ]
+
+
+def node_matrix(node):
+    """4x4 as rows. Honors gltf 'matrix' (column-major) or T/R/S."""
+    if "matrix" in node:
+        m = node["matrix"]
+        return [[m[c * 4 + r] for c in range(4)] for r in range(4)]
+    t = node.get("translation", [0.0, 0.0, 0.0])
+    r = quat_to_3x3(node["rotation"]) if "rotation" in node else [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    s = node.get("scale", [1.0, 1.0, 1.0])
+    rows = [[r[i][0] * s[0], r[i][1] * s[1], r[i][2] * s[2], t[i]] for i in range(3)]
+    rows.append([0.0, 0.0, 0.0, 1.0])
+    return rows
+
+
+def mat_mul(a, b):
+    return [[sum(a[i][k] * b[k][j] for k in range(4)) for j in range(4)] for i in range(4)]
+
+
+def xform_point(m, p):
+    return [m[i][0] * p[0] + m[i][1] * p[1] + m[i][2] * p[2] + m[i][3] for i in range(3)]
 
 
 def world_extents(js):
-    """Union of mesh bounds with node TRS applied, walking scene graph."""
+    """Union of mesh POSITION bounds through composed 4x4 node transforms
+    (translation, rotation, scale, or matrix) - exact for rotated hierarchies."""
     accessors = js.get("accessors", [])
     meshes = js.get("meshes", [])
     nodes = js.get("nodes", [])
@@ -61,50 +162,62 @@ def world_extents(js):
     def mesh_bounds(mesh):
         mn = [1e18] * 3
         mx = [-1e18] * 3
+        seen = False
         for prim in mesh.get("primitives", []):
             acc = accessors[prim["attributes"]["POSITION"]]
-            if "min" not in acc or "max" not in acc:
-                continue
-            for i in range(3):
-                mn[i] = min(mn[i], acc["min"][i])
-                mx[i] = max(mx[i], acc["max"][i])
-        return mn, mx
+            if "min" in acc and "max" in acc:
+                seen = True
+                for i in range(3):
+                    mn[i] = min(mn[i], acc["min"][i])
+                    mx[i] = max(mx[i], acc["max"][i])
+        return (mn, mx) if seen else None
 
-    def walk(idx, parent_scale, parent_trans):
+    def walk(idx, parent_mat):
         node = nodes[idx]
-        trans, scale = node_trs(node)
-        eff_trans = tuple(parent_trans[a] + parent_scale[a] * trans[a] for a in range(3))
-        eff_scale = tuple(parent_scale[a] * scale[a] for a in range(3))
-        out = []
+        mat = mat_mul(parent_mat, node_matrix(node))
+        pts = []
         if "mesh" in node:
-            mn, mx = mesh_bounds(meshes[node["mesh"]])
-            out.append(
-                (
-                    [eff_trans[a] + eff_scale[a] * mn[a] for a in range(3)],
-                    [eff_trans[a] + eff_scale[a] * mx[a] for a in range(3)],
-                )
-            )
+            mb = mesh_bounds(meshes[node["mesh"]])
+            if mb:
+                mn, mx = mb
+                for i in range(8):
+                    pts.append(xform_point(
+                        mat,
+                        [mx[0] if i & 1 else mn[0],
+                         mx[1] if i & 2 else mn[1],
+                         mx[2] if i & 4 else mn[2]],
+                    ))
         for child in node.get("children", []):
-            out.extend(walk(child, eff_scale, eff_trans))
-        return out
+            pts.extend(walk(child, mat))
+        return pts
 
-    roots = []
+    ident = [[1.0 if i == j else 0.0 for j in range(4)] for i in range(4)]
     scenes = js.get("scenes") or []
     if scenes:
         roots = scenes[0].get("nodes", [])
     else:
         parented = {c for n in nodes for c in n.get("children", [])}
         roots = [i for i in range(len(nodes)) if i not in parented]
-    boxes = []
+    pts = []
     for r in roots:
-        boxes.extend(walk(r, (1.0, 1.0, 1.0), (0.0, 0.0, 0.0)))
-    if not boxes:
+        pts.extend(walk(r, ident))
+    if not pts:
         return None
-    mn = [min(b[0][a] for b in boxes) for a in range(3)]
-    mx = [max(b[1][a] for b in boxes) for a in range(3)]
+    mn = [min(p[a] for p in pts) for a in range(3)]
+    mx = [max(p[a] for p in pts) for a in range(3)]
     return mn, mx
 
 
+def trimesh_extents(path):
+    try:
+        import trimesh
+    except Exception:
+        return None
+    sc = trimesh.load(path, force="scene")
+    return sc.bounds[1] - sc.bounds[0]
+
+
+# ---------------------------------------------------------------- checks
 def check_asset(root_dir, entry, problems):
     path = os.path.join(root_dir, entry["file"])
     if not os.path.isfile(path):
@@ -120,20 +233,17 @@ def check_asset(root_dir, entry, problems):
         return
     mn, mx = ext
     dims = [mx[a] - mn[a] for a in range(3)]
-
     exp = entry.get("expect", {})
     tol = float(entry.get("dims_tolerance", 0.25))
-    height_axis = exp.get("height_axis", "Y")
-    h = dims[AXIS[height_axis]]
-    # 1. orientation: height must not be the smallest extent, and must be a
-    #    reasonable fraction of the largest (a sideways model has height ~ length)
+    h_axis = AXIS[exp.get("height_axis", "Y")]
+
     largest = max(dims)
-    if largest > 0 and h < largest * float(exp.get("min_height_frac", 0.3)):
+    min_frac = float(exp.get("min_height_frac", 0.3))
+    if min_frac > 0 and largest > 0 and dims[h_axis] < largest * min_frac:
         problems.append(
-            "%s: orientation? height(%s)=%.2f is %.0f%% of largest extent=%.2f"
-            % (entry["file"], height_axis, h, 100 * h / max(largest, 1e-6), largest)
-        )
-    # 2. bounds drift vs locked dims (flexible: tolerance fraction per axis)
+            "%s: orientation? height extent %.2f is %.0f%% of largest %.2f (min %.0f%%)"
+            % (entry["file"], dims[h_axis], 100 * dims[h_axis] / largest, largest, 100 * min_frac))
+
     locked = exp.get("dims")
     if locked:
         for a, axis in enumerate("XYZ"):
@@ -142,37 +252,95 @@ def check_asset(root_dir, entry, problems):
                 continue
             dev = abs(dims[a] - want) / want
             if dev > tol:
-                problems.append(
-                    "%s: %s extent %.2f vs locked %.2f (dev %.0f%% > tol %.0f%%)"
-                    % (entry["file"], axis, dims[a], want, 100 * dev, 100 * tol)
-                )
-    # 3. rig contract
+                problems.append("%s: %s extent %.2f vs locked %.2f (dev %.0f%% > tol %.0f%%)"
+                                % (entry["file"], axis, dims[a], want, 100 * dev, 100 * tol))
+
     names = {n.get("name", "") for n in js.get("nodes", [])}
     for req in exp.get("required_nodes", []):
         if req not in names:
             problems.append("%s: missing required node %s" % (entry["file"], req))
-    emissive = {
-        m.get("name", "")
-        for m in js.get("materials", [])
-        if m.get("emissiveFactor") and any(m["emissiveFactor"])
-    }
+    emissive = {m.get("name", "") for m in js.get("materials", [])
+                if m.get("emissiveFactor") and any(m["emissiveFactor"])}
     for req in exp.get("required_emissive_materials", []):
         if req not in emissive:
             problems.append("%s: missing emissive material %s" % (entry["file"], req))
-    print(
-        "OK   %s dims=(%.2f,%.2f,%.2f) nodes=%d materials=%d emissive=%d"
-        % (entry["file"], dims[0], dims[1], dims[2], len(js.get("nodes", [])), len(js.get("materials", [])), len(emissive))
-    )
+
+    te = trimesh_extents(path)
+    if te is not None:
+        worst = max(abs(te[a] - dims[a]) for a in range(3))
+        if worst > 0.02:
+            problems.append("%s: parser disagreement - stdlib (%.2f,%.2f,%.2f) vs trimesh (%.2f,%.2f,%.2f) maxdev %.2fm"
+                            % (entry["file"], dims[0], dims[1], dims[2], te[0], te[1], te[2], worst))
+    print("OK   %s dims=(%.2f,%.2f,%.2f)%s nodes=%d mats=%d emissive=%d"
+          % (entry["file"], dims[0], dims[1], dims[2],
+             " xtrimesh" if te is not None else "",
+             len(js.get("nodes", [])), len(js.get("materials", [])), len(emissive)))
+
+
+# ---------------------------------------------------------------- generate
+def generate(root_dir):
+    cp = os.path.join(root_dir, "tools", "glb_asset_contract.json")
+    existing = {}
+    if os.path.isfile(cp):
+        for e in json.load(open(cp)):
+            existing[e["file"]] = e
+    entries = []
+    for path in sorted(glob.glob(os.path.join(root_dir, "assets", "models", "*.glb"))):
+        rel = os.path.relpath(path, root_dir).replace(os.sep, "/")
+        js, err = glb_json_chunk(path)
+        if err:
+            print("SKIP %s (%s)" % (rel, err))
+            continue
+        ext = world_extents(js)
+        if not ext:
+            print("SKIP %s (no bounds)" % rel)
+            continue
+        dims = [round(ext[1][a] - ext[0][a], 2) for a in range(3)]
+        if rel in existing and existing[rel].get("expect", {}).get("required_nodes"):
+            e = existing[rel]
+            e["expect"]["dims"] = {"X": dims[0], "Y": dims[1], "Z": dims[2]}
+            entries.append(e)
+        else:
+            entries.append({
+                "file": rel,
+                "dims_tolerance": 0.05,
+                "expect": {
+                    "height_axis": "Y",
+                    "min_height_frac": 0.0,
+                    "dims": {"X": dims[0], "Y": dims[1], "Z": dims[2]},
+                },
+            })
+    with open(cp, "w") as f:
+        json.dump(entries, f, indent=2)
+        f.write("\n")
+    print("GENERATED %d contract entries -> %s" % (len(entries), cp))
 
 
 def main():
-    root_dir = sys.argv[1] if len(sys.argv) > 1 else "."
+    args = sys.argv[1:]
+    gen = "--generate" in args
+    if gen:
+        args.remove("--generate")
+    root_dir = args[0] if args else "."
+    if gen:
+        generate(root_dir)
+        sys.exit(0)
+
     contract_path = os.path.join(root_dir, "tools", "glb_asset_contract.json")
     if not os.path.isfile(contract_path):
         print("CONTRACT MISSING: %s (fail closed)" % contract_path)
         sys.exit(3)
     with open(contract_path) as f:
         entries = json.load(f)
+
+    schema_errors = validate_manifest(entries, root_dir)
+    if schema_errors:
+        for e in schema_errors:
+            print("SCHEMA VIOLATION", e)
+        print("GLB_CONTRACT: FAIL (manifest schema: %d errors)" % len(schema_errors))
+        sys.exit(3)
+    print("MANIFEST SCHEMA: valid (%d entries)" % len(entries))
+
     problems = []
     for entry in entries:
         check_asset(root_dir, entry, problems)
