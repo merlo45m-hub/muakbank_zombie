@@ -1,0 +1,70 @@
+{
+  "description": "Reproducible Character Configuration Registry. Add new characters dynamically with custom stats, models, colors, and unlock rules.",
+  "characters": [
+    {
+      "id": "gamer",
+      "name": "GAMER",
+      "scene": "res://scenes/characters/character_gamer.tscn",
+      "color": "#ff2d7b",
+      "desc": "Speed and snacks on demand",
+      "base_stats": {
+        "health": 90,
+        "speed": 6.8,
+        "damage": 1.1
+      },
+      "unlock_rules": []
+    },
+    {
+      "id": "doctor",
+      "name": "DOCTOR",
+      "scene": "res://scenes/characters/character_doctor.tscn",
+      "color": "#6fa8ff",
+      "desc": "Tanky frame, medkits go further",
+      "base_stats": {
+        "health": 120,
+        "speed": 5.5,
+        "damage": 1.0
+      },
+      "unlock_rules": []
+    },
+    {
+      "id": "nurse",
+      "name": "NURSE",
+      "scene": "res://scenes/characters/character_nurse.tscn",
+      "color": "#2de0ff",
+      "desc": "Fast healer, high agility",
+      "base_stats": {
+        "health": 80,
+        "speed": 6.5,
+        "damage": 0.9
+      },
+      "unlock_rules": []
+    },
+    {
+      "id": "streamer",
+      "name": "STREAMER",
+      "scene": "res://scenes/characters/character_streamer.tscn",
+      "color": "#a05cff",
+      "desc": "Trades health for hype & damage",
+      "base_stats": {
+        "health": 85,
+        "speed": 6.0,
+        "damage": 1.3
+      },
+      "unlock_rules": []
+    },
+    {
+      "id": "hunter",
+      "name": "HUNTER",
+      "scene": "res://scenes/characters/character_hunter.tscn",
+      "color": "#ffd60a",
+      "desc": "Ranged specialist, steady aim",
+      "base_stats": {
+        "health": 100,
+        "speed": 5.8,
+        "damage": 1.25
+      },
+      "unlock_rules": []
+    }
+  ]
+}

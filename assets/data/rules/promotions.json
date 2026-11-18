@@ -1,0 +1,13 @@
+{
+  "description": "LiveOps promotional campaigns and banner events.",
+  "promotions": [
+    {
+      "id": "welcome_bonus",
+      "active": true,
+      "reward_coins": 500,
+      "requirements": [
+        {"type": 17, "comparison": "<=", "value": 3}
+      ]
+    }
+  ]
+}

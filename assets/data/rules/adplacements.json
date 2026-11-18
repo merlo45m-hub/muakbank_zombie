@@ -1,0 +1,7 @@
+{
+  "description": "Ad timing and interstitial placement rules.",
+  "interstitial_cooldown_seconds": 180,
+  "grace_period_days": 1,
+  "interstitial_on_game_over": true,
+  "rewarded_video_revive_allowed": true
+}

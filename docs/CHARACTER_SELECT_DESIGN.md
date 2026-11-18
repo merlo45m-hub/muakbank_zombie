@@ -1,7 +1,7 @@
 # Character Select — Rebuild Design
 
-**Status:** awaiting approval
-**Branch:** `feat/charselect-blocky`
+**Status:** COMPLETE & MERGED (PR #35, PR #36, PR #37 / Issue #12 Closed)
+**Branch:** `feat/ui-restructure` (Production Integration)
 **Scope:** the character-select screen (2nd screen: title → character select → level select) and the five survivor characters it displays.
 **Reference art:** the user's image `IMG_20261011_183806_060.jpg`, filed in the Obsidian vault at
 `/storage/emulated/0/ObsidianVault/hermes_brain/second_brain/` and referenced from the note
