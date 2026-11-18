@@ -1,0 +1,44 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource path="res://assets/models/props/gravestone_split_parts.tscn" type="PackedScene" id="split_parts"]
+
+[sub_resource type="BoxMesh" id="IntactMesh"]
+size = Vector3(0.4, 1.8, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="IntactMaterial"]
+albedo_color = Color(0.62, 0.58, 0.5, 1.0)
+roughness = 0.9
+
+[sub_resource type="BoxShape3D" id="IntactShape"]
+size = Vector3(0.4, 1.8, 0.2)
+
+[node name="Gravestone" type="StaticBody3D"]
+collision_layer = 1
+
+[node name="Intact" type="MeshInstance3D" parent="."]
+mesh = SubResource("IntactMesh")
+material_override = SubResource("IntactMaterial")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+shape = SubResource("IntactShape")
+
+[node name="JointA" type="Marker3D" parent="."]
+global_position = Vector3(0, 0.45, 0)
+
+[node name="JointB" type="Marker3D" parent="."]
+global_position = Vector3(0, 1.1, 0)
+
+[node name="LootTable" type="LootTable" parent="."]
+
+[node name="DismantleComponent" type="DismantleComponent" parent="."]
+prop_asset_id = "scav_gravestone_broken"
+bestiary_id = "zombie_pig_butcher"
+hitpoints = 20.0
+required_tool_tier = 2
+intact_mesh_path = NodePath("../Intact")
+joint_markers = [NodePath("../JointA"), NodePath("../JointB")]
+split_parts_scene=ExtResource("split_parts")
+loot_table_path = NodePath("../LootTable")
+loot_table_id = "grave_stone"
+despawn_delay = 0.0
+max_debris_per_prop = 6
