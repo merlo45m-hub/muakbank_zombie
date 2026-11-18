@@ -1,4 +1,5 @@
 [gd_scene format=3]
+[ext_resource type="Script" path="res://scripts/world/asset_blockout.gd" id="blockout_kenney"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/environment/hospital_enhanced.tscn" id="1_8jbmg"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/warehouse_enhanced.tscn" id="2_dw78b"]
@@ -238,3 +239,10 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 90, 0, 8)
 [node name="ArmoryLockdown" type="Node3D" parent="." unique_id=1417753049 instance=ExtResource("3_s3ps5")]
 
 [node name="IndustrialSupplyCacheNetwork" type="Node3D" parent="." unique_id=1234799681 instance=ExtResource("4_dw78b")]
+
+[node name="KenneySurvivalBlockout" type="Node3D" parent="."]
+script = ExtResource("blockout_kenney")
+world_id = "IndustrialDistrict"
+prop_count = 28
+seed_value = 20261118
+

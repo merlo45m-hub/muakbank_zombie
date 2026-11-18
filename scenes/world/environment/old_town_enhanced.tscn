@@ -1,4 +1,5 @@
 [gd_scene format=3]
+[ext_resource type="Script" path="res://scripts/world/asset_blockout.gd" id="blockout_kenney"]
 
 [ext_resource type="PackedScene" path="res://scenes/minigames/triage_roundup.tscn" id="18_tpi3k"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/quarantine_breach.tscn" id="19_rjkh0"]
@@ -3759,3 +3760,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0, -45)
 
 [node name="QuarantineBreach" type="Node3D" parent="." unique_id=1415944242 instance=ExtResource("19_rjkh0")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, -25)
+
+[node name="KenneySurvivalBlockout" type="Node3D" parent="."]
+script = ExtResource("blockout_kenney")
+world_id = "OldTown"
+prop_count = 28
+seed_value = 20261118
+
