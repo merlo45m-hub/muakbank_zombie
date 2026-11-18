@@ -83,13 +83,13 @@ func _coerce(key: String, value: Variant, fallback: Variant) -> Variant:
 			return int(value)
 		"selected_skins":
 			if value is Dictionary:
-				return value
+				return _normalize_json_dict(value)
 			return fallback
 		"tutorial_completed", "haptics_enabled", "post_cure":
 			return bool(value)
 		"collection_items", "collection_regions", "dismantled_props", "bestiary", "world_bosses_defeated":
 			if value is Dictionary:
-				return value
+				return _normalize_json_dict(value)
 			return fallback
 		"museum_seen":
 			if value is Array:
@@ -113,7 +113,7 @@ func _coerce(key: String, value: Variant, fallback: Variant) -> Variant:
 			return regions
 		"world_tech", "world_transport_repaired", "world_milestones", "world_region_state":
 			if value is Dictionary:
-				return value
+				return _normalize_json_dict(value)
 			return fallback
 		"world_visited_regions":
 			var regs: Array[int] = []
@@ -121,6 +121,29 @@ func _coerce(key: String, value: Variant, fallback: Variant) -> Variant:
 			return regs
 		_:
 			return value
+
+func _normalize_json_dict(v: Variant, depth: int = 0) -> Variant:
+	"""Normalize JSON-mangled dict keys/values: string int keys -> int, whole floats -> int."""
+	if v is Dictionary:
+		if depth >= 3:
+			return v
+		var out: Dictionary = {}
+		for k in v:
+			var key: Variant = k
+			if k is String and k.is_valid_int():
+				key = int(k)
+			out[key] = _normalize_json_dict(v.get(k), depth + 1)
+		return out
+	if v is Array:
+		if depth >= 3:
+			return v
+		var out: Array = []
+		for item in v:
+			out.push_back(_normalize_json_dict(item, depth + 1))
+		return out
+	if v is float and v == int(v):
+		return int(v)
+	return v
 
 func save_game() -> void:
 	"""Write save_data to disk via SaveMadeEasy's set_var + save."""

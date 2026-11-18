@@ -121,6 +121,32 @@ func _initialize() -> void:
 	if not (sd.get("world_bosses_defeated") as Dictionary).has(1):
 		printerr("FAIL: world_bosses_defeated default not applied"); ok = false
 
+	# HARD asserts: no canonicalization — int keys/values must survive JSON round-trip
+	if sd.get("collection_regions") is Dictionary:
+		var regions: Dictionary = sd["collection_regions"] as Dictionary
+		if not regions.has(1):
+			printerr("FAIL: collection_regions missing int key 1"); ok = false
+		elif typeof(regions[1]) != TYPE_INT:
+			printerr("FAIL: collection_regions[1] is not int"); ok = false
+	else:
+		printerr("FAIL: collection_regions not a Dictionary"); ok = false
+
+	if sd.get("selected_skins") is Dictionary:
+		var skins: Dictionary = sd["selected_skins"] as Dictionary
+		if not skins.has("gamer"):
+			printerr("FAIL: selected_skins missing 'gamer'"); ok = false
+		elif typeof(skins["gamer"]) != TYPE_INT or skins["gamer"] != 1:
+			printerr("FAIL: selected_skins['gamer'] is not int 1"); ok = false
+	else:
+		printerr("FAIL: selected_skins not a Dictionary"); ok = false
+
+	if sd.get("world_bosses_defeated") is Dictionary:
+		var bosses: Dictionary = sd["world_bosses_defeated"] as Dictionary
+		if not bosses.has(1):
+			printerr("FAIL: world_bosses_defeated missing int key 1"); ok = false
+	else:
+		printerr("FAIL: world_bosses_defeated not a Dictionary"); ok = false
+
 	save_manager.queue_free()
 
 	if ok:
