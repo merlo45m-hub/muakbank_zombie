@@ -84,14 +84,23 @@ hopping ahead for higher-tier gear is intended, not a bug.
 All characters follow stylized Vinyl Action-Figure proportions at **1:1 metric
 scale**. Survivor selection on illuminated neon-cyan circular pedestals.
 
-- **Survivor Archetypes (5):** Gamer, Doctor, Nurse, Streamer, Hunter — distinct
-  starting perks and silhouettes.
+- **Survivor Archetypes (5 Canonical + Extensible Roster):** Gamer, Doctor, Nurse, Streamer, Hunter — distinct
+  starting perks, silhouettes, props, and neon palettes. Supported by the data-driven `CharacterRegistry`
+  and 158-parameter modular rules engine (`docs/RULES_ENGINE.md`) allowing custom reproducible survivors
+  and dynamic unlock rules without scene code modifications.
 - **Zombie Animals (5):** Dog, Cat, Bear, Rabbit, Chicken — fast flankers, heavy
   bruisers (Bear), swarmers; drop Bestiary entries and bio-parts.
 - **World Bosses (3):** 1 per world (Suburban, Industrial, Bio-Lab) — guard Cure
   synthesis catalysts and major regional achievements; require upgraded tool tiers.
 
-## 5. Cure Synthesis, Achievements & Post-Cure Endgame
+## 5. Rules, LiveOps & Progression Architecture
+
+Driven by the central `Rules` Autoload (`docs/RULES_ENGINE.md`):
+- **158-Parameter Rule Engine Matrix:** Condition evaluator covering user stats, monetization, platform, LiveOps, challenges, and gameplay with independent runtime toggles.
+- **Reproducible Character Catalog:** Dynamic registration and unlock rule evaluation for new survivors.
+- **User Stat Tracking & Streaks:** Lifetime metrics and login streak tracking serialized with `SaveManager`.
+
+## 6. Cure Synthesis, Achievements & Post-Cure Endgame
 
 Cure is synthesized in the Bio-Lab synthesis core. It does **NOT** demand 100%
 completion.
@@ -106,7 +115,7 @@ completion.
   continues **seamlessly** — full world access retained for side quests, 100%
   achievements, Collection Log completion, high-tier survival challenges.
 
-## 6. Visual Style & 60 FPS Performance Budget
+## 7. Visual Style & 60 FPS Performance Budget
 
 Visual fidelity relies on clean materials and lighting, not expensive
 post-processing.
