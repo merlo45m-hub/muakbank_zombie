@@ -330,11 +330,8 @@ fi
 
 # --- 12/12 world_hop_bidirectional playtest (GDD Issue #25 / C1) ---------------
 # Heavy: instantiates full game.tscn + WorldProgression + WorldHopManager + waits for hops.
-# Belongs in nightly-regression.yml, not the fast PR gate.
-CHECK=$((CHECK + 1))
-log "[check ${CHECK}/12] world_hop_bidirectional_playtest: SKIPPED in fast gate (heavy multi-scene boot)"
-log "  Reason: instantiates res://scenes/main/game.tscn + WorldProgression + WorldHopManager + 3x secret hops (up to 1800 frames). Runs in nightly-regression.yml instead."
-# world_hop_bidirectional_playtest is run in nightly-regression.yml
+# Belongs in nightly-regression.yml, not the fast PR gate. NOT counted as a check.
+log "[skip] world_hop_bidirectional_playtest: gated in nightly-regression.yml (heavy multi-scene boot: game.tscn + 3x secret hops, up to 1800 frames)"
 
 # ---------------------------------------------------------------------------
 # Verdict — MUST be the last stdout line (machine-parseable).

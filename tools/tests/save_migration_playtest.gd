@@ -52,7 +52,9 @@ func _initialize() -> void:
 	print("[save_migration] Wrote v5 payload via SaveSystem")
 
 	# --- Now instantiate SaveManager and trigger load (migration runs inside _load_game) ---
-	var save_manager: Node = SaveManager.new()
+	# NB: SaveManager.gd declares no class_name (it is the "Save" autoload by path);
+	# resolve it via load() — the --script-scope pitfall from the harness docs.
+	var save_manager: Node = load("res://scripts/core/SaveManager.gd").new()
 	save_manager.name = "Save"
 	root.add_child(save_manager)
 	# _ready() calls _load_game() which migrates v5 -> v6
