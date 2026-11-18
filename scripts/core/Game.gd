@@ -310,6 +310,13 @@ func start_game() -> void:
 	# register a hit).
 	game_active = true
 
+	if has_node("/root/Rules"):
+		var rules_node: Node = get_node("/root/Rules")
+		if rules_node.has_method("record_run_started"):
+			rules_node.call("record_run_started")
+		if rules_node.has_method("increment_stat"):
+			rules_node.call("increment_stat", "TotalGames", 1)
+
 	# Start spawners
 	if zombie_spawner:
 		zombie_spawner.start_spawning()
@@ -499,6 +506,17 @@ func end_game(survived: bool) -> void:
 	print("[Game] Game over! Survived: ", survived, " Score: ", score)
 	Audio.stop_music()
 	emit_signal("game_over", survived, score, zombies_killed)
+
+	if has_node("/root/Rules"):
+		var rules_node: Node = get_node("/root/Rules")
+		if rules_node.has_method("record_run_completed"):
+			var elapsed: float = (time_remaining) if "time_remaining" in self else 0.0
+			rules_node.call("record_run_completed", elapsed)
+		if rules_node.has_method("increment_stat"):
+			rules_node.call("increment_stat", "TotalRuns", 1)
+		if rules_node.has_method("set_stat"):
+			var prev_hi: int = int(rules_node.call("get_stat", "HighScore", 0))
+			rules_node.call("set_stat", "HighScore", max(score, prev_hi))
 	
 	# Save progress BEFORE scene change (race condition fix)
 	Save.update_high_score(score)
@@ -535,6 +553,11 @@ func on_zombie_killed(zombie_type: String) -> void:
 	
 	zombies_killed += 1
 	score += SCORE_PER_KILL
+
+	if has_node("/root/Rules"):
+		var rules_node: Node = get_node("/root/Rules")
+		if rules_node.has_method("increment_stat"):
+			rules_node.call("increment_stat", "ZombiesKilled", 1)
 	# Update the HUD kill counter immediately — emitting kills_changed alone left
 	# the HUD stuck at the start value (0) because nothing re-read it on each kill.
 	if hud and hud.has_method("update_kills"):

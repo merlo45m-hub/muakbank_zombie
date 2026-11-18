@@ -291,6 +291,42 @@ func get_characters() -> Array[Dictionary]:
 	return []
 
 
+func get_character(char_id: String) -> Dictionary:
+	if characters != null:
+		return characters.get_character(char_id)
+	return {}
+
+
+func register_character(data: Dictionary) -> void:
+	register_custom_character(data)
+
+
+func record_run_started() -> void:
+	if not stat_tracking_enabled or stats == null:
+		return
+	stats.on_run_started()
+
+
+func record_run_completed(duration_sec: float = 0.0) -> void:
+	if not stat_tracking_enabled or stats == null:
+		return
+	stats.record_run_completed(duration_sec)
+
+
+func get_run_config_float(key: String, default_val: float = 1.0) -> float:
+	if not dynamic_run_config_enabled or configs == null:
+		return default_val
+	var run_cfg: Dictionary = configs.get_config("runconfiguration")
+	return float(run_cfg.get(key, default_val))
+
+
+func get_spawn_chance(entity_id: String, default_val: float = 0.5) -> float:
+	if not dynamic_spawns_enabled or configs == null:
+		return default_val
+	var spawns: Dictionary = configs.get_config("spawnchances")
+	return float(spawns.get(entity_id, default_val))
+
+
 func register_custom_character(data: Dictionary) -> void:
 	if characters != null:
 		characters.register_character(data)

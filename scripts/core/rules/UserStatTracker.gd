@@ -119,6 +119,17 @@ func on_run_ended(survived: bool = true) -> void:
 	increment_stat("TotalRuns", 1)
 
 
+func record_run_completed(duration_sec: float = 0.0) -> void:
+	_is_run_active = false
+	var elapsed: float = duration_sec
+	if elapsed <= 0.0 and _run_start_time_msec > 0:
+		elapsed = float(Time.get_ticks_msec() - _run_start_time_msec) / 1000.0
+	stats["SecondsInRun"] = elapsed
+	increment_stat("TotalTimeInRuns", elapsed)
+	increment_stat("EngagementPlayTime", elapsed)
+	increment_stat("TotalRuns", 1)
+
+
 func add_app_runtime(delta: float) -> void:
 	stats["EngagementTotalTime"] = float(stats["EngagementTotalTime"]) + delta
 	if _is_run_active:
