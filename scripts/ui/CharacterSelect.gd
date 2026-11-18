@@ -22,6 +22,7 @@ class Survivor extends RefCounted:
 	var color: Color
 	var scene_path: String
 	var pedestal_x: float = 0.0
+	var is_unlocked: bool = true
 
 # 5 Canonical Survivors in order (matching Reference Photo #12 left-to-right)
 const SURVIVOR_CONFIGS: Array[Dictionary] = [
@@ -105,19 +106,45 @@ func _init() -> void:
 
 func _init_survivors() -> void:
 	_survivors.clear()
-	for i in range(SURVIVOR_CONFIGS.size()):
-		var cfg: Dictionary = SURVIVOR_CONFIGS[i]
+	var configs: Array = []
+	if is_inside_tree() and has_node("/root/Rules"):
+		var rules_node: Node = get_node("/root/Rules")
+		if rules_node.has_method("get_characters"):
+			configs = rules_node.call("get_characters")
+	if configs.is_empty():
+		configs = SURVIVOR_CONFIGS
+
+	for i in range(configs.size()):
+		var cfg: Dictionary = configs[i]
 		var s := Survivor.new()
-		s.id = cfg["id"]
-		s.display_name = cfg["name"]
-		s.description = cfg.get("desc", "")
-		s.color = PEDESTAL_COLORS.get(s.id, Color.WHITE)
-		s.scene_path = cfg["scene"]
-		s.pedestal_x = PEDESTAL_X[i]
+		s.id = str(cfg.get("id", ""))
+		s.display_name = str(cfg.get("name", s.id.to_upper()))
+		s.description = str(cfg.get("desc", ""))
+		if PEDESTAL_COLORS.has(s.id):
+			s.color = PEDESTAL_COLORS[s.id]
+		elif cfg.has("color"):
+			if cfg["color"] is Color:
+				s.color = cfg["color"]
+			elif cfg["color"] is String:
+				s.color = Color.from_string(cfg["color"], Color.WHITE)
+			else:
+				s.color = Color.WHITE
+		else:
+			s.color = Color.WHITE
+		s.scene_path = str(cfg.get("scene", ""))
+		if i < PEDESTAL_X.size():
+			s.pedestal_x = PEDESTAL_X[i]
+		else:
+			s.pedestal_x = -3.4 + i * 1.7
+		if is_inside_tree() and has_node("/root/Rules"):
+			var rules_node: Node = get_node("/root/Rules")
+			if rules_node.has_method("is_character_unlocked"):
+				s.is_unlocked = bool(rules_node.call("is_character_unlocked", s.id))
 		_survivors.append(s)
 
 
 func _ready() -> void:
+	_init_survivors()
 	_soften_bloom()
 
 	var f := "res://assets/fonts/SpecialElite-Regular.ttf"
@@ -696,6 +723,22 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 	var active_skin: int = _get_current_skin(s.id)
 	_update_skin_ui(s, active_skin)
 
+	# Check unlock status if Rules is available
+	var is_unlocked: bool = s.is_unlocked
+	if has_node("/root/Rules"):
+		var rules_node: Node = get_node("/root/Rules")
+		if rules_node.has_method("is_character_unlocked"):
+			is_unlocked = bool(rules_node.call("is_character_unlocked", s.id))
+			s.is_unlocked = is_unlocked
+
+	if _play_btn != null and is_instance_valid(_play_btn):
+		if is_unlocked:
+			_play_btn.text = "PLAY  ▶"
+			_play_btn.disabled = false
+		else:
+			_play_btn.text = "LOCKED 🔒"
+			_play_btn.disabled = true
+
 	# 5. Audio feedback
 	if play_sound:
 		_play_selection_audio(selected_character)
@@ -873,9 +916,16 @@ func _generate_chime_stream(freq: float) -> AudioStreamWAV:
 
 func _on_play_pressed() -> void:
 	Audio.play_click()
-	if has_node("/root/Save") and selected_character >= 0 and selected_character < _survivors.size():
-		var save_mgr: Node = get_node("/root/Save")
-		save_mgr.set_selected_character(_survivors[selected_character].id)
+	if selected_character >= 0 and selected_character < _survivors.size():
+		var s: Survivor = _survivors[selected_character]
+		if has_node("/root/Rules"):
+			var rules_node: Node = get_node("/root/Rules")
+			if rules_node.has_method("is_character_unlocked"):
+				if not bool(rules_node.call("is_character_unlocked", s.id)):
+					return
+		if has_node("/root/Save"):
+			var save_mgr: Node = get_node("/root/Save")
+			save_mgr.set_selected_character(s.id)
 	get_tree().change_scene_to_file("res://scenes/ui/level_select.tscn")
 
 

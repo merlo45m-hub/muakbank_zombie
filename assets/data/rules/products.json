@@ -1,0 +1,30 @@
+{
+  "description": "Products and in-game shop items with currency pricing and ad alternatives.",
+  "products": {
+    "starter_pack": {
+      "cost_cents": 199,
+      "coins": 5000,
+      "gem_bonus": 50
+    },
+    "coin_pack_small": {
+      "cost_cents": 99,
+      "coins": 1000
+    },
+    "hoverboard_single": {
+      "coins": 300,
+      "ad_alternative": true
+    },
+    "revive_single": {
+      "coins": 250,
+      "ad_alternative": true
+    }
+  },
+  "ab_variants": {
+    "ab_coin_price_consumables_D": {
+      "hoverboard_single": {
+        "coins": 1000,
+        "ad_alternative": false
+      }
+    }
+  }
+}

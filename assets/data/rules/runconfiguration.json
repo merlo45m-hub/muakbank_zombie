@@ -1,0 +1,8 @@
+{
+  "description": "Dynamic run parameters including speeds, difficulty curves, and balance tuning.",
+  "base_run_speed": 6.0,
+  "sprint_speed_multiplier": 1.4,
+  "wave_difficulty_multiplier": 1.15,
+  "snack_heal_amount": 25,
+  "base_overwhelm_rate": 0.05
+}
