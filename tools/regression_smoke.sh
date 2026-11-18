@@ -16,43 +16,56 @@
 #   Exit code !=0 / final line "REGRESSION: FAIL (...)"    == GATE RED.
 #   In CI: run the same command; the exit code IS the gate.
 #
-# CHECKS (in order — 9 checks total)
-#   1. import      : headless engine import with a FRESH .godot cache
-#                    (rm -rf .godot), run in up to 3 passes until one pass is
-#                    CLEAN, gated on that pass. Multiple passes are required
-#                    because Godot's FIRST cold pass can transiently fail to
-#                    resolve resources whose import remap artifacts are built in
-#                    the SAME pass (observed on this tip: main_theme.tres
-#                    ->assets/fonts/*.ttf 'Cannot open file
-#                    res://.godot/imported/...' / 'referenced non-existent
-#                    resource' — the files exist and pass 2-3 import clean; the
-#                    Godot editor does the same repeated-pass import on first
-#                    open). Any GENUINE defect (script parse error, missing or
-#                    un-importable asset, broken theme) re-fails every retry
-#                    pass and is caught when no pass goes clean.
-#                    NOTE: --import exits 0 even when scripts fail to parse
-#                    (verified), so this gate is log-based, not exit-code-based.
-#   2. boot_dev    : boots res://scenes/dev/test_zombie.tscn headless for
-#                    BOOT_FRAMES_DEV frames under xvfb-run.
-#                    FAIL on 'Animation.*not found' / 'SCRIPT ERROR' /
-#                    non-allowlisted 'ERROR:' line, or nonzero exit.
-#   3. boot_game   : boots res://scenes/main/game.tscn (real game scene, level 1
-#                    old_town) headless for BOOT_FRAMES_GAME frames under xvfb.
-#                    Same failure criteria as check 2.
-#   4. player_api  : runs the EXISTING probe tools/addon_probe.tscn (reused, not
-#                    duplicated). Instantiates the real Player and asserts the
-#                    public food API (get_food_count / has_food / add_food /
-#                    consume_food_type / get_food_heal) against the GLoot-backed
-#                    GootInventory, plus the DialogueManager resource parse.
-#                    PASS = probe prints 'PROBE_RESULT: PASS' and exits 0.
-#   5. minigames   : runs the EXISTING probe tools/minigame_win_probe.tscn
-#                    (reused, not duplicated). Instantiates each REAL controller
-#                    (BioGenerator / SpoilAndSurvive / LastStandStation /
-#                    TriageRoundup / QuarantineBreach / ArmoryLockdown /
-#                    EndgameExtraction) and drives each state machine to its
-#                    WIN state within a bounded simulation.
-#                    PASS = probe exits 0 AND prints exactly
-#                    MINIGAME_COUNT 'WON=true' lines AND 'ALL WIN REACHABLE'.
+# CHECKS (in order — 12 checks total)
+#   1. import            : headless engine import with a FRESH .godot cache
+#                          (rm -rf .godot), run in up to 3 passes until one pass is
+#                          CLEAN, gated on that pass. Multiple passes are required
+#                          because Godot's FIRST cold pass can transiently fail to
+#                          resolve resources whose import remap artifacts are built in
+#                          the SAME pass (observed on this tip: main_theme.tres
+#                          ->assets/fonts/*.ttf 'Cannot open file
+#                          res://.godot/imported/...' / 'referenced non-existent
+#                          resource' — the files exist and pass 2-3 import clean; the
+#                          Godot editor does the same repeated-pass import on first
+#                          open). Any GENUINE defect (script parse error, missing or
+#                          un-importable asset, broken theme) re-fails every retry
+#                          pass and is caught when no pass goes clean.
+#                          NOTE: --import exits 0 even when scripts fail to parse
+#                          (verified), so this gate is log-based, not exit-code-based.
+#   2. boot_dev          : boots res://scenes/dev/test_zombie.tscn headless for
+#                          BOOT_FRAMES_DEV frames under xvfb-run.
+#                          FAIL on 'Animation.*not found' / 'SCRIPT ERROR' /
+#                          non-allowlisted 'ERROR:' line, or nonzero exit.
+#   3. boot_game         : boots res://scenes/main/game.tscn (real game scene, level 1
+#                          old_town) headless for BOOT_FRAMES_GAME frames under xvfb.
+#                          Same failure criteria as check 2.
+#   4. player_api        : runs the EXISTING probe tools/addon_probe.tscn (reused, not
+#                          duplicated). Instantiates the real Player and asserts the
+#                          public food API (get_food_count / has_food / add_food /
+#                          consume_food_type / get_food_heal) against the GLoot-backed
+#                          GootInventory, plus the DialogueManager resource parse.
+#                          PASS = probe prints 'PROBE_RESULT: PASS' and exits 0.
+#   5. minigames         : runs the EXISTING probe tools/minigame_win_probe.tscn
+#                          (reused, not duplicated). Instantiates each REAL controller
+#                          (BioGenerator / SpoilAndSurvive / LastStandStation /
+#                          TriageRoundup / QuarantineBreach / ArmoryLockdown /
+#                          EndgameExtraction) and drives each state machine to its
+#                          WIN state within a bounded simulation.
+#                          PASS = probe exits 0 AND prints exactly
+#                          MINIGAME_COUNT 'WON=true' lines AND 'ALL WIN REACHABLE'.
+#   6. scale_contract    : locked GLB + live gameplay AABB drift guard (verifier + in-engine).
+#   7. scale_perf        : FpsMonitor sampling with GLB instanced.
+#   8. strict_typing     : explicit return types + typed params (Issue #32).
+#   9. dismantle_playtest: GDD Issue #26 full-chain dismantling regression (tool-tier gate
+#                          -> joint disconnect -> loot -> sole-writer registries -> debris cap -> recycle).
+#                          Lightweight: no scene load, all nodes created programmatically.
+#   10. cure_endgame_playtest: GDD Issue #28 Cure synthesis, majority achievement threshold,
+#                          and post-cure open world state verification.
+#                          Lightweight: AchievementManager instantiated programmatically.
+#   11. save_migration_playtest: SaveManager v5->v6 migration roundtrip. Writes v5-shaped payload
+#                          via SaveSystem, loads through SaveManager._load_game(), asserts all
+#                          C1-C4 default keys backfilled and version==6.
+#                          Lightweight: SaveManager instantiated programmatically.
 #
 # ALLOWLIST — the EXPLICIT set of tolerated lifecycle noise lines (only these
 #   'ERROR'/warning lines may appear; anything else fails the gate):
@@ -126,7 +139,7 @@ run_scene() {
     local tscn="$1" name="$2" frames="$3" marker="$4" want="$5" rc got logf
     logf="${WORKDIR}/${name}.log"
     CHECK=$((CHECK + 1))
-    log "[check ${CHECK}/9] ${name}: ${tscn} (${frames} frames max, xvfb)"
+    log "[check ${CHECK}/12] ${name}: ${tscn} (${frames} frames max, xvfb)"
     # shellcheck disable=SC2086
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
         --headless --path "$PROJECT_ROOT" "$tscn" --quit-after "$frames" > "$logf" 2>&1
@@ -151,9 +164,9 @@ log "project : ${PROJECT_ROOT}"
 log "engine  : ${GODOT_BIN}"
 log "logs    : ${WORKDIR}"
 
-# --- pre-build asset registry gate (check 0/8) ------------------------------
+# --- pre-build asset registry gate (check 0/12) ------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/9] asset_registry: pre-build referenced-model path integrity"
+log "[check ${CHECK}/12] asset_registry: pre-build referenced-model path integrity"
 REG_LOG="${WORKDIR}/asset_registry.log"
 if [ -f "${PROJECT_ROOT}/tools/check_asset_registry.py" ]; then
     (cd "$PROJECT_ROOT" && "${PYTHON_BIN}" tools/check_asset_registry.py --no-notify) > "$REG_LOG" 2>&1 || true
@@ -168,7 +181,7 @@ fi
 
 # --- 2/8 fresh headless import (regenerates .godot) ------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/9] import: fresh headless import until stable (max 3 passes)"
+log "[check ${CHECK}/12] import: fresh headless import until stable (max 3 passes)"
 rm -rf "${PROJECT_ROOT}/.godot"
 
 IMPORT_PASS=""
@@ -213,7 +226,7 @@ fi
 
 # --- 6/6 scale-lock drift guard: GLB verifier + in-engine live AABB ----------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/9] scale_contract: locked GLB + live gameplay AABB drift guard"
+log "[check ${CHECK}/12] scale_contract: locked GLB + live gameplay AABB drift guard"
 SCALE_LOG="${WORKDIR}/scale_contract.log"
 if [ -f "${PROJECT_ROOT}/tools/blender/verify_scale_contract.py" ]; then
     (cd "$PROJECT_ROOT" && python3 tools/blender/verify_scale_contract.py) > "$SCALE_LOG" 2>&1 || true
@@ -243,7 +256,7 @@ unset _drift
 
 # --- 7/7 runtime perf monitoring with the asset resident --------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/9] scale_perf: FpsMonitor sampling with GLB instanced"
+log "[check ${CHECK}/12] scale_perf: FpsMonitor sampling with GLB instanced"
 PERF_LOG="${WORKDIR}/scale_perf.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/scale_perf_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -257,15 +270,71 @@ else
     bad "scale_perf: probe missing"
 fi
 
-# --- 9/9 strict typing gate (Issue #32) -------------------------------------
+# --- 8/12 strict typing gate (Issue #32) -------------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/9] strict_typing: explicit return types + typed params"
+log "[check ${CHECK}/12] strict_typing: explicit return types + typed params"
 STRICT_LOG="${WORKDIR}/strict_typing.log"
 if (cd "$PROJECT_ROOT" && "${PYTHON_BIN}" tools/check_gdscript_strict.py --gate .) > "$STRICT_LOG" 2>&1; then
     log "  strict_typing: OK ($(grep 'STRICT_GATE' "$STRICT_LOG" | tail -1))"
 else
     bad "strict_typing: $(grep -E 'STRICT_GATE|  FIX' "$STRICT_LOG" | head -1)"
 fi
+
+# --- 9/12 dismantle playtest (GDD Issue #26) ----------------------------------
+CHECK=$((CHECK + 1))
+log "[check ${CHECK}/12] dismantle_playtest: GDD26 full-chain dismantling regression"
+DISMANTLE_LOG="${WORKDIR}/dismantle_playtest.log"
+if [ -f "${PROJECT_ROOT}/tools/tests/dismantle_playtest.gd" ]; then
+    timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
+        --headless --path "$PROJECT_ROOT" --script tools/tests/dismantle_playtest.gd > "$DISMANTLE_LOG" 2>&1
+    if grep -q "GDD26_PASS=true" "$DISMANTLE_LOG"; then
+        log "  dismantle_playtest: GDD26_PASS=true"
+    else
+        bad "dismantle_playtest: GDD26_PASS=true missing ($(grep -E 'GDD26_FAIL|SCRIPT ERROR' "$DISMANTLE_LOG" | tail -1))"
+    fi
+else
+    bad "dismantle_playtest: playtest missing"
+fi
+
+# --- 10/12 cure endgame playtest (GDD Issue #28) --------------------------------
+CHECK=$((CHECK + 1))
+log "[check ${CHECK}/12] cure_endgame_playtest: GDD28 cure synthesis & post-cure"
+CURE_LOG="${WORKDIR}/cure_endgame_playtest.log"
+if [ -f "${PROJECT_ROOT}/tools/tests/cure_endgame_playtest.gd" ]; then
+    timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
+        --headless --path "$PROJECT_ROOT" --script tools/tests/cure_endgame_playtest.gd > "$CURE_LOG" 2>&1
+    if grep -q "GDD28_CURE_PASS=true" "$CURE_LOG"; then
+        log "  cure_endgame_playtest: GDD28_CURE_PASS=true"
+    else
+        bad "cure_endgame_playtest: GDD28_CURE_PASS=true missing ($(grep -E 'GDD28_CURE_FAIL|SCRIPT ERROR' "$CURE_LOG" | tail -1))"
+    fi
+else
+    bad "cure_endgame_playtest: playtest missing"
+fi
+
+# --- 11/12 save migration roundtrip (v5 -> v6) ----------------------------------
+CHECK=$((CHECK + 1))
+log "[check ${CHECK}/12] save_migration_playtest: SaveManager v5->v6 migration roundtrip"
+MIGRATE_LOG="${WORKDIR}/save_migration_playtest.log"
+if [ -f "${PROJECT_ROOT}/tools/tests/save_migration_playtest.gd" ]; then
+    timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
+        --headless --path "$PROJECT_ROOT" --script tools/tests/save_migration_playtest.gd > "$MIGRATE_LOG" 2>&1
+    if grep -q "MIGRATION_ROUNDTRIP_PASS=true" "$MIGRATE_LOG"; then
+        log "  save_migration_playtest: MIGRATION_ROUNDTRIP_PASS=true"
+    else
+        bad "save_migration_playtest: MIGRATION_ROUNDTRIP_PASS=true missing ($(grep -E 'MIGRATION_ROUNDTRIP_FAIL|SCRIPT ERROR' "$MIGRATE_LOG" | tail -1))"
+    fi
+else
+    bad "save_migration_playtest: playtest missing"
+fi
+
+# --- 12/12 world_hop_bidirectional playtest (GDD Issue #25 / C1) ---------------
+# Heavy: instantiates full game.tscn + WorldProgression + WorldHopManager + waits for hops.
+# Belongs in nightly-regression.yml, not the fast PR gate.
+CHECK=$((CHECK + 1))
+log "[check ${CHECK}/12] world_hop_bidirectional_playtest: SKIPPED in fast gate (heavy multi-scene boot)"
+log "  Reason: instantiates res://scenes/main/game.tscn + WorldProgression + WorldHopManager + 3x secret hops (up to 1800 frames). Runs in nightly-regression.yml instead."
+# world_hop_bidirectional_playtest is run in nightly-regression.yml
 
 # ---------------------------------------------------------------------------
 # Verdict — MUST be the last stdout line (machine-parseable).
