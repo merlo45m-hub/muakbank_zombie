@@ -1,0 +1,17 @@
+Kenney CC0 Asset Pack — survival props
+======================================
+
+Pack: kenney_survival
+Source: Kenney CC0 asset library (kenney.nl)
+License: CC0 1.0 Universal
+
+To the extent possible under law, Kenney LLC has waived all copyright and
+related or neighboring rights to these survival prop models. This work is
+published from: Netherlands.
+
+This pack is provided "as-is", without warranty of any kind. See
+https://creativecommons.org/publicdomain/zero/1.0/ for the full legal code.
+
+Intended use in Muakbank Zombie: scavenged survival props (barrels, bedrolls,
+chests, fences, bottles, boxes, buckets, campfires, fish) for dressing
+survival scenes. 80 x .glb files, 1,298,392 bytes total.
