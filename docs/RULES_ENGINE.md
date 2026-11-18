@@ -277,6 +277,26 @@ Rules.register_character(char_data)
 
 ---
 
+## Gameplay Integration & Character Interchangeability
+
+The Rules Engine connects directly to core gameplay actors to ensure 100% character interchangeability:
+
+### 1. Dynamic Player Actor (`scripts/core/Player.gd`)
+- **Visual Model Resolution**: Resolves character visuals from `Rules.get_character(id)["scene"]`, seamlessly supporting custom character scenes or GLB models.
+- **In-Memory Stat Synthesis**: If a pre-authored `.tres` file is absent, `Player.gd` dynamically synthesizes a `CharacterStats` resource in-memory from `char_def["base_stats"]`, applying `max_health`, `move_speed`, `attack_damage`, `critical_chance`, and `special_ability` directly.
+- **LiveOps Multipliers**: Dynamically multiplies movement and sprint speeds by `Rules.get_run_config_float("speed_multiplier", 1.0)`.
+- **Decoupled Autoload Invocations**: Uses safe runtime lookups (`get_node_or_null("/root/Audio")`, `get_node_or_null("/root/MinosDamageNumbers3D")`) to guarantee compile-time independence under standalone test harnesses.
+
+### 2. Run Lifecycle & Progression Hooks (`scripts/core/Game.gd`)
+- **Run Boot**: Calls `Rules.record_run_started()` and `Rules.increment_stat("TotalGames", 1)`.
+- **Combat Events**: Calls `Rules.increment_stat("ZombiesKilled", 1)` upon enemy defeat.
+- **Run Completion**: Calls `Rules.record_run_completed(elapsed)` on game over or extraction, persisting `TotalRuns`, `TotalTimeInRuns`, and updating `HighScore`.
+
+### 3. Dynamic Spawner Tuning (`scripts/characters/ZombieSpawner3D.gd`)
+- Dynamically scales enemy spawn intervals using `Rules.get_run_config_float("difficulty_multiplier", 1.0)`.
+
+---
+
 ## Verification & Test Harnesses
 
 ### 1. Rules Engine Test Harness
