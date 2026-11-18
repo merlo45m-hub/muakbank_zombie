@@ -259,12 +259,16 @@ func _setup_achievements() -> void:
 	var am = get_node_or_null("AchievementManager")
 	if not am or not am.has_method("register_achievement"):
 		return
-	am.register_achievement("first_kill", "First Blood", "Kill your first zombie")
-	am.register_achievement("combo_5", "Combo Master", "Reach a 5x kill combo")
-	am.register_achievement("boss_slayer", "Boss Slayer", "Defeat a boss zombie")
-	am.register_achievement("survivor", "Survivor", "Complete a level")
-	am.register_achievement("well_fed", "Well Fed", "Eat 10 food items")
-	am.register_achievement("untouchable", "Untouchable", "Complete a level without taking damage")
+	am.register_achievement("first_kill", "First Blood", "Kill your first zombie", 1)
+	am.register_achievement("combo_5", "Combo Master", "Reach a 5x kill combo", 1)
+	am.register_achievement("boss_slayer", "Boss Slayer", "Defeat a boss zombie", 1)
+	am.register_achievement("survivor", "Survivor", "Complete a level", 1)
+	am.register_achievement("well_fed", "Well Fed", "Eat 10 food items", 1)
+	am.register_achievement("untouchable", "Untouchable", "Complete a level without taking damage", 1)
+	am.register_achievement("boss_w1_defeated", "Suburban Dominator", "Defeat the Suburban World Boss", 1)
+	am.register_achievement("boss_w2_defeated", "Industrial Conqueror", "Defeat the Industrial World Boss", 2)
+	am.register_achievement("boss_w3_defeated", "Bio-Lab Vanguard", "Defeat the Bio-Lab World Boss", 3)
+	am.register_achievement("cure_synthesized", "Hope Restored", "Synthesize the Bio-Lab cure and enter post-cure world", 3)
 	# Registered now, so persisted unlocks can finally be applied (see _ready note).
 	if am.has_method("load_progress"):
 		am.load_progress()
@@ -621,8 +625,17 @@ func _on_boss_defeated() -> void:
 	# never fires for it — award the kill here so score/combo/difficulty/achievements
 	# all land (and boss_slayer becomes obtainable).
 	on_zombie_killed("boss")
-	if achievement_manager and achievement_manager.has_method("unlock"):
-		achievement_manager.unlock("boss_slayer")
+	var current_region: int = 1
+	var wp = get_node_or_null("/root/WorldProgression")
+	if wp and "current_region" in wp:
+		current_region = int(wp.current_region)
+	elif Save and Save.has_method("get_current_level"):
+		current_region = int(Save.get_current_level())
+	if achievement_manager:
+		if achievement_manager.has_method("record_boss_defeat"):
+			achievement_manager.record_boss_defeat(current_region, "boss_w%d" % current_region)
+		elif achievement_manager.has_method("unlock"):
+			achievement_manager.unlock("boss_slayer")
 
 func on_player_died() -> void:
 	if not game_active:

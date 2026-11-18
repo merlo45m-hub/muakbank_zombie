@@ -145,17 +145,26 @@ tier (`b4beb7f`), 1:1 metric Blender GLB scale guard (`192b1fb`), threaded
 CI (`b322faa`, `22cab96`), and the AchievementManager-script-assignment
 regression the GDD calls out (found & fixed in `b4beb7f`).
 
+#25 GDD-1 LANDED (`da03097`): Non-linear bidirectional world hopping + secret transport.
 #26 GDD-2 LANDED (`06e9f2c`): `DismantleComponent` (stateless, tool-tier gate,
 joint-disconnect mesh swap, NO CSG), `DebrisPool` autoload (MAX_ACTIVE=48 cap),
 `CollectionLog`/`Bestiary` read-only facades, sole-writer `CollectionManager`
 registries, SAVE_VERSION 4->5, `dismantle_tables.json`, full-chain
-`dismantle_playtest.gd` (GDD26_PASS=true). Split-part GLBs (#9.2) still owed;
-per-prop scene wiring is the art-gated next step.
+`dismantle_playtest.gd` (GDD26_PASS=true).
+#27 GDD-3 LANDED (`f5aa330`): Remapped world display names to Suburban (World 1) /
+Industrial (World 2) / Bio-Lab (World 3) per `docs/WORLD_NAME_ALIASES.md`.
+#28 GDD-4 LANDED: `AchievementManager` per-world achievements, boss defeats
+(`record_boss_defeat`), majority achievement threshold calculation
+(`has_majority_achievements() > 50%`), cure synthesis (`synthesize_cure()`),
+`post_cure` open-world state flag, SAVE_VERSION 5->6 migration, and full regression
+playtest `cure_endgame_playtest.gd` (`GDD28_CURE_PASS=true`).
+#29 GDD-5 CLOSED: Persistent `CollectionLog` and `Bestiary` registry via #26 + #29.
 
-Open workstreams: #27 GDD-3 world remap, #28 GDD-4 Cure/post-cure,
-#29 GDD-5 (registry exists via #26; catalog-coverage validation owed),
-#21 device visual review (manual pass scheduled 14:32 EST), #23 headless
-rendering to vault, #9.2 asset replacement.
+All four core Master GDD conflicts (C1 non-linear hopping, C2 dismantling loop,
+C3 world naming, C4 cure/post-cure endgame) are now fully implemented and verified!
+
+Open supporting workstreams: #21 device visual review, #23 headless rendering pipeline,
+#9.2 pre-authored split-part GLB asset replacement.
 
 ## 9. Delegation map (curator: Hermes)
 
