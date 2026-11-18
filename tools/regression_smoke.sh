@@ -322,7 +322,7 @@ if [ -f "${PROJECT_ROOT}/tools/tests/save_migration_playtest.gd" ]; then
     if grep -q "MIGRATION_ROUNDTRIP_PASS=true" "$MIGRATE_LOG"; then
         log "  save_migration_playtest: MIGRATION_ROUNDTRIP_PASS=true"
     else
-        bad "save_migration_playtest: MIGRATION_ROUNDTRIP_PASS=true missing ($(grep -E 'MIGRATION_ROUNDTRIP_FAIL|SCRIPT ERROR' "$MIGRATE_LOG" | tail -1))"
+        bad "save_migration_playtest: MIGRATION_ROUNDTRIP_PASS=true missing ($(grep -E 'FAIL:|MIGRATION_ROUNDTRIP_FAIL|SCRIPT ERROR' "$MIGRATE_LOG" | tr '\n' ' | '))"
     fi
 else
     bad "save_migration_playtest: playtest missing"
