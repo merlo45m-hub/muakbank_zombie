@@ -93,8 +93,9 @@ func _initialize() -> void:
 		var expected = defaults[key]
 		var actual = sd.get(key)
 		if present.has(key):
-			if actual != v5_payload[KEY_PREFIX + key]:
-				printerr("FAIL: key '", key, "' overwritten by default (expected stored value)")
+			var stored = v5_payload[KEY_PREFIX + key]
+			if typeof(actual) != typeof(stored) or actual != stored:
+				printerr("FAIL: key '", key, "' overwritten or mangled by round-trip; expected ", stored, " (", type_string(typeof(stored)), ") got ", actual, " (", type_string(typeof(actual)), ")")
 				ok = false
 			continue
 		if actual != expected:
