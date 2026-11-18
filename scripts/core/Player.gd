@@ -93,7 +93,7 @@ var _last_strong_direction: Vector3 = Vector3.FORWARD
 @onready var mobile_controls = $MobileControls if has_node("MobileControls") else null
 
 # === DAMAGE NUMBERS (minos-damage-numbers autoload) ===
-@onready var damage_numbers = MinosDamageNumbers3D
+@onready var damage_numbers = get_node_or_null("/root/MinosDamageNumbers3D")
 
 # === MOBILE STATE ===
 var mobile_move_vector: Vector2 = Vector2.ZERO
@@ -125,6 +125,12 @@ var _punch_t := 0.0
 var _applied_visual: Node3D = null
 
 
+func _play_audio(method_name: String) -> void:
+	if is_inside_tree() and has_node("/root/Audio"):
+		var a: Node = get_node("/root/Audio")
+		if a.has_method(method_name):
+			a.call(method_name)
+
 func _ready() -> void:
 	# Initialize the GLoot inventory node. Each food type is one stacked item.
 	_inventory = Inventory.new()
@@ -141,6 +147,30 @@ func _ready() -> void:
 	var stats_path := "res://assets/materials/stats_%s.tres" % char_id
 	if ResourceLoader.exists(stats_path):
 		character_stats = load(stats_path) as CharacterStats
+	elif has_node("/root/Rules"):
+		var rules_node: Node = get_node("/root/Rules")
+		if rules_node.has_method("get_character"):
+			var char_def: Dictionary = rules_node.call("get_character", char_id)
+			if not char_def.is_empty():
+				var stats := CharacterStats.new()
+				stats.character_id = char_id
+				stats.display_name = str(char_def.get("name", char_id.capitalize()))
+				stats.description = str(char_def.get("desc", ""))
+				var bstats: Dictionary = char_def.get("base_stats", {})
+				stats.max_health = int(bstats.get("max_health", 100))
+				stats.max_stamina = int(bstats.get("max_stamina", 100))
+				stats.move_speed = float(bstats.get("move_speed", 5.0))
+				stats.sprint_speed = float(bstats.get("sprint_speed", 8.0))
+				stats.attack_damage = int(bstats.get("attack_damage", 20))
+				stats.attack_speed = float(bstats.get("attack_speed", 0.8))
+				stats.attack_range = float(bstats.get("attack_range", 2.0))
+				stats.critical_chance = float(bstats.get("critical_chance", 0.1))
+				stats.critical_multiplier = float(bstats.get("critical_multiplier", 1.5))
+				stats.damage_reduction = float(bstats.get("damage_reduction", 0.0))
+				stats.special_ability = str(bstats.get("special_ability", ""))
+				stats.special_cooldown = float(bstats.get("special_cooldown", 10.0))
+				stats.special_duration = float(bstats.get("special_duration", 3.0))
+				character_stats = stats
 	if character_stats:
 		_apply_character_stats()
 
@@ -211,6 +241,14 @@ func _apply_character_stats() -> void:
 	sprint_speed = character_stats.sprint_speed
 	attack_damage = character_stats.attack_damage
 	stamina_regen = character_stats.stamina_regen
+
+	# Apply dynamic run configuration multipliers if Rules autoload is present
+	if has_node("/root/Rules"):
+		var rules_node: Node = get_node("/root/Rules")
+		if rules_node.has_method("get_run_config_float"):
+			var spd_mult: float = float(rules_node.call("get_run_config_float", "speed_multiplier", 1.0))
+			move_speed *= spd_mult
+			sprint_speed *= spd_mult
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -584,7 +622,7 @@ func _pickup_nearby() -> void:
 			if food_type != "":
 				body.collect(self)
 				add_food(food_type, heal)
-				Audio.play_pickup()
+				_play_audio("play_pickup")
 				Input.vibrate_handheld(15)
 				return
 		# Weapon pickup
@@ -593,7 +631,7 @@ func _pickup_nearby() -> void:
 			if weapon_id != "":
 				body.take()
 				equip_weapon(weapon_id)
-				Audio.play_pickup()
+				_play_audio("play_pickup")
 				Input.vibrate_handheld(25)
 				return
 
@@ -651,8 +689,7 @@ func _trigger_attack_feedback() -> void:
 		# Zombies are untouched: they never call this function and their own
 		# animator pipeline is unchanged.
 		pass
-	if Audio:
-		Audio.play_click()
+	_play_audio("play_click")
 	# ── PUNCH (bug A — "punch = flop") ────────────────────────────────────────
 	# The Kenney Blocky rig ships a real right-hand melee clip; BlockyAnim already
 	# maps the "attack" state onto it. Play it so the strike reads as an arm swing
@@ -923,7 +960,7 @@ func take_damage(amount: int) -> void:
 
 	print("[Player] Took ", amount, " damage — HP: ", health)
 
-	Audio.play_hurt()
+	_play_audio("play_hurt")
 
 	if health <= 0:
 		_die()
@@ -1031,7 +1068,7 @@ func equip_weapon(weapon_name: String) -> void:
 		if weapon_system.has_method("add_weapon_to_inventory"):
 			weapon_system.add_weapon_to_inventory(weapon_name)
 	emit_signal("picked_up_weapon", weapon_name)
-	Audio.haptic_light()
+	_play_audio("haptic_light")
 	print("[Player] Equipped: ", weapon_name)
 
 
@@ -1237,6 +1274,12 @@ func _apply_character_model() -> void:
 	# gameplay. The old GLB path shipped 64-vert blockout placeholders, so the
 	# character picked in the menu was never the character you played.
 	var scene_path := CHARACTER_SCENE_DIR % id
+	if has_node("/root/Rules"):
+		var rules_node: Node = get_node("/root/Rules")
+		if rules_node.has_method("get_character"):
+			var char_def: Dictionary = rules_node.call("get_character", id)
+			if char_def.has("scene") and ResourceLoader.exists(str(char_def["scene"])):
+				scene_path = str(char_def["scene"])
 	if ResourceLoader.exists(scene_path):
 		var packed_scene := load(scene_path) as PackedScene
 		if packed_scene != null:
