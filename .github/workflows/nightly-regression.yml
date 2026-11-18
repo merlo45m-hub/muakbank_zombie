@@ -58,6 +58,30 @@ jobs:
           xvfb-run -a "$GODOT_BIN" --headless --path . --script tools/tests/world_progression_playtest.gd | tee /tmp/playtest.log
           grep -q "FULL_PROGRESSION_PASS=true" /tmp/playtest.log
 
+      - name: Non-linear bidirectional hop playtest (GDD Issue #25 / C1)
+        run: |
+          set -euo pipefail
+          xvfb-run -a "$GODOT_BIN" --headless --path . --script tools/tests/world_hop_bidirectional_playtest.gd | tee /tmp/hop_playtest.log
+          grep -q "NONLINEAR_PROGRESSION_PASS=true" /tmp/hop_playtest.log
+
+      - name: Dismantle playtest (GDD Issue #26)
+        run: |
+          set -euo pipefail
+          xvfb-run -a "$GODOT_BIN" --headless --path . --script tools/tests/dismantle_playtest.gd | tee /tmp/dismantle_playtest.log
+          grep -q "GDD26_PASS=true" /tmp/dismantle_playtest.log
+
+      - name: Cure endgame playtest (GDD Issue #28)
+        run: |
+          set -euo pipefail
+          xvfb-run -a "$GODOT_BIN" --headless --path . --script tools/tests/cure_endgame_playtest.gd | tee /tmp/cure_playtest.log
+          grep -q "GDD28_CURE_PASS=true" /tmp/cure_playtest.log
+
+      - name: Save migration roundtrip playtest (v5 -> v6)
+        run: |
+          set -euo pipefail
+          xvfb-run -a "$GODOT_BIN" --headless --path . --script tools/tests/save_migration_playtest.gd | tee /tmp/migration_playtest.log
+          grep -q "MIGRATION_ROUNDTRIP_PASS=true" /tmp/migration_playtest.log
+
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
