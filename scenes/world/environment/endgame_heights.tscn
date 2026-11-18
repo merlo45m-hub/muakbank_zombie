@@ -1,4 +1,5 @@
 [gd_scene format=3]
+[ext_resource type="Script" path="res://scripts/world/hdri_lighting.gd" id="hdri_lighting"]
 [ext_resource type="Script" path="res://scripts/world/asset_blockout.gd" id="blockout_kenney"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/environment/sewer_enhanced.tscn" id="1_487vu"]
@@ -305,4 +306,10 @@ script = ExtResource("blockout_kenney")
 world_id = "EndgameHeights"
 prop_count = 28
 seed_value = 20261118
+
+
+[node name="HdriLighting" type="Node3D" parent="."]
+script = ExtResource("hdri_lighting")
+hdri_path = "res://assets/hdri/night_bridge_2k.hdr"
+ambient_energy = 0.35
 
