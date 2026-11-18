@@ -552,7 +552,10 @@ func _process(delta: float) -> void:
 	# Trigger once per step: when gait is active, speed >= 0.5, and the sine
 	# wave crosses from positive to negative (one footfall per cycle).
 	if _gait_weight > 0.5 and h_speed >= 0.5 and _prev_sin >= 0.0 and raw_sin < 0.0:
-		Audio.play_step()
+		if is_inside_tree() and has_node("/root/Audio"):
+			var audio_node: Node = get_node("/root/Audio")
+			if audio_node.has_method("play_step"):
+				audio_node.call("play_step")
 	_prev_sin = raw_sin
 
 	var walk_pos_y: float = raw_bob_val * p_bob * char_scale * minf(1.0, h_speed / 3.0) * p_bounce

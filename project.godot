@@ -36,6 +36,7 @@ FpsMonitor="*res://scripts/core/FpsMonitor.gd"
 DebrisPool="*res://scripts/core/DebrisPool.gd"
 CollectionLog="*res://scripts/gameplay/CollectionLog.gd"
 Bestiary="*res://scripts/gameplay/Bestiary.gd"
+Rules="*res://scripts/core/rules/RulesEngine.gd"
 
 [debug]
 

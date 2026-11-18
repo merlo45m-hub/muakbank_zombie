@@ -226,6 +226,12 @@ func _spawn_random_zombie() -> void:
 			effective_max = int(max_zombies * difficulty_manager.get_max_zombies_multiplier())
 		if difficulty_manager.has_method("get_spawn_interval"):
 			effective_interval = spawn_interval * difficulty_manager.get_spawn_interval()
+	if has_node("/root/Rules"):
+		var rules_node: Node = get_node("/root/Rules")
+		if rules_node.has_method("get_run_config_float"):
+			var diff_mult: float = float(rules_node.call("get_run_config_float", "difficulty_multiplier", 1.0))
+			if diff_mult > 0.01:
+				effective_interval /= diff_mult
 	if active_zombies.size() >= effective_max:
 		spawn_timer.start(effective_interval)
 		return
