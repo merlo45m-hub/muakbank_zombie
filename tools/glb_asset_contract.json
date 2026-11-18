@@ -1,0 +1,530 @@
+[
+  {
+    "file": "assets/models/aggy_voxel_hero_hunter.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 7.77,
+        "Y": 1.76,
+        "Z": 0.26
+      }
+    }
+  },
+  {
+    "file": "assets/models/aggy_voxel_zombie_skeleton_dog.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 7.9,
+        "Y": 1.31,
+        "Z": 0.28
+      }
+    }
+  },
+  {
+    "file": "assets/models/character_doctor.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 2.23,
+        "Z": 0.62
+      }
+    }
+  },
+  {
+    "file": "assets/models/character_gamer.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 2.28,
+        "Z": 0.77
+      }
+    }
+  },
+  {
+    "file": "assets/models/character_hunter.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 2.75,
+        "Z": 0.56
+      }
+    }
+  },
+  {
+    "file": "assets/models/character_nurse.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 2.24,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/character_streamer.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 2.1,
+        "Z": 1.52
+      }
+    }
+  },
+  {
+    "file": "assets/models/final_truck.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.7,
+        "Y": 3.2,
+        "Z": 2.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand2-conveyor-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 3.0,
+        "Y": 0.6,
+        "Z": 1.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand2-crane-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.67,
+        "Y": 3.09,
+        "Z": 3.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand2-hopper-round-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.9,
+        "Y": 1.7,
+        "Z": 1.9
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand2-machine-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.76,
+        "Y": 1.91,
+        "Z": 2.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand2-machine-fortified-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.8,
+        "Y": 2.03,
+        "Z": 2.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand2-pipe-bend-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.8,
+        "Y": 0.95,
+        "Z": 1.8
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand2-pipe-cross-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 2.0,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand2-pipe-long-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.8,
+        "Y": 1.4,
+        "Z": 1.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand2-pipe-valve-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.97,
+        "Y": 1.97,
+        "Z": 2.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand2-piston-square-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 2.0,
+        "Z": 2.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand3-chimney-basic-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.4,
+        "Y": 2.0,
+        "Z": 0.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand3-chimney-large-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.78,
+        "Y": 2.8,
+        "Z": 1.78
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand3-rooftop-antenna-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.32,
+        "Y": 1.2,
+        "Z": 4.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand3-service-ambulance-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.26,
+        "Y": 2.71,
+        "Z": 4.9
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand3-solar-landscape-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 3.2,
+        "Y": 0.55,
+        "Z": 1.89
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand3-solar-portrait-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.21,
+        "Y": 0.99,
+        "Z": 3.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand3-tank-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 0.98,
+        "Z": 1.22
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand3-tank-large-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.75,
+        "Y": 1.75,
+        "Z": 3.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/sand3-windmill-low-col.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.35,
+        "Y": 4.0,
+        "Z": 2.51
+      }
+    }
+  },
+  {
+    "file": "assets/models/screen_structures_exploded.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 9.63,
+        "Y": 0.06,
+        "Z": 7.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/weapon_axe.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.4,
+        "Y": 0.56,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/weapon_bat.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.1,
+        "Y": 0.58,
+        "Z": 0.7
+      }
+    }
+  },
+  {
+    "file": "assets/models/weapon_knife.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.15,
+        "Y": 0.7,
+        "Z": 0.08
+      }
+    }
+  },
+  {
+    "file": "assets/models/zombie_bear.glb",
+    "dims_tolerance": 0.25,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.3,
+      "dims": {
+        "X": 1.9,
+        "Y": 1.43,
+        "Z": 1.3
+      },
+      "required_nodes": [
+        "VXZ_Torso",
+        "VXZ_Head",
+        "VXZ_Eye_L",
+        "VXZ_Eye_R",
+        "VXZ_Wound",
+        "VXZ_Leg_00"
+      ],
+      "required_emissive_materials": [
+        "VXZ_Eyes_Red",
+        "VXZ_Wound"
+      ]
+    }
+  },
+  {
+    "file": "assets/models/zombie_cat.glb",
+    "dims_tolerance": 0.25,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.3,
+      "dims": {
+        "X": 1.03,
+        "Y": 0.64,
+        "Z": 0.5
+      },
+      "required_nodes": [
+        "VXZ_Torso",
+        "VXZ_Head",
+        "VXZ_Eye_L",
+        "VXZ_Eye_R",
+        "VXZ_Wound",
+        "VXZ_Leg_00"
+      ],
+      "required_emissive_materials": [
+        "VXZ_Eyes_Red",
+        "VXZ_Wound"
+      ]
+    }
+  },
+  {
+    "file": "assets/models/zombie_chicken.glb",
+    "dims_tolerance": 0.3,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.3,
+      "dims": {
+        "X": 0.51,
+        "Y": 0.48,
+        "Z": 0.37
+      },
+      "required_nodes": [
+        "VXZ_Torso",
+        "VXZ_Head",
+        "VXZ_Eye_L",
+        "VXZ_Eye_R",
+        "VXZ_Wound",
+        "VXZ_Leg_L"
+      ],
+      "required_emissive_materials": [
+        "VXZ_Eyes_Red",
+        "VXZ_Wound"
+      ]
+    }
+  },
+  {
+    "file": "assets/models/zombie_dog.glb",
+    "dims_tolerance": 0.25,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.3,
+      "dims": {
+        "X": 1.64,
+        "Y": 0.77,
+        "Z": 0.8
+      },
+      "required_nodes": [
+        "VXZ_Torso",
+        "VXZ_Head",
+        "VXZ_Eye_L",
+        "VXZ_Eye_R",
+        "VXZ_Wound",
+        "VXZ_Leg_00"
+      ],
+      "required_emissive_materials": [
+        "VXZ_Eyes_Red",
+        "VXZ_Wound"
+      ]
+    }
+  },
+  {
+    "file": "assets/models/zombie_rabbit.glb",
+    "dims_tolerance": 0.3,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.3,
+      "dims": {
+        "X": 0.63,
+        "Y": 0.62,
+        "Z": 0.52
+      },
+      "required_nodes": [
+        "VXZ_Torso",
+        "VXZ_Head",
+        "VXZ_Eye_L",
+        "VXZ_Eye_R",
+        "VXZ_Wound",
+        "VXZ_Leg_L"
+      ],
+      "required_emissive_materials": [
+        "VXZ_Eyes_Red",
+        "VXZ_Wound"
+      ]
+    }
+  }
+]

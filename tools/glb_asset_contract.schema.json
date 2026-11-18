@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GLB asset contract manifest",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["file", "expect"],
+    "additionalProperties": false,
+    "properties": {
+      "file": { "type": "string", "minLength": 5, "pattern": "^assets/.*\\.glb$" },
+      "dims_tolerance": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+      "expect": {
+        "type": "object",
+        "required": ["height_axis"],
+        "additionalProperties": false,
+        "properties": {
+          "height_axis": { "enum": ["X", "Y", "Z"] },
+          "min_height_frac": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "dims": {
+            "type": "object",
+            "required": ["X", "Y", "Z"],
+            "additionalProperties": false,
+            "properties": {
+              "X": { "type": "number", "minimum": 0.0 },
+              "Y": { "type": "number", "minimum": 0.0 },
+              "Z": { "type": "number", "minimum": 0.0 }
+            }
+          },
+          "required_nodes": { "type": "array", "items": { "type": "string" } },
+          "required_emissive_materials": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}
