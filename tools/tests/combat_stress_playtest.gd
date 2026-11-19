@@ -16,34 +16,46 @@ func _initialize() -> void:
 	print("=== Combat frame-pacing stress ===")
 	var spawner_script: GDScript = load("res://scripts/characters/ZombieSpawner3D.gd")
 	assert(spawner_script != null and spawner_script.can_instantiate(), "spawner script compile failed")
-	var packed_world: PackedScene = load("res://scenes/world/environment/industrial_district.tscn")
-	if packed_world == null:
-		print("STRESS_ERROR: industrial_district scene not found")
+		var packed_game: PackedScene = load("res://scenes/main/game.tscn")
+	if packed_game == null:
+		print("STRESS_ERROR: game.tscn not found")
 		quit(1)
 		return
-	var world: Node = packed_world.instantiate()
-	root.add_child.call_deferred(world)
+	var game: Node = packed_game.instantiate()
+	root.add_child.call_deferred(game)
 	for _i in range(6):
 		await process_frame
-	var spawner: Node = world.find_child("ZombieSpawner", true, false)
+	if game.has_method("start_game"):
+		game.call("start_game")
+		for _i in range(4):
+			await process_frame
+	var spawner: Node = game.find_child("ZombieSpawner", true, false)
 	if spawner == null:
-		# SceneTree owns the group query - Window (root) does NOT.
 		var grp: Array = get_nodes_in_group("zombie_spawner")
 		spawner = grp[0] if grp.size() > 0 else null
 	if spawner == null:
-		print("STRESS_ERROR: no zombie_spawner reachable from industrial_district")
+		print("STRESS_ERROR: no zombie_spawner reachable from game.tscn")
+		quit(1)
+		return
+	if not spawner.has_method("get_live_enemies"):
+		print("STRESS_ERROR: spawner lacks cached-list API")
 		quit(1)
 		return
 	# crank spawn pressure
 	spawner.set("max_zombies", WAVE_TARGET)
 	spawner.set("spawn_interval", 0.5)
 	spawner.set("can_spawn", true)
-	var player: Node3D = Node3D.new()
-	player.name = "StressPlayer"
-	player.add_to_group("player")
-	root.add_child.call_deferred(player)
-	await process_frame
-	var samples: Array[float] = []
+	if spawner.has_method("start_spawning"):
+		spawner.call("start_spawning")
+	var player: Node = get_first_node_in_group("player")
+	if player == null:
+		print("STRESS_WARN: no real player found; using stub")
+		player = Node3D.new()
+		player.name = "StressPlayer"
+		player.add_to_group("player")
+		root.add_child.call_deferred(player)
+		await process_frame
+var samples: Array[float] = []
 	var sim_t := 0.0
 	var tick_count := 0
 	while sim_t < SIM_SECONDS * 1000.0:
