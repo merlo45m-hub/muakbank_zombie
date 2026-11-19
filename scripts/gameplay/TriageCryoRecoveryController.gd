@@ -185,11 +185,11 @@ func _check_escapes() -> void:
 	for animal in animals:
 		if not is_instance_valid(animal) or bool(animal.get("delivered")):
 			continue
-	var d: Vector3 = animal.global_position - global_position
-	if absf(d.x) > HALL_HALF_EXTENT.x or absf(d.z) > HALL_HALF_EXTENT.z:
-		animal.call("reset_to_stall")
-		time_remaining = maxf(0.0, time_remaining - ESCAPE_PENALTY)
-		hud_flash = "%s ESCAPED — 8s LOST" % String(_type_of(animal)).to_upper()
+		var d: Vector3 = animal.global_position - global_position
+		if absf(d.x) > HALL_HALF_EXTENT.x or absf(d.z) > HALL_HALF_EXTENT.z:
+			animal.call("reset_to_stall")
+			time_remaining = maxf(0.0, time_remaining - ESCAPE_PENALTY)
+			hud_flash = "%s ESCAPED — 8s LOST" % String(_type_of(animal)).to_upper()
 
 func _check_overrun(delta: float) -> void:
 	if overrun_zone == null:
