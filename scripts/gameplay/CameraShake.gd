@@ -45,14 +45,15 @@ func _process(delta: float) -> void:
 	if not target:
 		return
 	var cam: Camera3D = target as Camera3D
-	if shake_strength > 0.01:
-		if cam:
-			cam.h_offset = randf_range(-1, 1) * shake_strength
-			cam.v_offset = randf_range(-1, 1) * shake_strength
-		shake_strength = lerp(shake_strength, 0.0, shake_decay * delta)
-	else:
+	if shake_strength < 0.01:
+		# Decay finished: zero the offsets once, then stop running this frame.
 		if shake_strength != 0.0:
 			if cam:
 				cam.h_offset = 0.0
 				cam.v_offset = 0.0
 			shake_strength = 0.0
+		return
+	if cam:
+		cam.h_offset = randf_range(-1, 1) * shake_strength
+		cam.v_offset = randf_range(-1, 1) * shake_strength
+	shake_strength = lerp(shake_strength, 0.0, shake_decay * delta)
