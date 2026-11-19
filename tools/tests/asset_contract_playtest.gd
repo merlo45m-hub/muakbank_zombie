@@ -192,9 +192,9 @@ func _run_grid_snap_probe() -> bool:
 			if not (child is Node3D):
 				continue
 			var node: Node3D = child as Node3D
-			var mx: float = absf(fmodf(node.position.x, cell))
-			var mz: float = absf(fmodf(node.position.z, cell))
-			var mr: float = absf(fmodf(node.rotation.y, step))
+			var mx: float = absf(fmod(node.position.x, cell))
+			var mz: float = absf(fmod(node.position.z, cell))
+			var mr: float = absf(fmod(node.rotation.y, step))
 			var pos_ok: bool = mx < MOD_EPS or mx > cell - MOD_EPS
 			var rot_ok: bool = mr < MOD_EPS or mr > step - MOD_EPS
 			checked_count += 1
