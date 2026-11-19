@@ -16,6 +16,7 @@ jobs:
           python-version: '3.12'
       - run: python3 tools/validate_project.py .
       - run: python3 tools/verify_visual_assets.py
+      - run: python3 tools/verify_scene_resolves.py
       # GDScript explicit-typing guard (docs/GDSCRIPT_TYPING.md). Scoped to .gd
       # files changed vs main so legacy probes aren't retroactively flagged.
       - run: python3 tools/check_gdscript_typing.py --changed --base=origin/main .

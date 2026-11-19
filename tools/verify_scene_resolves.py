@@ -11,8 +11,8 @@ for f in ROOT.rglob("*.tscn"):
     if "/.godot/" in str(f) or "/.git/" in str(f):
         continue
     s = f.read_text(encoding="utf-8", errors="replace")
-    ext_ids = set(re.findall(r'\[ext_resource[^\n]*id="([^"]+)"', s))
-    sub_ids = set(re.findall(r'\[sub_resource[^\n]*id="([^"]+)"', s))
+    ext_ids = set(re.findall(r'\[[\s]*ext_resource[^\n]*id="([^"]+)"', s))
+    sub_ids = set(re.findall(r'\[[\s]*sub_resource[^\n]*id="([^"]+)"', s))
     erefs = set(re.findall(r'ExtResource\("([^"]+)"\)', s))
     srefs = set(re.findall(r'SubResource\("([^"]+)"\)', s))
     d = (erefs - ext_ids) | (srefs - sub_ids)
@@ -22,7 +22,7 @@ for f in ROOT.rglob("*.tres"):
     if "/.godot/" in str(f):
         continue
     s = f.read_text(encoding="utf-8", errors="replace")
-    ext_ids = set(re.findall(r'\[ext_resource[^\n]*id="([^"]+)"', s))
+    ext_ids = set(re.findall(r'\[[\s]*ext_resource[^\n]*id="([^"]+)"', s))
     erefs = set(re.findall(r'ExtResource\("([^"]+)"\)', s))
     d = erefs - ext_ids
     if d:
