@@ -1,0 +1,256 @@
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://scripts/gameplay/TriageRoundupController.gd" id="1_ctrl"]
+[ext_resource type="Script" path="res://scripts/gameplay/TriageWardPen.gd" id="2_pen"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/triage_cargo_unit.tscn" id="3_unit"]
+[ext_resource type="PackedScene" path="res://scenes/ui/triage_roundup_hud.tscn" id="4_hud"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(22, 0.5, 44)
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(22, 0.5, 44)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.19, 0.2, 0.2, 1)
+roughness = 0.95
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_zone"]
+size = Vector3(5, 3, 5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_board"]
+size = Vector3(2.2, 1.5, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pad"]
+size = Vector3(2.4, 0.08, 2.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gate"]
+size = Vector3(2.7, 1, 0.12)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lamp"]
+top_radius = 0.12
+bottom_radius = 0.14
+height = 0.35
+radial_segments = 12
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp"]
+albedo_color = Color(0.15, 0.15, 0.16, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_crate"]
+albedo_color = Color(0.85, 0.15, 0.15, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cell"]
+albedo_color = Color(0.2, 0.35, 0.9, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_module"]
+albedo_color = Color(0.95, 0.8, 0.15, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bundle"]
+albedo_color = Color(0.35, 0.75, 0.3, 1)
+roughness = 0.6
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_overrun"]
+size = Vector3(16, 4, 8)
+
+[node name="TriageRoundup" type="Node3D" unique_id=1821840436]
+
+[node name="Floor" type="StaticBody3D" parent="." unique_id=1101497149]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+collision_mask = 9
+
+[node name="Collision" type="CollisionShape3D" parent="Floor" unique_id=1080999067]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor" unique_id=255843715]
+mesh = SubResource("BoxMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="Controller" type="Node3D" parent="." unique_id=1371561961]
+script = ExtResource("1_ctrl")
+objective_id = "l2_triage_roundup"
+objective_title = "Return escaped cargo units"
+gate_region = 2
+
+[node name="InteractionZone" type="Area3D" parent="Controller" unique_id=2111769808]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 1.5, 3)
+collision_layer = 0
+collision_mask = 3
+
+[node name="Collision" type="CollisionShape3D" parent="Controller/InteractionZone" unique_id=458137333]
+shape = SubResource("BoxShape3D_zone")
+
+[node name="Board" type="Node3D" parent="Controller" unique_id=1280109532]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 3)
+
+[node name="BoardMesh" type="MeshInstance3D" parent="Controller/Board" unique_id=437809742]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.78, 0)
+mesh = SubResource("BoxMesh_board")
+
+[node name="Prompt" type="Label3D" parent="Controller/Board" unique_id=574494585]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0.35)
+billboard = 1
+no_depth_test = true
+text = "START TRIAGE — 4 CARGO UNITS — HALL OVERRUN IN 90s"
+font_size = 40
+outline_size = 8
+
+[node name="TriageHUD" type="CanvasLayer" parent="." unique_id=307523790 instance=ExtResource("4_hud")]
+layer = 8
+visible = false
+
+[node name="Pens" type="Node3D" parent="." unique_id=1723771568]
+
+[node name="PenCrate" type="Node3D" parent="Pens" unique_id=1540555099]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -15)
+script = ExtResource("2_pen")
+required_animal_type = "crate"
+
+[node name="Pad" type="MeshInstance3D" parent="Pens/PenCrate" unique_id=200220912]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+mesh = SubResource("BoxMesh_pad")
+surface_material_override/0 = SubResource("StandardMaterial3D_crate")
+
+[node name="Gate" type="MeshInstance3D" parent="Pens/PenCrate" unique_id=178458567]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 1.35)
+mesh = SubResource("BoxMesh_gate")
+surface_material_override/0 = SubResource("StandardMaterial3D_crate")
+
+[node name="Lamp" type="MeshInstance3D" parent="Pens/PenCrate" unique_id=1287807141]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 1.35)
+mesh = SubResource("CylinderMesh_lamp")
+surface_material_override/0 = SubResource("StandardMaterial3D_lamp")
+
+[node name="TypeTag" type="Label3D" parent="Pens/PenCrate" unique_id=1639686556]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.9)
+billboard = 1
+no_depth_test = true
+text = "CRATE"
+font_size = 56
+outline_size = 8
+
+[node name="PenCell" type="Node3D" parent="Pens" unique_id=1280139343]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -15)
+script = ExtResource("2_pen")
+required_animal_type = "cell"
+
+[node name="Pad" type="MeshInstance3D" parent="Pens/PenCell" unique_id=1305271965]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+mesh = SubResource("BoxMesh_pad")
+surface_material_override/0 = SubResource("StandardMaterial3D_cell")
+
+[node name="Gate" type="MeshInstance3D" parent="Pens/PenCell" unique_id=291225174]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 1.35)
+mesh = SubResource("BoxMesh_gate")
+surface_material_override/0 = SubResource("StandardMaterial3D_cell")
+
+[node name="Lamp" type="MeshInstance3D" parent="Pens/PenCell" unique_id=1584631486]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 1.35)
+mesh = SubResource("CylinderMesh_lamp")
+surface_material_override/0 = SubResource("StandardMaterial3D_lamp")
+
+[node name="TypeTag" type="Label3D" parent="Pens/PenCell" unique_id=1205009214]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.9)
+billboard = 1
+no_depth_test = true
+text = "CELL"
+font_size = 56
+outline_size = 8
+
+[node name="PenModule" type="Node3D" parent="Pens" unique_id=284413013]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -15)
+script = ExtResource("2_pen")
+required_animal_type = "module"
+
+[node name="Pad" type="MeshInstance3D" parent="Pens/PenModule" unique_id=2101561408]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+mesh = SubResource("BoxMesh_pad")
+surface_material_override/0 = SubResource("StandardMaterial3D_module")
+
+[node name="Gate" type="MeshInstance3D" parent="Pens/PenModule" unique_id=74799252]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 1.35)
+mesh = SubResource("BoxMesh_gate")
+surface_material_override/0 = SubResource("StandardMaterial3D_module")
+
+[node name="Lamp" type="MeshInstance3D" parent="Pens/PenModule" unique_id=1271886724]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 1.35)
+mesh = SubResource("CylinderMesh_lamp")
+surface_material_override/0 = SubResource("StandardMaterial3D_lamp")
+
+[node name="TypeTag" type="Label3D" parent="Pens/PenModule" unique_id=1261531777]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.9)
+billboard = 1
+no_depth_test = true
+text = "MODULE"
+font_size = 56
+outline_size = 8
+
+[node name="PenBundle" type="Node3D" parent="Pens" unique_id=1792850785]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -15)
+script = ExtResource("2_pen")
+required_animal_type = "bundle"
+
+[node name="Pad" type="MeshInstance3D" parent="Pens/PenBundle" unique_id=947391874]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+mesh = SubResource("BoxMesh_pad")
+surface_material_override/0 = SubResource("StandardMaterial3D_bundle")
+
+[node name="Gate" type="MeshInstance3D" parent="Pens/PenBundle" unique_id=536375133]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 1.35)
+mesh = SubResource("BoxMesh_gate")
+surface_material_override/0 = SubResource("StandardMaterial3D_bundle")
+
+[node name="Lamp" type="MeshInstance3D" parent="Pens/PenBundle" unique_id=205444281]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 1.35)
+mesh = SubResource("CylinderMesh_lamp")
+surface_material_override/0 = SubResource("StandardMaterial3D_lamp")
+
+[node name="TypeTag" type="Label3D" parent="Pens/PenBundle" unique_id=776864578]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.9)
+billboard = 1
+no_depth_test = true
+text = "BUNDLE"
+font_size = 56
+outline_size = 8
+
+[node name="Animals" type="Node3D" parent="." unique_id=1343160568]
+
+[node name="UnitCrate" type="RigidBody3D" parent="Animals" unique_id=881616032 instance=ExtResource("3_unit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 15)
+mass = 24.0
+linear_damp = 2.0
+angular_damp = 6.0
+unit_type = "crate"
+
+[node name="UnitCell" type="RigidBody3D" parent="Animals" unique_id=376089658 instance=ExtResource("3_unit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 15)
+mass = 24.0
+linear_damp = 2.0
+angular_damp = 6.0
+unit_type = "cell"
+
+[node name="UnitModule" type="RigidBody3D" parent="Animals" unique_id=1426487080 instance=ExtResource("3_unit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 15)
+mass = 24.0
+linear_damp = 2.0
+angular_damp = 6.0
+unit_type = "module"
+
+[node name="UnitBundle" type="RigidBody3D" parent="Animals" unique_id=2029005300 instance=ExtResource("3_unit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 15)
+mass = 24.0
+linear_damp = 2.0
+angular_damp = 6.0
+unit_type = "bundle"
+
+[node name="OverrunZone" type="Area3D" parent="." unique_id=1335553619]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3)
+collision_layer = 0
+collision_mask = 8
+
+[node name="Collision" type="CollisionShape3D" parent="OverrunZone" unique_id=1801007755]
+shape = SubResource("BoxShape3D_overrun")

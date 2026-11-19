@@ -254,6 +254,8 @@ func _setup_objectives() -> void:
 		objective_manager.add_objective("l1_last_stand", "Survive 3 checkpoint waves", 1)
 		objective_manager.add_objective("l1_triage_roundup", "Return escaped animals", 1)
 		objective_manager.add_objective("l1_quarantine_breach", "Seal the service route", 1)
+	if Save.get_current_level() == 2:
+		objective_manager.add_objective("l2_triage_roundup", "Return escaped cargo units", 1)
 
 func _setup_achievements() -> void:
 	var am = get_node_or_null("AchievementManager")
@@ -434,7 +436,7 @@ func _get_minigame_ids_for_level(level: int) -> Array[String]:
 				"l1_quarantine_breach"
 			]
 		2:
-			return ["l2_armory_salvage"]
+			return ["l2_armory_salvage", "l2_triage_roundup"]
 		3:
 			return ["l3_rooftop_extraction"]
 		_:

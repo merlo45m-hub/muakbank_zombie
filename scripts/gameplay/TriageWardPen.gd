@@ -16,6 +16,10 @@ const TYPE_COLORS := {
 	"cat": Color(0.2, 0.35, 0.9),
 	"rabbit": Color(0.95, 0.8, 0.15),
 	"chicken": Color(0.35, 0.75, 0.3),
+	"crate": Color(0.85, 0.15, 0.15),
+	"cell": Color(0.2, 0.35, 0.9),
+	"module": Color(0.95, 0.8, 0.15),
+	"bundle": Color(0.35, 0.75, 0.3),
 }
 
 @export var required_animal_type: String = "dog"
@@ -51,7 +55,7 @@ func process_capture(delta: float) -> bool:
 		dwell = 0.0
 		current_guest = null
 		return false
-	if guest.get("animal_type") != required_animal_type or bool(guest.get("delivered")):
+	if _guest_type(guest) != required_animal_type or bool(guest.get("delivered")):
 		# Wrong type (or an already-delivered foreign animal) — bounce it out.
 		_bounce(guest)
 		dwell = 0.0
@@ -96,3 +100,13 @@ func _update_lamp(on: bool) -> void:
 	mat.emission = TYPE_COLORS.get(required_animal_type, Color.WHITE) if on else Color.BLACK
 	mat.emission_energy_multiplier = 2.2 if on else 0.0
 	_lamp.material_override = mat
+
+
+func _guest_type(guest: Node) -> String:
+	"""Data-driven guest identity: L1 animals expose animal_type, L2 cargo units
+	expose unit_type. One resolver, no literal branching in the capture path."""
+	var v: Variant = guest.get("animal_type")
+	if v == null:
+		v = guest.get("unit_type")
+	return String(v) if v != null else ""
+

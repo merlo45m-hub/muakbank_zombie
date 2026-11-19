@@ -9,8 +9,8 @@ class_name TriageRoundupController
 ## 1.25s stable-dwell capture; wrong-type animals bounce out; escapes cost 8s.
 ## Reports to ObjectiveManager exactly once on win (l1_triage_roundup).
 
-const OBJECTIVE_ID := "l1_triage_roundup"
-const OBJECTIVE_TITLE := "Return escaped animals"
+@export var objective_id: String = "l1_triage_roundup"
+@export var objective_title: String = "Return escaped animals"
 const RUN_DURATION := 90.0
 const ESCAPE_PENALTY := 8.0
 const FAILURE_RESET_DELAY := 3.0
@@ -23,6 +23,7 @@ enum RunState { IDLE, ACTIVE, WON, FAILED }
 @export var pens_path: NodePath = ^"../Pens"
 @export var animals_path: NodePath = ^"../Animals"
 @export var overrun_zone_path: NodePath = ^"../OverrunZone"
+@export var gate_region: int = 0  # 0 = no region gate; Industrial variant sets 2
 
 var state: RunState = RunState.IDLE
 var time_remaining: float = RUN_DURATION
@@ -37,11 +38,17 @@ var animals: Array[Node] = []
 var overrun_zone: Area3D = null
 var overrun_dwell: float = 0.0
 var hud_flash: String = ""
+var last_loot_tier: int = 0
 
 @onready var interaction_zone: Area3D = $InteractionZone
 @onready var prompt: Label3D = $Board/Prompt
 
 func _ready() -> void:
+	if gate_region > 0:
+		var wp: Node = get_node_or_null("/root/WorldProgression")
+		if wp == null or not wp.has_method("can_hop") or not bool(wp.call("can_hop", gate_region)):
+			queue_free()
+			return
 	add_to_group("interactive_prop")
 	hud = get_node_or_null(hud_path) as CanvasLayer
 	pens = _collect_children(pens_path)
@@ -64,8 +71,8 @@ func _register_objective() -> void:
 	objective_manager = get_tree().root.find_child("ObjectiveManager", true, false)
 	if objective_manager and objective_manager.has_method("add_objective"):
 		var objectives: Dictionary = objective_manager.get("objectives")
-		if not objectives.has(OBJECTIVE_ID):
-			objective_manager.add_objective(OBJECTIVE_ID, OBJECTIVE_TITLE, 1)
+		if not objectives.has(objective_id):
+			objective_manager.add_objective(objective_id, objective_title, 1)
 
 func _process(delta: float) -> void:
 	if state != RunState.ACTIVE:
@@ -120,7 +127,7 @@ func _on_animal_delivered(animal_type: String, _pen: Node) -> void:
 	delivered_types.append(animal_type)
 	# Park the matching body inside its pen so later collisions cannot undo it.
 	for animal in animals:
-		if is_instance_valid(animal) and animal.get("animal_type") == animal_type:
+		if is_instance_valid(animal) and _type_of(animal) == animal_type:
 			animal.call("park_at", _pen.global_position + Vector3(0, 0.3, 0))
 			break
 	if delivered_types.size() >= 4:
@@ -134,7 +141,9 @@ func _win_run() -> void:
 	state = RunState.WON
 	is_won = true
 	if objective_manager and objective_manager.has_method("update_progress"):
-		objective_manager.update_progress(OBJECTIVE_ID, 1)
+		objective_manager.update_progress(objective_id, 1)
+		var wp: Node = get_node_or_null("/root/WorldProgression")
+		last_loot_tier = int(wp.call("get_active_loot_tier")) if wp != null and wp.has_method("get_active_loot_tier") else 1
 	_show_result("ALL PATIENTS ACCOUNTED FOR")
 	_refresh_prompt()
 
@@ -175,7 +184,7 @@ func _check_escapes() -> void:
 		if absf(d.x) > HALL_HALF_EXTENT.x or absf(d.z) > HALL_HALF_EXTENT.z:
 			animal.call("reset_to_stall")
 			time_remaining = maxf(0.0, time_remaining - ESCAPE_PENALTY)
-			hud_flash = "%s ESCAPED — 8s LOST" % String(animal.get("animal_type")).to_upper()
+			hud_flash = "%s ESCAPED — 8s LOST" % String(_type_of(animal)).to_upper()
 
 func _check_overrun(delta: float) -> void:
 	if overrun_zone == null:
@@ -218,7 +227,7 @@ func _update_hud() -> void:
 	for pen in pens:
 		if not is_instance_valid(pen):
 			continue
-		var t: String = String(pen.get("required_animal_type"))
+		var t: String = String(_pen_required_type(pen))
 		var row: Label = hud.get_node_or_null("Panel/Margin/Rows/%sRow" % t.capitalize())
 		if row:
 			var done: bool = t in delivered_types
@@ -245,6 +254,24 @@ func _hide_result() -> void:
 	var result: Label = hud.get_node_or_null("Result")
 	if result:
 		result.visible = false
+
+func _type_of(body: Node) -> String:
+	# Read the unit's declared type from whatever export its scene uses.
+	# L1 bodies expose animal_type; industrial cargo units expose unit_type.
+	# Never branches on literal type values — only reads declared exports.
+	if body.has("unit_type"):
+		return String(body.get("unit_type"))
+	if body.has("animal_type"):
+		return String(body.get("animal_type"))
+	return ""
+
+func _pen_required_type(pen: Node) -> String:
+	# Read the pen's declared accepted type from its export.
+	if pen.has("required_unit_type"):
+		return String(pen.get("required_unit_type"))
+	if pen.has("required_animal_type"):
+		return String(pen.get("required_animal_type"))
+	return ""
 
 func _collect_children(path: NodePath) -> Array[Node]:
 	var container := get_node_or_null(path)
