@@ -6,7 +6,7 @@
 extends Node
 
 # === SAVE VERSION (bump to trigger a re-save / migration on load) ===
-const SAVE_VERSION: int = 6
+const SAVE_VERSION: int = 7
 
 # === SAVE DATA ===
 # Filled by _load_game() at startup. _default_save_data() is the single source of
@@ -256,6 +256,19 @@ func set_world_state(data: Dictionary) -> void:
 				save_data[key] = data[key]
 	save_game()
 
+func get_world_transient_snapshots() -> Dictionary:
+	"""Return a copy of the per-region transient snapshots (crash-durable hop state)."""
+	var d = save_data.get("world_transient_snapshots", {})
+	if d is Dictionary:
+		return d.duplicate(true)
+	return {}
+
+func set_world_transient_snapshots(snapshots: Dictionary) -> void:
+	"""Mirror WorldHopManager.transient_by_region into the save field and persist."""
+	var defaults := _default_save_data()
+	save_data["world_transient_snapshots"] = SaveSchema._deserialize_field(
+		SaveSchema.FieldType.TYPE_DICT_INT_KEYS, snapshots, defaults.get("world_transient_snapshots"))
+	save_game()
 
 # ── COLLECTION REGISTRY (sole-writer path) ─────────────────────
 
