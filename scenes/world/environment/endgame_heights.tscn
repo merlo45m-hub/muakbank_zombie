@@ -28,6 +28,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-h.glb" id="22_glf83"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/construction-barrier.glb" id="23_g2mc4"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/construction-cone.glb" id="24_4na5t"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/triage_cryo_recovery.tscn" id="9_tcryo"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ytlrm"]
 albedo_color = Color(0.22, 0.23, 0.25, 1)
@@ -313,3 +314,5 @@ script = ExtResource("hdri_lighting")
 hdri_path = "res://assets/hdri/night_bridge_2k.hdr"
 ambient_energy = 0.35
 
+[node name="TriageCryoRecovery" type="Node3D" parent="." instance=ExtResource("9_tcryo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 0, 0)
