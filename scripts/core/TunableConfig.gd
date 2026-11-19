@@ -133,7 +133,7 @@ func _on_sig(result: int, code: int, _headers: Array, body: PackedByteArray) -> 
 		return
 	var want: String = _hmac_sha256(_key_bytes(), pending_bytes).hex_encode()
 	var got: String = body.get_string_from_utf8().strip_edges()
-	if not got.equal_exact(want):
+	if not _consttime_eq(got, want):
 		push_warning("[TunableConfig] HMAC MISMATCH - manifest discarded, defaults stand")
 		return
 	active = pending_doc
@@ -178,3 +178,15 @@ func _apply() -> void:
 		var blood: Variant = _get_path(active, "sections.presentation.blood_fx")
 		if blood != null:
 			rules.call("set_parameter_enabled", "BLOOD_FX", bool(blood))
+
+
+func _consttime_eq(a: String, b: String) -> bool:
+	# Constant-time-ish compare (String.equal_exact is not a Godot API).
+	var ab: PackedByteArray = a.to_utf8_buffer()
+	var bb: PackedByteArray = b.to_utf8_buffer()
+	if ab.size() != bb.size():
+		return false
+	var diff: int = 0
+	for i in range(ab.size()):
+		diff |= int(ab[i]) ^ int(bb[i])
+	return diff == 0
