@@ -173,11 +173,13 @@ func _apply() -> void:
 					break
 			if has_tier:
 				look.set("tier", int(tier))
-	var rules: Node = get_node_or_null("/root/Rules")
-	if rules != null and rules.has_method("set_parameter_enabled"):
-		var blood: Variant = _get_path(active, "sections.presentation.blood_fx")
-		if blood != null:
-			rules.call("set_parameter_enabled", "BLOOD_FX", bool(blood))
+	# Honest unapplied-keys audit line: RulesEngine.set_parameter_enabled takes
+	# an int type_id (verified signature), and blood FX has NO runtime enable API
+	# (HitFeedback is per-character, ungrouped). blood_fx / screen_shake are
+	# PUBLISHED but intentionally NOT applied until a real consumer API lands.
+	var blood: Variant = _get_path(active, "sections.presentation.blood_fx")
+	if blood != null and bool(blood) != true:
+		print("[TunableConfig] UNAPPLIED (no consumer API yet): presentation.blood_fx=%s screen_shake (tracked follow-up)" % str(blood))
 
 
 func _consttime_eq(a: String, b: String) -> bool:
