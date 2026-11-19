@@ -30,6 +30,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/construction-cone.glb" id="24_4na5t"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/triage_cryo_recovery.tscn" id="9_tcryo"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/quarantine_breach_biolab.tscn" id="8_qblab"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-skyscraper-c.glb" id="6_jciay"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ytlrm"]
 albedo_color = Color(0.22, 0.23, 0.25, 1)
