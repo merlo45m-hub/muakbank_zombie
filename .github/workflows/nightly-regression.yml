@@ -46,7 +46,7 @@ jobs:
       - name: Fresh headless import
         run: xvfb-run -a "$GODOT_BIN" --headless --import --path .
 
-      - name: Canonical regression smoke (5 checks)
+      - name: Canonical regression smoke
         run: bash tools/regression_smoke.sh
 
       - name: GDUnit suite (12 checks)
@@ -81,6 +81,22 @@ jobs:
           set -euo pipefail
           xvfb-run -a "$GODOT_BIN" --headless --path . --script tools/tests/save_migration_playtest.gd | tee /tmp/migration_playtest.log
           grep -q "MIGRATION_ROUNDTRIP_PASS=true" /tmp/migration_playtest.log
+
+
+      - name: "Combat frame-pacing stress (issue #30, engine-side)"
+        run: |
+          set -euo pipefail
+          xvfb-run -a "$GODOT_BIN" --headless --path . --script tools/tests/combat_stress_playtest.gd | tee /tmp/stress.log
+          # Hard gate = the probe COMPLETED (no hang, no STRESS_ERROR).
+          # The pacing verdict itself is advisory on shared runners by design:
+          # runner CPU jitter, not game regressions, drives worst/p95 here.
+          # The numerical gate lives in the owner-controlled VPS lane.
+          if grep -q "STRESS_ERROR" /tmp/stress.log; then
+              cat /tmp/stress.log
+              exit 1
+          fi
+          grep -q "STRESS_JSON=" /tmp/stress.log
+          echo "stress verdict: $(grep -o 'STRESS_PASS=[a-z]*' /tmp/stress.log | head -1) $(grep STRESS_JSON /tmp/stress.log)"
 
       - name: Upload logs on failure
         if: failure()
