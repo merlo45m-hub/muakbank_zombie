@@ -173,247 +173,133 @@ material_override = SubResource("FloorMaterial")
 
 [node name="Gravestones" type="Node3D" parent="."]
 
-[node name="Grave1" type="Node3D" parent="Gravestones"]
+[node name="Grave1" type="Node3D" parent="Gravestones" instance=ExtResource("3_gv_broken")]
 transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, -8.5, 0.0, -3.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Gravestones/Grave1"]
-mesh = ExtResource("3_gv_broken")
-
-[node name="Grave2" type="Node3D" parent="Gravestones"]
+[node name="Grave2" type="Node3D" parent="Gravestones" instance=ExtResource("6_gv_decor")]
 transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, -5.2, 0.0, -5.5)
 
-[node name="Mesh" type="MeshInstance3D" parent="Gravestones/Grave2"]
-mesh = ExtResource("6_gv_decor")
-
-[node name="Grave3" type="Node3D" parent="Gravestones"]
+[node name="Grave3" type="Node3D" parent="Gravestones" instance=ExtResource("7_gv_round")]
 transform = Transform3D(0.999, 0, -0.035, 0, 1, 0, 0.035, 0, 0.999, -1.8, 0.0, -7.2)
 
-[node name="Mesh" type="MeshInstance3D" parent="Gravestones/Grave3"]
-mesh = ExtResource("7_gv_round")
-
-[node name="Grave4" type="Node3D" parent="Gravestones"]
+[node name="Grave4" type="Node3D" parent="Gravestones" instance=ExtResource("5_gv_cross")]
 transform = Transform3D(0.992, 0, -0.122, 0, 1, 0, 0.122, 0, 0.992, 2.5, 0.0, -6.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Gravestones/Grave4"]
-mesh = ExtResource("5_gv_cross")
-
-[node name="Grave5" type="Node3D" parent="Gravestones"]
+[node name="Grave5" type="Node3D" parent="Gravestones" instance=ExtResource("8_gv_wide")]
 transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, 6.8, 0.0, -4.5)
 
-[node name="Mesh" type="MeshInstance3D" parent="Gravestones/Grave5"]
-mesh = ExtResource("8_gv_wide")
-
-[node name="Grave6" type="Node3D" parent="Gravestones"]
+[node name="Grave6" type="Node3D" parent="Gravestones" instance=ExtResource("4_gv_cross_lg")]
 transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, -9.2, 0.0, -8.8)
 
-[node name="Mesh" type="MeshInstance3D" parent="Gravestones/Grave6"]
-mesh = ExtResource("4_gv_cross_lg")
-
-[node name="Grave7" type="Node3D" parent="Gravestones"]
+[node name="Grave7" type="Node3D" parent="Gravestones" instance=ExtResource("2_gv_bevel")]
 transform = Transform3D(0.999, 0, -0.035, 0, 1, 0, 0.035, 0, 0.999, -3.5, 0.0, -9.5)
 
-[node name="Mesh" type="MeshInstance3D" parent="Gravestones/Grave7"]
-mesh = ExtResource("2_gv_bevel")
-
-[node name="Grave8" type="Node3D" parent="Gravestones"]
+[node name="Grave8" type="Node3D" parent="Gravestones" instance=ExtResource("3_gv_broken")]
 transform = Transform3D(0.992, 0, -0.122, 0, 1, 0, 0.122, 0, 0.992, 1.2, 0.0, -10.2)
 
-[node name="Mesh" type="MeshInstance3D" parent="Gravestones/Grave8"]
-mesh = ExtResource("3_gv_broken")
-
-[node name="Grave9" type="Node3D" parent="Gravestones"]
+[node name="Grave9" type="Node3D" parent="Gravestones" instance=ExtResource("7_gv_round")]
 transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, 5.5, 0.0, -8.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Gravestones/Grave9"]
-mesh = ExtResource("7_gv_round")
-
-[node name="Grave10" type="Node3D" parent="Gravestones"]
+[node name="Grave10" type="Node3D" parent="Gravestones" instance=ExtResource("2_gv_bevel")]
 transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, -6.0, 0.0, -12.0)
-
-[node name="Mesh" type="MeshInstance3D" parent="Gravestones/Grave10"]
-mesh = ExtResource("2_gv_bevel")
 
 [node name="FocalPair" type="Node3D" parent="."]
 
-[node name="Crypt" type="Node3D" parent="FocalPair"]
+[node name="Crypt" type="Node3D" parent="FocalPair" instance=ExtResource("13_gv_crypt")]
 transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, -4.5, 0.0, -14.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="FocalPair/Crypt"]
-mesh = ExtResource("13_gv_crypt")
-
-[node name="Altar" type="Node3D" parent="FocalPair"]
+[node name="Altar" type="Node3D" parent="FocalPair" instance=ExtResource("14_gv_altar")]
 transform = Transform3D(0.999, 0, -0.035, 0, 1, 0, 0.035, 0, 0.999, -2.8, 0.0, -15.2)
-
-[node name="Mesh" type="MeshInstance3D" parent="FocalPair/Altar"]
-mesh = ExtResource("14_gv_altar")
 
 [node name="Fencing" type="Node3D" parent="."]
 
-[node name="FenceLeft1" type="Node3D" parent="Fencing"]
+[node name="FenceLeft1" type="Node3D" parent="Fencing" instance=ExtResource("15_gv_fence_iron")]
 transform = Transform3D(0.707, 0, 0.707, 0, 1, 0, -0.707, 0, 0.707, -7.0, 0.0, -8.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Fencing/FenceLeft1"]
-mesh = ExtResource("15_gv_fence_iron")
-
-[node name="FenceLeft2" type="Node3D" parent="Fencing"]
+[node name="FenceLeft2" type="Node3D" parent="Fencing" instance=ExtResource("15_gv_fence_iron")]
 transform = Transform3D(0.707, 0, 0.707, 0, 1, 0, -0.707, 0, 0.707, -7.0, 0.0, -9.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Fencing/FenceLeft2"]
-mesh = ExtResource("15_gv_fence_iron")
-
-[node name="FenceLeft3" type="Node3D" parent="Fencing"]
+[node name="FenceLeft3" type="Node3D" parent="Fencing" instance=ExtResource("17_gv_fence_dmg")]
 transform = Transform3D(0.707, 0, 0.707, 0, 1, 0, -0.707, 0, 0.707, -7.0, 0.0, -10.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Fencing/FenceLeft3"]
-mesh = ExtResource("17_gv_fence_dmg")
-
-[node name="FenceRight1" type="Node3D" parent="Fencing"]
+[node name="FenceRight1" type="Node3D" parent="Fencing" instance=ExtResource("15_gv_fence_iron")]
 transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, 7.0, 0.0, -8.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Fencing/FenceRight1"]
-mesh = ExtResource("15_gv_fence_iron")
-
-[node name="FenceRight2" type="Node3D" parent="Fencing"]
+[node name="FenceRight2" type="Node3D" parent="Fencing" instance=ExtResource("15_gv_fence_iron")]
 transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, 7.0, 0.0, -9.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Fencing/FenceRight2"]
-mesh = ExtResource("15_gv_fence_iron")
-
-[node name="FenceRight3" type="Node3D" parent="Fencing"]
+[node name="FenceRight3" type="Node3D" parent="Fencing" instance=ExtResource("16_gv_fence")]
 transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, 7.0, 0.0, -10.0)
-
-[node name="Mesh" type="MeshInstance3D" parent="Fencing/FenceRight3"]
-mesh = ExtResource("16_gv_fence")
 
 [node name="Trees" type="Node3D" parent="."]
 
-[node name="Pine1" type="Node3D" parent="Trees"]
+[node name="Pine1" type="Node3D" parent="Trees" instance=ExtResource("21_gv_pine_crooked")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 0.0, -12.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Trees/Pine1"]
-mesh = ExtResource("21_gv_pine_crooked")
-
-[node name="Pine2" type="Node3D" parent="Trees"]
+[node name="Pine2" type="Node3D" parent="Trees" instance=ExtResource("22_gv_pine_fall")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.0, 0.0, -13.5)
 
-[node name="Mesh" type="MeshInstance3D" parent="Trees/Pine2"]
-mesh = ExtResource("22_gv_pine_fall")
-
-[node name="Pine3" type="Node3D" parent="Trees"]
+[node name="Pine3" type="Node3D" parent="Trees" instance=ExtResource("20_gv_pine")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.0, 0.0, -5.0)
-
-[node name="Mesh" type="MeshInstance3D" parent="Trees/Pine3"]
-mesh = ExtResource("20_gv_pine")
 
 [node name="ForegroundDetails" type="Node3D" parent="."]
 
-[node name="Lantern1" type="Node3D" parent="ForegroundDetails"]
+[node name="Lantern1" type="Node3D" parent="ForegroundDetails" instance=ExtResource("19_gv_lantern")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0, 0.0, 2.5)
 
-[node name="Mesh" type="MeshInstance3D" parent="ForegroundDetails/Lantern1"]
-mesh = ExtResource("19_gv_lantern")
-
-[node name="Rocks1" type="Node3D" parent="ForegroundDetails"]
+[node name="Rocks1" type="Node3D" parent="ForegroundDetails" instance=ExtResource("25_gv_rocks")]
 transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, 2.0, 0.0, 1.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="ForegroundDetails/Rocks1"]
-mesh = ExtResource("25_gv_rocks")
-
-[node name="Rocks2" type="Node3D" parent="ForegroundDetails"]
+[node name="Rocks2" type="Node3D" parent="ForegroundDetails" instance=ExtResource("26_gv_trunk")]
 transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, -1.5, 0.0, 0.5)
 
-[node name="Mesh" type="MeshInstance3D" parent="ForegroundDetails/Rocks2"]
-mesh = ExtResource("26_gv_trunk")
-
-[node name="Debris1" type="Node3D" parent="ForegroundDetails"]
+[node name="Debris1" type="Node3D" parent="ForegroundDetails" instance=ExtResource("27_gv_debris")]
 transform = Transform3D(0.999, 0, -0.035, 0, 1, 0, 0.035, 0, 0.999, 0.5, 0.0, 1.5)
 
-[node name="Mesh" type="MeshInstance3D" parent="ForegroundDetails/Debris1"]
-mesh = ExtResource("27_gv_debris")
-
-[node name="DebrisWood1" type="Node3D" parent="ForegroundDetails"]
+[node name="DebrisWood1" type="Node3D" parent="ForegroundDetails" instance=ExtResource("28_gv_debris_wood")]
 transform = Transform3D(0.992, 0, -0.122, 0, 1, 0, 0.122, 0, 0.992, -2.5, 0.0, 2.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="ForegroundDetails/DebrisWood1"]
-mesh = ExtResource("28_gv_debris_wood")
-
-[node name="Pumpkin1" type="Node3D" parent="ForegroundDetails"]
+[node name="Pumpkin1" type="Node3D" parent="ForegroundDetails" instance=ExtResource("23_gv_pumpkin_carved")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 0.0, 0.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="ForegroundDetails/Pumpkin1"]
-mesh = ExtResource("23_gv_pumpkin_carved")
-
-[node name="Pumpkin2" type="Node3D" parent="ForegroundDetails"]
+[node name="Pumpkin2" type="Node3D" parent="ForegroundDetails" instance=ExtResource("24_gv_pumpkin")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.0, -0.5)
-
-[node name="Mesh" type="MeshInstance3D" parent="ForegroundDetails/Pumpkin2"]
-mesh = ExtResource("24_gv_pumpkin")
 
 [node name="Path" type="Node3D" parent="."]
 
-[node name="Road1" type="Node3D" parent="Path"]
+[node name="Road1" type="Node3D" parent="Path" instance=ExtResource("29_gv_road")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0, 4.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Path/Road1"]
-mesh = ExtResource("29_gv_road")
-
-[node name="Road2" type="Node3D" parent="Path"]
+[node name="Road2" type="Node3D" parent="Path" instance=ExtResource("29_gv_road")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0, 3.2)
 
-[node name="Mesh" type="MeshInstance3D" parent="Path/Road2"]
-mesh = ExtResource("29_gv_road")
-
-[node name="Road3" type="Node3D" parent="Path"]
+[node name="Road3" type="Node3D" parent="Path" instance=ExtResource("29_gv_road")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0, 2.4)
 
-[node name="Mesh" type="MeshInstance3D" parent="Path/Road3"]
-mesh = ExtResource("29_gv_road")
-
-[node name="Road4" type="Node3D" parent="Path"]
+[node name="Road4" type="Node3D" parent="Path" instance=ExtResource("29_gv_road")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0, 1.6)
 
-[node name="Mesh" type="MeshInstance3D" parent="Path/Road4"]
-mesh = ExtResource("29_gv_road")
-
-[node name="Road5" type="Node3D" parent="Path"]
+[node name="Road5" type="Node3D" parent="Path" instance=ExtResource("29_gv_road")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0, 0.8)
-
-[node name="Mesh" type="MeshInstance3D" parent="Path/Road5"]
-mesh = ExtResource("29_gv_road")
 
 [node name="GraveBorders" type="Node3D" parent="."]
 
-[node name="Border1" type="Node3D" parent="GraveBorders"]
+[node name="Border1" type="Node3D" parent="GraveBorders" instance=ExtResource("10_gv_border")]
 transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, -8.5, 0.0, -2.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="GraveBorders/Border1"]
-mesh = ExtResource("10_gv_border")
-
-[node name="Border2" type="Node3D" parent="GraveBorders"]
+[node name="Border2" type="Node3D" parent="GraveBorders" instance=ExtResource("10_gv_border")]
 transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, 7.0, 0.0, -3.5)
 
-[node name="Mesh" type="MeshInstance3D" parent="GraveBorders/Border2"]
-mesh = ExtResource("10_gv_border")
-
-[node name="Border3" type="Node3D" parent="GraveBorders"]
+[node name="Border3" type="Node3D" parent="GraveBorders" instance=ExtResource("9_gv_grave")]
 transform = Transform3D(0.999, 0, -0.035, 0, 1, 0, 0.035, 0, 0.999, -5.0, 0.0, -11.0)
-
-[node name="Mesh" type="MeshInstance3D" parent="GraveBorders/Border3"]
-mesh = ExtResource("9_gv_grave")
 
 [node name="Crosses" type="Node3D" parent="."]
 
-[node name="CrossWood1" type="Node3D" parent="Crosses"]
+[node name="CrossWood1" type="Node3D" parent="Crosses" instance=ExtResource("12_gv_cross_wood")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0.5, -3.0)
 
-[node name="Mesh" type="MeshInstance3D" parent="Crosses/CrossWood1"]
-mesh = ExtResource("12_gv_cross_wood")
-
-[node name="CrossStone1" type="Node3D" parent="Crosses"]
+[node name="CrossStone1" type="Node3D" parent="Crosses" instance=ExtResource("11_gv_cross")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.5, -6.0)
-
-[node name="Mesh" type="MeshInstance3D" parent="Crosses/CrossStone1"]
-mesh = ExtResource("11_gv_cross")
 
 [node name="MoonLight" type="DirectionalLight3D" parent="."]
 shadow_enabled = true
