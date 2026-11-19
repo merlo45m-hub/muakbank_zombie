@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/minigames/endgame_extraction.tscn" id="4_sqrqr"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-skyscraper-b.glb" id="5_0857m"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/endgame_cache_network.tscn" id="5_i5oq1"]
-[ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-skyscraper-c.glb" id="6_jciay"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/armory_lockdown_biolab.tscn" id="6_armory"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-skyscraper-d.glb" id="7_skyx0"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-skyscraper-e.glb" id="8_x60a5"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/commercial/Models/building-i.glb" id="9_osygr"]
@@ -29,6 +29,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/construction-barrier.glb" id="23_g2mc4"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/construction-cone.glb" id="24_4na5t"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/triage_cryo_recovery.tscn" id="9_tcryo"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/quarantine_breach_biolab.tscn" id="8_qblab"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ytlrm"]
 albedo_color = Color(0.22, 0.23, 0.25, 1)
@@ -302,6 +303,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 140, 0, 0)
 
 [node name="EndgameSupplyCacheNetwork" type="Node3D" parent="." unique_id=1825956653 instance=ExtResource("5_i5oq1")]
 
+[node name="ArmoryLockdownBioLab" type="Node3D" parent="." unique_id=1417753050 instance=ExtResource("6_armory")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
 [node name="KenneySurvivalBlockout" type="Node3D" parent="."]
 script = ExtResource("blockout_kenney")
 world_id = "EndgameHeights"
@@ -316,3 +320,5 @@ ambient_energy = 0.35
 
 [node name="TriageCryoRecovery" type="Node3D" parent="." instance=ExtResource("9_tcryo")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 0, 0)
+[node name="QuarantineBreachBioLab" type="Node3D" parent="." instance=ExtResource("8_qblab")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, 0)
