@@ -23,11 +23,6 @@ func _initialize() -> void:
 	wp.unlocked_regions = ur
 	wp.current_region = 3
 
-	# Also set transport_repaired[2] = true so is_secret_reachable(2, 3) is true
-	var tr: Array[bool] = []
-	tr.assign([false, false, true])
-	wp.transport_repaired = tr
-
 	var packed: PackedScene = load("res://scenes/minigames/armory_lockdown_biolab.tscn")
 	assert(packed != null, "Bio-Lab armory scene load FAIL")
 	var inst: Node = packed.instantiate()
