@@ -7,6 +7,17 @@ extends SceneTree
 ## FLOORS encode the mathematical/asset contracts (graveyard instance counts etc).
 
 const ALLOWED_WIP: Array[String] = ["scenes/dev/", "wip/"]
+const PRESENTATION_CURATED: Array[String] = [
+	"res://scenes/main/title_screen.tscn",
+	"res://scenes/main/game.tscn",
+	"res://scenes/ui/character_select.tscn",
+	"res://scenes/ui/level_select.tscn",
+	"res://scenes/ui/level_backdrop.tscn",
+	"res://scenes/world/title_background.tscn",
+	"res://scenes/world/environment/old_town_enhanced.tscn",
+	"res://scenes/world/environment/industrial_district.tscn",
+	"res://scenes/world/environment/endgame_heights.tscn",
+]
 const FLOORS: Dictionary = {
 	"res://scenes/world/title_background.tscn": 25,
 	"res://scenes/main/title_screen.tscn": 20,
@@ -23,7 +34,12 @@ var total_meshes: int = 0
 
 func _initialize() -> void:
 	var paths: Array[String] = []
-	_collect("res://", paths)
+	if OS.get_environment("MKB_SWEEP") == "full":
+		_collect("res://", paths)
+	else:
+		# CI mode = curated presentation list (bounded runner time); the repo-wide
+		# audit passes MKB_SWEEP=full explicitly.
+		paths.assign(PRESENTATION_CURATED.duplicate())
 	paths.sort()
 	for pth in paths:
 		scanned += 1
