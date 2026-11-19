@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene load_steps=980 format=3]
 [ext_resource type="Script" path="res://scripts/world/hdri_lighting.gd" id="hdri_lighting"]
 [ext_resource type="Script" path="res://scripts/world/asset_blockout.gd" id="blockout_kenney"]
 
@@ -22,6 +22,7 @@
 [ext_resource type="PackedScene" path="res://scenes/minigames/last_stand_station.tscn" id="minigame_laststand"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/spoil_and_survive.tscn" id="minigame_spoil"]
 
+[ext_resource type="Script" path="res://scripts/world/GridSnap.gd" id="gridsnap"]
 [sub_resource type="Environment" id="OldTownEnv"]
 background_mode = 1
 background_color = Color(0.05, 0.06, 0.09, 1)
@@ -500,6 +501,11 @@ material_override = SubResource("RoofMaterial")
 mesh = SubResource("ConeMesh_steeple_roof")
 
 [node name="Streets" type="Node3D" parent="." unique_id=1380616609]
+script = ExtResource("gridsnap")
+cell_size = 0.5
+rotation_step_deg = 90
+auto_snap = true
+groups = ["GridSnap"]
 
 [node name="Lamp1" type="Node3D" parent="Streets" unique_id=965237732]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -10)
