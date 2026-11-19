@@ -255,7 +255,7 @@ func _ensure_hydrated() -> void:
 	if save == null:
 		return
 	_hydrated = true
-	var snapshots := save.get_world_transient_snapshots()
+	var snapshots: Variant = save.get_world_transient_snapshots()
 	if snapshots is Dictionary:
 		transient_by_region = snapshots.duplicate(true)
 
