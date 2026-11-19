@@ -155,12 +155,22 @@ func _world_aabb_union(root: Node3D) -> AABB:
 	while stack.size() > 0:
 		var node: Node = stack.pop_front()
 		if node is MeshInstance3D:
-			var m: AABB = node.global_aabb
-			if not have:
-				aabb = m
-				have = true
-			else:
-				aabb = aabb.merge(m)
+			# Deterministic in headless --script: local mesh AABB transformed by
+			# global_transform (8 corners). global_aabb is render-server-cached
+			# and reads empty without flushed draw frames.
+			var la: AABB = (node as MeshInstance3D).get_aabb()
+			var gt: Transform3D = node.global_transform
+			for i in range(8):
+				var c := Vector3(
+					la.end.x if i & 1 else la.position.x,
+					la.end.y if i & 2 else la.position.y,
+					la.end.z if i & 4 else la.position.z)
+				var w: Vector3 = gt * c
+				if not have:
+					aabb = AABB(w, Vector3.ZERO)
+					have = true
+				else:
+					aabb = aabb.expand(w)
 		for child in node.get_children():
 			stack.push_back(child as Node)
 	return aabb
