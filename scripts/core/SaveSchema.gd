@@ -12,7 +12,8 @@ const SCHEMA_VERSION: int = 1
 ## Maps SaveManager.SAVE_VERSION to the schema version that produced it.
 ## Used for forward-compat decisions if we ever need multi-schema support.
 const SAVE_VERSION_TO_SCHEMA: Dictionary = {
-	6: 1
+	6: 1,
+	7: 1
 }
 
 
@@ -35,7 +36,7 @@ enum FieldType {
 ## Each field: {key, type, default, element_type (for containers), key_type (for dicts)}
 ## Field order matches _default_save_data() declaration order for readability.
 const FIELDS: Array[Dictionary] = [
-	{"key": "version", "type": FieldType.TYPE_INT, "default": 6},
+	{"key": "version", "type": FieldType.TYPE_INT, "default": 7},
 	{"key": "high_score", "type": FieldType.TYPE_INT, "default": 0},
 	{"key": "total_zombies_fed", "type": FieldType.TYPE_INT, "default": 0},
 	{"key": "total_shifts_completed", "type": FieldType.TYPE_INT, "default": 0},
@@ -64,6 +65,7 @@ const FIELDS: Array[Dictionary] = [
 	{"key": "world_max_loot_tier", "type": FieldType.TYPE_INT, "default": 1},
 	{"key": "world_visited_regions", "type": FieldType.TYPE_ARRAY_INT, "default": [1]},
 	{"key": "world_region_state", "type": FieldType.TYPE_DICT_INT_KEYS, "default": {}},
+	{"key": "world_transient_snapshots", "type": FieldType.TYPE_DICT_INT_KEYS, "default": {}},
 	{"key": "post_cure", "type": FieldType.TYPE_BOOL, "default": false},
 	{"key": "world_bosses_defeated", "type": FieldType.TYPE_DICT_INT_BOOL, "default": {1: false, 2: false, 3: false}},
 	{"key": "cure_synthesized_at", "type": FieldType.TYPE_STRING, "default": ""}
