@@ -43,33 +43,52 @@ func _initialize() -> void:
 	await process_frame
 
 	var doors: Node = inst.get_node_or_null("Doors")
-	var guard := 0
-	var won := false
 	var note := ""
-	while guard < 600 and int(ctrl.get("state")) == 1:
-		# Move braces to sockets for current step
+	var won := false
+	# Drive the REAL state machine: per ordered step, close the door, put the
+	# matching brace in its socket, tick seal in 0.25s quanta (SEAL_DWELL=0.75;
+	# oversized manual deltas overshot the unbraced-limit and failed the run -
+	# the original lane bug). Total sim time stays under SPAWN_INTERVAL so no
+	# leaker ever spawns and the win path is deterministic.
+	for step_name in ["A", "B", "C"]:
+		if int(ctrl.get("state")) != 1:
+			break
 		var current_step: String = String(ctrl.get("current_step"))
-		var door: Node = doors.get_node_or_null("Door%s" % current_step)
-		if door and is_instance_valid(door):
-			# Find the brace for this door
-			var brace_type: String = String(door.get("assigned_brace"))
-			var brace: Node = _find_brace(inst, brace_type)
-			if brace:
-				var socket: Node = door.get_node_or_null("BraceSocket")
-				if socket:
-					brace.global_position = socket.global_position
-					brace.linear_velocity = Vector3.ZERO
-					brace.angular_velocity = Vector3.ZERO
-		ctrl.call("_process", 1.0)
-		note = "time=%.0f step=%s state=%d" % [float(ctrl.get("time_remaining")), current_step, int(ctrl.get("state"))]
-		if int(ctrl.get("state")) == 2:
-			won = true
-			note += " <<WON"
+		if current_step != step_name:
+			note = "order drift: want %s got %s" % [step_name, current_step]
 			break
-		if int(ctrl.get("state")) == 3:
-			note += " <<FAILED"
+		var door: Node = doors.get_node_or_null("Door" + step_name)
+		if door == null or not is_instance_valid(door):
+			note = "no door " + step_name
 			break
-		guard += 1
+		door.call("toggle_to_closed")
+		var brace_type: String = String(door.get("assigned_brace"))
+		var brace: Node = _find_brace(inst, brace_type)
+		if brace == null:
+			note = "no brace for step " + step_name + " (want " + brace_type + ")"
+			break
+		var socket: Node = door.get_node_or_null("BraceSocket")
+		if socket == null:
+			note = "no socket on door " + step_name
+			break
+		brace.global_position = (socket as Node3D).global_position
+		if brace.has_method("set_linear_velocity"):
+			brace.call("set_linear_velocity", Vector3.ZERO)
+			brace.call("set_angular_velocity", Vector3.ZERO)
+		await process_frame
+		var t := 0
+		while t < 12 and not bool(door.get("sealed")) and int(ctrl.get("state")) == 1:
+			ctrl.call("_process", 0.25)
+			t += 1
+		await process_frame
+		if bool(door.get("sealed")):
+			note = "sealed " + step_name
+		else:
+			note = "door " + step_name + " unsealed after dwell ticks"
+			break
+	won = int(ctrl.get("state")) == 2
+	if not won:
+		note += " | time=%.0f state=%d" % [float(ctrl.get("time_remaining")), int(ctrl.get("state"))]
 
 	var tier: int = int(ctrl.get("last_loot_tier")) if ctrl.get("last_loot_tier") != null else 0
 	print(TAG + "state=%d won=%s tier=%d | %s" % [int(ctrl.get("state")), won, tier, note])
