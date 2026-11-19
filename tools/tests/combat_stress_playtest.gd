@@ -22,15 +22,18 @@ func _initialize() -> void:
 		quit(1)
 		return
 	var world: Node = packed_world.instantiate()
-	root.add_child(world)
-	for _i in range(4):
+	root.add_child.call_deferred(world)
+	for _i in range(6):
 		await process_frame
 	var spawner: Node = world.find_child("ZombieSpawner", true, false)
 	if spawner == null:
-		# fall back to any spawner-group node anywhere under root
-		var grp: Array = root.get_nodes_in_group("zombie_spawner")
+		# SceneTree owns the group query - Window (root) does NOT.
+		var grp: Array = get_nodes_in_group("zombie_spawner")
 		spawner = grp[0] if grp.size() > 0 else null
-	assert(spawner != null, "no zombie_spawner reachable from industrial_district")
+	if spawner == null:
+		print("STRESS_ERROR: no zombie_spawner reachable from industrial_district")
+		quit(1)
+		return
 	# crank spawn pressure
 	spawner.set("max_zombies", WAVE_TARGET)
 	spawner.set("spawn_interval", 0.5)
@@ -38,7 +41,7 @@ func _initialize() -> void:
 	var player: Node3D = Node3D.new()
 	player.name = "StressPlayer"
 	player.add_to_group("player")
-	root.add_child(player)
+	root.add_child.call_deferred(player)
 	await process_frame
 	var samples: Array[float] = []
 	var sim_t := 0.0
