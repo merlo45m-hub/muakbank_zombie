@@ -79,7 +79,7 @@ func _check_asset(entry: Dictionary, host: Node3D, failures: Array[String]) -> v
 		failures.append(rel + " instance is not a Node3D")
 		return
 	host.add_child(inst)
-	for _ in range(SETTLE_FRAMES):
+	for _fr in range(SETTLE_FRAMES):
 		await process_frame
 	var expect: Dictionary = entry.get("expect", {}) as Dictionary
 	var tol: float = float(entry.get("dims_tolerance", 0.25))
@@ -174,7 +174,7 @@ func _run_grid_snap_probe() -> bool:
 		print("GRID_SNAP_FAIL street scene failed to instantiate")
 		return false
 	get_tree().get_root().add_child(env)
-	for _ in range(8):
+	for _fr in range(8):
 		await process_frame
 	var hosts: Array = get_tree().get_nodes_in_group("GridSnap")
 	if hosts.is_empty():
