@@ -109,6 +109,10 @@ func _initialize() -> void:
 	var z0: Node3D = (alive[0] as Node3D) if alive.size() > 0 else null
 	if z0 != null and is_instance_valid(z0):
 		dummy.global_transform.origin = z0.global_transform.origin - z0.global_transform.basis.z * 1.0
+		# Own the cooldown: background AI frames may have burned it on the stub
+		# player before we get here (CI scheduling race, seen as "took 0" on
+		# runners). This assertion guards the damage PATH, not cooldown state.
+		z0.set("attack_timer", 0.0)
 		z0.call("attack", dummy)
 		await process_frame
 	_assert(dummy.damage_taken > 0, "attack damages the enemy in front (took %d)" % dummy.damage_taken)
