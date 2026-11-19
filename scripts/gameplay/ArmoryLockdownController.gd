@@ -1,13 +1,13 @@
 extends Node3D
 class_name ArmoryLockdownController
 
-## ArmoryLockdownController — Mini-game cluster controller for SAND2 (Industrial).
+## ArmoryLockdownController — Mini-game cluster controller for SAND2 (Industrial) and Bio-Lab.
 ## Embeds BreakableSupplyCrate, CheckpointArmoryTerminal, and InteractiveDoor.
 ## Player activates the armory terminal, cracks the supply crates for gear/braces,
 ## and breaches/opens the security door to restore facility access.
 
-const OBJECTIVE_ID := "l2_armory_salvage"
-const OBJECTIVE_TITLE := "Recover armory supplies & breach lockdown"
+@export var objective_id: String = "l2_armory_salvage"  # L3 scene sets l3_synthesis_core_access
+@export var objective_title: String = "Recover armory supplies & breach lockdown"  # L3 scene overrides
 const RUN_DURATION := 90.0
 
 enum RunState { IDLE, ACTIVE, WON, FAILED }
@@ -16,10 +16,12 @@ enum RunState { IDLE, ACTIVE, WON, FAILED }
 @export var door_path: NodePath = ^"../ArmoryDoor"
 @export var crate1_path: NodePath = ^"../Crate1"
 @export var crate2_path: NodePath = ^"../Crate2"
+@export var gate_region: int = 0  # 0 = no gate (shipped behavior); Bio-Lab scene sets 3
 
 var state: RunState = RunState.IDLE
 var time_remaining: float = RUN_DURATION
 var is_won: bool = false
+var last_loot_tier: int = 1
 
 var objective_manager: Node = null
 var player: Node3D = null
@@ -29,6 +31,11 @@ var crate1: Node3D = null
 var crate2: Node3D = null
 
 func _ready() -> void:
+	if gate_region > 0:
+		var wp: Node = get_node_or_null("/root/WorldProgression")
+		if wp == null or not wp.has_method("can_hop") or not bool(wp.call("can_hop", gate_region)):
+			queue_free()
+			return
 	add_to_group("interactive_prop")
 	terminal = get_node_or_null(terminal_path) as Node3D
 	door = get_node_or_null(door_path) as Node3D
@@ -41,8 +48,8 @@ func _register_objective() -> void:
 	objective_manager = get_tree().root.find_child("ObjectiveManager", true, false)
 	if objective_manager and objective_manager.has_method("add_objective"):
 		var objectives: Dictionary = objective_manager.get("objectives")
-		if not objectives.has(OBJECTIVE_ID):
-			objective_manager.add_objective(OBJECTIVE_ID, OBJECTIVE_TITLE, 1)
+		if not objectives.has(objective_id):
+			objective_manager.add_objective(objective_id, objective_title, 1)
 
 func start_trial() -> void:
 	if state == RunState.ACTIVE or state == RunState.WON:
@@ -74,8 +81,16 @@ func _win_trial() -> void:
 	if terminal and terminal.has_method("set_trial_state"):
 		terminal.set_trial_state("COMPLETED")
 	if objective_manager and objective_manager.has_method("update_progress"):
-		objective_manager.update_progress(OBJECTIVE_ID, 1)
-	print("[ArmoryLockdown] WON! Armory lockdown cleared.")
+		objective_manager.update_progress(objective_id, 1)
+	var wp: Node = get_node_or_null("/root/WorldProgression")
+	last_loot_tier = int(wp.call("get_active_loot_tier")) if wp != null and wp.has_method("get_active_loot_tier") else 1
+	if gate_region > 0:
+		# Rules stat integration is L3-scoped only (lane added this on the
+		# shared win path; gated to preserve shipped L1/L2 telemetry).
+		var rules: Node = get_node_or_null("/root/Rules")
+		if rules != null and rules.has_method("increment_stat"):
+			rules.call("increment_stat", "MINIGAMES_WON", 1)
+	print("[ArmoryLockdown] WON! Armory lockdown cleared. Loot tier: ", last_loot_tier)
 
 func _fail_trial() -> void:
 	state = RunState.FAILED
@@ -92,4 +107,8 @@ func _fail_trial() -> void:
 
 func interact() -> void:
 	if state == RunState.IDLE:
+		if gate_region > 0:
+			var wp: Node = get_node_or_null("/root/WorldProgression")
+			if wp != null and wp.has_method("can_hop") and not bool(wp.call("can_hop", gate_region)):
+				return
 		start_trial()

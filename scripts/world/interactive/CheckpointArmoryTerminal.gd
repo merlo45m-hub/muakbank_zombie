@@ -2,6 +2,7 @@ extends Node3D
 class_name CheckpointArmoryTerminal
 
 @export var controller_path: NodePath = ^"../Controller"
+@export var gate_region: int = 0  # 0 = shipped behavior; Bio-Lab scene sets 3
 
 var controller: Node
 var prompt: Label3D
@@ -21,6 +22,12 @@ func _ready() -> void:
 func interact() -> void:
 	if terminal_state != "IDLE" or not player_near:
 		return
+	if gate_region > 0:
+		var wp: Node = get_node_or_null("/root/WorldProgression")
+		if wp != null and wp.has_method("can_hop") and not bool(wp.call("can_hop", gate_region)):
+			if prompt:
+				prompt.text = "BIO-LAB ACCESS REQUIRED"
+			return
 	if controller and controller.has_method("start_trial"):
 		controller.start_trial()
 
@@ -48,10 +55,10 @@ func _refresh_prompt() -> void:
 	prompt.visible = player_near
 	match terminal_state:
 		"IDLE":
-			prompt.text = "ACTIVATE LAST STAND TRIAL"
+			prompt.text = ("ACTIVATE SYNTHESIS CORE ACCESS" if gate_region > 0 else "ACTIVATE LAST STAND TRIAL")
 		"ACTIVE":
 			prompt.text = "LOCKDOWN ACTIVE"
 		"COMPLETED":
 			prompt.text = "GATE CLEARED — TRANSIT OPEN"
 		"FAILED":
-			prompt.text = "TRIAL FAILED — REARM AND RETRY"
+			prompt.text = ("BREACH TIMED OUT" if gate_region > 0 else "TRIAL FAILED — REARM AND RETRY")
