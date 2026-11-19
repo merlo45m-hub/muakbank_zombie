@@ -439,7 +439,7 @@ func _get_minigame_ids_for_level(level: int) -> Array[String]:
 		2:
 			return ["l2_armory_salvage", "l2_triage_roundup", "l2_quarantine_breach"]
 		3:
-			return ["l3_rooftop_extraction"]
+			return ["l3_rooftop_extraction", "l3_quarantine_containment"]
 		_:
 			return []
 

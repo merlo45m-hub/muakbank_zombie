@@ -16,7 +16,7 @@
 #   Exit code !=0 / final line "REGRESSION: FAIL (...)"    == GATE RED.
 #   In CI: run the same command; the exit code IS the gate.
 #
-# CHECKS (in order — 17 checks total)
+# CHECKS (in order — 18 checks total)
 #   1. import            : headless engine import with a FRESH .godot cache
 #                          (rm -rf .godot), run in up to 3 passes until one pass is
 #                          CLEAN, gated on that pass. Multiple passes are required
@@ -84,6 +84,8 @@
 #   17. quarantine_l2_probe : Industrial Quarantine Breach full win via the REAL controller
 #                          (can_hop(2) gate, brace discovery, tier-2 loot). PASS =
 #                          'QUARANTINE_L2_PASS=true' (task 6b).
+#   18. quarantine_l3_probe : Bio-Lab Quarantine Breach full win (can_hop(3), real seal
+#                          mechanics, tier-3 read). PASS = 'QUARANTINE_L3_PASS=true' (L3).
 # ALLOWLIST — the EXPLICIT set of tolerated lifecycle noise lines (only these
 #   'ERROR'/warning lines may appear; anything else fails the gate):
 #     - 'resources still in use at exit'                 Godot exit-time orphaned-resource report (fires on any heavy headless quit)
@@ -156,7 +158,7 @@ run_scene() {
     local tscn="$1" name="$2" frames="$3" marker="$4" want="$5" rc got logf
     logf="${WORKDIR}/${name}.log"
     CHECK=$((CHECK + 1))
-    log "[check ${CHECK}/17] ${name}: ${tscn} (${frames} frames max, xvfb)"
+    log "[check ${CHECK}/18] ${name}: ${tscn} (${frames} frames max, xvfb)"
     # shellcheck disable=SC2086
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
         --headless --path "$PROJECT_ROOT" "$tscn" --quit-after "$frames" > "$logf" 2>&1
@@ -183,7 +185,7 @@ log "logs    : ${WORKDIR}"
 
 # --- pre-build asset registry gate (check 0/14) ------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] asset_registry: pre-build referenced-model path integrity"
+log "[check ${CHECK}/18] asset_registry: pre-build referenced-model path integrity"
 REG_LOG="${WORKDIR}/asset_registry.log"
 if [ -f "${PROJECT_ROOT}/tools/check_asset_registry.py" ]; then
     (cd "$PROJECT_ROOT" && "${PYTHON_BIN}" tools/check_asset_registry.py --no-notify) > "$REG_LOG" 2>&1 || true
@@ -198,7 +200,7 @@ fi
 
 # --- 2/8 fresh headless import (regenerates .godot) ------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] import: fresh headless import until stable (max 3 passes)"
+log "[check ${CHECK}/18] import: fresh headless import until stable (max 3 passes)"
 rm -rf "${PROJECT_ROOT}/.godot"
 
 IMPORT_PASS=""
@@ -243,7 +245,7 @@ fi
 
 # --- 6/6 scale-lock drift guard: GLB verifier + in-engine live AABB ----------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] scale_contract: locked GLB + live gameplay AABB drift guard"
+log "[check ${CHECK}/18] scale_contract: locked GLB + live gameplay AABB drift guard"
 SCALE_LOG="${WORKDIR}/scale_contract.log"
 if [ -f "${PROJECT_ROOT}/tools/blender/verify_scale_contract.py" ]; then
     (cd "$PROJECT_ROOT" && python3 tools/blender/verify_scale_contract.py) > "$SCALE_LOG" 2>&1 || true
@@ -273,7 +275,7 @@ unset _drift
 
 # --- 7/7 runtime perf monitoring with the asset resident --------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] scale_perf: FpsMonitor sampling with GLB instanced"
+log "[check ${CHECK}/18] scale_perf: FpsMonitor sampling with GLB instanced"
 PERF_LOG="${WORKDIR}/scale_perf.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/scale_perf_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -289,7 +291,7 @@ fi
 
 # --- 8/14 strict typing gate (Issue #32) -------------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] strict_typing: explicit return types + typed params"
+log "[check ${CHECK}/18] strict_typing: explicit return types + typed params"
 STRICT_LOG="${WORKDIR}/strict_typing.log"
 if (cd "$PROJECT_ROOT" && "${PYTHON_BIN}" tools/check_gdscript_strict.py --gate .) > "$STRICT_LOG" 2>&1; then
     log "  strict_typing: OK ($(grep 'STRICT_GATE' "$STRICT_LOG" | tail -1))"
@@ -299,7 +301,7 @@ fi
 
 # --- 9/14 dismantle playtest (GDD Issue #26) ----------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] dismantle_playtest: GDD26 full-chain dismantling regression"
+log "[check ${CHECK}/18] dismantle_playtest: GDD26 full-chain dismantling regression"
 DISMANTLE_LOG="${WORKDIR}/dismantle_playtest.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/dismantle_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
@@ -315,7 +317,7 @@ fi
 
 # --- 10/14 cure endgame playtest (GDD Issue #28) --------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] cure_endgame_playtest: GDD28 cure synthesis & post-cure"
+log "[check ${CHECK}/18] cure_endgame_playtest: GDD28 cure synthesis & post-cure"
 CURE_LOG="${WORKDIR}/cure_endgame_playtest.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/cure_endgame_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
@@ -331,7 +333,7 @@ fi
 
 # --- 11/14 save migration roundtrip (v5 -> v6) ----------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] save_migration_playtest: SaveManager v5->v6 migration roundtrip"
+log "[check ${CHECK}/18] save_migration_playtest: SaveManager v5->v6 migration roundtrip"
 MIGRATE_LOG="${WORKDIR}/save_migration_playtest.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/save_migration_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
@@ -352,7 +354,7 @@ log "[skip] world_hop_bidirectional_playtest: gated in nightly-regression.yml (h
 
 # --- 14/15 GLB asset contract (orientation/bounds/parts, Issue #14 automation) -----
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] glb_contract: GLB orientation + locked dims + VXZ part schema"
+log "[check ${CHECK}/18] glb_contract: GLB orientation + locked dims + VXZ part schema"
 if python3 tools/verify_glb_assets.py "$PROJECT_ROOT" > "$WORKDIR/glb_contract.log" 2>&1; then
     log "  glb_contract: $(grep 'GLB_CONTRACT:' "$WORKDIR/glb_contract.log" | tail -1)"
 else
@@ -361,7 +363,7 @@ fi
 
 # --- 14/14 asset contract (in-engine gate, Issue #14 automation) ----------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] asset_contract: engine-side GLB contract gate"
+log "[check ${CHECK}/18] asset_contract: engine-side GLB contract gate"
 ASSET_LOG="${WORKDIR}/asset_contract.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/asset_contract_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN"         --headless --path "$PROJECT_ROOT" --script tools/tests/asset_contract_playtest.gd > "$ASSET_LOG" 2>&1
@@ -377,7 +379,7 @@ fi
 
 # --- 15/15 perf control-path playtest (control-path performance fixes) --------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] perf_control_path_playtest: control-path perf correctness"
+log "[check ${CHECK}/18] perf_control_path_playtest: control-path perf correctness"
 PERF_LOG="${WORKDIR}/perf_control_path.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/perf_control_path_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN"         --headless --path "$PROJECT_ROOT" --script tools/tests/perf_control_path_playtest.gd > "$PERF_LOG" 2>&1
@@ -395,7 +397,7 @@ CHECK=$((CHECK + 1))
 
 # --- 16/16 Industrial triage round-up full-win probe (task 6a) --------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] triage_l2_probe: Industrial triage win + tier-2 loot"
+log "[check ${CHECK}/18] triage_l2_probe: Industrial triage win + tier-2 loot"
 L2_LOG="${WORKDIR}/triage_l2.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/triage_l2_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -411,7 +413,7 @@ fi
 
 # --- 17/17 Industrial quarantine breach full-win probe (task 6b) -------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/17] quarantine_l2_probe: Industrial breach win + tier-2 loot"
+log "[check ${CHECK}/18] quarantine_l2_probe: Industrial breach win + tier-2 loot"
 QL2_LOG="${WORKDIR}/quarantine_l2.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/quarantine_l2_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -423,6 +425,22 @@ if [ -f "${PROJECT_ROOT}/tools/tests/quarantine_l2_probe.gd" ]; then
     fi
 else
     bad "quarantine_l2_probe: probe file missing"
+fi
+
+# --- 18/18 Bio-Lab quarantine breach full-win probe ------------------------------
+CHECK=$((CHECK + 1))
+log "[check ${CHECK}/18] quarantine_l3_probe: Bio-Lab breach win + tier-3"
+Q3_LOG="${WORKDIR}/quarantine_l3.log"
+if [ -f "${PROJECT_ROOT}/tools/tests/quarantine_l3_probe.gd" ]; then
+    timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
+        --headless --path "$PROJECT_ROOT" --script tools/tests/quarantine_l3_probe.gd > "$Q3_LOG" 2>&1
+    if grep -q "QUARANTINE_L3_PASS=true" "$Q3_LOG"; then
+        log "  quarantine_l3_probe: QUARANTINE_L3_PASS=true"
+    else
+        bad "quarantine_l3_probe: QUARANTINE_L3_PASS=true missing ($(grep -E 'QUARANTINE_L3|SCRIPT ERROR' "$Q3_LOG" | tail -1))"
+    fi
+else
+    bad "quarantine_l3_probe: probe file missing"
 fi
 
 # ---------------------------------------------------------------------------
