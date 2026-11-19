@@ -40,8 +40,9 @@ func _run_asset_contract() -> bool:
 	var checked: int = 0
 	for entry in entries:
 		await _check_asset(entry, host, failures)
-		while host.get_child_count() > 0:
-			host.get_child(0).queue_free()
+		for c in host.get_children():
+			host.remove_child(c)
+			c.free()
 		await process_frame
 		checked += 1
 	root.remove_child(host)
