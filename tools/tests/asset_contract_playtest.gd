@@ -22,9 +22,9 @@ const MOD_EPS: float = 0.01
 const STREET_SCENE: String = "res://scenes/world/environment/old_town_enhanced.tscn"
 
 func _ready() -> void:
-	if not _run_asset_contract():
+	if not await _run_asset_contract():
 		quit(1)
-	if not _run_grid_snap_probe():
+	if not await _run_grid_snap_probe():
 		quit(1)
 	quit(0)
 
@@ -35,16 +35,16 @@ func _run_asset_contract() -> bool:
 		return false
 	var host: Node3D = Node3D.new()
 	host.name = HIDDEN_HOST_NAME
-	get_tree().get_root().add_child(host)
+	root.add_child(host)
 	var failures: Array[String] = []
 	var checked: int = 0
 	for entry in entries:
-		_check_asset(entry, host, failures)
+		await _check_asset(entry, host, failures)
 		while host.get_child_count() > 0:
 			host.get_child(0).queue_free()
 		await process_frame
 		checked += 1
-	get_tree().get_root().remove_child(host)
+	root.remove_child(host)
 	host.free()
 	if failures.is_empty():
 		print("ASSET_CONTRACT_PASS=true assets=", checked)
@@ -94,7 +94,7 @@ func _check_asset(entry: Dictionary, host: Node3D, failures: Array[String]) -> v
 	var axis_idx: int = _axis_index(h_axis)
 	var largest: float = maxf(size.x, maxf(size.y, size.z))
 	if largest > 0.0 and size[axis_idx] < largest * min_frac:
-		failures.append(rel + " orientation height axis ", h_axis, " fraction below min_frac ", str(min_frac))
+		failures.append(rel + " orientation height axis " + h_axis + " fraction below min_frac " + str(min_frac))
 		return
 	var basis: Basis = inst.global_transform.basis
 	if not _basis_axis_aligned(basis):
@@ -102,7 +102,7 @@ func _check_asset(entry: Dictionary, host: Node3D, failures: Array[String]) -> v
 		return
 	var det: float = basis.determinant()
 	if absf(det - 1.0) > AXIS_EPS:
-		failures.append(rel + " root determinant != 1 (", str(det), ")")
+		failures.append(rel + " root determinant != 1 (" + str(det) + ")")
 		return
 	print("ASSET_CHECK ", rel, " OK dims=(%.2f,%.2f,%.2f)" % [size.x, size.y, size.z])
 
@@ -173,10 +173,10 @@ func _run_grid_snap_probe() -> bool:
 	if env == null:
 		print("GRID_SNAP_FAIL street scene failed to instantiate")
 		return false
-	get_tree().get_root().add_child(env)
+	root.add_child(env)
 	for _fr in range(8):
 		await process_frame
-	var hosts: Array = get_tree().get_nodes_in_group("GridSnap")
+	var hosts: Array = get_nodes_in_group("GridSnap")
 	if hosts.is_empty():
 		print("GRID_SNAP_FAIL no GridSnap hosts found in street scene")
 		return false
