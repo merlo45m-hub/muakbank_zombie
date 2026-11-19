@@ -435,6 +435,15 @@ func _process(delta: float) -> void:
 
 	_prev_charging = is_charging
 
+	# ── IDLE HOLD ──────────────────────────────────────────────────────────
+	# Stationary with no active envelope: skip the gait math and the transform
+	# rewrite entirely (never re-write identity every frame). Signal side
+	# effects are gated above and have already fired: footsteps need
+	# h_speed >= 0.5 (impossible here), and the boss slam shake fired on the
+	# charging falling edge just before.
+	if h_speed < 0.1 and not _lunge_active and _hit_t <= 0.0 and _spawn_t <= 0.0 and _hop_t <= 0.0 and _land_t <= 0.0 and _launch_t <= 0.0 and _boss_launch_t <= 0.0 and _slam_t <= 0.0:
+		return
+
 	# Resolve per-type parameters from registry (reads const dict, no alloc).
 	var p_bob: float         = _gait.get("bob",           bob_height)
 	var p_phase_base: float  = _gait.get("phase_base",    walk_phase_base)

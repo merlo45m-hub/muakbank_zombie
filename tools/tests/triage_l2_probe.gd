@@ -39,7 +39,7 @@ func _initialize() -> void:
 	ctrl.set("player", player)
 	await process_frame
 
-	ctrl.interact()
+	ctrl.call("interact")
 	await process_frame
 
 	var pens: Node = inst.get_node_or_null("Pens")
@@ -54,7 +54,7 @@ func _initialize() -> void:
 			if unit and not bool(unit.get("delivered")):
 				unit.global_position = pen.global_position + Vector3(0, 0.4, 0)
 				unit.linear_velocity = Vector3.ZERO
-		ctrl._process(1.0)
+		ctrl.call("_process", 1.0)
 		note = "time=%.0f delivered=%d tier=%d" % [float(ctrl.get("time_remaining")), int(ctrl.get("delivered_types").size()), int(ctrl.get("last_loot_tier"))]
 		if int(ctrl.get("state")) == 2:
 			won = true
