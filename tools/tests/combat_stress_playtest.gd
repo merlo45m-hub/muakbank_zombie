@@ -16,7 +16,12 @@ func _initialize() -> void:
 	print("=== Combat frame-pacing stress ===")
 	var spawner_script: GDScript = load("res://scripts/characters/ZombieSpawner3D.gd")
 	assert(spawner_script != null and spawner_script.can_instantiate(), "spawner script compile failed")
-	var world: Node = load("res://scenes/world/industrial_district.tscn").instantiate()
+	var packed_world: PackedScene = load("res://scenes/world/environment/industrial_district.tscn")
+	if packed_world == null:
+		print("STRESS_ERROR: industrial_district scene not found")
+		quit(1)
+		return
+	var world: Node = packed_world.instantiate()
 	root.add_child(world)
 	for _i in range(4):
 		await process_frame
