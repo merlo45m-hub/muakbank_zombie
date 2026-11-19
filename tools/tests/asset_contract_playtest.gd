@@ -21,7 +21,7 @@ const AXIS_EPS: float = 0.01
 const MOD_EPS: float = 0.01
 const STREET_SCENE: String = "res://scenes/world/environment/old_town_enhanced.tscn"
 
-func _ready() -> void:
+func _initialize() -> void:
 	if not await _run_asset_contract():
 		quit(1)
 	if not await _run_grid_snap_probe():
