@@ -95,10 +95,13 @@ func _initialize() -> void:
 	var tier: int = int(ctrl.get("last_loot_tier")) if ctrl.get("last_loot_tier") != null else 0
 	# Loot pass-through: earned tier must reach the loot-drop path (cap >= tier,
 	# tier-3 roll not capped).
+	# Sink test on the REAL API: roll_loot(requested_tier) is the instance
+	# method that the drop path consumes; clamp_tier/cap are static helpers
+	# and must not be called through an instance Callable.
 	var ltg: Node = load("res://scripts/gameplay/LootTierGate.gd").new()
-	var cap: int = int(ltg.call("cap"))
-	var roll: Dictionary = ltg.call("clamp_tier", 3)
-	var tier_reaches_drop: bool = (cap >= 3) and not bool(roll.get("capped"))
+	var roll: Dictionary = ltg.call("roll_loot", 3)
+	var cap: int = int(roll.get("tier", 0))
+	var tier_reaches_drop: bool = cap >= 3 and not bool(roll.get("capped", true))
 
 	print(TAG + "state=%d won=%s tier=%d cap=%d drop_carries_tier=%s | %s" % [
 		int(ctrl.get("state")), won, tier, cap, tier_reaches_drop, note])
