@@ -53,6 +53,14 @@ func _initialize() -> void:
 		player.add_to_group("player")
 		root.add_child.call_deferred(player)
 		await process_frame
+	# Force initial pressure: start_spawning's grace period awaits REAL time,
+	# too slow for a 20s measurement window. Use the same pool path the timer
+	# uses and top it up during the loop.
+	var zs0: Node = spawner
+	if zs0.has_method("_spawn_random_zombie"):
+		for _k in range(WAVE_TARGET):
+			zs0.call("_spawn_random_zombie")
+	await process_frame
 	var samples: Array[float] = []
 	var sim_t := 0.0
 	var tick_count := 0
@@ -66,6 +74,12 @@ func _initialize() -> void:
 		samples.append(dt_ms)
 		sim_t += TICK_MS
 		tick_count += 1
+		if tick_count % 30 == 0 and spawner.has_method("_spawn_random_zombie"):
+			var live_now: int = int(spawner.call("get_live_enemies").size())
+			var k := 0
+			while live_now + k < WAVE_TARGET and k < 4:
+				spawner.call("_spawn_random_zombie")
+				k += 1
 		if tick_count % 300 == 0:
 			print("  live=%d t=%.0fms" % [int(spawner.call("get_live_enemies").size()), sim_t])
 	samples.sort()
