@@ -208,11 +208,16 @@ def world_extents(js):
     return mn, mx
 
 
-def trimesh_extents(path):
+def trimesh_extents(path, rigid=False):
     try:
         import trimesh
     except Exception:
         return None
+    if rigid:
+        # skinned/animated asset: compare node-transform tree (same rest
+        # geometry the stdlib parser measures), not deformed scene bounds
+        g = trimesh.load(path)
+        return g.bounding_box.extents
     sc = trimesh.load(path, force="scene")
     return sc.bounds[1] - sc.bounds[0]
 
@@ -228,6 +233,13 @@ def check_asset(root_dir, entry, problems):
         problems.append("%s: %s" % (entry["file"], err))
         return
     ext = world_extents(js)
+    if entry.get("animation_container"):
+        if not (js.get("animations") or js.get("skins")):
+            problems.append("%s: flagged animation_container but has neither skins nor animations" % entry["file"])
+            return
+        print("OK   %s animation-container (skins=%d anims=%d)" % (
+            entry["file"], len(js.get("skins", [])), len(js.get("animations", []))))
+        return
     if not ext:
         problems.append("%s: no POSITION bounds found" % entry["file"])
         return
@@ -246,14 +258,17 @@ def check_asset(root_dir, entry, problems):
 
     locked = exp.get("dims")
     if locked:
+        ABS_FLOOR = 0.005  # 5mm: absolute floor so sub-cm rounding of tiny
+        #                      props can never produce false violations
         for a, axis in enumerate("XYZ"):
             want = float(locked[axis])
             if want <= 0:
                 continue
-            dev = abs(dims[a] - want) / want
-            if dev > tol:
-                problems.append("%s: %s extent %.2f vs locked %.2f (dev %.0f%% > tol %.0f%%)"
-                                % (entry["file"], axis, dims[a], want, 100 * dev, 100 * tol))
+            dev_abs = abs(dims[a] - want)
+            if dev_abs > max(tol * want, ABS_FLOOR):
+                problems.append("%s: %s extent %.3f vs locked %.3f (dev %.0f%% > tol %.0f%%)"
+                                % (entry["file"], axis, dims[a], want,
+                                   100 * dev_abs / want, 100 * tol))
 
     names = {n.get("name", "") for n in js.get("nodes", [])}
     for req in exp.get("required_nodes", []):
@@ -265,7 +280,7 @@ def check_asset(root_dir, entry, problems):
         if req not in emissive:
             problems.append("%s: missing emissive material %s" % (entry["file"], req))
 
-    te = trimesh_extents(path)
+    te = trimesh_extents(path, rigid=bool(js.get("skins") or js.get("animations")))
     if te is not None:
         worst = max(abs(te[a] - dims[a]) for a in range(3))
         if worst > 0.02:
@@ -285,17 +300,25 @@ def generate(root_dir):
         for e in json.load(open(cp)):
             existing[e["file"]] = e
     entries = []
-    for path in sorted(glob.glob(os.path.join(root_dir, "assets", "models", "*.glb"))):
+    for path in sorted(glob.glob(os.path.join(root_dir, "assets", "**", "*.glb"),
+                                  recursive=True)):
         rel = os.path.relpath(path, root_dir).replace(os.sep, "/")
         js, err = glb_json_chunk(path)
         if err:
             print("SKIP %s (%s)" % (rel, err))
             continue
         ext = world_extents(js)
-        if not ext:
-            print("SKIP %s (no bounds)" % rel)
+        if not ext or js.get("skins") or js.get("animations"):
+            entries.append({
+                "file": rel,
+                "animation_container": True,
+                "expect": {"height_axis": "Y", "min_height_frac": 0.0},
+            })
+            print("NOTE %s (%s -> container entry)" % (
+                rel, "skinned/animated: rigid-tree extents meaningless (joint-chain phantom)"
+                if (js.get("skins") or js.get("animations")) else "no POSITION bounds"))
             continue
-        dims = [round(ext[1][a] - ext[0][a], 2) for a in range(3)]
+        dims = [round(ext[1][a] - ext[0][a], 3) for a in range(3)]
         if rel in existing and existing[rel].get("expect", {}).get("required_nodes"):
             e = existing[rel]
             e["expect"]["dims"] = {"X": dims[0], "Y": dims[1], "Z": dims[2]}

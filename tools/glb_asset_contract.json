@@ -26,6 +26,4810 @@
     }
   },
   {
+    "file": "assets/models/cc0/animals/bear_grizzly.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.755,
+        "Y": 1.334,
+        "Z": 2.255
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/animals/cat_ginger_tabby.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.221,
+        "Y": 0.518,
+        "Z": 0.676
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/animals/chick.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.144,
+        "Y": 0.252,
+        "Z": 0.249
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/animals/dog_pocket_borough.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.625,
+        "Y": 1.625,
+        "Z": 1.625
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-a.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-b.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-c.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-d.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-e.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-f.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-g.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-h.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-i.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-j.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-k.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-l.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-m.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-n.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-o.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-p.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-q.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character-r.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/ambulance.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.8,
+        "Z": 3.25
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/box.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.715,
+        "Y": 0.715,
+        "Z": 0.715
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/cone-flat.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.476,
+        "Y": 0.281,
+        "Z": 0.476
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/cone.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.476,
+        "Y": 0.595,
+        "Z": 0.476
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-bolt.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.173,
+        "Y": 0.26,
+        "Z": 0.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-bumper.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 0.4,
+        "Z": 0.45
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-door-window.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.188,
+        "Y": 0.9,
+        "Z": 0.8
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-door.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.188,
+        "Y": 0.9,
+        "Z": 0.8
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-drivetrain-axle.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.204,
+        "Y": 0.296,
+        "Z": 0.348
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-drivetrain.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.204,
+        "Y": 0.296,
+        "Z": 1.92
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-nut.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.173,
+        "Y": 0.1,
+        "Z": 0.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-plate-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.9,
+        "Y": 0.1,
+        "Z": 0.9
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-plate-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.9,
+        "Y": 0.2,
+        "Z": 0.9
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-plate-small-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.45,
+        "Y": 0.1,
+        "Z": 0.45
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-plate-small-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.45,
+        "Y": 0.2,
+        "Z": 0.45
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-spoiler-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.1,
+        "Y": 0.3,
+        "Z": 0.237
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-spoiler-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.35,
+        "Z": 0.337
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/debris-tire.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.35,
+        "Y": 0.6,
+        "Z": 0.6
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/delivery-flat.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.35,
+        "Z": 3.25
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/delivery.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.65,
+        "Z": 3.25
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/firetruck.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.7,
+        "Z": 3.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/garbage-truck.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.6,
+        "Y": 1.6,
+        "Z": 3.45
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/hatchback-sports.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 1.1,
+        "Z": 2.85
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/kart-oobi.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.974,
+        "Y": 1.329,
+        "Z": 1.428
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/kart-oodi.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.974,
+        "Y": 1.329,
+        "Z": 1.428
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/kart-ooli.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.974,
+        "Y": 1.329,
+        "Z": 1.428
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/kart-oopi.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.974,
+        "Y": 1.329,
+        "Z": 1.428
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/kart-oozi.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.974,
+        "Y": 1.329,
+        "Z": 1.428
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/police.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.3,
+        "Z": 3.1
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/race-future.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.2,
+        "Y": 0.833,
+        "Z": 2.66
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/race.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 0.733,
+        "Z": 2.56
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/sedan-sports.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 1.1,
+        "Z": 2.55
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/sedan.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.3,
+        "Z": 2.55
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/suv-luxury.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.3,
+        "Z": 2.85
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/suv.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.3,
+        "Z": 2.7
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/taxi.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.5,
+        "Z": 2.75
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/tractor-police.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.342,
+        "Y": 1.702,
+        "Z": 2.302
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/tractor-shovel.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.661,
+        "Y": 1.512,
+        "Z": 2.47
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/tractor.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.342,
+        "Y": 1.602,
+        "Z": 2.202
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/truck-flat.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.3,
+        "Z": 2.745
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/truck.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.3,
+        "Z": 2.95
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/van.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.5,
+        "Y": 1.35,
+        "Z": 2.75
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/wheel-dark.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.4,
+        "Y": 0.6,
+        "Z": 0.6
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/wheel-default.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.4,
+        "Y": 0.6,
+        "Z": 0.6
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/wheel-racing.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.4,
+        "Y": 0.6,
+        "Z": 0.6
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/wheel-tractor-back.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.538,
+        "Y": 0.875,
+        "Z": 0.875
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/wheel-tractor-dark-back.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.538,
+        "Y": 0.875,
+        "Z": 0.875
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/wheel-tractor-dark-front.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.369,
+        "Y": 0.539,
+        "Z": 0.539
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/wheel-tractor-front.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.369,
+        "Y": 0.539,
+        "Z": 0.539
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/cars/Models/wheel-truck.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.35,
+        "Y": 0.6,
+        "Z": 0.6
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.884,
+        "Y": 1.293,
+        "Z": 0.94
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.97,
+        "Y": 1.293,
+        "Z": 0.94
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-c.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.884,
+        "Y": 0.893,
+        "Z": 1.09
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-d.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.84,
+        "Y": 1.293,
+        "Z": 0.9
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-e.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.64,
+        "Y": 0.893,
+        "Z": 1.008
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-f.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.84,
+        "Y": 1.693,
+        "Z": 1.03
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-g.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.97,
+        "Y": 1.693,
+        "Z": 0.922
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-h.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.884,
+        "Y": 1.293,
+        "Z": 1.008
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-i.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.24,
+        "Y": 1.68,
+        "Z": 1.302
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-j.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.084,
+        "Y": 1.693,
+        "Z": 1.34
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-k.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.084,
+        "Y": 1.47,
+        "Z": 0.942
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-l.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.37,
+        "Y": 2.27,
+        "Z": 1.402
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-m.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.24,
+        "Y": 3.15,
+        "Z": 1.242
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-n.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.32,
+        "Y": 2.48,
+        "Z": 1.82
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-skyscraper-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.36,
+        "Y": 2.88,
+        "Z": 1.36
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-skyscraper-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.36,
+        "Y": 4.48,
+        "Z": 1.36
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-skyscraper-c.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.28,
+        "Y": 4.08,
+        "Z": 1.388
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-skyscraper-d.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.28,
+        "Y": 5.47,
+        "Z": 1.388
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/building-skyscraper-e.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.295,
+        "Y": 4.08,
+        "Z": 1.242
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/detail-awning-wide.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.8,
+        "Y": 0.4,
+        "Z": 0.148
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/detail-awning.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.4,
+        "Y": 0.4,
+        "Z": 0.148
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/detail-overhang-wide.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.4,
+        "Z": 0.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/detail-overhang.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.4,
+        "Z": 0.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/detail-parasol-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.346,
+        "Y": 0.45,
+        "Z": 0.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/detail-parasol-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.346,
+        "Y": 0.45,
+        "Z": 0.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 2.0,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 2.225,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-c.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 2.25,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-d.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 1.75,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-e.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 1.8,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-f.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 2.0,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-g.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 2.0,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-h.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 2.1,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-i.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 1.775,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-j.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 1.75,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-k.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 1.55,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-l.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 1.85,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-m.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 1.975,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-n.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.7,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-wide-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 1.1,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/commercial/Models/low-detail-building-wide-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 1.15,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/bridge-pillar-wide.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.14,
+        "Y": 0.5,
+        "Z": 0.14
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/bridge-pillar.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.1,
+        "Y": 0.5,
+        "Z": 0.1
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/construction-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.135,
+        "Y": 0.13,
+        "Z": 0.225
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/construction-cone.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.075,
+        "Y": 0.094,
+        "Z": 0.075
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/construction-fence.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.075,
+        "Y": 0.179,
+        "Z": 0.375
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/construction-light.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.075,
+        "Y": 0.234,
+        "Z": 0.075
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/dumpster.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.275,
+        "Y": 0.209,
+        "Z": 0.37
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/electricity-pole-single.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.079,
+        "Y": 0.525,
+        "Z": 0.214
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/electricity-pole-wide.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.079,
+        "Y": 0.525,
+        "Z": 0.214
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/electricity-pole.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.579,
+        "Y": 0.525,
+        "Z": 0.214
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/electricity-side-single.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.063,
+        "Y": 0.525,
+        "Z": 0.431
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/electricity-side-wide.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.063,
+        "Y": 0.525,
+        "Z": 0.431
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/electricity-side.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.563,
+        "Y": 0.525,
+        "Z": 0.431
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/electricity-wires-wide.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.007,
+        "Y": 0.104,
+        "Z": 0.185
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/electricity-wires.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.506,
+        "Y": 0.065,
+        "Z": 0.185
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/light-curved-cross.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.4,
+        "Y": 0.675,
+        "Z": 0.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/light-curved-double.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.05,
+        "Y": 0.675,
+        "Z": 0.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/light-curved.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.05,
+        "Y": 0.675,
+        "Z": 0.225
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/light-square-cross.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.425,
+        "Y": 0.6,
+        "Z": 0.425
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/light-square-double.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.05,
+        "Y": 0.6,
+        "Z": 0.425
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/light-square.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.05,
+        "Y": 0.6,
+        "Z": 0.238
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-bend-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-bend-sidewalk.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-bend-square-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-bend-square.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-bend.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-bridge.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.52,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-crossing.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-crossroad-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-crossroad-line.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-crossroad-path.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-crossroad.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-curve-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 0.08,
+        "Z": 2.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-curve-intersection-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 0.08,
+        "Z": 2.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-curve-intersection.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 0.02,
+        "Z": 2.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-curve-pavement.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 0.02,
+        "Z": 2.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-curve.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 0.02,
+        "Z": 2.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-driveway-double-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-driveway-double.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-driveway-single-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-driveway-single.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-end-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-end-round-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-end-round.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-end.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-intersection-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-intersection-line.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-intersection-path.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-intersection.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-roundabout-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 3.0,
+        "Y": 0.08,
+        "Z": 3.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-roundabout.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 3.0,
+        "Y": 0.02,
+        "Z": 3.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-side-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.31,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-side-entry-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.31,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-side-entry.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.31
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-side-exit-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.31,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-side-exit.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.31
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-side.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.31
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-sign-empty-hanging.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.09,
+        "Y": 0.475,
+        "Z": 0.295
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-sign-empty.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.05,
+        "Y": 0.475,
+        "Z": 0.05
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-sign-object-stop.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.077,
+        "Y": 0.126,
+        "Z": 0.126
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-sign-object-street.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.043,
+        "Y": 0.06,
+        "Z": 0.192
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-sign-object-warning.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.077,
+        "Y": 0.134,
+        "Z": 0.134
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-sign-stop.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.078,
+        "Y": 0.494,
+        "Z": 0.138
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-sign-street.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.196,
+        "Y": 0.475,
+        "Z": 0.196
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-sign-warning.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.077,
+        "Y": 0.499,
+        "Z": 0.147
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-slant-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.33,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-slant-curve-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 0.58,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-slant-curve.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 0.52,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-slant-flat-curve.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 2.0,
+        "Y": 0.52,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-slant-flat-high.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.52,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-slant-flat.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.27,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-slant-high-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.58,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-slant-high.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.52,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-slant.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.27,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-split-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 2.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-split.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 2.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-square-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-square.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-straight-barrier-end.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-straight-barrier-half.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-straight-barrier.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.08,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-straight-half.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/road-straight.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/sign-highway-detailed.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.132,
+        "Y": 0.822,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/sign-highway-wide.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.132,
+        "Y": 0.707,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/sign-highway.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.132,
+        "Y": 0.707,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/tile-high.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.25,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/tile-low.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.02,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/tile-slant.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.27,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/tile-slantHigh.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.52,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/traffic-light-hanging.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.118,
+        "Y": 0.509,
+        "Z": 0.295
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/traffic-light-object-hanging.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.098,
+        "Y": 0.143,
+        "Z": 0.061
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/traffic-light-object-horizontal.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.098,
+        "Y": 0.061,
+        "Z": 0.143
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/traffic-light-object-vertical.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.098,
+        "Y": 0.143,
+        "Z": 0.061
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/roads/Models/traffic-light.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.118,
+        "Y": 0.515,
+        "Z": 0.09
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 0.834,
+        "Z": 1.028
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.828,
+        "Y": 1.138,
+        "Z": 1.14
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-c.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.286,
+        "Y": 1.034,
+        "Z": 1.028
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-d.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.756,
+        "Y": 1.238,
+        "Z": 1.028
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-e.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 1.138,
+        "Z": 1.028
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-f.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.428,
+        "Y": 1.138,
+        "Z": 1.406
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-g.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.45,
+        "Y": 0.768,
+        "Z": 1.178
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-h.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.3,
+        "Y": 0.737,
+        "Z": 0.916
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-i.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.286,
+        "Y": 0.737,
+        "Z": 1.028
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-j.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.37,
+        "Y": 1.038,
+        "Z": 0.916
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-k.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.921,
+        "Y": 1.15,
+        "Z": 1.02
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-l.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.034,
+        "Y": 1.049,
+        "Z": 1.02
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-m.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.428,
+        "Y": 0.737,
+        "Z": 1.428
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-n.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.784,
+        "Y": 1.138,
+        "Z": 1.378
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-o.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.27,
+        "Y": 1.138,
+        "Z": 1.028
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-p.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.24,
+        "Y": 0.918,
+        "Z": 0.99
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-q.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.24,
+        "Y": 0.918,
+        "Z": 0.886
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-r.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.028,
+        "Y": 1.141,
+        "Z": 1.02
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-s.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.406,
+        "Y": 1.138,
+        "Z": 1.086
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-t.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.314,
+        "Y": 1.156,
+        "Z": 1.406
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/building-type-u.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.428,
+        "Y": 1.138,
+        "Z": 1.087
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/driveway-long.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.36,
+        "Y": 0.01,
+        "Z": 0.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/driveway-short.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.36,
+        "Y": 0.01,
+        "Z": 0.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/fence-1x2.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.875,
+        "Y": 0.27,
+        "Z": 0.438
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/fence-1x3.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.275,
+        "Y": 0.27,
+        "Z": 0.438
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/fence-1x4.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.675,
+        "Y": 0.27,
+        "Z": 0.438
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/fence-2x2.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.875,
+        "Y": 0.27,
+        "Z": 0.837
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/fence-2x3.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.275,
+        "Y": 0.27,
+        "Z": 0.837
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/fence-3x2.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.875,
+        "Y": 0.27,
+        "Z": 1.238
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/fence-3x3.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.275,
+        "Y": 0.27,
+        "Z": 1.238
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/fence-low.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.275,
+        "Y": 0.17,
+        "Z": 0.837
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/fence.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.475,
+        "Y": 0.27,
+        "Z": 0.075
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/path-long.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.2,
+        "Y": 0.01,
+        "Z": 0.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/path-short.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.2,
+        "Y": 0.01,
+        "Z": 0.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/path-stones-long.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.14,
+        "Y": 0.01,
+        "Z": 0.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/path-stones-messy.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.156,
+        "Y": 0.01,
+        "Z": 0.361
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/path-stones-short.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.14,
+        "Y": 0.01,
+        "Z": 0.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/planter.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.4,
+        "Y": 0.177,
+        "Z": 0.3
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/tree-large.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.21,
+        "Y": 0.767,
+        "Z": 0.243
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/city/suburban/Models/tree-small.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.21,
+        "Y": 0.567,
+        "Z": 0.243
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/altar-stone.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.04,
+        "Y": 0.488,
+        "Z": 0.653
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/brick-wall.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.725,
+        "Z": 0.3
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/cross-wood.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.43,
+        "Y": 1.045,
+        "Z": 0.43
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/cross.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.669,
+        "Y": 1.05,
+        "Z": 0.25
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/crypt-small.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.35,
+        "Y": 1.0,
+        "Z": 1.4
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/debris-wood.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.459,
+        "Y": 0.1,
+        "Z": 0.504
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/debris.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.536,
+        "Y": 0.16,
+        "Z": 0.547
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/fence-damaged.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.62,
+        "Z": 0.312
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/fence.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.62,
+        "Z": 0.184
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/grave-border.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.762,
+        "Y": 0.112,
+        "Z": 1.389
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/grave.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.724,
+        "Y": 0.114,
+        "Z": 1.241
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/gravestone-bevel.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.45,
+        "Y": 0.529,
+        "Z": 0.25
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/gravestone-broken.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.509,
+        "Y": 0.341,
+        "Z": 0.392
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/gravestone-cross-large.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.45,
+        "Y": 0.938,
+        "Z": 0.33
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/gravestone-cross.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.45,
+        "Y": 0.915,
+        "Z": 0.33
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/gravestone-decorative.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.51,
+        "Y": 0.594,
+        "Z": 0.25
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/gravestone-round.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.45,
+        "Y": 0.575,
+        "Z": 0.25
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/gravestone-wide.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.85,
+        "Y": 0.57,
+        "Z": 0.3
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/iron-fence.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.0,
+        "Y": 0.879,
+        "Z": 0.11
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/lantern-candle.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.24,
+        "Y": 0.388,
+        "Z": 0.24
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/pine-crooked.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.178,
+        "Y": 2.108,
+        "Z": 1.335
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/pine-fall.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.178,
+        "Y": 2.302,
+        "Z": 1.335
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/pine.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.178,
+        "Y": 2.302,
+        "Z": 1.335
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/pumpkin-carved.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.377,
+        "Y": 0.321,
+        "Z": 0.377
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/pumpkin.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.377,
+        "Y": 0.321,
+        "Z": 0.377
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/road.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.797,
+        "Y": 0.078,
+        "Z": 0.79
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/rocks.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.076,
+        "Y": 0.377,
+        "Z": 0.964
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/graveyard/trunk.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.539,
+        "Y": 0.45,
+        "Z": 0.554
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney/gravestone-cross.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.45,
+        "Y": 0.915,
+        "Z": 0.33
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney/gravestone-round.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.45,
+        "Y": 0.575,
+        "Z": 0.25
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_anim/idle.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_anim/jump.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_anim/model.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_anim/run.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/barrel-open.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.236,
+        "Y": 0.344,
+        "Z": 0.236
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/barrel.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.236,
+        "Y": 0.344,
+        "Z": 0.236
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/bedroll-frame.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.272,
+        "Y": 0.148,
+        "Z": 0.608
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/bedroll-packed.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.26,
+        "Y": 0.09,
+        "Z": 0.09
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/bedroll.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.31,
+        "Y": 0.125,
+        "Z": 0.608
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/bottle-large.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.072,
+        "Y": 0.144,
+        "Z": 0.084
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/bottle.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.053,
+        "Y": 0.154,
+        "Z": 0.061
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/box-large-open.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.25,
+        "Y": 0.306,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/box-large.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.25,
+        "Y": 0.25,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/box-open.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.25,
+        "Y": 0.306,
+        "Z": 0.25
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/box.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.25,
+        "Y": 0.25,
+        "Z": 0.25
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/bucket.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.144,
+        "Y": 0.192,
+        "Z": 0.144
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/campfire-fishing-stand.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.395,
+        "Y": 0.276,
+        "Z": 0.253
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/campfire-pit.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.278,
+        "Y": 0.109,
+        "Z": 0.269
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/campfire-stand.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.41,
+        "Y": 0.281,
+        "Z": 0.124
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/chest.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/fence-doorway.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.517,
+        "Z": 0.048
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/fence-fortified.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.517,
+        "Z": 0.053
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/fence.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.517,
+        "Z": 0.043
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/fish-large.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.307,
+        "Y": 0.159,
+        "Z": 0.098
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/fish.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.205,
+        "Y": 0.106,
+        "Z": 0.065
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/floor-hole.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.067,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/floor-old.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.051,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/floor.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.051,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/grass-large.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.476,
+        "Y": 0.142,
+        "Z": 0.487
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/grass.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.234,
+        "Y": 0.142,
+        "Z": 0.257
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/metal-panel-narrow.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.25,
+        "Y": 0.5,
+        "Z": 0.05
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/metal-panel-screws-half.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.25,
+        "Z": 0.063
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/metal-panel-screws-narrow.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.25,
+        "Y": 0.5,
+        "Z": 0.063
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/metal-panel-screws.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.5,
+        "Z": 0.063
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/metal-panel.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.5,
+        "Z": 0.05
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/patch-grass-large.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.4,
+        "Y": 0.0,
+        "Z": 1.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/patch-grass.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.2,
+        "Y": 0.0,
+        "Z": 1.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/resource-planks.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.373,
+        "Y": 0.094,
+        "Z": 0.626
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/resource-stone-large.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.376,
+        "Y": 0.16,
+        "Z": 0.337
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/resource-stone.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.165,
+        "Y": 0.107,
+        "Z": 0.142
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/resource-wood.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.205,
+        "Y": 0.062,
+        "Z": 0.087
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/rock-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.555,
+        "Y": 0.393,
+        "Z": 0.622
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/rock-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.835,
+        "Y": 0.419,
+        "Z": 0.725
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/rock-c.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.784,
+        "Y": 0.51,
+        "Z": 0.566
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/rock-flat-grass.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.786,
+        "Y": 0.226,
+        "Z": 1.448
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/rock-flat.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 1.786,
+        "Y": 0.195,
+        "Z": 1.448
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/rock-sand-a.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.555,
+        "Y": 0.393,
+        "Z": 0.484
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/rock-sand-b.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.799,
+        "Y": 0.449,
+        "Z": 0.789
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/rock-sand-c.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.784,
+        "Y": 0.51,
+        "Z": 0.569
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/signpost-single.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.209,
+        "Y": 0.46,
+        "Z": 0.043
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/signpost.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.214,
+        "Y": 0.46,
+        "Z": 0.043
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/structure-canvas.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.5,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/structure-floor.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.549,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/structure-metal-doorway.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.535,
+        "Y": 0.517,
+        "Z": 0.089
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/structure-metal-floor.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.512,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/structure-metal-roof.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.544,
+        "Y": 0.5,
+        "Z": 0.55
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/structure-metal-wall.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.535,
+        "Y": 0.5,
+        "Z": 0.089
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/structure-metal.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.535,
+        "Y": 0.5,
+        "Z": 0.535
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/structure-roof.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.535,
+        "Y": 0.657,
+        "Z": 0.552
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/structure.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.5,
+        "Y": 0.5,
+        "Z": 0.5
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tent-canvas-half.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.561,
+        "Y": 0.491,
+        "Z": 0.561
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tent-canvas.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.561,
+        "Y": 0.491,
+        "Z": 0.561
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tent.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.561,
+        "Y": 0.491,
+        "Z": 0.561
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tool-axe-upgraded.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.147,
+        "Y": 0.256,
+        "Z": 0.04
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tool-axe.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.114,
+        "Y": 0.256,
+        "Z": 0.031
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tool-hammer-upgraded.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.116,
+        "Y": 0.185,
+        "Z": 0.052
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tool-hammer.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.09,
+        "Y": 0.153,
+        "Z": 0.04
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tool-hoe-upgraded.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.089,
+        "Y": 0.24,
+        "Z": 0.091
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tool-hoe.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.085,
+        "Y": 0.24,
+        "Z": 0.071
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tool-pickaxe-upgraded.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.179,
+        "Y": 0.24,
+        "Z": 0.04
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tool-pickaxe.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.179,
+        "Y": 0.24,
+        "Z": 0.039
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tool-shovel-upgraded.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.091,
+        "Y": 0.29,
+        "Z": 0.045
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tool-shovel.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.071,
+        "Y": 0.29,
+        "Z": 0.031
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tree-autumn-tall.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.553,
+        "Y": 1.711,
+        "Z": 0.526
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tree-autumn-trunk.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.2,
+        "Y": 0.261,
+        "Z": 0.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tree-autumn.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.553,
+        "Y": 1.411,
+        "Z": 0.526
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tree-log-small.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.249,
+        "Y": 0.277,
+        "Z": 0.65
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tree-log.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.249,
+        "Y": 0.277,
+        "Z": 1.0
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tree-tall.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.553,
+        "Y": 1.711,
+        "Z": 0.526
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tree-trunk.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.2,
+        "Y": 0.261,
+        "Z": 0.2
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/tree.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.553,
+        "Y": 1.411,
+        "Z": 0.526
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/workbench-anvil.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.323,
+        "Y": 0.336,
+        "Z": 0.296
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/workbench-grind.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.26,
+        "Y": 0.282,
+        "Z": 0.329
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/kenney_survival/workbench.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.326,
+        "Y": 0.287,
+        "Z": 0.296
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/aid-cane-blind.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.096,
+        "Y": 0.31,
+        "Z": 0.096
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/aid-cane-low-vision.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.096,
+        "Y": 0.31,
+        "Z": 0.096
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/aid-cane.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.096,
+        "Y": 0.315,
+        "Z": 0.23
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/aid-crutch.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.196,
+        "Y": 0.31,
+        "Z": 0.187
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/aid-defibrillator-green.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.225,
+        "Y": 0.29,
+        "Z": 0.14
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/aid-defibrillator-red.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.225,
+        "Y": 0.29,
+        "Z": 0.14
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/aid-glasses.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.33,
+        "Y": 0.096,
+        "Z": 0.184
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/aid-mask.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.336,
+        "Y": 0.203,
+        "Z": 0.21
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/aid-sunglasses.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.33,
+        "Y": 0.096,
+        "Z": 0.184
+      }
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-female-a.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-female-b.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-female-c.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-female-d.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-female-e.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-female-f.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-male-a.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-male-b.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-male-c.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-male-d.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-male-e.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/minis/character-male-f.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
     "file": "assets/models/character_doctor.glb",
     "dims_tolerance": 0.05,
     "expect": {
@@ -46,8 +4850,8 @@
       "min_height_frac": 0.0,
       "dims": {
         "X": 1.3,
-        "Y": 2.28,
-        "Z": 0.77
+        "Y": 2.275,
+        "Z": 0.775
       }
     }
   },
@@ -60,7 +4864,7 @@
       "dims": {
         "X": 1.3,
         "Y": 2.75,
-        "Z": 0.56
+        "Z": 0.565
       }
     }
   },
@@ -123,7 +4927,7 @@
       "height_axis": "Y",
       "min_height_frac": 0.0,
       "dims": {
-        "X": 1.67,
+        "X": 1.675,
         "Y": 3.09,
         "Z": 3.2
       }
@@ -137,7 +4941,7 @@
       "min_height_frac": 0.0,
       "dims": {
         "X": 1.9,
-        "Y": 1.7,
+        "Y": 1.699,
         "Z": 1.9
       }
     }
@@ -150,7 +4954,7 @@
       "min_height_frac": 0.0,
       "dims": {
         "X": 1.76,
-        "Y": 1.91,
+        "Y": 1.906,
         "Z": 2.2
       }
     }
@@ -163,7 +4967,7 @@
       "min_height_frac": 0.0,
       "dims": {
         "X": 1.8,
-        "Y": 2.03,
+        "Y": 2.026,
         "Z": 2.4
       }
     }
@@ -176,7 +4980,7 @@
       "min_height_frac": 0.0,
       "dims": {
         "X": 1.8,
-        "Y": 0.95,
+        "Y": 0.948,
         "Z": 1.8
       }
     }
@@ -214,8 +5018,8 @@
       "height_axis": "Y",
       "min_height_frac": 0.0,
       "dims": {
-        "X": 1.97,
-        "Y": 1.97,
+        "X": 1.969,
+        "Y": 1.969,
         "Z": 2.0
       }
     }
@@ -253,9 +5057,9 @@
       "height_axis": "Y",
       "min_height_frac": 0.0,
       "dims": {
-        "X": 1.78,
+        "X": 1.779,
         "Y": 2.8,
-        "Z": 1.78
+        "Z": 1.779
       }
     }
   },
@@ -267,7 +5071,7 @@
       "min_height_frac": 0.0,
       "dims": {
         "X": 1.32,
-        "Y": 1.2,
+        "Y": 1.199,
         "Z": 4.0
       }
     }
@@ -279,8 +5083,8 @@
       "height_axis": "Y",
       "min_height_frac": 0.0,
       "dims": {
-        "X": 2.26,
-        "Y": 2.71,
+        "X": 2.262,
+        "Y": 2.714,
         "Z": 4.9
       }
     }
@@ -293,8 +5097,8 @@
       "min_height_frac": 0.0,
       "dims": {
         "X": 3.2,
-        "Y": 0.55,
-        "Z": 1.89
+        "Y": 0.555,
+        "Z": 1.893
       }
     }
   },
@@ -305,8 +5109,8 @@
       "height_axis": "Y",
       "min_height_frac": 0.0,
       "dims": {
-        "X": 2.21,
-        "Y": 0.99,
+        "X": 2.206,
+        "Y": 0.985,
         "Z": 3.0
       }
     }
@@ -319,8 +5123,8 @@
       "min_height_frac": 0.0,
       "dims": {
         "X": 2.0,
-        "Y": 0.98,
-        "Z": 1.22
+        "Y": 0.979,
+        "Z": 1.215
       }
     }
   },
@@ -331,7 +5135,7 @@
       "height_axis": "Y",
       "min_height_frac": 0.0,
       "dims": {
-        "X": 2.75,
+        "X": 2.745,
         "Y": 1.75,
         "Z": 3.0
       }
@@ -344,9 +5148,9 @@
       "height_axis": "Y",
       "min_height_frac": 0.0,
       "dims": {
-        "X": 1.35,
+        "X": 1.348,
         "Y": 4.0,
-        "Z": 2.51
+        "Z": 2.513
       }
     }
   },
@@ -357,9 +5161,9 @@
       "height_axis": "Y",
       "min_height_frac": 0.0,
       "dims": {
-        "X": 9.63,
+        "X": 9.632,
         "Y": 0.06,
-        "Z": 7.4
+        "Z": 7.397
       }
     }
   },
@@ -371,7 +5175,7 @@
       "min_height_frac": 0.0,
       "dims": {
         "X": 0.4,
-        "Y": 0.56,
+        "Y": 0.565,
         "Z": 1.0
       }
     }
