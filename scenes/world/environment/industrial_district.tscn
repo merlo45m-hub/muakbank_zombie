@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/construction-barrier.glb" id="20_3g33e"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/city/roads/Models/electricity-pole-single.glb" id="21_a611b"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/triage_roundup_industrial.tscn" id="22_triage_industrial"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/quarantine_breach_industrial.tscn" id="23_quarantine_industrial"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ytlrm"]
 albedo_color = Color(0.22, 0.23, 0.25, 1)
@@ -255,5 +256,8 @@ hdri_path = "res://assets/hdri/overcast_industrial_courtyard_2k.hdr"
 ambient_energy = 0.35
 
 [node name="TriageRoundup" type="Node3D" parent="." instance=ExtResource("22_triage_industrial")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="QuarantineBreach" type="Node3D" parent="." instance=ExtResource("23_quarantine_industrial")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
