@@ -95,6 +95,7 @@ func _initialize() -> void:
 	for sv in samples:
 		worst_all = maxf(worst_all, sv)
 	samples = steady
+	samples.sort()
 	var n: int = samples.size()
 	var total := 0.0
 	for s in samples:
