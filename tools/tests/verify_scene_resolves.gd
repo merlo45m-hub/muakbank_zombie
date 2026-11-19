@@ -6,7 +6,7 @@ extends SceneTree
 ## scenes must load; scenes under ALLOWED_WIP may fail and are counted, not fatal.
 ## FLOORS encode the mathematical/asset contracts (graveyard instance counts etc).
 
-const ALLOWED_WIP: PackedStringArray = PackedStringArray(["scenes/dev/", "wip/"])
+const ALLOWED_WIP: Array[String] = ["scenes/dev/", "wip/"]
 const FLOORS: Dictionary = {
 	"res://scenes/world/title_background.tscn": 25,
 	"res://scenes/main/title_screen.tscn": 20,
