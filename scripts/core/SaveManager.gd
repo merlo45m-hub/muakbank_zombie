@@ -48,16 +48,18 @@ func _load_game() -> void:
 		save_system.delete_all()
 	save_system._load(save_path)
 
+	var raw: Dictionary = {}
 	var defaults := _default_save_data()
-	# Fallback 0, not SAVE_VERSION: a pre-versioning file lacks the key and must read
-	# as older so the migration below runs. Defaulting to SAVE_VERSION would mask it.
 	var old_version: int = int(save_system.get_var(SAVE_KEY_PREFIX + "version", 0))
 	for key in defaults:
 		if key == "version":
 			continue
-		var value = save_system.get_var(SAVE_KEY_PREFIX + key, defaults[key])
-		save_data[key] = _coerce(key, value, defaults[key])
-	save_data["version"] = maxi(old_version, SAVE_VERSION)
+		raw[key] = save_system.get_var(SAVE_KEY_PREFIX + key, defaults[key])
+	raw["version"] = maxi(old_version, SAVE_VERSION)
+
+	# All conversion happens in SaveSchema; game state sees only typed data.
+	save_data = SaveSchema.deserialize(raw)
+
 	# Player._apply_character_model() reads the member var; save_data is what reaches
 	# disk. Without this line they drift and a character choice survives exactly one run.
 	selected_character = String(save_data.get("selected_character", selected_character))
@@ -74,68 +76,24 @@ func _load_game() -> void:
 		print("[SaveManager] Migrating save v%d -> v%d" % [old_version, SAVE_VERSION])
 		save_game()
 
-func _coerce(key: String, value: Variant, fallback: Variant) -> Variant:
-	"""Keep stored types stable across a JSON round-trip (a save file is JSON)."""
-	if value == null:
-		return fallback
-	match key:
-		"high_score", "total_zombies_fed", "total_shifts_completed", "total_likes_earned", "current_level", "difficulty", "selected_skin":
-			return int(value)
-		"selected_skins":
-			if value is Dictionary:
-				return value
-			return fallback
-		"tutorial_completed", "haptics_enabled", "post_cure":
-			return bool(value)
-		"collection_items", "collection_regions", "dismantled_props", "bestiary", "world_bosses_defeated":
-			if value is Dictionary:
-				return value
-			return fallback
-		"museum_seen":
-			if value is Array:
-				return value
-			return fallback
-		"museum_version":
-			return int(value)
-		"cure_synthesized_at":
-			return str(value)
-		"unlocked_levels":
-			# JSON stores ints as floats; level ids must compare as ints
-			# (is_level_unlocked uses has(level) against ints).
-			var levels: Array[int] = []
-			levels.assign(value)
-			return levels
-		"world_current_region", "world_max_loot_tier":
-			return int(value)
-		"world_unlocked_regions":
-			var regions: Array[int] = []
-			regions.assign(value)
-			return regions
-		"world_tech", "world_transport_repaired", "world_milestones", "world_region_state":
-			if value is Dictionary:
-				return value
-			return fallback
-		"world_visited_regions":
-			var regs: Array[int] = []
-			regs.assign(value)
-			return regs
-		_:
-			return value
-
 func save_game() -> void:
 	"""Write save_data to disk via SaveMadeEasy's set_var + save."""
 	# Copy member vars into the dictionary first, so the fallback path persists them too.
 	save_data["selected_character"] = selected_character
 	save_data["selected_skin"] = selected_skin
 	save_data["selected_skins"] = selected_skins
+
+	# Serialize through SaveSchema so on-disk format stays byte-compatible with v6.
+	var to_store := SaveSchema.serialize(save_data)
+
 	var save_system := _get_save_system()
 	if save_system == null:
 		_save_game_fallback()
 		return
 
 	# Push every save_data field into SaveMadeEasy's nested dictionary
-	for key in save_data:
-		save_system.set_var(SAVE_KEY_PREFIX + key, save_data[key])
+	for key in to_store:
+		save_system.set_var(SAVE_KEY_PREFIX + key, to_store[key])
 
 	save_system.save(save_path)
 	print("[SaveManager] Game saved")
@@ -164,46 +122,8 @@ func reset_progress() -> void:
 	save_game()
 
 func _default_save_data() -> Dictionary:
-	return {
-		"version": SAVE_VERSION,
-		"high_score": 0,
-		"total_zombies_fed": 0,
-		"total_shifts_completed": 0,
-		"total_likes_earned": 0,
-		"unlocked_foods": ["burger", "noodles", "soda", "donut", "pizza", "taco"],
-		"unlocked_levels": [1],
-		"unlocked_achievements": [],
-		"current_level": 1,
-		"difficulty": 0,  # 0=normal, 1=hard, 2=insane
-		"selected_character": "nurse",  # drives which GLB Player._apply_character_model loads
-		"selected_skin": 0,
-		"selected_skins": {
-			"gamer": 0,
-			"doctor": 0,
-			"nurse": 0,
-			"streamer": 0,
-			"hunter": 0
-		},
-		"tutorial_completed": false,
-		"haptics_enabled": true,
-		"collection_items": {},
-		"collection_regions": {},
-		"dismantled_props": {},
-		"bestiary": {},
-		"museum_seen": [],
-		"museum_version": 2,
-		"world_current_region": 1,
-		"world_unlocked_regions": [1],
-		"world_tech": {},
-		"world_transport_repaired": {},
-		"world_milestones": {},
-		"world_max_loot_tier": 1,
-		"world_visited_regions": [1],
-		"world_region_state": {},
-		"post_cure": false,
-		"world_bosses_defeated": {1: false, 2: false, 3: false},
-		"cure_synthesized_at": ""
-	}
+	"""Defaults derived from SaveSchema — single source of truth."""
+	return SaveSchema.get_defaults()
 
 
 # ── GETTERS ───────────────────────────────────────────────────
@@ -329,7 +249,11 @@ func set_world_state(data: Dictionary) -> void:
 	var defaults := _default_save_data()
 	for key in data:
 		if key.begins_with("world_"):
-			save_data[key] = _coerce(key, data[key], defaults.get(key))
+			var field_def := SaveSchema.get_field_def(key)
+			if field_def:
+				save_data[key] = SaveSchema._deserialize_field(field_def.type, data[key], defaults.get(key))
+			else:
+				save_data[key] = data[key]
 	save_game()
 
 
@@ -341,7 +265,7 @@ func get_registry(key: String) -> Variant:
 
 func set_registry(key: String, value: Variant) -> void:
 	"""Coerce one registry key against its default; caller persists via save_game().
-	
+
 	CollectionManager (sole writer of collection_*/museum_*/dismantled_props/
 	bestiary) writes through this instead of mutating save_data directly.
 	"""
@@ -349,7 +273,11 @@ func set_registry(key: String, value: Variant) -> void:
 	if not defaults.has(key):
 		push_warning("[SaveManager] set_registry: unknown key %s" % key)
 		return
-	save_data[key] = _coerce(key, value, defaults.get(key))
+	var field_def := SaveSchema.get_field_def(key)
+	if field_def:
+		save_data[key] = SaveSchema._deserialize_field(field_def.type, value, defaults.get(key))
+	else:
+		save_data[key] = value
 
 
 # ── POST-CURE & WORLD BOSSES (GDD §5, §7 / Issue #28) ────────
