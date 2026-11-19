@@ -36,6 +36,16 @@ func _initialize() -> void:
 	var paths: Array[String] = []
 	if OS.get_environment("MKB_SWEEP") == "full":
 		_collect("res://", paths)
+		var rng: String = OS.get_environment("MKB_SWEEP_RANGE")
+		if rng.contains(":"):
+			var parts: PackedStringArray = rng.split(":")
+			var lo: int = int(parts[0])
+			var hi: int = int(parts[1])
+			var allp: Array[String] = []
+			allp.assign(paths)
+			paths.clear()
+			for bi in range(lo, mini(hi, allp.size())):
+				paths.append(allp[bi])
 	else:
 		# CI mode = curated presentation list (bounded runner time); the repo-wide
 		# audit passes MKB_SWEEP=full explicitly.
@@ -66,6 +76,7 @@ func _initialize() -> void:
 		total_meshes += meshes
 		root.remove_child(inst)
 		inst.free()
+		await process_frame
 		if FLOORS.has(pth) and meshes < int(FLOORS[pth]):
 			failures.append(pth + " :: meshes=" + str(meshes) + " floor=" + str(int(FLOORS[pth])))
 		if scanned % 25 == 0:
