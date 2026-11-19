@@ -41,7 +41,9 @@ func _ready() -> void:
 	_http.use_threads = true
 	add_child(_http)
 	_http.request_completed.connect(_on_manifest)
-	_http.request(ENDPOINT + "/manifest.json", [], false, HTTPClient.METHOD_GET)
+	# Godot 4.7 signature: (url, headers, method, body) — the old ssl_verify
+	# positional was removed; passing false here was parsed as the Method enum.
+	_http.request(ENDPOINT + "/manifest.json", [], HTTPClient.METHOD_GET)
 
 
 func _key_bytes() -> PackedByteArray:
@@ -118,7 +120,7 @@ func _on_manifest(result: int, code: int, _headers: Array, body: PackedByteArray
 	pending_bytes = body
 	_http.request_completed.disconnect(_on_manifest)
 	_http.request_completed.connect(_on_sig)
-	_http.request(ENDPOINT + "/manifest.sig", [], false, HTTPClient.METHOD_GET)
+	_http.request(ENDPOINT + "/manifest.sig", [], HTTPClient.METHOD_GET)
 
 
 func _on_sig(result: int, code: int, _headers: Array, body: PackedByteArray) -> void:

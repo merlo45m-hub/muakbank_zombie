@@ -16,7 +16,7 @@ config/features=PackedStringArray("4.7")
 config/icon="res://muakbank_icon.png"
 
 [autoload]
-TunableConfig="*res://scripts/core/TunableConfig.gd"
+TunableConfig="uid://bfw1wjv8ml6ax"
 
 SceneManager="*SceneManager.gd"
 SaveSystem="*uid://dfu2pldj84cy1"
