@@ -61,6 +61,45 @@ func roll_drops() -> Array:
 
 	return drops
 
+func request_reward_drops(world_pos: Vector3, requested_tier: int) -> Dictionary:
+	## Minigame-win reward path (audit #189-adjacent loot pass-through): unlike
+	## kill drops there is NO drop_chance gate — a win always pays out exactly
+	## one reward roll. The earned tier is requested from LootTierGate (which
+	## clamps against max_loot_tier), so a Bio-Lab win can never pay tier 3 with
+	## the region locked, and the requested tier is returned for the sink probe.
+	# Static helpers only — roll_loot is an instance method and must not be
+	# called through the class (Parse Error class, idiom preamble #3).
+	var t: int = LootTierGate.clamp_tier(requested_tier)
+	var capped: bool = t < requested_tier
+	var pool: Array = []
+	for entry in loot_items:
+		if int(entry.get("tier", 1)) == t:
+			pool.append(entry)
+	if pool.is_empty():
+		for entry in loot_items:
+			if int(entry.get("tier", 1)) <= t:
+				pool.append(entry)
+	if pool.is_empty():
+		return {"tier": t, "count": 0, "capped": capped}
+	var total_weight: float = 0.0
+	for entry in pool:
+		total_weight += entry.get("weight", 1.0)
+	var roll := randf() * total_weight
+	var cumulative: float = 0.0
+	var chosen: Dictionary = pool[0]
+	for entry in pool:
+		cumulative += entry.get("weight", 1.0)
+		if roll <= cumulative:
+			chosen = entry
+			break
+	var count := 0
+	for i in range(int(chosen.get("count", 1))):
+		var node: Node = (chosen.get("item") as PackedScene).instantiate()
+		get_parent().add_child(node)
+		node.global_position = world_pos
+		count += 1
+	return {"tier": t, "count": count, "capped": capped}
+
 func spawn_drops(world_pos: Vector3) -> void:
 	var scene = get_tree().current_scene
 	if not scene:

@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://scripts/world/interactive/CheckpointArmoryTerminal.gd" id="2_wektp"]
 [ext_resource type="Script" path="res://scripts/world/interactive/InteractiveDoor.gd" id="3_nclk4"]
 [ext_resource type="Script" path="res://scripts/world/interactive/BreakableSupplyCrate.gd" id="4_35rst"]
+[ext_resource type="Script" path="res://scripts/gameplay/LootTable.gd" id="90_loottable"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_qab6h"]
 size = Vector3(0.8, 1.1, 0.45)
@@ -61,6 +62,7 @@ script = ExtResource("1_rufbm")
 objective_id = "l3_synthesis_core_access"
 objective_title = "Breach synthesis core lock"
 gate_region = 3
+reward_table_path = NodePath("../LootRewardTable")
 
 [node name="Terminal" type="Node3D" parent="." unique_id=1329771254]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
@@ -179,3 +181,6 @@ collision_mask = 3
 
 [node name="Collision" type="CollisionShape3D" parent="Crate2/CrateInteractionZone" unique_id=1611497175]
 shape = SubResource("BoxShape3D_qlej5")
+
+[node name="LootRewardTable" type="Node" parent="."]
+script = ExtResource("90_loottable")

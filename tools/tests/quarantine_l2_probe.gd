@@ -22,6 +22,9 @@ func _initialize() -> void:
 	ur.assign([1, 2])
 	wp.unlocked_regions = ur
 	wp.current_region = 2
+	# Reward clamp reads the CACHED max_loot_tier; raw test unlocks
+	# must warm it the same way try_unlock would.
+	wp.call("_recompute_max_loot_tier", false)
 
 	var packed: PackedScene = load("res://scenes/minigames/quarantine_breach_industrial.tscn")
 	assert(packed != null, "industrial scene load FAIL")
@@ -92,6 +95,9 @@ func _initialize() -> void:
 
 	var tier: int = int(ctrl.get("last_loot_tier")) if ctrl.get("last_loot_tier") != null else 0
 	print(TAG + "state=%d won=%s tier=%d | %s" % [int(ctrl.get("state")), won, tier, note])
+	var rr: Dictionary = ctrl.get("last_reward_report") if ctrl.get("last_reward_report") != null else {}
+	var reward_ok: bool = int(rr.get("count", 0)) >= 1 and int(rr.get("tier", 0)) == 2
+	print(TAG + "reward count=%d tier=%d capped=%s" % [int(rr.get("count", 0)), int(rr.get("tier", 0)), str(rr.get("capped", "?"))])
 	if won and tier == 2:
 		print(TAG + "QUARANTINE_L2_PASS=true")
 		quit(0)

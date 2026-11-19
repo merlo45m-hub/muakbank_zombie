@@ -60,6 +60,9 @@ var last_loot_tier: int = 1
 @onready var interaction_zone: Area3D = $InteractionZone
 @onready var prompt: Label3D = $Board/Prompt
 
+@export var reward_table_path: NodePath = NodePath("")  # bay scenes wire a LootTable child; empty = no reward drop (shipped behavior)
+var last_reward_report: Dictionary = {}
+
 func _ready() -> void:
 	if gate_region > 0:
 		var wp: Node = get_node_or_null("/root/WorldProgression")
@@ -196,6 +199,10 @@ func _win_run() -> void:
 	if wp != null and wp.has_method("get_active_loot_tier"):
 		tier = int(wp.call("get_active_loot_tier"))
 	last_loot_tier = tier
+	if reward_table_path != NodePath(""):
+		var rt: Node = get_node_or_null(reward_table_path)
+		if rt != null and rt.has_method("request_reward_drops"):
+			last_reward_report = rt.call("request_reward_drops", global_position, last_loot_tier)
 	if wp != null and wp.has_method("try_unlock"):
 		wp.call("try_unlock", gate_region)
 	if objective_manager and objective_manager.has_method("update_progress"):
