@@ -823,12 +823,12 @@ func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 	# per-swing get_nodes_in_group("enemies") scan; distance-prefiltered so
 	# take_damage() only runs for in-range enemies.
 	var enemies: Array = _get_live_enemies()
-	var hit_range: float = weapon_range * (character_stats.attack_range / 2.0 if character_stats else 1.0)
+	var attack_reach: float = weapon_range * (character_stats.attack_range / 2.0 if character_stats else 1.0)
 	for enemy in enemies:
 		if not is_instance_valid(enemy) or enemy.is_dead:
 			continue
 		var dist: float = global_transform.origin.distance_to(enemy.global_transform.origin)
-		if dist >= hit_range:
+		if dist >= attack_reach:
 			continue
 		if not enemy.has_method("take_damage"):
 			continue

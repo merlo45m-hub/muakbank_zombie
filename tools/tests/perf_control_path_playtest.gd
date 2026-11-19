@@ -82,7 +82,7 @@ func _initialize() -> void:
 		return
 
 	# --- spawn 12 zombies via the real spawner (checkout/recycle path) ---
-	for _ in range(12):
+	for _i in range(12):
 		zs._spawn_random_zombie()
 	await process_frame
 
@@ -90,7 +90,7 @@ func _initialize() -> void:
 	_assert(alive.size() == 12, "12 zombies spawned via the real spawner (got %d)" % alive.size())
 
 	# (a) let separation settle, then assert no two alive zombies within 0.3 m
-	for _ in range(400):
+	for _i in range(400):
 		await process_frame
 	alive = _alive_zombies()
 	var pair_ok: bool = true
@@ -123,7 +123,7 @@ func _initialize() -> void:
 			z.take_damage(1000)
 			killed += 1
 	# Let death tweens finish so the died signal / pool return completes.
-	for _ in range(200):
+	for _i in range(200):
 		await process_frame
 
 	var cache_size: int = zs.get_live_enemies().size()
