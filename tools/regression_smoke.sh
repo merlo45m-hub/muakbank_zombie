@@ -16,7 +16,7 @@
 #   Exit code !=0 / final line "REGRESSION: FAIL (...)"    == GATE RED.
 #   In CI: run the same command; the exit code IS the gate.
 #
-# CHECKS (in order — 21 checks total)
+# CHECKS (in order — 22 checks total)
 #   1. import            : headless engine import with a FRESH .godot cache
 #                          (rm -rf .godot), run in up to 3 passes until one pass is
 #                          CLEAN, gated on that pass. Multiple passes are required
@@ -92,6 +92,9 @@
 #   20. triage_l3_probe : Bio-Lab cryo-pod recovery full win (ready+interact can_hop(3)
 #                          guards, dwell capture, escape penalty, tier-3 at win).
 #                          PASS = 'TRIAGE_L3_PASS=true' (L3 family 3/3).
+#   22. visual_assets : pre-build presentation gate — placeholder primitives,
+#                          missing textures/sidecars on presentation surfaces,
+#                          ledger-tracked via tools/visual_assets_exceptions.json (#63).
 # ALLOWLIST — the EXPLICIT set of tolerated lifecycle noise lines (only these
 #   'ERROR'/warning lines may appear; anything else fails the gate):
 #     - 'resources still in use at exit'                 Godot exit-time orphaned-resource report (fires on any heavy headless quit)
@@ -164,7 +167,7 @@ run_scene() {
     local tscn="$1" name="$2" frames="$3" marker="$4" want="$5" rc got logf
     logf="${WORKDIR}/${name}.log"
     CHECK=$((CHECK + 1))
-    log "[check ${CHECK}/21] ${name}: ${tscn} (${frames} frames max, xvfb)"
+    log "[check ${CHECK}/22] ${name}: ${tscn} (${frames} frames max, xvfb)"
     # shellcheck disable=SC2086
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
         --headless --path "$PROJECT_ROOT" "$tscn" --quit-after "$frames" > "$logf" 2>&1
@@ -191,7 +194,7 @@ log "logs    : ${WORKDIR}"
 
 # --- pre-build asset registry gate (check 0/14) ------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] asset_registry: pre-build referenced-model path integrity"
+log "[check ${CHECK}/22] asset_registry: pre-build referenced-model path integrity"
 REG_LOG="${WORKDIR}/asset_registry.log"
 if [ -f "${PROJECT_ROOT}/tools/check_asset_registry.py" ]; then
     (cd "$PROJECT_ROOT" && "${PYTHON_BIN}" tools/check_asset_registry.py --no-notify) > "$REG_LOG" 2>&1 || true
@@ -206,7 +209,7 @@ fi
 
 # --- 2/21 fresh headless import (regenerates .godot) ------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] import: fresh headless import until stable (max 3 passes)"
+log "[check ${CHECK}/22] import: fresh headless import until stable (max 3 passes)"
 rm -rf "${PROJECT_ROOT}/.godot"
 # gitignored cache dir: worktree/CI checkouts may miss it; editor_doc_cache write fails
 # inside import when absent, making the stability loop spin 3 passes for nothing.
@@ -254,7 +257,7 @@ fi
 
 # --- scale-lock drift guard: GLB verifier + in-engine live AABB ----------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] scale_contract: locked GLB + live gameplay AABB drift guard"
+log "[check ${CHECK}/22] scale_contract: locked GLB + live gameplay AABB drift guard"
 SCALE_LOG="${WORKDIR}/scale_contract.log"
 if [ -f "${PROJECT_ROOT}/tools/blender/verify_scale_contract.py" ]; then
     (cd "$PROJECT_ROOT" && python3 tools/blender/verify_scale_contract.py) > "$SCALE_LOG" 2>&1 || true
@@ -284,7 +287,7 @@ unset _drift
 
 # --- runtime perf monitoring with the asset resident --------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] scale_perf: FpsMonitor sampling with GLB instanced"
+log "[check ${CHECK}/22] scale_perf: FpsMonitor sampling with GLB instanced"
 PERF_LOG="${WORKDIR}/scale_perf.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/scale_perf_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -300,7 +303,7 @@ fi
 
 # --- 8/21 strict typing gate (Issue #32) -------------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] strict_typing: explicit return types + typed params"
+log "[check ${CHECK}/22] strict_typing: explicit return types + typed params"
 STRICT_LOG="${WORKDIR}/strict_typing.log"
 if (cd "$PROJECT_ROOT" && "${PYTHON_BIN}" tools/check_gdscript_strict.py --gate .) > "$STRICT_LOG" 2>&1; then
     log "  strict_typing: OK ($(grep 'STRICT_GATE' "$STRICT_LOG" | tail -1))"
@@ -310,7 +313,7 @@ fi
 
 # --- 9/21 dismantle playtest (GDD Issue #26) ----------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] dismantle_playtest: GDD26 full-chain dismantling regression"
+log "[check ${CHECK}/22] dismantle_playtest: GDD26 full-chain dismantling regression"
 DISMANTLE_LOG="${WORKDIR}/dismantle_playtest.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/dismantle_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
@@ -326,7 +329,7 @@ fi
 
 # --- 10/21 cure endgame playtest (GDD Issue #28) --------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] cure_endgame_playtest: GDD28 cure synthesis & post-cure"
+log "[check ${CHECK}/22] cure_endgame_playtest: GDD28 cure synthesis & post-cure"
 CURE_LOG="${WORKDIR}/cure_endgame_playtest.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/cure_endgame_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
@@ -342,7 +345,7 @@ fi
 
 # --- 11/21 save migration roundtrip (v5 -> v6) ----------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] save_migration_playtest: SaveManager v5->v6 migration roundtrip"
+log "[check ${CHECK}/22] save_migration_playtest: SaveManager v5->v6 migration roundtrip"
 MIGRATE_LOG="${WORKDIR}/save_migration_playtest.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/save_migration_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
@@ -363,7 +366,7 @@ log "[skip] world_hop_bidirectional_playtest: gated in nightly-regression.yml (h
 
 # --- 14/21 GLB asset contract (orientation/bounds/parts, Issue #14 automation) -----
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] glb_contract: GLB orientation + locked dims + VXZ part schema"
+log "[check ${CHECK}/22] glb_contract: GLB orientation + locked dims + VXZ part schema"
 if python3 tools/verify_glb_assets.py "$PROJECT_ROOT" > "$WORKDIR/glb_contract.log" 2>&1; then
     log "  glb_contract: $(grep 'GLB_CONTRACT:' "$WORKDIR/glb_contract.log" | tail -1)"
 else
@@ -372,7 +375,7 @@ fi
 
 # --- 14/21 asset contract (in-engine gate, Issue #14 automation) ----------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] asset_contract: engine-side GLB contract gate"
+log "[check ${CHECK}/22] asset_contract: engine-side GLB contract gate"
 ASSET_LOG="${WORKDIR}/asset_contract.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/asset_contract_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN"         --headless --path "$PROJECT_ROOT" --script tools/tests/asset_contract_playtest.gd > "$ASSET_LOG" 2>&1
@@ -388,7 +391,7 @@ fi
 
 # --- 15/21 perf control-path playtest (control-path performance fixes) --------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] perf_control_path_playtest: control-path perf correctness"
+log "[check ${CHECK}/22] perf_control_path_playtest: control-path perf correctness"
 PERF_LOG="${WORKDIR}/perf_control_path.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/perf_control_path_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN"         --headless --path "$PROJECT_ROOT" --script tools/tests/perf_control_path_playtest.gd > "$PERF_LOG" 2>&1
@@ -406,7 +409,7 @@ CHECK=$((CHECK + 1))
 
 # --- 16/21 Industrial triage round-up full-win probe (task 6a) --------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] triage_l2_probe: Industrial triage win + tier-2 loot"
+log "[check ${CHECK}/22] triage_l2_probe: Industrial triage win + tier-2 loot"
 L2_LOG="${WORKDIR}/triage_l2.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/triage_l2_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -422,7 +425,7 @@ fi
 
 # --- 17/21 Industrial quarantine breach full-win probe (task 6b) -------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] quarantine_l2_probe: Industrial breach win + tier-2 loot"
+log "[check ${CHECK}/22] quarantine_l2_probe: Industrial breach win + tier-2 loot"
 QL2_LOG="${WORKDIR}/quarantine_l2.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/quarantine_l2_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -438,7 +441,7 @@ fi
 
 # --- 18/21 Bio-Lab quarantine breach full-win probe ------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] quarantine_l3_probe: Bio-Lab breach win + tier-3"
+log "[check ${CHECK}/22] quarantine_l3_probe: Bio-Lab breach win + tier-3"
 Q3_LOG="${WORKDIR}/quarantine_l3.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/quarantine_l3_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -454,7 +457,7 @@ fi
 
 # --- 19/21 Bio-Lab armory lockdown full-win probe ---------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] armory_l3_probe: Bio-Lab armory win + tier-3 roll"
+log "[check ${CHECK}/22] armory_l3_probe: Bio-Lab armory win + tier-3 roll"
 A3_LOG="${WORKDIR}/armory_l3.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/armory_l3_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -470,7 +473,7 @@ fi
 
 # --- Bio-Lab cryo triage full-win probe -------------------------------------
 CHECK=$((CHECK + 1))
-log "[check ${CHECK}/21] triage_l3_probe: Bio-Lab cryo recovery win + tier-3"
+log "[check ${CHECK}/22] triage_l3_probe: Bio-Lab cryo recovery win + tier-3"
 T3_LOG="${WORKDIR}/triage_l3.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/triage_l3_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
@@ -482,6 +485,19 @@ if [ -f "${PROJECT_ROOT}/tools/tests/triage_l3_probe.gd" ]; then
     fi
 else
     bad "triage_l3_probe: probe file missing"
+fi
+
+# --- 22/22 visual assets gate ----------------------------------------------------
+CHECK=$((CHECK + 1))
+log "[check ${CHECK}/22] visual_assets: presentation placeholder/texture scan"
+VA_LOG="${WORKDIR}/visual_assets.log"
+timeout 180 python3 "${PROJECT_ROOT}/tools/verify_visual_assets.py" > "$VA_LOG" 2>&1
+VA_RC=$?
+if [ "$VA_RC" -eq 0 ]; then
+    log "  visual_assets: $(grep -o 'VISUAL_ASSETS: PASS.*' "$VA_LOG" | tail -1)"
+else
+    bad "visual_assets: gate rc=${VA_RC} ($(grep -E 'VISUAL_ASSETS: (FAIL|SCOPE)' "$VA_LOG" | tail -1))"
+    grep "  ISSUE " "$VA_LOG" | head -6
 fi
 
 # ---------------------------------------------------------------------------
