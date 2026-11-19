@@ -53,7 +53,7 @@ func _initialize() -> void:
 		player.add_to_group("player")
 		root.add_child.call_deferred(player)
 		await process_frame
-var samples: Array[float] = []
+	var samples: Array[float] = []
 	var sim_t := 0.0
 	var tick_count := 0
 	while sim_t < SIM_SECONDS * 1000.0:
