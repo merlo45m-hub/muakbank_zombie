@@ -84,7 +84,7 @@ var _lod_timer: float = 0.0
 # Resolved once in _ready via a single group lookup. Separation queries the
 # spawner's cached live-enemy list (O(1)) instead of scanning the "enemies"
 # group every physics frame.
-var _spawner: ZombieSpawner3D = null
+var _spawner: Node = null  # located via group; typed Node (autoload-named scripts have no class_name)
 
 # === POOLING SUPPORT ===
 var dead: bool = false          # Object-pool compatibility: must be false when alive, true when in dead pool
@@ -157,7 +157,7 @@ func _ready() -> void:
 	# instead of scanning the group every physics frame.
 	if _spawner == null:
 		for s in get_tree().get_nodes_in_group("zombie_spawner"):
-			if s is ZombieSpawner3D:
+			if s.has_method("get_nearby_enemies"):
 				_spawner = s
 				break
 	if mesh:

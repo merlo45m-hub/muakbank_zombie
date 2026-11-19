@@ -24,7 +24,7 @@ func _alive_zombies() -> Array:
 	# Parked pool instances sit out of tree (dead flag true); dead-and-returned
 	# zombies are removed from the tree too, so both filters are belt-and-braces.
 	var out: Array = []
-	for z in get_tree().get_nodes_in_group("enemies"):
+	for z in get_nodes_in_group("enemies"):
 		if z is ZombieBase and z.is_inside_tree() and not z.is_dead and not z.dead:
 			out.append(z)
 	return out
@@ -35,15 +35,9 @@ func _initialize() -> void:
 
 	print("=== Perf control-path playtest ===")
 
-	# --- engine singletons addressed by bare name (Level.get_enemy_pool,
-	# --- Audio.play_*) --- autoloads are not wired into the tree under --script,
-	# --- so register minimal stubs so the real spawner / zombie code paths run.
-	var level_stub: Node = _LevelStub.new()
-	level_stub.name = "LevelStub"
-	Engine.add_singleton("Level", level_stub)
-	var audio_stub: Node = _AudioStub.new()
-	audio_stub.name = "AudioStub"
-	Engine.add_singleton("Audio", audio_stub)
+	# Level and Audio are REAL autoloads (project.godot) and DO initialize under
+	# --script mode (proven by engine run logs) - no stubs needed; stubbing here
+	# would shadow the real pool API this playtest exists to exercise.
 
 	# --- stub player (group "player") so the spawner locates a target ---
 	var player: Node3D = Node3D.new()
@@ -75,9 +69,9 @@ func _initialize() -> void:
 	# Let spawner._ready run (pools, group registration, player lookup).
 	await process_frame
 
-	var zs: ZombieSpawner3D = spawner as ZombieSpawner3D
-	if zs == null:
-		print("PERF_PATH_FAIL: spawner is not ZombieSpawner3D")
+	var zs: Node = spawner
+	if zs == null or not zs.has_method("get_live_enemies"):
+		print("PERF_PATH_FAIL: spawner lacks cached-list API")
 		quit(1)
 		return
 

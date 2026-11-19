@@ -40,7 +40,7 @@ var is_attacking: bool = false
 var is_rage_active: bool = false
 # Resolved once via group lookup; attacks consult the spawner's cached
 # live-enemy list instead of scanning the "enemies" group per swing.
-var _spawner: ZombieSpawner3D = null
+var _spawner: Node = null  # autoload-named script has no class_name; duck-typed
 var is_shield_active: bool = false
 # Brief post-hit invulnerability so a swarm of fast zombies (each on its own
 # ~0.4s attack cooldown) cannot stack hits and melt the player in seconds.
@@ -902,7 +902,7 @@ func _get_live_enemies() -> Array:
 		return []
 	if _spawner == null:
 		for s in tree.get_nodes_in_group("zombie_spawner"):
-			if s is ZombieSpawner3D:
+			if s.has_method("get_live_enemies"):
 				_spawner = s
 				break
 	if _spawner != null:
