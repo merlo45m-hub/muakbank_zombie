@@ -51,7 +51,7 @@ const SPRINT_BTN_RECT := Rect2(30.0, -760.0, 270.0, 360.0)
 # JUMP used to sit almost fully inside the SPECIAL button's rect (both right-column
 # offsets overlapped), so SPECIAL was half-eaten and the labels rendered on top of
 # each other. Park JUMP left of the VS attack button — same bottom band, no overlap.
-const JUMP_BTN_RECT := Rect2(-510.0, -250.0, -310.0, -50.0)
+const JUMP_BTN_RECT := Rect2(-510.0, -250.0, 200.0, 200.0)  # pos+SIZE, not pos+end
 # SPECIAL sits in the right column directly ABOVE SWAP (SWAP spans y -490..-290):
 # top -730, bottom -530 leaves a 40px gap to SWAP's -490 top edge, same 200x200
 # size and x column (-510..-310) as SWAP/JUMP, clear of ATTACK (-250..-50) and
