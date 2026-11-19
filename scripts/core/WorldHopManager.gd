@@ -31,6 +31,7 @@ var _path: String = ""
 var _target_region: int = 0
 var _spawn: Vector3 = Vector3.ZERO
 var _world_root: Node = null
+var _hydrated: bool = false
 
 # GDD-1 / FM-A: captured per-request context. A superseded request must NOT
 # mutate these while a threaded load is in flight.
@@ -243,8 +244,38 @@ func restore_transient_state(snap: Dictionary) -> bool:
 	return true
 
 
+func _ready() -> void:
+	_ensure_hydrated()
+
+func _ensure_hydrated() -> void:
+	"""Load transient_by_region from the save field once; crash-durable hydrate after restart."""
+	if _hydrated:
+		return
+	var save := _save()
+	if save == null:
+		return
+	_hydrated = true
+	var snapshots := save.get_world_transient_snapshots()
+	if snapshots is Dictionary:
+		transient_by_region = snapshots.duplicate(true)
+
+func _save() -> Node:
+	return get_node_or_null("/root/Save")
+
+func _mirror_snapshots() -> void:
+	"""Persist transient_by_region to the save field; idempotent, keyed by region id."""
+	var save := _save()
+	if save != null:
+		save.set_world_transient_snapshots(transient_by_region)
+
+func clear_transient_region(region_id: int) -> void:
+	"""Drop a region's snapshot when it is completed/reset so stale timers cannot resurrect."""
+	transient_by_region.erase(region_id)
+	_mirror_snapshots()
+
 func _on_load_complete(packed: Resource) -> void:
 	state = HopState.RELOCATING_PLAYER
+	_ensure_hydrated()
 	var root := _ensure_world_root()
 	var inst := (packed as PackedScene).instantiate()
 	root.add_child(inst)
@@ -259,7 +290,9 @@ func _on_load_complete(packed: Resource) -> void:
 	snapshot_count += 1
 	var departing: int = int(_req.get("from", 0))
 	if departing > 0:
+		last_transient_snapshot["gen"] = generation
 		transient_by_region[departing] = last_transient_snapshot.duplicate(true)
+		_mirror_snapshots()
 	var arriving: int = int(_req.get("target", _target_region))
 	if transient_by_region.has(arriving):
 		restore_transient_state(transient_by_region[arriving])

@@ -74,8 +74,8 @@ func _initialize() -> void:
 	var ok: bool = true
 	var sd: Dictionary = save_manager.save_data
 
-	if int(sd.get("version", 0)) != 6:
-		printerr("FAIL: version not migrated to 6, got ", sd.get("version"))
+	if int(sd.get("version", 0)) != 7:
+		printerr("FAIL: version not migrated to 7, got ", sd.get("version"))
 		ok = false
 	else:
 		print("  PASS: version == 6")
