@@ -68,7 +68,10 @@ func _initialize() -> void:
 
 	var tex: ViewportTexture = viewport.get_texture()
 	var img: Image = tex.get_image()
-	img.flip_y()
+	# NO flip_y(): proven 2026-11-19 against title_screen UI ground truth (red Nosifer
+	# title band measured top28%%=45724px vs bottom28%%=1284px unflipped, mirrored when
+	# flipped; anchor is offset_top=18 in the tscn). ViewportTexture->Image is already
+	# top-down in Godot 4.7; the old flip inverted every CI capture artifact. Issue #63 I0.
 	var err: Error = img.save_png(out_path)
 
 	var report: Dictionary = {
