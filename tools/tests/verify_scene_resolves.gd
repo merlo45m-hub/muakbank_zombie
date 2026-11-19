@@ -6,7 +6,18 @@ extends SceneTree
 ## scenes must load; scenes under ALLOWED_WIP may fail and are counted, not fatal.
 ## FLOORS encode the mathematical/asset contracts (graveyard instance counts etc).
 
-const ALLOWED_WIP: PackedStringArray = PackedStringArray(["scenes/dev/", "wip/"])
+const ALLOWED_WIP: Array[String] = ["scenes/dev/", "wip/"]
+const PRESENTATION_CURATED: Array[String] = [
+	"res://scenes/main/title_screen.tscn",
+	"res://scenes/main/game.tscn",
+	"res://scenes/ui/character_select.tscn",
+	"res://scenes/ui/level_select.tscn",
+	"res://scenes/ui/level_backdrop.tscn",
+	"res://scenes/world/title_background.tscn",
+	"res://scenes/world/environment/old_town_enhanced.tscn",
+	"res://scenes/world/environment/industrial_district.tscn",
+	"res://scenes/world/environment/endgame_heights.tscn",
+]
 const FLOORS: Dictionary = {
 	"res://scenes/world/title_background.tscn": 25,
 	"res://scenes/main/title_screen.tscn": 20,
@@ -23,7 +34,22 @@ var total_meshes: int = 0
 
 func _initialize() -> void:
 	var paths: Array[String] = []
-	_collect("res://", paths)
+	if OS.get_environment("MKB_SWEEP") == "full":
+		_collect("res://", paths)
+		var rng: String = OS.get_environment("MKB_SWEEP_RANGE")
+		if rng.contains(":"):
+			var parts: PackedStringArray = rng.split(":")
+			var lo: int = int(parts[0])
+			var hi: int = int(parts[1])
+			var allp: Array[String] = []
+			allp.assign(paths)
+			paths.clear()
+			for bi in range(lo, mini(hi, allp.size())):
+				paths.append(allp[bi])
+	else:
+		# CI mode = curated presentation list (bounded runner time); the repo-wide
+		# audit passes MKB_SWEEP=full explicitly.
+		paths.assign(PRESENTATION_CURATED.duplicate())
 	paths.sort()
 	for pth in paths:
 		scanned += 1
@@ -50,6 +76,7 @@ func _initialize() -> void:
 		total_meshes += meshes
 		root.remove_child(inst)
 		inst.free()
+		await process_frame
 		if FLOORS.has(pth) and meshes < int(FLOORS[pth]):
 			failures.append(pth + " :: meshes=" + str(meshes) + " floor=" + str(int(FLOORS[pth])))
 		if scanned % 25 == 0:
