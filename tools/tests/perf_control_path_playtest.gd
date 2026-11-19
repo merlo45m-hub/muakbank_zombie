@@ -25,7 +25,7 @@ func _alive_zombies() -> Array:
 	# zombies are removed from the tree too, so both filters are belt-and-braces.
 	var out: Array = []
 	for z in get_nodes_in_group("enemies"):
-		if z is ZombieBase and z.is_inside_tree() and not z.is_dead and not z.dead:
+		if z.has_method("take_damage") and z.is_inside_tree() and not bool(z.get("is_dead")) and not bool(z.get("dead")):
 			out.append(z)
 	return out
 
@@ -95,8 +95,8 @@ func _initialize() -> void:
 	var pair_ok: bool = true
 	for i in range(alive.size()):
 		for j in range(i + 1, alive.size()):
-			var a: ZombieBase = alive[i]
-			var b: ZombieBase = alive[j]
+			var a: Node3D = alive[i] as Node3D
+			var b: Node3D = alive[j] as Node3D
 			if is_instance_valid(a) and is_instance_valid(b):
 				if a.global_transform.origin.distance_to(b.global_transform.origin) < 0.3:
 					pair_ok = false
@@ -106,10 +106,10 @@ func _initialize() -> void:
 	var dummy: _DamageDummy = _DamageDummy.new()
 	dummy.name = "DamageDummy"
 	root.add_child(dummy)
-	var z0: ZombieBase = alive[0] if alive.size() > 0 else null
+	var z0: Node3D = (alive[0] as Node3D) if alive.size() > 0 else null
 	if z0 != null and is_instance_valid(z0):
 		dummy.global_transform.origin = z0.global_transform.origin - z0.global_transform.basis.z * 1.0
-		z0.attack(dummy)
+		z0.call("attack", dummy)
 		await process_frame
 	_assert(dummy.damage_taken > 0, "attack damages the enemy in front (took %d)" % dummy.damage_taken)
 
@@ -118,8 +118,8 @@ func _initialize() -> void:
 	for z in alive:
 		if killed >= 3:
 			break
-		if z is ZombieBase and not z.is_dead:
-			z.take_damage(1000)
+		if z.has_method("take_damage") and not bool(z.get("is_dead")):
+			z.call("take_damage", 1000)
 			killed += 1
 	# Let death tweens finish so the died signal / pool return completes.
 	for _i in range(200):
