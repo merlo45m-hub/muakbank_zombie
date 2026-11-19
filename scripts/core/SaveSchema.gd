@@ -106,15 +106,15 @@ static func deserialize(raw: Dictionary) -> Dictionary:
 	var defaults := get_defaults()
 
 	for field in FIELDS:
-		var key := field.key
-		var ftype := field.type
-		var default := defaults[key]
+		var key: String = String(field.key)
+		var ftype: int = int(field.type)
+		var default: Variant = defaults[key]
 
 		if not raw.has(key):
 			out[key] = default.duplicate(true)
 			continue
 
-		var value := raw[key]
+		var value: Variant = raw[key]
 		out[key] = _deserialize_field(ftype, value, default)
 
 	return out
@@ -225,7 +225,7 @@ static func serialize(data: Dictionary) -> Dictionary:
 	var out: Dictionary = {}
 
 	for field in FIELDS:
-		var key := field.key
+		var key: String = String(field.key)
 		if data.has(key):
 			out[key] = data[key]
 		else:
