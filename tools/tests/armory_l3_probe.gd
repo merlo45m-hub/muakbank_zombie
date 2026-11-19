@@ -97,8 +97,8 @@ func _initialize() -> void:
 	if extraction_inst and armory_inst:
 		# EndgameExtraction is at (140, 0, 0) in RooftopDistrict
 		# ArmoryLockdownBioLab is at (0, 0, 0) which falls in MallDistrict
-		var ext_pos := extraction_inst.global_position
-		var arm_pos := armory_inst.global_position
+		var ext_pos: Vector3 = extraction_inst.global_position as Vector3
+		var arm_pos: Vector3 = armory_inst.global_position as Vector3
 		different_districts = (ext_pos.x > 100 and arm_pos.x < 100) or (ext_pos.x < 100 and arm_pos.x > 100)
 		print(TAG + "extraction pos: %s, armory pos: %s, different_districts: %s" % [ext_pos, arm_pos, different_districts])
 
