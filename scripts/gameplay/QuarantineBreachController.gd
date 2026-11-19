@@ -2,17 +2,17 @@ extends Node3D
 class_name QuarantineBreachController
 
 ## QuarantineBreachController — state machine + rules engine for the Quarantine
-## Breach mini-game (spec: docs/specs/LEVEL1_MINIGAMES_B.md §2).
+## Breach mini-game (spec: docs/specs/LEVEL1_MINIGAMES_B.md §2, LEVEL2_MINIGAMES_B.md §3).
 ##
 ## Seal three breaches (A—Intake, B—Laundry, C—Loading Bay) IN ORDER before the
 ## 120s seal-down clock expires. Each door is sealed by closing it with its
 ## assigned brace (supply case for A/C, laundry cart for B) seated in the door's
 ## socket for 0.75s. The active lane leaks one zombie every 7s; six zombies
 ## crossing the interior red line (BreachKillZone) loses the route. Reports to
-## ObjectiveManager exactly once on win (l1_quarantine_breach).
+## ObjectiveManager exactly once on win (l1_quarantine_breach / l2_quarantine_breach).
 
-const OBJECTIVE_ID := "l1_quarantine_breach"
-const OBJECTIVE_TITLE := "Seal the service route"
+@export var objective_id: String = "l1_quarantine_breach"
+@export var objective_title: String = "Seal the service route"
 const RUN_DURATION := 120.0
 const SPAWN_INTERVAL := 7.0
 const MAX_LEAKERS := 6
@@ -21,6 +21,8 @@ const KILLZONE_CROWD_LIMIT := 6
 
 const STEP_ORDER: Array[String] = ["A", "B", "C"]
 const ZOMBIE_SCENE: PackedScene = preload("res://scenes/characters/zombie_dog.tscn")
+
+@export var gate_region: int = 0  # 0 = no region gate; Industrial variant sets 2
 
 enum RunState { IDLE, ACTIVE, WON, FAILED }
 
@@ -51,11 +53,17 @@ var cart: Node = null
 var kill_zone: Area3D = null
 var lane_markers: Dictionary = {}    # "A"/"B"/"C" -> Marker3D
 var board: Node3D = null
+var last_loot_tier: int = 1
 
 @onready var interaction_zone: Area3D = $InteractionZone
 @onready var prompt: Label3D = $Board/Prompt
 
 func _ready() -> void:
+	if gate_region > 0:
+		var wp: Node = get_node_or_null("/root/WorldProgression")
+		if wp == null or not wp.has_method("can_hop") or not bool(wp.call("can_hop", gate_region)):
+			queue_free()
+			return
 	add_to_group("interactive_prop")
 	hud = get_node_or_null(hud_path) as CanvasLayer
 	doors = _collect_doors(doors_path)
@@ -82,8 +90,8 @@ func _register_objective() -> void:
 	objective_manager = get_tree().root.find_child("ObjectiveManager", true, false)
 	if objective_manager and objective_manager.has_method("add_objective"):
 		var objectives: Dictionary = objective_manager.get("objectives")
-		if not objectives.has(OBJECTIVE_ID):
-			objective_manager.add_objective(OBJECTIVE_ID, OBJECTIVE_TITLE, 1)
+		if not objectives.has(objective_id):
+			objective_manager.add_objective(objective_id, objective_title, 1)
 
 func _process(delta: float) -> void:
 	if state != RunState.ACTIVE:
@@ -115,6 +123,12 @@ func _process(delta: float) -> void:
 ## Start the seal-down (probe/tests and the in-world START prompt both use this).
 func interact() -> void:
 	if state == RunState.IDLE:
+		if gate_region > 0:
+			var wp: Node = get_node_or_null("/root/WorldProgression")
+			if wp != null and wp.has_method("can_hop") and not bool(wp.call("can_hop", gate_region)):
+				if prompt:
+					prompt.text = "INDUSTRIAL ACCESS REQUIRED"
+				return
 		_start_run()
 
 func start_run() -> void:
@@ -174,9 +188,11 @@ func _win_run() -> void:
 	state = RunState.WON
 	is_won = true
 	if objective_manager and objective_manager.has_method("update_progress"):
-		objective_manager.update_progress(OBJECTIVE_ID, 1)
-	_show_result("SERVICE ROUTE SEALED")
-	_refresh_prompt()
+		objective_manager.update_progress(objective_id, 1)
+		var wp: Node = get_node_or_null("/root/WorldProgression")
+		last_loot_tier = int(wp.call("get_active_loot_tier")) if wp != null and wp.has_method("get_active_loot_tier") else 1
+		_show_result("SERVICE ROUTE SEALED")
+		_refresh_prompt()
 
 func _fail_run(message: String) -> void:
 	if state != RunState.ACTIVE:
@@ -342,3 +358,10 @@ func _collect_doors(path: NodePath) -> Dictionary:
 	for c in container.get_children():
 		out[c.get("seal_step")] = c
 	return out
+
+func _has_prop(obj: Object, prop: String) -> bool:
+	# Object has no has() - Dictionary/Array do. Property existence via list.
+	for pi in obj.get_property_list():
+		if String(pi.get("name", "")) == prop:
+			return true
+	return false
