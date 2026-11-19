@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=3 uid="uid://title_background_v2"]
+[gd_scene load_steps=56 format=3 uid="uid://title_background_v2"]
 
 [ext_resource type="Script" path="res://scripts/ui/TitleBackground.gd" id="1_tb"]
 [ext_resource path="res://assets/models/cc0/graveyard/gravestone-bevel.glb" type="PackedScene" id="2_gv_bevel"]
@@ -149,6 +149,52 @@ emission_energy_multiplier = 1.6
 [sub_resource type="PlaneMesh" id="CemeteryFloor"]
 size = Vector2(60, 60)
 orientation = 1
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.12, 0.11, 0.1, 1.0)
+roughness = 0.95
+metallic = 0.0
+
+[sub_resource type="SphereMesh" id="FogSphere"]
+radius = 25
+
+[sub_resource type="StandardMaterial3D" id="FogMaterial2"]
+albedo_color = Color(0.2, 0.18, 0.17, 0.08)
+cull_mode = 1
+no_depth_test = false
+transparency = 1
+
+[sub_resource type="SphereMesh" id="MoonMesh"]
+radius = 7.5
+height = 15.0
+radial_segments = 48
+rings = 24
+
+[sub_resource type="StandardMaterial3D" id="MoonMat"]
+albedo_color = Color(1, 0.99, 0.95, 1)
+emission_enabled = true
+emission = Color(1, 0.98, 0.92, 1)
+emission_energy_multiplier = 1.4
+
+[sub_resource type="Gradient" id="GlowGrad"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GlowTex"]
+gradient = SubResource("GlowGrad")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="GlowMat"]
+transparency = 1
+shading_mode = 0
+blend_mode = 1
+billboard_mode = 1
+albedo_texture = SubResource("GlowTex")
+albedo_color = Color(0.7, 0.8, 0.98, 0.4)
+
 
 [node name="TitleBackground" type="Node3D"]
 script = ExtResource("1_tb")
