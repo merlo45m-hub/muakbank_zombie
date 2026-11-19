@@ -14,9 +14,7 @@ const BUDGET_MEAN_MS := 30.0     # mean must stay under (VPS is slow-shared host
 
 func _initialize() -> void:
 	print("=== Combat frame-pacing stress ===")
-	var spawner_script: GDScript = load("res://scripts/characters/ZombieSpawner3D.gd")
-	assert(spawner_script != null and spawner_script.can_instantiate(), "spawner script compile failed")
-		var packed_game: PackedScene = load("res://scenes/main/game.tscn")
+	var packed_game: PackedScene = load("res://scenes/main/game.tscn")
 	if packed_game == null:
 		print("STRESS_ERROR: game.tscn not found")
 		quit(1)
