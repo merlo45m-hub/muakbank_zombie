@@ -1,9 +1,10 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/TriageCryoRecoveryController.gd" id="1_ctrl"]
 [ext_resource type="Script" path="res://scripts/gameplay/TriageCryoBay.gd" id="2_bay"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/triage_cryo_pod.tscn" id="3_pod"]
 [ext_resource type="PackedScene" path="res://scenes/ui/triage_cryo_recovery_hud.tscn" id="4_hud"]
+[ext_resource type="Script" path="res://scripts/gameplay/LootTable.gd" id="90_loottable"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(22, 0.5, 44)
@@ -75,6 +76,7 @@ script = ExtResource("1_ctrl")
 objective_id = "l3_triage_cryo_recovery"
 objective_title = "Recover cryo-pods from containment"
 gate_region = 3
+reward_table_path = NodePath("../LootRewardTable")
 
 [node name="InteractionZone" type="Area3D" parent="Controller" unique_id=2111769808]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 1.5, 3)
@@ -254,3 +256,6 @@ collision_mask = 8
 
 [node name="Collision" type="CollisionShape3D" parent="OverrunZone" unique_id=1801007755]
 shape = SubResource("BoxShape3D_overrun")
+
+[node name="LootRewardTable" type="Node" parent="."]
+script = ExtResource("90_loottable")

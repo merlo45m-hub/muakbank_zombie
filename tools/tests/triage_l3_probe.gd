@@ -22,6 +22,9 @@ func _initialize() -> void:
 	ur.assign([1, 2, 3])
 	wp.unlocked_regions = ur
 	wp.current_region = 3
+	# Reward clamp reads the CACHED max_loot_tier; raw test unlocks
+	# must warm it the same way try_unlock would.
+	wp.call("_recompute_max_loot_tier", false)
 
 	var packed: PackedScene = load("res://scenes/minigames/triage_cryo_recovery.tscn")
 	assert(packed != null, "biolab scene load FAIL")
@@ -67,6 +70,9 @@ func _initialize() -> void:
 
 	var tier: int = int(ctrl.get("last_loot_tier"))
 	print(TAG + "state=%d won=%s tier=%d | %s" % [int(ctrl.get("state")), won, tier, note])
+		var rr: Dictionary = ctrl.get("last_reward_report") if ctrl.get("last_reward_report") != null else {}
+	var reward_ok: bool = int(rr.get("count", 0)) >= 1 and int(rr.get("tier", 0)) == 3
+	print(TAG + \"reward count=%d tier=%d capped=%s\" % [int(rr.get(\"count\", 0)), int(rr.get(\"tier\", 0)), str(rr.get(\"capped\", \"?\"))])
 	if won and tier == 3:
 		print(TAG + "TRIAGE_L3_PASS=true")
 		quit(0)

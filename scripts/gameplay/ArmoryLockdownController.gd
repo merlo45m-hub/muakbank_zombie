@@ -30,6 +30,9 @@ var door: Node3D = null
 var crate1: Node3D = null
 var crate2: Node3D = null
 
+@export var reward_table_path: NodePath = NodePath("")  # bay scenes wire a LootTable child; empty = no reward drop (shipped behavior)
+var last_reward_report: Dictionary = {}
+
 func _ready() -> void:
 	if gate_region > 0:
 		var wp: Node = get_node_or_null("/root/WorldProgression")
@@ -84,6 +87,10 @@ func _win_trial() -> void:
 		objective_manager.update_progress(objective_id, 1)
 	var wp: Node = get_node_or_null("/root/WorldProgression")
 	last_loot_tier = int(wp.call("get_active_loot_tier")) if wp != null and wp.has_method("get_active_loot_tier") else 1
+	if reward_table_path != NodePath(""):
+		var rt: Node = get_node_or_null(reward_table_path)
+		if rt != null and rt.has_method("request_reward_drops"):
+			last_reward_report = rt.call("request_reward_drops", global_position, last_loot_tier)
 	if gate_region > 0:
 		# Rules stat integration is L3-scoped only (lane added this on the
 		# shared win path; gated to preserve shipped L1/L2 telemetry).

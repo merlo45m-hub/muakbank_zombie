@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3]
+[gd_scene load_steps=30 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/QuarantineBreachController.gd" id="1_ctrl"]
 [ext_resource type="Script" path="res://scripts/gameplay/QuarantineSealDoor.gd" id="2_door"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/world/interactive/QuarantineSupplyCase.gd" id="4_case"]
 [ext_resource type="Script" path="res://scripts/world/interactive/PushableServiceCart.gd" id="5_cart"]
 [ext_resource type="PackedScene" path="res://scenes/ui/quarantine_breach_hud.tscn" id="6_hud"]
+[ext_resource type="Script" path="res://scripts/gameplay/LootTable.gd" id="90_loottable"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(26, 0.5, 44)
@@ -101,6 +102,7 @@ objective_title = "Seal the research breach"
 gate_region = 3
 access_denied_text = "BIO-LAB ACCESS REQUIRED"
 step_names = {"A": "INTAKE VALVE", "B": "COOLANT JUNCTION", "C": "VENT STACK"}
+reward_table_path = NodePath("../LootRewardTable")
 
 [node name="InteractionZone" type="Area3D" parent="Controller" unique_id=1004036629]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1.5, -14)
@@ -408,3 +410,6 @@ collision_mask = 8
 
 [node name="Collision" type="CollisionShape3D" parent="BreachKillZone" unique_id=746358389]
 shape = SubResource("BoxShape3D_killzone")
+
+[node name="LootRewardTable" type="Node" parent="."]
+script = ExtResource("90_loottable")

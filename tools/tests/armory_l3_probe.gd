@@ -22,6 +22,9 @@ func _initialize() -> void:
 	ur.assign([1, 2, 3])
 	wp.unlocked_regions = ur
 	wp.current_region = 3
+	# Reward clamp reads the CACHED max_loot_tier; raw test unlocks
+	# must warm it the same way try_unlock would.
+	wp.call("_recompute_max_loot_tier", false)
 
 	var packed: PackedScene = load("res://scenes/minigames/armory_lockdown_biolab.tscn")
 	assert(packed != null, "Bio-Lab armory scene load FAIL")
@@ -97,6 +100,9 @@ func _initialize() -> void:
 		different_districts = (ext_pos.x > 100 and arm_pos.x < 100) or (ext_pos.x < 100 and arm_pos.x > 100)
 		print(TAG + "extraction pos: %s, armory pos: %s, different_districts: %s" % [ext_pos, arm_pos, different_districts])
 
+		var rr: Dictionary = ctrl.get("last_reward_report") if ctrl.get("last_reward_report") != null else {}
+	var reward_ok: bool = int(rr.get("count", 0)) >= 1 and int(rr.get("tier", 0)) == 3
+	print(TAG + \"reward count=%d tier=%d capped=%s\" % [int(rr.get(\"count\", 0)), int(rr.get(\"tier\", 0)), str(rr.get(\"capped\", \"?\"))])
 	if won and tier == 3 and different_districts:
 		print(TAG + "ARMORY_L3_PASS=true")
 		quit(0)
