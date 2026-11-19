@@ -23,6 +23,8 @@ const STEP_ORDER: Array[String] = ["A", "B", "C"]
 const ZOMBIE_SCENE: PackedScene = preload("res://scenes/characters/zombie_dog.tscn")
 
 @export var gate_region: int = 0  # 0 = no region gate; Industrial variant sets 2
+@export var access_denied_text: String = "INDUSTRIAL ACCESS REQUIRED"
+@export var step_names: Dictionary = {}
 
 enum RunState { IDLE, ACTIVE, WON, FAILED }
 
@@ -127,7 +129,7 @@ func interact() -> void:
 			var wp: Node = get_node_or_null("/root/WorldProgression")
 			if wp != null and wp.has_method("can_hop") and not bool(wp.call("can_hop", gate_region)):
 				if prompt:
-					prompt.text = "INDUSTRIAL ACCESS REQUIRED"
+					prompt.text = access_denied_text
 				return
 		_start_run()
 
@@ -187,12 +189,19 @@ func _win_run() -> void:
 		return
 	state = RunState.WON
 	is_won = true
+	# Capture the earned tier and pass it to the loot-drop path so the reached
+	# regions tier raises the drop cap (LootTierGate.cap() -> max_loot_tier).
+	var tier: int = 1
+	var wp: Node = get_node_or_null("/root/WorldProgression")
+	if wp != null and wp.has_method("get_active_loot_tier"):
+		tier = int(wp.call("get_active_loot_tier"))
+	last_loot_tier = tier
+	if wp != null and wp.has_method("try_unlock"):
+		wp.call("try_unlock", gate_region)
 	if objective_manager and objective_manager.has_method("update_progress"):
 		objective_manager.update_progress(objective_id, 1)
-		var wp: Node = get_node_or_null("/root/WorldProgression")
-		last_loot_tier = int(wp.call("get_active_loot_tier")) if wp != null and wp.has_method("get_active_loot_tier") else 1
-		_show_result("SERVICE ROUTE SEALED")
-		_refresh_prompt()
+	_show_result("CONTAINMENT SEALED")
+	_refresh_prompt()
 
 func _fail_run(message: String) -> void:
 	if state != RunState.ACTIVE:
@@ -278,7 +287,7 @@ func _update_hud() -> void:
 	if timer:
 		timer.text = "SEALDOWN: %02d s" % ceili(time_remaining)
 		timer.add_theme_color_override("font_color", Color(1.0, 0.3, 0.2) if time_remaining <= 30.0 else Color(1.0, 0.85, 0.6))
-	var step_names := {"A": "INTAKE", "B": "LAUNDRY", "C": "LOADING BAY"}
+	var step_names_map: Dictionary = step_names if not step_names.is_empty() else {"A": "INTAKE", "B": "LAUNDRY", "C": "LOADING BAY"}
 	for step in STEP_ORDER:
 		var door: Node = doors.get(step)
 		if door == null:
@@ -286,7 +295,7 @@ func _update_hud() -> void:
 		var row: Label = hud.get_node_or_null("Panel/Margin/Rows/Step%sRow" % step)
 		if row:
 			var done: bool = bool(door.get("sealed"))
-			var label: String = "%s — %s" % [step, step_names.get(step, step)]
+			var label: String = "%s — %s" % [step, step_names_map.get(step, step)]
 			row.text = ("%s: SEALED" % label) if done else ("%s: BREACH" % label)
 			row.add_theme_color_override("font_color", Color(0.35, 0.9, 0.4) if done else Color(1.0, 0.45, 0.2))
 	var active: Label = hud.get_node_or_null("Panel/Margin/Rows/ActiveText")
