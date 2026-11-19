@@ -11,7 +11,6 @@ class_name GridSnap
 @export var auto_snap: bool = true
 
 func _ready() -> void:
-func _ready() -> void:
 	add_to_group("GridSnap")  # self-registered: tscn groups attr is not applied reliably
 	if auto_snap:
 		snap_children()
