@@ -1,63 +1,39 @@
-[gd_scene load_steps=32 format=3 uid="uid://title_background_v2"]
+[gd_scene load_steps=56 format=3 uid="uid://title_background_v2"]
 
 [ext_resource type="Script" path="res://scripts/ui/TitleBackground.gd" id="1_tb"]
-
-[sub_resource type="BoxMesh" id="CemeteryFloor"]
-size = Vector3(50, 0.2, 50)
-
-[sub_resource type="BoxShape3D" id="FloorShape"]
-size = Vector3(50, 0.2, 50)
+[ext_resource path="res://assets/models/cc0/graveyard/gravestone-bevel.glb" type="PackedScene" id="2_gv_bevel"]
+[ext_resource path="res://assets/models/cc0/graveyard/gravestone-broken.glb" type="PackedScene" id="3_gv_broken"]
+[ext_resource path="res://assets/models/cc0/graveyard/gravestone-cross-large.glb" type="PackedScene" id="4_gv_cross_lg"]
+[ext_resource path="res://assets/models/cc0/graveyard/gravestone-cross.glb" type="PackedScene" id="5_gv_cross"]
+[ext_resource path="res://assets/models/cc0/graveyard/gravestone-decorative.glb" type="PackedScene" id="6_gv_decor"]
+[ext_resource path="res://assets/models/cc0/graveyard/gravestone-round.glb" type="PackedScene" id="7_gv_round"]
+[ext_resource path="res://assets/models/cc0/graveyard/gravestone-wide.glb" type="PackedScene" id="8_gv_wide"]
+[ext_resource path="res://assets/models/cc0/graveyard/grave.glb" type="PackedScene" id="9_gv_grave"]
+[ext_resource path="res://assets/models/cc0/graveyard/grave-border.glb" type="PackedScene" id="10_gv_border"]
+[ext_resource path="res://assets/models/cc0/graveyard/cross.glb" type="PackedScene" id="11_gv_cross"]
+[ext_resource path="res://assets/models/cc0/graveyard/cross-wood.glb" type="PackedScene" id="12_gv_cross_wood"]
+[ext_resource path="res://assets/models/cc0/graveyard/crypt-small.glb" type="PackedScene" id="13_gv_crypt"]
+[ext_resource path="res://assets/models/cc0/graveyard/altar-stone.glb" type="PackedScene" id="14_gv_altar"]
+[ext_resource path="res://assets/models/cc0/graveyard/iron-fence.glb" type="PackedScene" id="15_gv_fence_iron"]
+[ext_resource path="res://assets/models/cc0/graveyard/fence.glb" type="PackedScene" id="16_gv_fence"]
+[ext_resource path="res://assets/models/cc0/graveyard/fence-damaged.glb" type="PackedScene" id="17_gv_fence_dmg"]
+[ext_resource path="res://assets/models/cc0/graveyard/brick-wall.glb" type="PackedScene" id="18_gv_brick"]
+[ext_resource path="res://assets/models/cc0/graveyard/lantern-candle.glb" type="PackedScene" id="19_gv_lantern"]
+[ext_resource path="res://assets/models/cc0/graveyard/pine.glb" type="PackedScene" id="20_gv_pine"]
+[ext_resource path="res://assets/models/cc0/graveyard/pine-crooked.glb" type="PackedScene" id="21_gv_pine_crooked"]
+[ext_resource path="res://assets/models/cc0/graveyard/pine-fall.glb" type="PackedScene" id="22_gv_pine_fall"]
+[ext_resource path="res://assets/models/cc0/graveyard/pumpkin-carved.glb" type="PackedScene" id="23_gv_pumpkin_carved"]
+[ext_resource path="res://assets/models/cc0/graveyard/pumpkin.glb" type="PackedScene" id="24_gv_pumpkin"]
+[ext_resource path="res://assets/models/cc0/graveyard/rocks.glb" type="PackedScene" id="25_gv_rocks"]
+[ext_resource path="res://assets/models/cc0/graveyard/trunk.glb" type="PackedScene" id="26_gv_trunk"]
+[ext_resource path="res://assets/models/cc0/graveyard/debris.glb" type="PackedScene" id="27_gv_debris"]
+[ext_resource path="res://assets/models/cc0/graveyard/debris-wood.glb" type="PackedScene" id="28_gv_debris_wood"]
+[ext_resource path="res://assets/models/cc0/graveyard/road.glb" type="PackedScene" id="29_gv_road"]
 
 [sub_resource type="StandardMaterial3D" id="FloorMaterial"]
 albedo_color = Color(0.12, 0.11, 0.1, 1.0)
 roughness = 0.95
 metallic = 0.0
-
-[sub_resource type="BoxMesh" id="TombstoneMesh"]
-size = Vector3(1.2, 2.4, 0.4)
-
-[sub_resource type="StandardMaterial3D" id="TombMaterial"]
-albedo_color = Color(0.45, 0.44, 0.48, 1.0)
-roughness = 0.9
-metallic = 0.0
-
-[sub_resource type="BoxMesh" id="TombstoneMesh2"]
-size = Vector3(1.6, 3.0, 0.3)
-
-[sub_resource type="BoxMesh" id="CrossMesh"]
-size = Vector3(0.08, 0.9, 0.08)
-
-[sub_resource type="StandardMaterial3D" id="CrossMaterial"]
-albedo_color = Color(0.32, 0.29, 0.24, 1.0)
-roughness = 0.85
-
-[sub_resource type="SphereMesh" id="FogSphere"]
-radius = 25
-
-[sub_resource type="StandardMaterial3D" id="FogMaterial"]
-albedo_color = Color(0.3, 0.28, 0.24, 0.25)
-cull_mode = 1
-no_depth_test = false
-transparency = 1
-
-[sub_resource type="CylinderMesh" id="TreeTrunk"]
-radius = 0.15
-height = 3.5
-orientation = 1
-
-[sub_resource type="StandardMaterial3D" id="TreeTrunkMat"]
-albedo_color = Color(0.18, 0.14, 0.11, 1.0)
-roughness = 0.95
-
-[sub_resource type="SphereMesh" id="TreeCanopy"]
-radius = 1.2
-radial_segments = 8
-rings = 4
-
-[sub_resource type="StandardMaterial3D" id="TreeCanopyMat"]
-albedo_color = Color(0.20, 0.24, 0.16, 1.0)
-roughness = 0.9
-transparency = 0
 
 [sub_resource type="Environment" id="TitleEnv"]
 background_mode = 1
@@ -170,6 +146,56 @@ emission_enabled = true
 emission = Color(1, 0.55, 0.15, 1)
 emission_energy_multiplier = 1.6
 
+[sub_resource type="PlaneMesh" id="CemeteryFloor"]
+size = Vector2(60, 60)
+orientation = 1
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.12, 0.11, 0.1, 1.0)
+roughness = 0.95
+metallic = 0.0
+
+[sub_resource type="SphereMesh" id="FogSphere"]
+radius = 25
+
+[sub_resource type="StandardMaterial3D" id="FogMaterial2"]
+albedo_color = Color(0.2, 0.18, 0.17, 0.08)
+cull_mode = 1
+no_depth_test = false
+transparency = 1
+
+[sub_resource type="SphereMesh" id="MoonMesh"]
+radius = 7.5
+height = 15.0
+radial_segments = 48
+rings = 24
+
+[sub_resource type="StandardMaterial3D" id="MoonMat"]
+albedo_color = Color(1, 0.99, 0.95, 1)
+emission_enabled = true
+emission = Color(1, 0.98, 0.92, 1)
+emission_energy_multiplier = 1.4
+
+[sub_resource type="Gradient" id="GlowGrad"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GlowTex"]
+gradient = SubResource("GlowGrad")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="GlowMat"]
+transparency = 1
+shading_mode = 0
+blend_mode = 1
+billboard_mode = 1
+albedo_texture = SubResource("GlowTex")
+albedo_color = Color(0.7, 0.8, 0.98, 0.4)
+
+
 [node name="TitleBackground" type="Node3D"]
 script = ExtResource("1_tb")
 
@@ -183,124 +209,143 @@ fov = 90
 near = 0.1
 far = 100
 
-[node name="Floor" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0, 0)
 
-[node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
+[node name="GroundMesh" type="MeshInstance3D" parent="Ground"]
 mesh = SubResource("CemeteryFloor")
 material_override = SubResource("FloorMaterial")
+# I2-candidate: replace with real ground when terrain pack wired
 
-[node name="Tombstones" type="Node3D" parent="."]
+[node name="Gravestones" type="Node3D" parent="."]
 
-[node name="Tomb1" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.6, -5)
+[node name="Grave1" type="Node3D" parent="Gravestones" instance=ExtResource("3_gv_broken")]
+transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, -8.5, 0.0, -3.0)
 
-[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb1"]
-mesh = SubResource("TombstoneMesh")
-material_override = SubResource("TombMaterial")
+[node name="Grave2" type="Node3D" parent="Gravestones" instance=ExtResource("6_gv_decor")]
+transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, -5.2, 0.0, -5.5)
 
-[node name="Tomb2" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.75, -7)
+[node name="Grave3" type="Node3D" parent="Gravestones" instance=ExtResource("7_gv_round")]
+transform = Transform3D(0.999, 0, -0.035, 0, 1, 0, 0.035, 0, 0.999, -1.8, 0.0, -7.2)
 
-[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb2"]
-mesh = SubResource("TombstoneMesh2")
-material_override = SubResource("TombMaterial")
+[node name="Grave4" type="Node3D" parent="Gravestones" instance=ExtResource("5_gv_cross")]
+transform = Transform3D(0.992, 0, -0.122, 0, 1, 0, 0.122, 0, 0.992, 2.5, 0.0, -6.0)
 
-[node name="Cross1" type="MeshInstance3D" parent="Tombstones/Tomb2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.1)
-mesh = SubResource("CrossMesh")
-material_override = SubResource("CrossMaterial")
+[node name="Grave5" type="Node3D" parent="Gravestones" instance=ExtResource("8_gv_wide")]
+transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, 6.8, 0.0, -4.5)
 
-[node name="Tomb3" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.6, -6)
+[node name="Grave6" type="Node3D" parent="Gravestones" instance=ExtResource("4_gv_cross_lg")]
+transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, -9.2, 0.0, -8.8)
 
-[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb3"]
-mesh = SubResource("TombstoneMesh")
-material_override = SubResource("TombMaterial")
+[node name="Grave7" type="Node3D" parent="Gravestones" instance=ExtResource("2_gv_bevel")]
+transform = Transform3D(0.999, 0, -0.035, 0, 1, 0, 0.035, 0, 0.999, -3.5, 0.0, -9.5)
 
-[node name="Tomb4" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.7, -4)
+[node name="Grave8" type="Node3D" parent="Gravestones" instance=ExtResource("3_gv_broken")]
+transform = Transform3D(0.992, 0, -0.122, 0, 1, 0, 0.122, 0, 0.992, 1.2, 0.0, -10.2)
 
-[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb4"]
-mesh = SubResource("TombstoneMesh2")
-material_override = SubResource("TombMaterial")
+[node name="Grave9" type="Node3D" parent="Gravestones" instance=ExtResource("7_gv_round")]
+transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, 5.5, 0.0, -8.0)
 
-[node name="Tomb5" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0.5, -2.5)
+[node name="Grave10" type="Node3D" parent="Gravestones" instance=ExtResource("2_gv_bevel")]
+transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, -6.0, 0.0, -12.0)
 
-[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb5"]
-mesh = SubResource("TombstoneMesh")
-material_override = SubResource("TombMaterial")
+[node name="FocalPair" type="Node3D" parent="."]
 
-[node name="Tomb6" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.65, -7.5)
+[node name="Crypt" type="Node3D" parent="FocalPair" instance=ExtResource("13_gv_crypt")]
+transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, -4.5, 0.0, -14.0)
 
-[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb6"]
-mesh = SubResource("TombstoneMesh")
-material_override = SubResource("TombMaterial")
+[node name="Altar" type="Node3D" parent="FocalPair" instance=ExtResource("14_gv_altar")]
+transform = Transform3D(0.999, 0, -0.035, 0, 1, 0, 0.035, 0, 0.999, -2.8, 0.0, -15.2)
 
-[node name="Tomb7" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(0.966, 0, 0.259, 0, 1, 0, -0.259, 0, 0.966, -2.4, 0.6, -8.5)
+[node name="Fencing" type="Node3D" parent="."]
 
-[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb7"]
-mesh = SubResource("TombstoneMesh2")
-material_override = SubResource("TombMaterial")
+[node name="FenceLeft1" type="Node3D" parent="Fencing" instance=ExtResource("15_gv_fence_iron")]
+transform = Transform3D(0.707, 0, 0.707, 0, 1, 0, -0.707, 0, 0.707, -7.0, 0.0, -8.0)
 
-[node name="Tomb8" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(0.94, 0, -0.342, 0, 1, 0, 0.342, 0, 0.94, 1.6, 0.55, -9.6)
+[node name="FenceLeft2" type="Node3D" parent="Fencing" instance=ExtResource("15_gv_fence_iron")]
+transform = Transform3D(0.707, 0, 0.707, 0, 1, 0, -0.707, 0, 0.707, -7.0, 0.0, -9.0)
 
-[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb8"]
-mesh = SubResource("TombstoneMesh")
-material_override = SubResource("TombMaterial")
+[node name="FenceLeft3" type="Node3D" parent="Fencing" instance=ExtResource("17_gv_fence_dmg")]
+transform = Transform3D(0.707, 0, 0.707, 0, 1, 0, -0.707, 0, 0.707, -7.0, 0.0, -10.0)
 
-[node name="Cross2" type="MeshInstance3D" parent="Tombstones/Tomb8"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0.1)
-mesh = SubResource("CrossMesh")
-material_override = SubResource("CrossMaterial")
+[node name="FenceRight1" type="Node3D" parent="Fencing" instance=ExtResource("15_gv_fence_iron")]
+transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, 7.0, 0.0, -8.0)
 
-[node name="Tomb9" type="StaticBody3D" parent="Tombstones"]
-transform = Transform3D(0.906, 0, 0.423, 0, 1, 0, -0.423, 0, 0.906, -0.4, 0.7, -11.2)
+[node name="FenceRight2" type="Node3D" parent="Fencing" instance=ExtResource("15_gv_fence_iron")]
+transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, 7.0, 0.0, -9.0)
 
-[node name="TombMesh" type="MeshInstance3D" parent="Tombstones/Tomb9"]
-mesh = SubResource("TombstoneMesh2")
-material_override = SubResource("TombMaterial")
+[node name="FenceRight3" type="Node3D" parent="Fencing" instance=ExtResource("16_gv_fence")]
+transform = Transform3D(0.707, 0, -0.707, 0, 1, 0, 0.707, 0, 0.707, 7.0, 0.0, -10.0)
 
 [node name="Trees" type="Node3D" parent="."]
 
-[node name="Tree1" type="Node3D" parent="Trees"]
-transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, -4.2, 0, -9.5)
+[node name="Pine1" type="Node3D" parent="Trees" instance=ExtResource("21_gv_pine_crooked")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 0.0, -12.0)
 
-[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
-mesh = SubResource("TreeTrunk")
-material_override = SubResource("TreeTrunkMat")
+[node name="Pine2" type="Node3D" parent="Trees" instance=ExtResource("22_gv_pine_fall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.0, 0.0, -13.5)
 
+[node name="Pine3" type="Node3D" parent="Trees" instance=ExtResource("20_gv_pine")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.0, 0.0, -5.0)
 
-[node name="Tree2" type="Node3D" parent="Trees"]
-transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 4.0, 0, -10.5)
+[node name="ForegroundDetails" type="Node3D" parent="."]
 
-[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
-mesh = SubResource("TreeTrunk")
-material_override = SubResource("TreeTrunkMat")
+[node name="Lantern1" type="Node3D" parent="ForegroundDetails" instance=ExtResource("19_gv_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0, 0.0, 2.5)
 
+[node name="Rocks1" type="Node3D" parent="ForegroundDetails" instance=ExtResource("25_gv_rocks")]
+transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, 2.0, 0.0, 1.0)
 
-[node name="Tree3" type="Node3D" parent="Trees"]
-transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, -7.0, 0, -11.5)
+[node name="Rocks2" type="Node3D" parent="ForegroundDetails" instance=ExtResource("26_gv_trunk")]
+transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, -1.5, 0.0, 0.5)
 
-[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
-mesh = SubResource("TreeTrunk")
-material_override = SubResource("TreeTrunkMat")
+[node name="Debris1" type="Node3D" parent="ForegroundDetails" instance=ExtResource("27_gv_debris")]
+transform = Transform3D(0.999, 0, -0.035, 0, 1, 0, 0.035, 0, 0.999, 0.5, 0.0, 1.5)
 
+[node name="DebrisWood1" type="Node3D" parent="ForegroundDetails" instance=ExtResource("28_gv_debris_wood")]
+transform = Transform3D(0.992, 0, -0.122, 0, 1, 0, 0.122, 0, 0.992, -2.5, 0.0, 2.0)
 
-[node name="Zombies" type="Node3D" parent="."]
+[node name="Pumpkin1" type="Node3D" parent="ForegroundDetails" instance=ExtResource("23_gv_pumpkin_carved")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 0.0, 0.0)
 
-[node name="FogSphere" type="MeshInstance3D" parent="."]
-visible = false
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-mesh = SubResource("FogSphere")
-material_override = SubResource("FogMaterial")
+[node name="Pumpkin2" type="Node3D" parent="ForegroundDetails" instance=ExtResource("24_gv_pumpkin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.0, -0.5)
+
+[node name="Path" type="Node3D" parent="."]
+
+[node name="Road1" type="Node3D" parent="Path" instance=ExtResource("29_gv_road")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0, 4.0)
+
+[node name="Road2" type="Node3D" parent="Path" instance=ExtResource("29_gv_road")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0, 3.2)
+
+[node name="Road3" type="Node3D" parent="Path" instance=ExtResource("29_gv_road")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0, 2.4)
+
+[node name="Road4" type="Node3D" parent="Path" instance=ExtResource("29_gv_road")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0, 1.6)
+
+[node name="Road5" type="Node3D" parent="Path" instance=ExtResource("29_gv_road")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0, 0.8)
+
+[node name="GraveBorders" type="Node3D" parent="."]
+
+[node name="Border1" type="Node3D" parent="GraveBorders" instance=ExtResource("10_gv_border")]
+transform = Transform3D(0.996, 0, 0.087, 0, 1, 0, -0.087, 0, 0.996, -8.5, 0.0, -2.0)
+
+[node name="Border2" type="Node3D" parent="GraveBorders" instance=ExtResource("10_gv_border")]
+transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, 7.0, 0.0, -3.5)
+
+[node name="Border3" type="Node3D" parent="GraveBorders" instance=ExtResource("9_gv_grave")]
+transform = Transform3D(0.999, 0, -0.035, 0, 1, 0, 0.035, 0, 0.999, -5.0, 0.0, -11.0)
+
+[node name="Crosses" type="Node3D" parent="."]
+
+[node name="CrossWood1" type="Node3D" parent="Crosses" instance=ExtResource("12_gv_cross_wood")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0.5, -3.0)
+
+[node name="CrossStone1" type="Node3D" parent="Crosses" instance=ExtResource("11_gv_cross")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.5, -6.0)
 
 [node name="MoonLight" type="DirectionalLight3D" parent="."]
 shadow_enabled = true
@@ -377,4 +422,3 @@ light_color = Color(0.85, 0.88, 0.95, 1)
 light_energy = 0.18
 omni_range = 9.0
 shadow_enabled = false
-

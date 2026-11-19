@@ -1,12 +1,40 @@
 {
   "note": "Counted, reason-bearing exceptions for tools/verify_visual_assets.py. Removing an entry requires the fix increment from issue #63 to land. Adding requires the owning increment ID. This ledger IS the honest remaining-work list.",
   "exceptions": [
-    {"path": "scenes/world/title_background.tscn", "reason": "blockout graveyard pending #63 I1 (real CC0 GLB set swap) + I4 (lighting) — flagged by vision review 2026-11-19", "owner": "#63 I1"},
-    {"path": "scenes/main/game.tscn", "reason": "GroundMesh gameplay floor + debug player capsule are intentional collision/dev primitives; world dressing is owner creative lane (#63 out of scope)", "owner": "dressing-directive"},
-    {"path": "scenes/characters/character_doctor.tscn", "reason": "Stethoscope accessory primitive — character fidelity pass #63 I4", "owner": "#63 I4"},
-    {"path": "scenes/characters/character_gamer.tscn", "reason": "Controller accessory primitive — #63 I4", "owner": "#63 I4"},
-    {"path": "scenes/characters/character_hunter.tscn", "reason": "Bat weapon primitive — #63 I4", "owner": "#63 I4"},
-    {"path": "scenes/characters/character_nurse.tscn", "reason": "Mask+Syringe primitives — #63 I4", "owner": "#63 I4"},
-    {"path": "scenes/characters/character_streamer.tscn", "reason": "Phone primitive — #63 I4", "owner": "#63 I4"}
+    {
+      "path": "scenes/world/title_background.tscn",
+      "reason": "I1 partial (2026-11-19): all tomb/cross/fence/tree/debris blockout primitives REPLACED by 28 contracted graveyard GLBs. Remaining exceptions: 1 PlaneMesh ground (I2 replaces) + Moon/Halo/Halo2/Orb emissive spheres (intentional stylized sky/light accents, not blockout).",
+      "owner": "#63 I1"
+    },
+    {
+      "path": "scenes/main/game.tscn",
+      "reason": "GroundMesh gameplay floor + debug player capsule are intentional collision/dev primitives; world dressing is owner creative lane (#63 out of scope)",
+      "owner": "dressing-directive"
+    },
+    {
+      "path": "scenes/characters/character_doctor.tscn",
+      "reason": "Stethoscope accessory primitive \u2014 character fidelity pass #63 I4",
+      "owner": "#63 I4"
+    },
+    {
+      "path": "scenes/characters/character_gamer.tscn",
+      "reason": "Controller accessory primitive \u2014 #63 I4",
+      "owner": "#63 I4"
+    },
+    {
+      "path": "scenes/characters/character_hunter.tscn",
+      "reason": "Bat weapon primitive \u2014 #63 I4",
+      "owner": "#63 I4"
+    },
+    {
+      "path": "scenes/characters/character_nurse.tscn",
+      "reason": "Mask+Syringe primitives \u2014 #63 I4",
+      "owner": "#63 I4"
+    },
+    {
+      "path": "scenes/characters/character_streamer.tscn",
+      "reason": "Phone primitive \u2014 #63 I4",
+      "owner": "#63 I4"
+    }
   ]
 }
