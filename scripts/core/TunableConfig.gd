@@ -50,7 +50,11 @@ func _key_bytes() -> PackedByteArray:
 	if FileAccess.file_exists(KEY_FILE):
 		var f: FileAccess = FileAccess.open(KEY_FILE, FileAccess.READ)
 		if f != null:
-			return f.get_buffer(f.get_length()).strip_edges()
+			var raw: PackedByteArray = f.get_buffer(f.get_length())
+			while raw.size() > 0 and raw[raw.size() - 1] <= 32:
+				raw.resize(raw.size() - 1)
+			if raw.size() > 0:
+				return raw
 	return DEV_HMAC_KEY.to_utf8_buffer()
 
 
