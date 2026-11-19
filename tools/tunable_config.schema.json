@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "muakbank-tunable-config-v1",
+  "title": "Muakbank Zombie Live Tunables Contract v1",
+  "description": "The ONLY gameplay numbers the app may receive at runtime. Server-enforced schema, client-enforced validation: a manifest that fails this schema is rejected wholesale (no partial apply), signature mismatch is rejected + logged + falls back to bundled defaults. Game logic reads these through the existing Rules/set_parameter API; nothing here requires a rebuild.",
+  "type": "object",
+  "required": ["schema_version", "manifest_id", "issued_at", "expires_at", "sections"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1},
+    "manifest_id": {"type": "string", "pattern": "^[a-z0-9._-]{8,64}$"},
+    "issued_at": {"type": "integer", "minimum": 0},
+    "expires_at": {"type": "integer", "minimum": 0},
+    "min_app_build": {"type": "integer", "default": 0, "description": "refuse manifest on older builds"},
+    "sections": {
+      "type": "object",
+      "required": ["spawning", "combat", "economy", "minigames", "presentation"],
+      "additionalProperties": false,
+      "properties": {
+        "spawning": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["base_interval_s", "wave_scaling", "max_alive"],
+          "properties": {
+            "base_interval_s": {"type": "number", "minimum": 0.5, "maximum": 60},
+            "wave_scaling": {"type": "number", "minimum": 0.1, "maximum": 3},
+            "max_alive": {"type": "integer", "minimum": 1, "maximum": 64},
+            "grace_s": {"type": "number", "minimum": 0, "maximum": 60}
+          }
+        },
+        "combat": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["damage_multiplier", "attack_cooldown_s"],
+          "properties": {
+            "damage_multiplier": {"type": "number", "minimum": 0.1, "maximum": 5},
+            "attack_cooldown_s": {"type": "number", "minimum": 0.1, "maximum": 5},
+            "shove_impulse_cap": {"type": "number", "minimum": 0, "maximum": 50}
+          }
+        },
+        "economy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["drop_chance", "reward_tier_floor"],
+          "properties": {
+            "drop_chance": {"type": "number", "minimum": 0, "maximum": 1},
+            "reward_tier_floor": {"type": "integer", "minimum": 1, "maximum": 3}
+          }
+        },
+        "minigames": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [],
+          "properties": {
+            "triage": {"$ref": "#/definitions/minigame_params"},
+            "quarantine": {"$ref": "#/definitions/minigame_params"},
+            "armory": {"$ref": "#/definitions/minigame_params"},
+            "extraction": {"$ref": "#/definitions/minigame_params"}
+          }
+        },
+        "presentation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["quality_tier"],
+          "properties": {
+            "quality_tier": {"type": "integer", "minimum": 0, "maximum": 1, "description": "0 MOBILE 1 HIGH — server can raise/lower without a build (issue #63 I6)"},
+            "blood_fx": {"type": "boolean", "default": true},
+            "screen_shake": {"type": "boolean", "default": true}
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "minigame_params": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_s": {"type": "number", "minimum": 10, "maximum": 600},
+        "fail_penalty_s": {"type": "number", "minimum": 0, "maximum": 60},
+        "max_active": {"type": "integer", "minimum": 1, "maximum": 24}
+      }
+    }
+  }
+}

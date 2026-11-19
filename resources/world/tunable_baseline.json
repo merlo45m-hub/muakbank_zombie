@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "manifest_id": "bundled-v1-static",
+  "issued_at": 1795108094,
+  "expires_at": 2110468094,
+  "min_app_build": 0,
+  "sections": {
+    "spawning": {
+      "base_interval_s": 5.0,
+      "wave_scaling": 1.0,
+      "max_alive": 12,
+      "grace_s": 25.0
+    },
+    "combat": {
+      "damage_multiplier": 1.0,
+      "attack_cooldown_s": 1.5
+    },
+    "economy": {
+      "drop_chance": 0.35,
+      "reward_tier_floor": 1
+    },
+    "minigames": {
+      "triage": {
+        "duration_s": 90.0,
+        "fail_penalty_s": 8.0
+      },
+      "quarantine": {
+        "duration_s": 120.0,
+        "max_active": 6
+      },
+      "armory": {
+        "duration_s": 90.0
+      },
+      "extraction": {
+        "duration_s": 120.0
+      }
+    },
+    "presentation": {
+      "quality_tier": 0,
+      "blood_fx": true,
+      "screen_shake": true
+    }
+  }
+}
