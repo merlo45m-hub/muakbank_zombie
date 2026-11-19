@@ -20,6 +20,22 @@ import os
 import subprocess
 import sys
 
+
+def visual_asset_gate(repo_dir: str) -> tuple[int, str]:
+    """Pre-build presentation gate: runs tools/verify_visual_assets.py in the
+    export clone. Non-zero rc = unexcepted placeholder/texture violation;
+    the export is REFUSED (build never generated). Exceptions ledger in
+    tools/visual_assets_exceptions.json carries tracked work with issue refs."""
+    try:
+        r = subprocess.run(
+            [sys.executable, "tools/verify_visual_assets.py"],
+            cwd=repo_dir, capture_output=True, text=True, timeout=120,
+        )
+        return r.returncode, (r.stdout + r.stderr).strip().splitlines()[-1] if (r.stdout or r.stderr) else "no output"
+    except Exception as e:  # gate self-fault must BLOCK, never silently pass
+        return 3, f"visual_asset_gate crashed: {e}"
+
+
 DEV_REPO = os.environ.get("MKB_DEV_REPO", "/root/muakbank_zombie")
 EXPORT_DIR = os.environ.get("MKB_EXPORT_DIR", "/root/muakbank_export")
 STATE = os.environ.get("MKB_STATE", "/root/.hermes/mkb_last_export_sha")
@@ -129,6 +145,14 @@ def main():
 
     ensure_clone(url)
     sync(url, sha)
+    # PRE-BUILD VISUAL GATE (user directive 2026-11-19, issue #63): flag missing
+    # textures / placeholder meshes BEFORE a build is generated. The gate runs
+    # against the exact synced tree. Unexcepted violations REFUSE the export;
+    # tracked work lives in tools/visual_assets_exceptions.json with issue refs.
+    vrc, vverdict = visual_asset_gate(EXPORT_DIR)
+    if vrc != 0:
+        print(f"AUTO_EXPORT REFUSED sha={sha[:12]} pre-build visual gate: {vverdict}")
+        return 4
     # Import is best-effort: Godot's first-import headless exit code is unreliable
     # (see valid_apk docstring). Remove the old APK so a stale file can't pass.
     try:
