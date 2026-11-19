@@ -76,7 +76,7 @@ static func get_defaults() -> Dictionary:
 	"""Return a Dictionary of all field keys to their default values."""
 	var out: Dictionary = {}
 	for field in FIELDS:
-		out[field.key] = field.default.duplicate(true)
+		out[field.key] = _clone_default(field.default)
 	return out
 
 
@@ -96,6 +96,13 @@ static func get_all_keys() -> Array[String]:
 	return out
 
 
+static func _clone_default(v: Variant) -> Variant:
+	"""Type-safe default clone: containers are deep-copied, scalars returned as-is."""
+	if v is Array or v is Dictionary:
+		return v.duplicate(true)
+	return v
+
+
 ## === DESERIALIZATION (load boundary) ===
 ## Input: raw Dictionary from JSON (string keys, floats for ints, etc.)
 ## Output: typed Dictionary matching field declarations exactly.
@@ -111,7 +118,7 @@ static func deserialize(raw: Dictionary) -> Dictionary:
 		var default: Variant = defaults[key]
 
 		if not raw.has(key):
-			out[key] = default.duplicate(true)
+			out[key] = _clone_default(default)
 			continue
 
 		var value: Variant = raw[key]
@@ -139,7 +146,7 @@ static func _deserialize_field(ftype: int, value: Variant, default: Variant) -> 
 
 		FieldType.TYPE_ARRAY_STRING:
 			if value == null or not value is Array:
-				return default.duplicate()
+				return _clone_default(default)
 			var arr: Array[String] = []
 			for elem in value:
 				arr.append(str(elem))
@@ -147,7 +154,7 @@ static func _deserialize_field(ftype: int, value: Variant, default: Variant) -> 
 
 		FieldType.TYPE_ARRAY_INT:
 			if value == null or not value is Array:
-				return default.duplicate()
+				return _clone_default(default)
 			var arr: Array[int] = []
 			for elem in value:
 				arr.append(int(elem))
@@ -155,17 +162,17 @@ static func _deserialize_field(ftype: int, value: Variant, default: Variant) -> 
 
 		FieldType.TYPE_ARRAY_UNTYPED:
 			if value == null or not value is Array:
-				return default.duplicate()
+				return _clone_default(default)
 			return value.duplicate(true)
 
 		FieldType.TYPE_DICT_UNTYPED:
 			if value == null or not value is Dictionary:
-				return default.duplicate(true)
+				return _clone_default(default)
 			return value.duplicate(true)
 
 		FieldType.TYPE_DICT_STR_INT:
 			if value == null or not value is Dictionary:
-				return default.duplicate(true)
+				return _clone_default(default)
 			var out: Dictionary = {}
 			for k in value:
 				var nk := str(k)
@@ -175,7 +182,7 @@ static func _deserialize_field(ftype: int, value: Variant, default: Variant) -> 
 
 		FieldType.TYPE_DICT_INT_BOOL:
 			if value == null or not value is Dictionary:
-				return default.duplicate(true)
+				return _clone_default(default)
 			var out: Dictionary = {}
 			for k in value:
 				var nk := int(k)
@@ -185,7 +192,7 @@ static func _deserialize_field(ftype: int, value: Variant, default: Variant) -> 
 
 		FieldType.TYPE_DICT_INT_KEYS:
 			if value == null or not value is Dictionary:
-				return default.duplicate(true)
+				return _clone_default(default)
 			return _normalize_int_keyed(value, 0)
 
 		_:
@@ -229,6 +236,6 @@ static func serialize(data: Dictionary) -> Dictionary:
 		if data.has(key):
 			out[key] = data[key]
 		else:
-			out[key] = field.default.duplicate(true)
+			out[key] = _clone_default(field.default)
 
 	return out
