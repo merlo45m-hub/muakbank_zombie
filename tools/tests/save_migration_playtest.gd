@@ -114,15 +114,14 @@ func _initialize() -> void:
 	# For each SaveSchema field, assert typeof(sd[key]) matches the declared type.
 	# Container fields assert key/value typing. Defaults equal SaveSchema defaults
 	# where the payload omitted them.
-	var schema: SaveSchema = SaveSchema.new()
-	var defaults_from_schema: Dictionary = schema.get_defaults()
+	var defaults_from_schema: Dictionary = SaveSchema.get_defaults()
 	var type_errors: int = 0
 	var container_type_errors: int = 0
 
-	for field in schema.FIELDS:
-		var key := field.key
-		var ftype := field.type
-		var actual := sd.get(key)
+	for field in SaveSchema.FIELDS:
+		var key: String = String(field.key)
+		var ftype: int = int(field.type)
+		var actual: Variant = sd.get(key)
 
 		# Type assertion
 		var type_ok := _assert_type_matches(key, ftype, actual)
@@ -138,12 +137,12 @@ func _initialize() -> void:
 
 		# Default equality for omitted keys
 		if not present.has(key) and key != "version":
-			var expected_default := defaults_from_schema[key]
+			var expected_default: Variant = defaults_from_schema[key]
 			if _canonicalize(actual) != _canonicalize(expected_default):
 				printerr("FAIL: schema default mismatch for '", key, "' expected ", expected_default, " got ", actual)
 				ok = false
 
-	print("  schema type checks: ", schema.FIELDS.size() - type_errors, "/", schema.FIELDS.size(), " passed")
+	print("  schema type checks: ", SaveSchema.FIELDS.size() - type_errors, "/", SaveSchema.FIELDS.size(), " passed")
 	print("  container typing checks passed: ", container_type_errors == 0)
 
 	# Explicit spot-checks (redundant with the loop, kept for readable failure output)

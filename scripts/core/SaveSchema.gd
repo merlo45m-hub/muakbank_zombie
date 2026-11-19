@@ -72,7 +72,7 @@ const FIELDS: Array[Dictionary] = [
 
 ## === PUBLIC API ===
 
-func get_defaults() -> Dictionary:
+static func get_defaults() -> Dictionary:
 	"""Return a Dictionary of all field keys to their default values."""
 	var out: Dictionary = {}
 	for field in FIELDS:
@@ -80,7 +80,7 @@ func get_defaults() -> Dictionary:
 	return out
 
 
-func get_field_def(key: String) -> Dictionary:
+static func get_field_def(key: String) -> Dictionary:
 	"""Return the field definition for a given key, or empty dict if unknown."""
 	for field in FIELDS:
 		if field.key == key:
@@ -88,7 +88,7 @@ func get_field_def(key: String) -> Dictionary:
 	return {}
 
 
-func get_all_keys() -> Array[String]:
+static func get_all_keys() -> Array[String]:
 	"""Return all known field keys."""
 	var out: Array[String] = []
 	for field in FIELDS:
@@ -101,7 +101,7 @@ func get_all_keys() -> Array[String]:
 ## Output: typed Dictionary matching field declarations exactly.
 ## Unknown keys are dropped. All conversion is deterministic.
 
-func deserialize(raw: Dictionary) -> Dictionary:
+static func deserialize(raw: Dictionary) -> Dictionary:
 	var out: Dictionary = {}
 	var defaults := get_defaults()
 
@@ -120,7 +120,7 @@ func deserialize(raw: Dictionary) -> Dictionary:
 	return out
 
 
-func _deserialize_field(ftype: int, value: Variant, default: Variant) -> Variant:
+static func _deserialize_field(ftype: int, value: Variant, default: Variant) -> Variant:
 	match ftype:
 		FieldType.TYPE_INT:
 			if value == null:
@@ -192,7 +192,7 @@ func _deserialize_field(ftype: int, value: Variant, default: Variant) -> Variant
 			return value
 
 
-func _normalize_int_keyed(v: Variant, depth: int) -> Variant:
+static func _normalize_int_keyed(v: Variant, depth: int) -> Variant:
 	"""Serializer-owned normalization for int-keyed maps: int-like string keys
 	become ints, whole-number floats become ints, recursed deterministically to
 	depth 3. Same rules on every platform - this is the schema, not a fallback."""
@@ -221,7 +221,7 @@ func _normalize_int_keyed(v: Variant, depth: int) -> Variant:
 ## Output: Dictionary ready for JSON.stringify (ints stay ints, same key names).
 ## This is the identity transform for our types — kept for symmetry and future-proofing.
 
-func serialize(data: Dictionary) -> Dictionary:
+static func serialize(data: Dictionary) -> Dictionary:
 	var out: Dictionary = {}
 
 	for field in FIELDS:
