@@ -70,9 +70,9 @@ func _initialize() -> void:
 
 	var tier: int = int(ctrl.get("last_loot_tier"))
 	print(TAG + "state=%d won=%s tier=%d | %s" % [int(ctrl.get("state")), won, tier, note])
-		var rr: Dictionary = ctrl.get("last_reward_report") if ctrl.get("last_reward_report") != null else {}
+	var rr: Dictionary = ctrl.get("last_reward_report") if ctrl.get("last_reward_report") != null else {}
 	var reward_ok: bool = int(rr.get("count", 0)) >= 1 and int(rr.get("tier", 0)) == 2
-	print(TAG + \"reward count=%d tier=%d capped=%s\" % [int(rr.get(\"count\", 0)), int(rr.get(\"tier\", 0)), str(rr.get(\"capped\", \"?\"))])
+	print(TAG + "reward count=%d tier=%d capped=%s" % [int(rr.get("count", 0)), int(rr.get("tier", 0)), str(rr.get("capped", "?"))])
 	if won and tier == 2:
 		print(TAG + "TRIAGE_L2_PASS=true")
 		quit(0)

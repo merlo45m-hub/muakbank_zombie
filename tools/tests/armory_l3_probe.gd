@@ -100,9 +100,9 @@ func _initialize() -> void:
 		different_districts = (ext_pos.x > 100 and arm_pos.x < 100) or (ext_pos.x < 100 and arm_pos.x > 100)
 		print(TAG + "extraction pos: %s, armory pos: %s, different_districts: %s" % [ext_pos, arm_pos, different_districts])
 
-		var rr: Dictionary = ctrl.get("last_reward_report") if ctrl.get("last_reward_report") != null else {}
+	var rr: Dictionary = ctrl.get("last_reward_report") if ctrl.get("last_reward_report") != null else {}
 	var reward_ok: bool = int(rr.get("count", 0)) >= 1 and int(rr.get("tier", 0)) == 3
-	print(TAG + \"reward count=%d tier=%d capped=%s\" % [int(rr.get(\"count\", 0)), int(rr.get(\"tier\", 0)), str(rr.get(\"capped\", \"?\"))])
+	print(TAG + "reward count=%d tier=%d capped=%s" % [int(rr.get("count", 0)), int(rr.get("tier", 0)), str(rr.get("capped", "?"))])
 	if won and tier == 3 and different_districts:
 		print(TAG + "ARMORY_L3_PASS=true")
 		quit(0)
