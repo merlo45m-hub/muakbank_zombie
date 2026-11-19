@@ -8,6 +8,7 @@
     "additionalProperties": false,
     "properties": {
       "file": { "type": "string", "minLength": 5, "pattern": "^assets/.*\\.glb$" },
+      "animation_container": { "type": "boolean" },
       "dims_tolerance": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
       "expect": {
         "type": "object",
