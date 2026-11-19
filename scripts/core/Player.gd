@@ -38,6 +38,9 @@ var is_dead: bool = false
 var is_eating: bool = false
 var is_attacking: bool = false
 var is_rage_active: bool = false
+# Resolved once via group lookup; attacks consult the spawner's cached
+# live-enemy list instead of scanning the "enemies" group per swing.
+var _spawner: Node = null  # autoload-named script has no class_name; duck-typed
 var is_shield_active: bool = false
 # Brief post-hit invulnerability so a swarm of fast zombies (each on its own
 # ~0.4s attack cooldown) cannot stack hits and melt the player in seconds.
@@ -816,44 +819,47 @@ func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 	var weapon_fire_rate: float = float(weapon_data.get("fire_rate", attack_cooldown))
 	var speed_mult: float = character_stats.attack_speed if character_stats else 1.0
 	attack_timer = weapon_fire_rate * speed_mult
-	var enemies: Array = get_tree().get_nodes_in_group("enemies")
+	# Attack against the spawner's cached live-enemy list (O(1)) instead of a
+	# per-swing get_nodes_in_group("enemies") scan; distance-prefiltered so
+	# take_damage() only runs for in-range enemies.
+	var enemies: Array = _get_live_enemies()
+	var attack_reach: float = weapon_range * (character_stats.attack_range / 2.0 if character_stats else 1.0)
 	for enemy in enemies:
-		if not enemy.is_in_group("enemies"):
-			continue
-		if enemy.has_method("is_dead") and enemy.is_dead:
+		if not is_instance_valid(enemy) or enemy.is_dead:
 			continue
 		var dist: float = global_transform.origin.distance_to(enemy.global_transform.origin)
-		var hit_range: float = weapon_range * (character_stats.attack_range / 2.0 if character_stats else 1.0)
-		if dist < hit_range:
-			if enemy.has_method("take_damage"):
-				var damage: int = weapon_damage
-				if character_stats:
-					damage = int(damage * character_stats.weapon_damage_multiplier)
-				if is_rage_active:
-					damage *= 2
-				var is_crit: bool = false
-				if character_stats and randf() < character_stats.critical_chance:
-					damage = int(damage * character_stats.critical_multiplier)
-					is_crit = true
-				# zombie_type carries the spawner's short key ("bear", "runner") that
-				# HitFeedback matches on; get_class() returns the native class instead,
-				# ignoring class_name, so the bear branch was unreachable.
-				if has_node("HitFeedback") and $HitFeedback.has_method("emit_hit"):
-					$HitFeedback.emit_hit(enemy.global_transform.origin, str(enemy.get("zombie_type")))
-				enemy.take_damage(damage)
-				# Knock the enemy back so it can't plant on the player and deal
-				# free damage every 1.25s until death — gives the player a window
-				# to reposition or finish it.
-				if enemy.has_method("apply_knockback"):
-					enemy.apply_knockback(global_transform.origin, 7.0)
-				# Impact feel: a light camera kick + haptic tick per landed hit.
-				Input.vibrate_handheld(18)
-				var game_scene := get_tree().current_scene
-				if game_scene and game_scene.has_method("_shake"):
-					game_scene._shake(0.10 if not is_crit else 0.18)
-				if damage_numbers:
-					var dmg_type: int = MinosDamageNumbers3D.DamageType.CRITICAL_HIT if is_crit else MinosDamageNumbers3D.DamageType.NORMAL
-					damage_numbers.display_number(damage, enemy.global_transform.origin, dmg_type)
+		if dist >= attack_reach:
+			continue
+		if not enemy.has_method("take_damage"):
+			continue
+		var damage: int = weapon_damage
+		if character_stats:
+			damage = int(damage * character_stats.weapon_damage_multiplier)
+		if is_rage_active:
+			damage *= 2
+		var is_crit: bool = false
+		if character_stats and randf() < character_stats.critical_chance:
+			damage = int(damage * character_stats.critical_multiplier)
+			is_crit = true
+		# zombie_type carries the spawner's short key ("bear", "runner") that
+		# HitFeedback matches on; get_class() returns the native class instead,
+		# ignoring class_name, so the bear branch was unreachable.
+		if has_node("HitFeedback") and $HitFeedback.has_method("emit_hit"):
+			$HitFeedback.emit_hit(enemy.global_transform.origin, str(enemy.get("zombie_type")))
+		enemy.take_damage(damage)
+		# Knock the enemy back so it can't plant on the player and deal
+		# free damage every 1.25s until death — gives the player a window
+		# to reposition or finish it.
+		if enemy.has_method("apply_knockback"):
+			enemy.apply_knockback(global_transform.origin, 7.0)
+		# Impact feel: a light camera kick + haptic tick per landed hit.
+		Input.vibrate_handheld(18)
+		var game_scene := get_tree().current_scene
+		if game_scene and game_scene.has_method("_shake"):
+			game_scene._shake(0.10 if not is_crit else 0.18)
+		if damage_numbers:
+			var dmg_type: int = MinosDamageNumbers3D.DamageType.CRITICAL_HIT if is_crit else MinosDamageNumbers3D.DamageType.NORMAL
+			damage_numbers.display_number(damage, enemy.global_transform.origin, dmg_type)
 
 	# Shove triage animals (Triage Roundup)
 	for animal in get_tree().get_nodes_in_group("triage_animal"):
@@ -887,6 +893,21 @@ func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 # ──────────────────────────────────────────────
 #  SPECIAL ABILITIES (preserved exactly)
 # ──────────────────────────────────────────────
+
+func _get_live_enemies() -> Array:
+	# Live enemies from the spawner's O(1) cache. Lazily resolves the spawner by
+	# group in case its _ready has not registered yet when the first attack lands.
+	var tree = get_tree()
+	if tree == null:
+		return []
+	if _spawner == null:
+		for s in tree.get_nodes_in_group("zombie_spawner"):
+			if s.has_method("get_live_enemies"):
+				_spawner = s
+				break
+	if _spawner != null:
+		return _spawner.get_live_enemies()
+	return []
 
 func use_special_ability() -> void:
 	if special_timer > 0 or not character_stats:

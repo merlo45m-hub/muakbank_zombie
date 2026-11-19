@@ -80,6 +80,12 @@ var hit_flash_tween: Tween = null
 var is_hidden: bool = false
 var _lod_timer: float = 0.0
 
+# === SPAWNER REF ===
+# Resolved once in _ready via a single group lookup. Separation queries the
+# spawner's cached live-enemy list (O(1)) instead of scanning the "enemies"
+# group every physics frame.
+var _spawner: Node = null  # located via group; typed Node (autoload-named scripts have no class_name)
+
 # === POOLING SUPPORT ===
 var dead: bool = false          # Object-pool compatibility: must be false when alive, true when in dead pool
 var pooled: bool = false       # True when managed by ZombieSpawner3D's pool — suppresses queue_free()
@@ -146,6 +152,14 @@ func _ready() -> void:
 		base_damage = damage
 		base_move_speed = move_speed
 	add_to_group("enemies")
+	# Single group lookup: locate the spawner that owns this zombie's pool slot,
+	# stored so _apply_separation queries its cached live-enemy list (O(1))
+	# instead of scanning the group every physics frame.
+	if _spawner == null:
+		for s in get_tree().get_nodes_in_group("zombie_spawner"):
+			if s.has_method("get_nearby_enemies"):
+				_spawner = s
+				break
 	if mesh:
 		_mesh_rest_xform = mesh.transform  # pristine transform, restored by reset_for_pool()
 		if mesh.is_inside_tree():
@@ -482,15 +496,32 @@ func _apply_separation(strength: float = 1.0) -> void:
 	# _chase() meant the VFN override silently overwrote it, so hordes still piled up.
 	# `strength` scales it down for stationary attackers, which should jostle for
 	# position rather than slide.
+	# Candidates come from the spawner's cached live-enemy list (O(1)) restricted
+	# to neighbors within SEPARATION_SCAN_RADIUS — replaces the per-frame
+	# get_nodes_in_group("enemies") scan. The cache carries no stale entries: dead
+	# and recycled zombies are erased on pool return, so separation stays identical
+	# across death and recycle.
 	var tree := get_tree()
 	if tree == null:
 		return
 	var separation_vec = Vector3.ZERO
-	for other in tree.get_nodes_in_group("enemies"):
+	var neighbors: Array = []
+	if _spawner != null:
+		neighbors = _spawner.get_nearby_enemies(global_transform.origin, SEPARATION_SCAN_RADIUS)
+	else:
+		# Fallback while the spawner is unregistered: scan the group directly.
+		for other in tree.get_nodes_in_group("enemies"):
+			if other == self or not is_instance_valid(other) or not (other is Node3D):
+				continue
+			if other is ZombieBase and other.is_dead:
+				continue
+			var d2: float = global_transform.origin.distance_squared_to(other.global_transform.origin)
+			if d2 < 0.0001 or d2 > SEPARATION_SCAN_RADIUS * SEPARATION_SCAN_RADIUS:
+				continue
+			neighbors.append(other)
+	for other in neighbors:
 		if other == self or not is_instance_valid(other):
 			continue
-		# The group is nominally ZombieBase-only, but a future decoy/turret that
-		# joins it must not crash every separation pass on a transform access.
 		if not (other is Node3D):
 			continue
 		if other is ZombieBase and other.is_dead:

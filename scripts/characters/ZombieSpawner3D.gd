@@ -29,6 +29,16 @@ var _first_spawn_done: bool = false
 var difficulty_manager: Node = null
 var current_level: int = 1
 
+# Cached live-enemy list — single source of truth for separation and attack
+# queries (O(1), no per-frame group scan). Kept in sync by the pool lifecycle:
+# checkout appends in _spawn_random_zombie, death/return erases in
+# _return_to_pool — so the cache never holds stale (dead or parked) entries.
+var _live_enemies: Array[ZombieBase] = []
+
+# Last player position at a VFN recalc — used to skip recalculation when the
+# player moved less than 2 m since the last one.
+var _vfn_last_player_pos: Vector3 = Vector3.ZERO
+
 @onready var spawn_timer: Timer = $SpawnTimer
 
 # --- Object pools: one per zombie type ---
@@ -41,7 +51,12 @@ var vfn_field_ready: bool = false
 
 func _ready() -> void:
 	await get_tree().process_frame
+	# Register before _init_pools parks instances: parked zombies' _ready runs
+	# during pool initialisation and may resolve this spawner by group.
+	add_to_group("zombie_spawner")
 	player = get_tree().get_first_node_in_group("player")
+	if player:
+		_vfn_last_player_pos = player.global_transform.origin
 	if not player:
 		push_warning("[ZombieSpawner] No player found!")
 
@@ -155,6 +170,21 @@ func _get_pool_for_type(zombie_type: String) -> Dictionary:
 # ──────────────────────────────────────────────
 #  SPAWNING
 # ──────────────────────────────────────────────
+
+func get_live_enemies() -> Array[ZombieBase]:
+	"""Live zombies currently in the world - O(1) cache, no group scan."""
+	return _live_enemies
+
+func get_nearby_enemies(around: Vector3, radius: float) -> Array[ZombieBase]:
+	"""Proximity helper: live enemies within `radius` of `around`."""
+	var out: Array[ZombieBase] = []
+	var r2: float = radius * radius
+	for e in _live_enemies:
+		if not is_instance_valid(e) or e.is_dead:
+			continue
+		if e.global_transform.origin.distance_squared_to(around) < r2:
+			out.append(e)
+	return out
 
 func start_spawning() -> void:
 	can_spawn = true
@@ -327,6 +357,8 @@ func _spawn_random_zombie() -> void:
 		zombie_type, str(spawn_pos), str(player.global_transform.origin),
 		spawn_pos.distance_to(player.global_transform.origin), min_spawn_distance, spawn_radius])
 	active_zombies.append(zombie)
+	if zombie is ZombieBase:
+		_live_enemies.append(zombie as ZombieBase)
 	zombie.set("zombie_type", zombie_type)
 
 	# Connect the died signal. The handler is bound with arguments, so the bound
@@ -379,6 +411,10 @@ func _spawn_random_zombie() -> void:
 func _return_to_pool(zombie: Node3D) -> void:
 	if not zombie:
 		return
+	# Keep the live-enemy cache free of stale entries: a recycled or killed
+	# zombie is no longer a separation or attack target.
+	if zombie is ZombieBase:
+		_live_enemies.erase(zombie)
 	var pool_entry = zombie.get("pool_entry")
 	if pool_entry == null:
 		# Fallback: if no pool entry was stored, just queue_free
@@ -446,7 +482,7 @@ var blocked_spawns: int = 0
 # 0.5s, not 0.25s: the field is recalculated with the player as its ONLY target,
 # so halving the interval doubles the thread wakeups for a marginally fresher
 # player position. The zombie positions are not part of the field.
-const VFN_RECALC_INTERVAL: float = 0.5
+const VFN_RECALC_INTERVAL: float = 1.0
 
 func _process(delta: float) -> void:
 	# Throttle VFN field recalculation — calculate_threaded() on a 50x50 field
@@ -454,5 +490,14 @@ func _process(delta: float) -> void:
 	if vfn_field_ready and vfn_field:
 		_vfn_recalc_timer += delta
 		if _vfn_recalc_timer >= VFN_RECALC_INTERVAL:
+			if not player:
+				_vfn_recalc_timer = 0.0
+				return
+			var player_pos = player.global_transform.origin
+			# Skip recalc when the player moved less than 2 m since the last one.
+			if player_pos.distance_squared_to(_vfn_last_player_pos) < 4.0:
+				_vfn_recalc_timer = 0.0
+				return
+			_vfn_last_player_pos = player_pos
 			_vfn_recalc_timer = 0.0
 			_update_vfn_target()
