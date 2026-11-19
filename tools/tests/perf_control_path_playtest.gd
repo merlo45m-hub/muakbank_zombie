@@ -43,8 +43,8 @@ func _initialize() -> void:
 	var player: Node3D = Node3D.new()
 	player.name = "TestPlayer"
 	player.add_to_group("player")
-	player.global_transform.origin = Vector3(0, 0, 0)
 	root.add_child(player)
+	player.global_transform.origin = Vector3(0, 0, 0)
 
 	# --- stub DifficultyManager (spawner looks for ../DifficultyManager) ---
 	var diff: Node = _DifficultyStub.new()
@@ -52,7 +52,12 @@ func _initialize() -> void:
 	root.add_child(diff)
 
 	# --- real spawner ---
-	var spawner_script: GDScript = preload("res://scripts/characters/ZombieSpawner3D.gd")
+	# Deferred load(), after frames: ZombieSpawner3D references autoload
+	# identifiers (Save/Level) that only resolve once autoloads are registered;
+	# a compile-time preload() of it in --script context fails ("Identifier not
+	# found") before the tree exists. load() here compiles lazily in a live tree.
+	var spawner_script: GDScript = load("res://scripts/characters/ZombieSpawner3D.gd")
+	assert(spawner_script != null and spawner_script.can_instantiate(), "spawner script compile failed")
 	var spawner: Node3D = spawner_script.new()
 	spawner.name = "ZombieSpawner"
 	# spawn_timer is @onready $SpawnTimer — parent a Timer child before entering the tree.
