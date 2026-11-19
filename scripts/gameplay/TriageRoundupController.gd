@@ -255,21 +255,29 @@ func _hide_result() -> void:
 	if result:
 		result.visible = false
 
+
+func _has_prop(obj: Object, prop: String) -> bool:
+	# Object has no has() - Dictionary/Array do. Property existence via list.
+	for pi in obj.get_property_list():
+		if String(pi.get("name", "")) == prop:
+			return true
+	return false
+
 func _type_of(body: Node) -> String:
 	# Read the unit's declared type from whatever export its scene uses.
 	# L1 bodies expose animal_type; industrial cargo units expose unit_type.
 	# Never branches on literal type values — only reads declared exports.
-	if body.has("unit_type"):
+	if _has_prop(body, "unit_type"):
 		return String(body.get("unit_type"))
-	if body.has("animal_type"):
+	if _has_prop(body, "animal_type"):
 		return String(body.get("animal_type"))
 	return ""
 
 func _pen_required_type(pen: Node) -> String:
 	# Read the pen's declared accepted type from its export.
-	if pen.has("required_unit_type"):
+	if _has_prop(pen, "required_unit_type"):
 		return String(pen.get("required_unit_type"))
-	if pen.has("required_animal_type"):
+	if _has_prop(pen, "required_animal_type"):
 		return String(pen.get("required_animal_type"))
 	return ""
 
