@@ -81,7 +81,9 @@ func _initialize() -> void:
 # 8b) Restart durability: persist snapshots, free the manager, re-instantiate
 #     and re-hydrate via the real code path; a departing region's snapshot
 #     must survive key-for-key.
-	Save.save_game()
+	var save_node = get_root().get_node_or_null("Save")
+	if save_node != null:
+		save_node.call("save_game")
 	var expected: Dictionary = hop.transient_by_region.duplicate(true)
 	var ok: bool = true
 	hop.queue_free()
