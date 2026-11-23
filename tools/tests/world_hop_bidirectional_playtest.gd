@@ -81,10 +81,13 @@ func _initialize() -> void:
 # 8b) Restart durability: persist snapshots, free the manager, re-instantiate
 #     and re-hydrate via the real code path; a departing region's snapshot
 #     must survive key-for-key.
-	Save.save_game()
+	var save_node = get_root().get_node_or_null("Save")
+	if save_node != null:
+		save_node.call("save_game")
 	var expected: Dictionary = hop.transient_by_region.duplicate(true)
+	var ok: bool = true
 	hop.queue_free()
-	var fresh := (load("res://scripts/core/WorldHopManager.gd")).new()
+	var fresh = (load("res://scripts/core/WorldHopManager.gd") as GDScript).new()
 	fresh.name = "WorldHopRestartProbe"
 	get_root().add_child(fresh)
 	await process_frame
@@ -98,10 +101,6 @@ func _initialize() -> void:
 		print("RESTART_DURABILITY_PASS region 2 snapshot survived restart")
 
 	# 8) Final acceptance.
-	var ok: bool = wp.is_bidirectional(1, 2) and wp.is_secret_reachable(1, 2) \
-		and wp.get_loot_tier_cap() == 3 and wp.get_active_loot_tier() == 1 \
-		and _completed == [2, 3, 1] and _failed.is_empty() \
-		and wp.visited_regions.has(1) and wp.visited_regions.has(2) and wp.visited_regions.has(3) \
-		and hop.transient_by_region.has(1)
+	ok = wp.is_bidirectional(1, 2) and wp.is_secret_reachable(1, 2) and wp.get_loot_tier_cap() == 3 and wp.get_active_loot_tier() == 1 and _completed == [2, 3, 1] and _failed.is_empty() and wp.visited_regions.has(1) and wp.visited_regions.has(2) and wp.visited_regions.has(3) and fresh.transient_by_region.has(1)
 	print("NONLINEAR_PROGRESSION_PASS=", ok)
 	quit(0 if ok else 1)
