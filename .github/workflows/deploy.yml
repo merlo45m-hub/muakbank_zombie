@@ -121,9 +121,11 @@ jobs:
           HOME="$GODOT_HOME" xvfb-run -a "$GODOT_BIN" --headless \
             --export-debug "Android" --export-path "$GITHUB_WORKSPACE/muakbank_zombie.apk" \
             > /tmp/export.log 2>&1 || true
-          # Godot 4.7 headless can return 134 at shutdown AFTER a valid export,
-          # so validate the ARTIFACT, not the exit code (verified live).
-          grep -q "\[ DONE \] export" /tmp/export.log || { tail -30 /tmp/export.log; exit 1; }
+          # Godot 4.7 headless can abort at shutdown AFTER a valid export.
+          # Validate the ARTIFACT, not the exit code, and do not require a
+          # literal space after the marker: ANSI colour codes sit between the
+          # marker and "export" in runner logs.
+          grep -q "\[ DONE \]" /tmp/export.log || { tail -30 /tmp/export.log; exit 1; }
           test -s "$GITHUB_WORKSPACE/muakbank_zombie.apk"
 
       - name: Validate APK structure
