@@ -13,27 +13,22 @@
     },
     {
       "path": "scenes/characters/character_doctor.tscn",
-      "reason": "Stethoscope accessory primitive \u2014 character fidelity pass #63 I4",
+      "reason": "Stethoscope accessory primitive — character fidelity pass #63 I4",
       "owner": "#63 I4"
     },
     {
       "path": "scenes/characters/character_gamer.tscn",
-      "reason": "Controller accessory primitive \u2014 #63 I4",
-      "owner": "#63 I4"
-    },
-    {
-      "path": "scenes/characters/character_hunter.tscn",
-      "reason": "Bat weapon primitive \u2014 #63 I4",
+      "reason": "Controller accessory primitive — #63 I4",
       "owner": "#63 I4"
     },
     {
       "path": "scenes/characters/character_nurse.tscn",
-      "reason": "Mask+Syringe primitives \u2014 #63 I4",
+      "reason": "Mask primitive replaced by contracted CC0 aid-mask.glb in #63 I4; remaining exception is the syringe primitive only.",
       "owner": "#63 I4"
     },
     {
       "path": "scenes/characters/character_streamer.tscn",
-      "reason": "Phone primitive \u2014 #63 I4",
+      "reason": "Phone primitive — #63 I4",
       "owner": "#63 I4"
     }
   ]
