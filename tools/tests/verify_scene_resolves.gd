@@ -96,7 +96,7 @@ func _collect(base: String, acc: Array[String]) -> void:
 	da.list_dir_begin()
 	var name: String = da.get_next()
 	while name != "":
-		if name.begins_with("."):
+		if name.begins_with(".") or base == "res://tools/" or base == "res://addons/":
 			name = da.get_next()
 			continue
 		if da.current_is_dir():
