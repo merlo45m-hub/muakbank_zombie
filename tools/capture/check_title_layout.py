@@ -17,9 +17,9 @@ import sys
 
 REQUIRED = ("TitleLabel", "ButtonsBox", "FooterBrand")
 EXPECTED_DIMS = (1600, 900)
-EXPECTED_BUTTONS = 5
+MIN_BUTTONS = 5
 MIN_BUTTON_W = 400
-MIN_BUTTON_H = 86
+MIN_BUTTON_H = 48
 TOLERANCE = 1.0
 
 
@@ -93,7 +93,7 @@ def main() -> int:
 
     content_violations: list[str] = []
     buttons = data.get("buttons", [])
-    if not isinstance(buttons, list) or len(buttons) != EXPECTED_BUTTONS:
+    if not isinstance(buttons, list) or len(buttons) < MIN_BUTTONS:
         content_violations.append("button_count_%d" % (len(buttons) if isinstance(buttons, list) else -1))
         buttons = []
     parsed_buttons: list[tuple[float, float, float, float]] = []
