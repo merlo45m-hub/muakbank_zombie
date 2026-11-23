@@ -1,5 +1,4 @@
 [gd_scene load_steps=46 format=3]
-[gd_scene format=3]
 [ext_resource type="Script" path="res://scripts/world/hdri_lighting.gd" id="hdri_lighting"]
 [ext_resource type="Script" path="res://scripts/world/asset_blockout.gd" id="blockout_kenney"]
 
