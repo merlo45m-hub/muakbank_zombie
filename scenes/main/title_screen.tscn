@@ -188,6 +188,23 @@ theme_override_styles/pressed = SubResource("WoodPressed")
 theme_override_styles/focus = SubResource("WoodHover")
 text = "QUIT"
 
+[node name="FooterScrim" type="ColorRect" parent="UI"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -76.0
+offset_right = 220.0
+offset_bottom = -48.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+z_index = -1
+color = Color(0, 0, 0, 0.55)
+
 [node name="FooterBrand" type="CenterContainer" parent="UI"]
 layout_mode = 1
 anchors_preset = 7

@@ -87,6 +87,24 @@ jobs:
           grep -E 'LAYOUT:|SCRIPT ERROR|Parse Error' /tmp/cap_title_layout.log | tail -8 || true
           test -s build/capture/title_layout.json
           python3 tools/capture/check_title_layout.py build/capture/title_layout.json
+      - name: Title typography and touch-target gate (issue #63 I3)
+        env:
+          CAP_GODOT: /opt/Godot_v4.7-stable_linux.x86_64
+        run: |
+          set -euo pipefail
+          CAP_TYPO_OUT="$GITHUB_WORKSPACE/build/capture/title_typography.json" \
+            xvfb-run -a -s "-screen 0 1600x900x24" "$CAP_GODOT" \
+              --display-driver x11 \
+              --rendering-method gl_compatibility \
+              --rendering-driver opengl3 \
+              --resolution 1600x900 \
+              --fixed-fps 60 \
+              --path . \
+              --script tools/capture/title_typography_probe.gd \
+              > /tmp/cap_title_typography.log 2>&1
+          grep -E 'TYPO:|SCRIPT ERROR|Parse Error' /tmp/cap_title_typography.log | tail -8 || true
+          test -s build/capture/title_typography.json
+          python3 tools/capture/check_title_typography.py build/capture/title_typography.json
       - name: Upload captures
         if: always()
         uses: actions/upload-artifact@v4

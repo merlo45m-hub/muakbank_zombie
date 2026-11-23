@@ -11,6 +11,18 @@ static func install_on(title_screen: Node3D) -> void:
 	var instance = preload("res://scripts/ui/DevMenu.gd").new()
 	title_screen.add_child(instance)
 
+func _wood_style(modulate: Color) -> StyleBoxTexture:
+	var style: StyleBoxTexture = StyleBoxTexture.new()
+	style.content_margin_left = 56.0
+	style.content_margin_top = 14.0
+	style.content_margin_right = 56.0
+	style.content_margin_bottom = 14.0
+	var texture: Texture2D = load("res://assets/textures/wood_planks.jpg") as Texture2D
+	if texture != null:
+		style.texture = texture
+	style.modulate_color = modulate
+	return style
+
 func _ready() -> void:
 	var parent = get_parent()
 	if not is_instance_valid(parent):
@@ -22,18 +34,21 @@ func _ready() -> void:
 	if is_instance_valid(btn_container):
 		dev_btn = Button.new()
 		dev_btn.text = "DEV ROOM"
-		dev_btn.custom_minimum_size = Vector2(200, 50)
-		dev_btn.add_theme_font_size_override("font_size", 18)
-		dev_btn.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
-		var style = StyleBoxFlat.new()
-		style.bg_color = Color(0.15, 0.15, 0.15)
-		style.border_width_left = 2
-		style.border_width_top = 2
-		style.border_width_right = 2
-		style.border_width_bottom = 2
-		style.border_color = Color(0.4, 0.4, 0.4)
-		dev_btn.add_theme_stylebox_override("normal", style)
-		
+		dev_btn.custom_minimum_size = Vector2(400, 64)
+		var secondary_font: Font = load("res://assets/fonts/SpecialElite-Regular.ttf") as Font
+		if secondary_font != null:
+			dev_btn.add_theme_font_override("font", secondary_font)
+		dev_btn.add_theme_font_size_override("font_size", 30)
+		dev_btn.add_theme_color_override("font_color", Color(0.96, 0.94, 0.89, 1))
+		dev_btn.add_theme_color_override("font_hover_color", Color(1.0, 0.97, 0.9, 1))
+		dev_btn.add_theme_color_override("font_pressed_color", Color(0.9, 0.86, 0.8, 1))
+		dev_btn.add_theme_color_override("font_outline_color", Color(0.05, 0.02, 0.01, 0.9))
+		dev_btn.add_theme_constant_override("outline_size", 5)
+		dev_btn.add_theme_stylebox_override("normal", _wood_style(Color(0.72, 0.68, 0.62, 1)))
+		dev_btn.add_theme_stylebox_override("hover", _wood_style(Color(0.98, 0.93, 0.86, 1)))
+		dev_btn.add_theme_stylebox_override("pressed", _wood_style(Color(0.6, 0.56, 0.52, 1)))
+		dev_btn.add_theme_stylebox_override("focus", _wood_style(Color(0.98, 0.93, 0.86, 1)))
+
 		btn_container.add_child(dev_btn)
 		dev_btn.pressed.connect(_on_dev_btn_pressed)
 		
