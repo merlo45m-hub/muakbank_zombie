@@ -20,6 +20,7 @@ func _rect_dict(node: Node) -> Dictionary:
 	}
 
 func _initialize() -> void:
+	print("LAYOUT: start")
 	var out_path: String = OS.get_environment("CAP_LAYOUT_OUT")
 	if out_path.is_empty():
 		push_error("LAYOUT: CAP_LAYOUT_OUT required")
@@ -40,8 +41,8 @@ func _initialize() -> void:
 		frame_index += 1
 	await RenderingServer.frame_post_draw
 
-	var viewport: Viewport = root as Viewport
-	var vrect: Rect2 = viewport.get_viewport_rect()
+	var window: Window = root as Window
+	var dimensions: Vector2i = window.size
 	var ui: Node = instance.get_node_or_null("UI")
 	var title: Node = instance.get_node_or_null("UI/TitleLabel")
 	var buttons: Node = instance.get_node_or_null("UI/ButtonsBox")
@@ -70,8 +71,8 @@ func _initialize() -> void:
 	}
 	var report: Dictionary = {
 		"scene": LAYOUT_SCENE,
-		"width": int(vrect.size.x),
-		"height": int(vrect.size.y),
+		"width": dimensions.x,
+		"height": dimensions.y,
 		"frames": WARMUP_FRAMES,
 		"safe_margin": 48,
 		"button_separation": vbox.get_theme_constant("separation") if vbox != null else -1,
@@ -88,6 +89,7 @@ func _initialize() -> void:
 	handle.close()
 
 	print("LAYOUT: scene=" + LAYOUT_SCENE)
-	print("LAYOUT: dims=" + str(int(vrect.size.x)) + "x" + str(int(vrect.size.y)))
+	print("LAYOUT: dims=" + str(dimensions.x) + "x" + str(dimensions.y))
+	print("LAYOUT: rects_collected")
 	print("LAYOUT: out=" + out_path)
 	quit(0)
