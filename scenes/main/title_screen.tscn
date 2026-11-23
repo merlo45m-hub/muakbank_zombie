@@ -90,17 +90,17 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -210.0
-offset_top = -190.0
+offset_top = -57.0
 offset_right = 210.0
-offset_bottom = 290.0
+offset_bottom = 343.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 6
 alignment = 1
 
 [node name="PlayBtn" type="Button" parent="UI/ButtonsBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(400, 86)
+custom_minimum_size = Vector2(400, 64)
 theme_override_colors/font_color = Color(0.96, 0.94, 0.89, 1)
 theme_override_colors/font_hover_color = Color(1, 0.97, 0.9, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
@@ -118,7 +118,7 @@ text = "PLAY"
 
 [node name="LevelBtn" type="Button" parent="UI/ButtonsBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(400, 86)
+custom_minimum_size = Vector2(400, 64)
 theme_override_colors/font_color = Color(0.96, 0.94, 0.89, 1)
 theme_override_colors/font_hover_color = Color(1, 0.97, 0.9, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
@@ -136,7 +136,7 @@ text = "LEVELS"
 
 [node name="SettingsBtn" type="Button" parent="UI/ButtonsBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(400, 86)
+custom_minimum_size = Vector2(400, 64)
 theme_override_colors/font_color = Color(0.96, 0.94, 0.89, 1)
 theme_override_colors/font_hover_color = Color(1, 0.97, 0.9, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
@@ -154,7 +154,7 @@ text = "SETTINGS"
 
 [node name="CreditsBtn" type="Button" parent="UI/ButtonsBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(400, 86)
+custom_minimum_size = Vector2(400, 64)
 theme_override_colors/font_color = Color(0.96, 0.94, 0.89, 1)
 theme_override_colors/font_hover_color = Color(1, 0.97, 0.9, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
@@ -172,7 +172,7 @@ text = "CREDITS"
 
 [node name="QuitBtn" type="Button" parent="UI/ButtonsBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(400, 86)
+custom_minimum_size = Vector2(400, 64)
 theme_override_colors/font_color = Color(0.96, 0.94, 0.89, 1)
 theme_override_colors/font_hover_color = Color(1, 0.97, 0.9, 1)
 theme_override_colors/font_pressed_color = Color(0.9, 0.86, 0.8, 1)
