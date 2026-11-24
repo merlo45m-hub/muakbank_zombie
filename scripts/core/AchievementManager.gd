@@ -108,6 +108,13 @@ func record_boss_defeat(world_id: int, boss_id: String = "") -> void:
 	var world_boss_ach := "boss_w%d_defeated" % world_id
 	if is_registered(world_boss_ach):
 		unlock(world_boss_ach)
+
+	# Grant catalyst for this world via CollectionManager (sole writer)
+	var cm := get_node_or_null("/root/CollectionManager")
+	if cm != null and cm.has_method("record_item"):
+		var cid = CureCatalysts.get_catalyst_id_for_world(world_id)
+		cm.record_item(cid)
+
 	_save_progress()
 	print("[Achievement] World %d Boss Defeated: %s" % [world_id, boss_id])
 
@@ -125,16 +132,25 @@ func is_registered(id: String) -> bool:
 # === CURE SYNTHESIS & POST-CURE STATE (GDD §5, §7) ===
 
 func can_synthesize_cure() -> bool:
-	# Requires defeating the World Boss in each of the three worlds
+	# Requires all three catalysts, defeating the World Boss in each of the three worlds
 	# AND reaching a majority achievement threshold across Worlds 1–3
-	return are_all_world_bosses_defeated() and has_majority_achievements()
+	var cm := get_node_or_null("/root/CollectionManager")
+	var has_catalysts := CureCatalysts.has_all_catalysts(cm)
+	return has_catalysts and are_all_world_bosses_defeated() and has_majority_achievements()
 
 func synthesize_cure() -> bool:
 	if post_cure:
 		return true
 	if not can_synthesize_cure():
-		print("[Achievement] Cannot synthesize cure: World bosses defeated=", are_all_world_bosses_defeated(), " majority=", has_majority_achievements())
+		var cm := get_node_or_null("/root/CollectionManager")
+		var missing := CureCatalysts.get_missing_catalysts(cm)
+		print("[Achievement] Cannot synthesize cure: catalysts=", missing, " bosses=", are_all_world_bosses_defeated(), " majority=", has_majority_achievements())
 		return false
+	# Consume each catalyst exactly once via CollectionManager.consume_item
+	var cm := get_node_or_null("/root/CollectionManager")
+	if cm != null and cm.has_method("consume_item"):
+		for cid in CureCatalysts.get_all_catalyst_ids():
+			cm.consume_item(cid, 1)
 	post_cure = true
 	if is_registered("cure_synthesized"):
 		unlock("cure_synthesized")
