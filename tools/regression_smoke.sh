@@ -208,45 +208,6 @@ run_scene() {
     fi
 }
 
-# --- fast preflight: supplementary probes (manifest-driven, fail-fast) -------
-# Runs before numbered check 1 with FAST_PROBE_TIMEOUT (default 120s).
-# First failure exits FAIL immediately, before the numbered ~5-minute suite.
-# Completed probe names are recorded so their duplicate supplementary blocks
-# at the end are skipped while their PASS lines still print.
-MANIFEST="${PROJECT_ROOT}/tools/fast_probe_manifest.json"
-if [ -f "$MANIFEST" ]; then
-    while IFS=$'\t' read -r fname fscript fmarker; do
-        [ -n "$fname" ] || continue
-        plog="${WORKDIR}/fast_${fname}.log"
-        if timeout "${FAST_PROBE_TIMEOUT}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
-            --headless --path "$PROJECT_ROOT" --script "$fscript" > "$plog" 2>&1; then
-            if grep -q "$fmarker" "$plog"; then
-                log "  preflight: $fname: $fmarker"
-                FAST_DONE+=("$fname")
-            else
-                bad "fast preflight: $fname: PASS marker '$fmarker' missing"
-                log "REGRESSION: FAIL (fast preflight: $fname)"
-                exit 1
-            fi
-        else
-            frc=$?
-            if [ "$frc" -eq 124 ]; then
-                bad "fast preflight: $fname: TIMEOUT after ${FAST_PROBE_TIMEOUT}s"
-            else
-                bad "fast preflight: $fname: engine exited rc=${frc}"
-            fi
-            log "REGRESSION: FAIL (fast preflight: $fname)"
-            exit 1
-        fi
-    done < <(python3 - "$MANIFEST" <<'PY'
-import json, sys
-m = json.load(open(sys.argv[1]))
-for p in m.get("probes", []):
-    print(f"{p['name']}\t{p['script']}\t{p['marker']}")
-PY
-    )
-fi
-
 # ---------------------------------------------------------------------------
 log "=== Muakbank Zombie regression smoke gate ==="
 log "project : ${PROJECT_ROOT}"
@@ -305,6 +266,46 @@ if [ -z "$IMPORT_PASS" ]; then
     bad "import: never stable after 3 passes; last error: ${_last:-see import3.log}"
 fi
 unset _bad _last
+
+# --- fast preflight: supplementary probes (manifest-driven, fail-fast) -------
+# Runs after the import gate, before the expensive scene/engine checks.
+# First failure exits FAIL immediately, before the slow numbered checks.
+# Completed probe names are recorded so their duplicate supplementary blocks
+# at the end are skipped while their PASS lines still print.
+MANIFEST="${PROJECT_ROOT}/tools/fast_probe_manifest.json"
+if [ -f "$MANIFEST" ]; then
+    while IFS=$'\t' read -r fname fscript fmarker; do
+        [ -n "$fname" ] || continue
+        plog="${WORKDIR}/fast_${fname}.log"
+        if timeout "${FAST_PROBE_TIMEOUT}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
+            --headless --path "$PROJECT_ROOT" --script "$fscript" > "$plog" 2>&1; then
+            if grep -q "$fmarker" "$plog"; then
+                log "  preflight: $fname: $fmarker"
+                FAST_DONE+=("$fname")
+            else
+                bad "fast preflight: $fname: PASS marker '$fmarker' missing"
+                log "REGRESSION: FAIL (fast preflight: $fname)"
+                exit 1
+            fi
+        else
+            frc=$?
+            if [ "$frc" -eq 124 ]; then
+                bad "fast preflight: $fname: TIMEOUT after ${FAST_PROBE_TIMEOUT}s"
+            else
+                bad "fast preflight: $fname: engine exited rc=${frc}"
+            fi
+            log "REGRESSION: FAIL (fast preflight: $fname)"
+            exit 1
+        fi
+    done < <(python3 - "$MANIFEST" <<'PY'
+import json, sys
+m = json.load(open(sys.argv[1]))
+for p in m.get("probes", []):
+    print(f"{p['name']}\t{p['script']}\t{p['marker']}")
+PY
+    )
+fi
+
 
 # --- + 3/5 scene boots --------------------------------------------------
 run_scene "res://scenes/dev/test_zombie.tscn"  "boot_dev"  "${BOOT_FRAMES_DEV}"  "" 0
