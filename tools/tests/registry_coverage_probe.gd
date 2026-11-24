@@ -60,10 +60,18 @@ func _initialize() -> void:
 	# Derive animal ids from the production spawner table, not a hardcoded list.
 	var animals: Array[String] = []
 	var spawner_src: String = FileAccess.get_file_as_string("res://scripts/characters/ZombieSpawner3D.gd")
-	var animal_re: RegEx = RegEx.new()
-	animal_re.compile("zombie_[a-z]+_scene.*\\[\"([a-z_]+)\\"\\]")
-	for match in animal_re.search_all(spawner_src):
-		animals.append(match.get_string(1))
+	for line in spawner_src.split("\n"):
+		if line.contains("zombie_") and line.contains("_scene") and line.contains("[\""):
+			var at: int = line.find("[\"")
+			if at < 0:
+				continue
+			var rest: String = line.substr(at + 2)
+			var endq: int = rest.find("\"")
+			if endq <= 0:
+				continue
+			var animal_id: String = rest.substr(0, endq)
+			if not animals.has(animal_id):
+				animals.append(animal_id)
 	_assert(animals.size() == 5, "5 animal ids derived from ZombieSpawner3D table (%s)" % str(animals))
 	var animal_before: Dictionary = cm.call("get_bestiary") as Dictionary
 	for animal in animals:
