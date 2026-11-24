@@ -67,7 +67,7 @@ func _ready() -> void:
 	# Secret transport triggers (spawned at runtime, not in scene)
 	var trigger_script: GDScript = load("res://scripts/world/SecretTransportTriggers.gd") as GDScript
 	secret_transport_triggers = trigger_script.new()
-	add_child(secret_transport_triggers)
+	add_child.call_deferred(secret_transport_triggers)
 	
 	# Set up level objectives
 	_setup_objectives()
@@ -124,7 +124,10 @@ func _load_environment() -> void:
 
 	# Spawn secret transport triggers for this region (Issue #83)
 	if secret_transport_triggers != null and secret_transport_triggers.has_method("spawn_triggers_for_region"):
-		secret_transport_triggers.call("spawn_triggers_for_region", level)
+		if secret_transport_triggers.is_inside_tree():
+			secret_transport_triggers.call("spawn_triggers_for_region", level)
+		else:
+			secret_transport_triggers.call_deferred("spawn_triggers_for_region", level)
 
 ## Per-level spawn preference, in level-local coordinates. A HINT only: _place_player()
 ## probes the level's real collision and walks outward until it finds ground with room
