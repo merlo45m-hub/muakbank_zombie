@@ -94,6 +94,9 @@ func _ready() -> void:
 			objective_manager.objective_updated.connect(_on_objective_updated)
 		if objective_manager.has_signal("objective_completed"):
 			objective_manager.objective_completed.connect(_on_objective_completed)
+	# Connect AchievementManager post_cure_entered signal
+	if achievement_manager and achievement_manager.has_signal("post_cure_entered"):
+		achievement_manager.post_cure_entered.connect(_on_post_cure_entered)
 	
 	# Set environment based on current level
 	_load_environment()
@@ -490,6 +493,13 @@ func _finish_shift_incomplete() -> void:
 	print("[Game] Shift over with objectives incomplete — level not credited.")
 	end_game(false)
 
+func _on_post_cure_entered() -> void:
+	"""Persist and log the open-world state when cure is synthesized.
+	No gameplay gating that closes worlds."""
+	print("[Game] POST-CURE OPEN WORLD ACTIVE — All worlds remain accessible.")
+	if achievement_manager and achievement_manager.has_method("is_post_cure"):
+		print("[Game] Post-cure state persisted: ", achievement_manager.is_post_cure())
+
 func end_game(survived: bool) -> void:
 	if not game_active:
 		return
@@ -536,7 +546,16 @@ func end_game(survived: bool) -> void:
 			achievement_manager.unlock("survivor")
 			if not damage_taken_this_level:
 				achievement_manager.unlock("untouchable")
-	
+		# Cure synthesis trigger on Bio-Lab (level 3) win
+		if Save.get_current_level() == 3:
+			if achievement_manager and achievement_manager.has_method("can_synthesize_cure"):
+				if achievement_manager.can_synthesize_cure():
+					achievement_manager.synthesize_cure()
+					if hud and hud.has_method("show_banner"):
+						hud.show_banner("CURE SYNTHESIZED! Post-cure open world active.")
+					else:
+						print("[Game] CURE SYNTHESIZED! Post-cure open world active.")
+
 	# Store results in Save singleton for the game over screen to retrieve
 	# This avoids race condition with scene change + await
 	Save.pending_results = {
@@ -651,17 +670,13 @@ func _on_boss_defeated() -> void:
 	# never fires for it — award the kill here so score/combo/difficulty/achievements
 	# all land (and boss_slayer becomes obtainable).
 	on_zombie_killed("boss")
-	var current_region: int = 1
-	var wp = get_node_or_null("/root/WorldProgression")
-	if wp and "current_region" in wp:
-		current_region = int(wp.current_region)
-	elif Save and Save.has_method("get_current_level"):
-		current_region = int(Save.get_current_level())
-	if achievement_manager:
-		if achievement_manager.has_method("record_boss_defeat"):
-			achievement_manager.record_boss_defeat(current_region, "boss_w%d" % current_region)
-		elif achievement_manager.has_method("unlock"):
-			achievement_manager.unlock("boss_slayer")
+	var current_level: int = 1
+	if Save and Save.has_method("get_current_level"):
+		current_level = int(Save.get_current_level())
+	if achievement_manager and achievement_manager.has_method("record_boss_defeat"):
+		achievement_manager.record_boss_defeat(current_level, "boss_w%d" % current_level)
+	elif achievement_manager and achievement_manager.has_method("unlock"):
+		achievement_manager.unlock("boss_slayer")
 
 func on_player_died() -> void:
 	if not game_active:
