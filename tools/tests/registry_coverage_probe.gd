@@ -57,7 +57,14 @@ func _initialize() -> void:
 	_assert(survivors_ok, "5 survivors registered with resolvable scenes and stats (%s)" % str(ids))
 
 	# --- 2. Five zombie animals recorded through the sole writer ------------
-	var animals: Array[String] = ["dog", "cat", "bear", "rabbit", "chicken"]
+	# Derive animal ids from the production spawner table, not a hardcoded list.
+	var animals: Array[String] = []
+	var spawner_src: String = FileAccess.get_file_as_string("res://scripts/characters/ZombieSpawner3D.gd")
+	var animal_re: RegEx = RegEx.new()
+	animal_re.compile("zombie_[a-z]+_scene.*\\[\"([a-z_]+)\"\\]")
+	for match in animal_re.search_all(spawner_src):
+		animals.append(match.get_string(1))
+	_assert(animals.size() == 5, "5 animal ids derived from ZombieSpawner3D table (%s)" % str(animals))
 	var animal_before: Dictionary = cm.call("get_bestiary") as Dictionary
 	for animal in animals:
 		cm.call("record_defeat", animal)
@@ -94,7 +101,24 @@ func _initialize() -> void:
 	_assert(props_ok, "6 core props reached record_dismantle and CollectionLog union (%d ids)" % core_ids.size())
 
 	# --- 4. Sole-writer invariant and persistence ---------------------------
-	_assert(not clog.has_method("record_item") and not blog.has_method("record_defeat"), "read-only facades expose no writer")
+	var writer_methods: Array[String] = ["record_item", "record_defeat", "record_dismantle", "set_registry", "save_game"]
+	var facades_readonly: bool = true
+	for method_name in writer_methods:
+		if clog.has_method(method_name) or blog.has_method(method_name):
+			facades_readonly = false
+	_assert(facades_readonly, "read-only facades expose no registry writer or save method")
+
+	# --- 5. Emitter source contracts (registry APIs have real gameplay callers) ---
+	var game_src: String = FileAccess.get_file_as_string("res://scripts/core/Game.gd")
+	var dc_src: String = FileAccess.get_file_as_string("res://scripts/gameplay/DismantleComponent.gd")
+	var select_src: String = FileAccess.get_file_as_string("res://scripts/ui/CharacterSelect.gd")
+	_assert(game_src.contains("cm.call(\"record_defeat\", zombie_type)"), "production kill emitter calls record_defeat")
+	_assert(dc_src.contains("cm.call(\"record_dismantle\", prop_asset_id, required_tool_tier)") and dc_src.contains("cm.call(\"record_item\", String(item_id), int(loot_counts[item_id]))"), "production dismantle emitters call sole-writer APIs")
+	var ui_has_all: bool = true
+	for wanted in want_survivors:
+		if not select_src.contains("\"" + wanted + "\""):
+			ui_has_all = false
+	_assert(ui_has_all, "character select exposes the same five survivor ids")
 	var saved_props: Variant = save.call("get_registry", "dismantled_props")
 	var saved_best: Variant = save.call("get_registry", "bestiary")
 	var persisted: bool = saved_props is Dictionary and saved_best is Dictionary
@@ -104,7 +128,7 @@ func _initialize() -> void:
 	for animal in animals:
 		if persisted and not (saved_best as Dictionary).has(animal):
 			persisted = false
-	_assert(persisted, "registry coverage persisted through Save")
+	_assert(persisted, "registry coverage present in Save registry state after sole-writer calls")
 
 	if _failures == 0:
 		print("REGISTRY_COVERAGE_PASS=true survivors=5 animals=5 props=%d" % core_ids.size())
