@@ -17,6 +17,8 @@
 #   In CI: run the same command; the exit code IS the gate.
 #
 # CHECKS (in order — 23 checks total)
+#   * cure_persistence: supplementary (not counted above) — fresh-process
+#     save→reload persistence proof for GDD Issue #28 cure state.
 #   1. import            : headless engine import with a FRESH .godot cache
 #                          (rm -rf .godot), run in up to 3 passes until one pass is
 #                          CLEAN, gated on that pass. Multiple passes are required
@@ -339,7 +341,14 @@ CURE_LOG="${WORKDIR}/cure_endgame_playtest.log"
 if [ -f "${PROJECT_ROOT}/tools/tests/cure_endgame_playtest.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 $XVFB_RUN "$GODOT_BIN" \
         --headless --path "$PROJECT_ROOT" --script tools/tests/cure_endgame_playtest.gd > "$CURE_LOG" 2>&1
-    if grep -q "GDD28_CURE_PASS=true" "$CURE_LOG"; then
+    CURE_RC=$?
+    if [ "$CURE_RC" -ne 0 ]; then
+        if [ "$CURE_RC" -eq 124 ]; then
+            bad "cure_endgame_playtest: TIMEOUT after ${TIMEOUT_S}s"
+        else
+            bad "cure_endgame_playtest: engine exited rc=${CURE_RC}"
+        fi
+    elif grep -q "GDD28_CURE_PASS=true" "$CURE_LOG"; then
         log "  cure_endgame_playtest: GDD28_CURE_PASS=true"
     else
         bad "cure_endgame_playtest: GDD28_CURE_PASS=true missing ($(grep -E 'GDD28_CURE_FAIL|SCRIPT ERROR' "$CURE_LOG" | tail -1))"
@@ -515,6 +524,23 @@ if grep -q "SCENE_RESOLVES_PASS=true" "$SR_LOG"; then
     log "  scene_resolves: $(grep -o 'SCENE_RESOLVES_PASS=true.*' "$SR_LOG" | tail -1)"
 else
     bad "scene_resolves: PASS marker missing ($(grep -m1 'SCENE_RESOLVES_FAIL' "$SR_LOG" || tail -1 "$SR_LOG"))"
+fi
+
+# --- supplementary: GDD Issue #28 cure save→reload persistence (fresh process) --
+# Clearly labeled supplementary check — NOT part of the numbered 23; the
+# denominator stays 23 and no existing label is renumbered.
+PERSIST_LOG="${WORKDIR}/cure_persistence.log"
+if [ -x "${PROJECT_ROOT}/tools/tests/cure_persistence_harness.sh" ]; then
+    "${PROJECT_ROOT}/tools/tests/cure_persistence_harness.sh" > "$PERSIST_LOG" 2>&1
+    PERSIST_RC=$?
+    if [ "$PERSIST_RC" -eq 0 ]; then
+        log "  cure_persistence: fresh-process save→reload cure persistence OK"
+    else
+        bad "cure_persistence: fresh-process save→reload failed (rc=${PERSIST_RC})"
+        tail -n 5 "$PERSIST_LOG" | while IFS= read -r persist_line; do log "  | $persist_line"; done
+    fi
+else
+    bad "cure_persistence: harness missing or not executable"
 fi
 
 # ---------------------------------------------------------------------------
