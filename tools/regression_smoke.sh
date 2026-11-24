@@ -19,6 +19,10 @@
 # CHECKS (in order — 23 checks total)
 #   * cure_persistence: supplementary (not counted above) — fresh-process
 #     save→reload persistence proof for GDD Issue #28 cure state.
+#   * secret_transport_trigger: supplementary (not counted above) — SceneTree probe
+#     asserting per-region secret-transport trigger behavior for GDD Issue #25 /
+#     issue #83 (target correctness, unreachable no-hop, single hop, no double
+#     fire). Stub WorldProgression + spy WorldHopManager; no game scene boot.
 #   1. import            : headless engine import with a FRESH .godot cache
 #                          (rm -rf .godot), run in up to 3 passes until one pass is
 #                          CLEAN, gated on that pass. Multiple passes are required
@@ -541,6 +545,31 @@ if [ -x "${PROJECT_ROOT}/tools/tests/cure_persistence_harness.sh" ]; then
     fi
 else
     bad "cure_persistence: harness missing or not executable"
+fi
+
+# --- supplementary: GDD Issue #25 secret transport trigger probe (#83) ------
+# Lightweight SceneTree probe: stub WorldProgression + spy WorldHopManager;
+# trigger helper instantiated per region, no game scene boot.
+# Clearly labeled supplementary check — NOT part of the numbered 23; the
+# denominator stays 23 and no existing label is renumbered.
+TRIGGER_LOG="${WORKDIR}/secret_transport_trigger.log"
+if [ -f "${PROJECT_ROOT}/tools/tests/secret_transport_trigger_probe.gd" ]; then
+    timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
+        --headless --path "$PROJECT_ROOT" --script tools/tests/secret_transport_trigger_probe.gd > "$TRIGGER_LOG" 2>&1
+    TRIGGER_RC=$?
+    if [ "$TRIGGER_RC" -ne 0 ]; then
+        if [ "$TRIGGER_RC" -eq 124 ]; then
+            bad "secret_transport_trigger: TIMEOUT after ${TIMEOUT_S}s"
+        else
+            bad "secret_transport_trigger: engine exited rc=${TRIGGER_RC}"
+        fi
+    elif grep -q "SECRET_TRANSPORT_TRIGGER_PASS=true" "$TRIGGER_LOG"; then
+        log "  secret_transport_trigger: SECRET_TRANSPORT_TRIGGER_PASS=true"
+    else
+        bad "secret_transport_trigger: PASS marker missing ($(grep -E 'SECRET_TRANSPORT_TRIGGER_FAIL|SCRIPT ERROR' "$TRIGGER_LOG" | tail -1))"
+    fi
+else
+    bad "secret_transport_trigger: probe file missing"
 fi
 
 # ---------------------------------------------------------------------------
