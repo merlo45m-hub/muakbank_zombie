@@ -55,10 +55,10 @@ func spawn_triggers_for_region(region_id: int) -> void:
 		coll.shape = shape
 		trigger.add_child(coll)
 
-		trigger.set_collision_layer_value(1, false)
-		trigger.set_collision_layer_value(2, true)  # Player layer
-		trigger.set_collision_mask_value(1, false)
-		trigger.set_collision_mask_value(2, true)
+		trigger.set_collision_layer_value(1, true)
+		trigger.set_collision_layer_value(2, false)
+		trigger.set_collision_mask_value(1, true)  # Player bodies use default layer 1
+		trigger.set_collision_mask_value(2, false)
 
 		trigger.body_entered.connect(_on_body_entered.bind(def))
 		add_child(trigger)
