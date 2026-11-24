@@ -51,15 +51,22 @@ func unlock(id: String) -> void:
 func is_unlocked(id: String) -> bool:
 	return achievements.has(id) and bool(achievements[id]["unlocked"])
 
-func get_unlocked_count() -> int:
+func get_unlocked_count(world_ids: Array[int] = []) -> int:
 	var count := 0
 	for a in achievements.values():
 		if a["unlocked"]:
-			count += 1
+			var w := int(a.get("world_id", 0))
+			if world_ids.is_empty() or w in world_ids:
+				count += 1
 	return count
 
-func get_total_count() -> int:
-	return achievements.size()
+func get_total_count(world_ids: Array[int] = []) -> int:
+	var count := 0
+	for a in achievements.values():
+		var w := int(a.get("world_id", 0))
+		if world_ids.is_empty() or w in world_ids:
+			count += 1
+	return count
 
 # === PER-WORLD & MAJORITY THRESHOLD (GDD §5, §7) ===
 
@@ -78,16 +85,18 @@ func get_world_total_count(world_id: int) -> int:
 	return count
 
 func has_majority_achievements() -> bool:
-	var total := get_total_count()
+	var world_ids: Array[int] = [1, 2, 3]
+	var total := get_total_count(world_ids)
 	if total == 0:
 		return false
-	return (float(get_unlocked_count()) / float(total)) > 0.5
+	return (float(get_unlocked_count(world_ids)) / float(total)) > 0.5
 
 func get_achievement_completion_ratio() -> float:
-	var total := get_total_count()
+	var world_ids: Array[int] = [1, 2, 3]
+	var total := get_total_count(world_ids)
 	if total == 0:
 		return 0.0
-	return float(get_unlocked_count()) / float(total)
+	return float(get_unlocked_count(world_ids)) / float(total)
 
 # === WORLD BOSSES (GDD §4, §5) ===
 
