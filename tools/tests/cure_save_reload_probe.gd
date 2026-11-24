@@ -22,7 +22,7 @@ func _assert(cond: bool, msg: String) -> void:
 		printerr("  FAIL: ", msg)
 
 func _get_save() -> Node:
-	var root: Node = root
+	var root: Node = get_root()
 	if root and root.has_node("Save"):
 		return root.get_node("Save")
 	return null
