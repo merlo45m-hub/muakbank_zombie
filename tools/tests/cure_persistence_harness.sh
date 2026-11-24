@@ -9,7 +9,7 @@
 set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 GODOT_BIN="${GODOT_BIN:-/root/Godot_v4.7-stable_linux.x86_64}"
 TIMEOUT_S="${TIMEOUT_S:-420}"
 XVFB_RUN="${XVFB_RUN:-xvfb-run -a}"
