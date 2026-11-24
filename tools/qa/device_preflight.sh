@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # tools/qa/device_preflight.sh — read-only device preflight gate.
 #
 # Reads ADB_TARGET (default 127.0.0.1:5555) and PKG (optional, reserved for
