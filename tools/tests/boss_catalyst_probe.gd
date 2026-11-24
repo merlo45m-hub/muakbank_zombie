@@ -15,11 +15,11 @@
 ## registration under --script.
 extends SceneTree
 
-const AM_SCRIPT := load("res://scripts/core/AchievementManager.gd")
-const WP_SCRIPT := load("res://scripts/core/WorldProgression.gd")
-const WM_SCRIPT := load("res://scripts/gameplay/WaveManager.gd")
-const CC_SCRIPT := load("res://scripts/gameplay/CureCatalysts.gd")
-const MOCK_CM := load("res://tools/tests/stubs/mock_catalyst_collection.gd")
+var AM_SCRIPT: GDScript = null
+var WP_SCRIPT: GDScript = null
+var WM_SCRIPT: GDScript = null
+var CC_SCRIPT: GDScript = null
+var MOCK_CM: GDScript = null
 
 const WORLD_1 := 1
 const WORLD_2 := 2
@@ -43,6 +43,11 @@ func _on_gate_blocked(required: int, actual: int) -> void:
 	_gate_actual = actual
 
 func _initialize() -> void:
+	AM_SCRIPT = load("res://scripts/core/AchievementManager.gd") as GDScript
+	WP_SCRIPT = load("res://scripts/core/WorldProgression.gd") as GDScript
+	WM_SCRIPT = load("res://scripts/gameplay/WaveManager.gd") as GDScript
+	CC_SCRIPT = load("res://scripts/gameplay/CureCatalysts.gd") as GDScript
+	MOCK_CM = load("res://tools/tests/stubs/mock_catalyst_collection.gd") as GDScript
 	for _i in range(4):
 		await process_frame
 
