@@ -65,7 +65,8 @@ func _ready() -> void:
 	achievement_manager = get_node_or_null("AchievementManager")
 	camera_shake = get_node_or_null("CameraShake")
 	# Secret transport triggers (spawned at runtime, not in scene)
-	secret_transport_triggers = load("res://scripts/world/SecretTransportTriggers.gd").instantiate()
+	var trigger_script: GDScript = load("res://scripts/world/SecretTransportTriggers.gd") as GDScript
+	secret_transport_triggers = trigger_script.new()
 	add_child(secret_transport_triggers)
 	
 	# Set up level objectives
