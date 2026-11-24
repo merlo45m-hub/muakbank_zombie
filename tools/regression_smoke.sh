@@ -123,6 +123,9 @@
 # CONFIG (env overrides, all optional)
 #   GODOT_BIN  engine binary      (default: /root/Godot_v4.7-stable_linux.x86_64)
 #   TIMEOUT_S  per-step timeout s (default: 420; the fresh import is the slowest)
+#   REUSE_IMPORT=1  keep .godot and skip the destructive fresh-import reset
+#                   for LOCAL retry runs; CI default remains a clean import.
+#   FAST_PROBE_TIMEOUT  fast preflight per-probe timeout s (default: 120)
 # ============================================================================
 
 set -uo pipefail
@@ -131,6 +134,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 GODOT_BIN="${GODOT_BIN:-/root/Godot_v4.7-stable_linux.x86_64}"
 TIMEOUT_S="${TIMEOUT_S:-420}"
+FAST_PROBE_TIMEOUT="${FAST_PROBE_TIMEOUT:-120}"
 XVFB_RUN="${XVFB_RUN:-xvfb-run -a}"
 
 BOOT_FRAMES_DEV=180
@@ -141,6 +145,7 @@ MINIGAME_SUMMARY="MINIWIN RESULT ALL WIN REACHABLE"
 ALLOWED='resources still in use at exit|RID allocations of type .* were leaked at exit|RID allocations leaked|Pages in use exist at exit in PagedAllocator|ObjectDB instances were leaked at exit|cannot connect to daemon tcp:5037|llvmpipe|libGL error|Mesa|GODOT_SILENCE_ROOT_WARNING'
 
 CHECK=0
+FAST_DONE=()
 ERRORS=0
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 DETAILS=""
@@ -158,6 +163,8 @@ notify_failure() {
     fi
 }
 bad()  { ERRORS=$((ERRORS + 1)); DETAILS="${DETAILS}${DETAILS:+; }$1"; log "  FAIL [$1]"; notify_failure "$1"; }
+
+probe_done() { local n; for n in "${FAST_DONE[@]}"; do [ "$n" = "$1" ] && return 0; done; return 1; }
 
 # scan_errors <logfile> <check_name> — the fixed error criteria for a run log:
 # any animation-not-found, script error / parse error, or non-allowlisted ERROR.
@@ -225,7 +232,10 @@ fi
 # --- 2/21 fresh headless import (regenerates .godot) ------------------------
 CHECK=$((CHECK + 1))
 log "[check ${CHECK}/23] import: fresh headless import until stable (max 3 passes)"
-rm -rf "${PROJECT_ROOT}/.godot"
+# REUSE_IMPORT=1 keeps .godot for LOCAL retry runs; CI default is clean import.
+if [ "${REUSE_IMPORT:-0}" != "1" ]; then
+    rm -rf "${PROJECT_ROOT}/.godot"
+fi
 # gitignored cache dir: worktree/CI checkouts may miss it; editor_doc_cache write fails
 # inside import when absent, making the stability loop spin 3 passes for nothing.
 mkdir -p "${PROJECT_ROOT}/godot/cache"
@@ -256,6 +266,46 @@ if [ -z "$IMPORT_PASS" ]; then
     bad "import: never stable after 3 passes; last error: ${_last:-see import3.log}"
 fi
 unset _bad _last
+
+# --- fast preflight: supplementary probes (manifest-driven, fail-fast) -------
+# Runs after the import gate, before the expensive scene/engine checks.
+# First failure exits FAIL immediately, before the slow numbered checks.
+# Completed probe names are recorded so their duplicate supplementary blocks
+# at the end are skipped while their PASS lines still print.
+MANIFEST="${PROJECT_ROOT}/tools/fast_probe_manifest.json"
+if [ -f "$MANIFEST" ]; then
+    while IFS=$'\t' read -r fname fscript fmarker; do
+        [ -n "$fname" ] || continue
+        plog="${WORKDIR}/fast_${fname}.log"
+        if timeout "${FAST_PROBE_TIMEOUT}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
+            --headless --path "$PROJECT_ROOT" --script "$fscript" > "$plog" 2>&1; then
+            if grep -q "$fmarker" "$plog"; then
+                log "  preflight: $fname: $fmarker"
+                FAST_DONE+=("$fname")
+            else
+                bad "fast preflight: $fname: PASS marker '$fmarker' missing"
+                log "REGRESSION: FAIL (fast preflight: $fname)"
+                exit 1
+            fi
+        else
+            frc=$?
+            if [ "$frc" -eq 124 ]; then
+                bad "fast preflight: $fname: TIMEOUT after ${FAST_PROBE_TIMEOUT}s"
+            else
+                bad "fast preflight: $fname: engine exited rc=${frc}"
+            fi
+            log "REGRESSION: FAIL (fast preflight: $fname)"
+            exit 1
+        fi
+    done < <(python3 - "$MANIFEST" <<'PY'
+import json, sys
+m = json.load(open(sys.argv[1]))
+for p in m.get("probes", []):
+    print(f"{p['name']}\t{p['script']}\t{p['marker']}")
+PY
+    )
+fi
+
 
 # --- + 3/5 scene boots --------------------------------------------------
 run_scene "res://scenes/dev/test_zombie.tscn"  "boot_dev"  "${BOOT_FRAMES_DEV}"  "" 0
@@ -557,7 +607,9 @@ fi
 # Clearly labeled supplementary check — NOT part of the numbered 23; the
 # denominator stays 23 and no existing label is renumbered.
 TRIGGER_LOG="${WORKDIR}/secret_transport_trigger.log"
-if [ -f "${PROJECT_ROOT}/tools/tests/secret_transport_trigger_probe.gd" ]; then
+if probe_done secret_transport_trigger; then
+    log "  secret_transport_trigger: SECRET_TRANSPORT_TRIGGER_PASS=true (fast preflight)"
+elif [ -f "${PROJECT_ROOT}/tools/tests/secret_transport_trigger_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
         --headless --path "$PROJECT_ROOT" --script tools/tests/secret_transport_trigger_probe.gd > "$TRIGGER_LOG" 2>&1
     TRIGGER_RC=$?
@@ -583,7 +635,9 @@ fi
 # Clearly labeled supplementary check — NOT part of the numbered 23; the
 # denominator stays 23 and no existing label is renumbered.
 BONUS_LOG="${WORKDIR}/collection_bonus_probe.log"
-if [ -f "${PROJECT_ROOT}/tools/tests/collection_bonus_probe.gd" ]; then
+if probe_done collection_bonus; then
+    log "  collection_bonus: COLLECTION_BONUS_PROBE_PASS=true (fast preflight)"
+elif [ -f "${PROJECT_ROOT}/tools/tests/collection_bonus_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN"         --headless --path "$PROJECT_ROOT" --script tools/tests/collection_bonus_probe.gd > "$BONUS_LOG" 2>&1
     BONUS_RC=$?
     if [ "$BONUS_RC" -ne 0 ]; then
@@ -609,7 +663,9 @@ fi
 # Clearly labeled supplementary check — NOT part of the numbered 23; the
 # denominator stays 23 and no existing label is renumbered.
 REGISTRY_LOG="${WORKDIR}/registry_record_probe.log"
-if [ -f "${PROJECT_ROOT}/tools/tests/registry_record_probe.gd" ]; then
+if probe_done registry_record; then
+    log "  registry_record: REGISTRY_RECORD_PROBE_PASS=true (fast preflight)"
+elif [ -f "${PROJECT_ROOT}/tools/tests/registry_record_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN"         --headless --path "$PROJECT_ROOT" --script tools/tests/registry_record_probe.gd > "$REGISTRY_LOG" 2>&1
     REGISTRY_RC=$?
     if [ "$REGISTRY_RC" -ne 0 ]; then
@@ -639,7 +695,9 @@ fi
 # Clearly labeled supplementary check — NOT part of the numbered 23; the
 # denominator stays 23 and no existing label is renumbered.
 CATALYST_LOG="${WORKDIR}/boss_catalyst_probe.log"
-if [ -f "${PROJECT_ROOT}/tools/tests/boss_catalyst_probe.gd" ]; then
+if probe_done boss_catalyst; then
+    log "  boss_catalyst: BOSS_CATALYST_PROBE_PASS=true (fast preflight)"
+elif [ -f "${PROJECT_ROOT}/tools/tests/boss_catalyst_probe.gd" ]; then
     timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
         --headless --path "$PROJECT_ROOT" --script tools/tests/boss_catalyst_probe.gd > "$CATALYST_LOG" 2>&1
     CATALYST_RC=$?

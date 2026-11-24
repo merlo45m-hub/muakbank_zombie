@@ -1,0 +1,24 @@
+{
+  "probes": [
+    {
+      "name": "secret_transport_trigger",
+      "script": "tools/tests/secret_transport_trigger_probe.gd",
+      "marker": "SECRET_TRANSPORT_TRIGGER_PASS=true"
+    },
+    {
+      "name": "collection_bonus",
+      "script": "tools/tests/collection_bonus_probe.gd",
+      "marker": "COLLECTION_BONUS_PROBE_PASS=true"
+    },
+    {
+      "name": "registry_record",
+      "script": "tools/tests/registry_record_probe.gd",
+      "marker": "REGISTRY_RECORD_PROBE_PASS=true"
+    },
+    {
+      "name": "boss_catalyst",
+      "script": "tools/tests/boss_catalyst_probe.gd",
+      "marker": "BOSS_CATALYST_PROBE_PASS=true"
+    }
+  ]
+}
