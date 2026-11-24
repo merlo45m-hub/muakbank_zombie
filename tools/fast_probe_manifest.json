@@ -19,6 +19,11 @@
       "name": "boss_catalyst",
       "script": "tools/tests/boss_catalyst_probe.gd",
       "marker": "BOSS_CATALYST_PROBE_PASS=true"
+    },
+    {
+      "name": "dismantle_stress",
+      "script": "tools/tests/dismantle_stress_playtest.gd",
+      "marker": "DISMANTLE_STRESS_PASS=true"
     }
   ]
 }
