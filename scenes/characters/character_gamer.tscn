@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/core/Player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/gameplay/MobileControls.gd" id="2"]
-[ext_resource type="PackedScene" path="res://assets/models/cc0/blocks/character-b.glb" id="model"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/blocks/character_b_rounded.glb" id="model"]
 [ext_resource type="PackedScene" path="res://assets/models/prop_controller.glb" id="prop_controller"]
 
 [sub_resource type="CapsuleShape3D" id="PlayerCollision"]

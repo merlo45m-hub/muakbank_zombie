@@ -5382,5 +5382,45 @@
         "Z": 0.02
       }
     }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character_a_rounded.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character_b_rounded.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character_f_rounded.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character_i_rounded.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
+  },
+  {
+    "file": "assets/models/cc0/blocks/character_q_rounded.glb",
+    "animation_container": true,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0
+    }
   }
 ]

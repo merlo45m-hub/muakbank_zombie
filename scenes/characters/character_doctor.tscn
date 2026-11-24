@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://scripts/gameplay/WeaponSystem.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/gameplay/MobileControls.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/gameplay/HitFeedback.gd" id="4"]
-[ext_resource type="PackedScene" path="res://assets/models/cc0/blocks/character-i.glb" id="model"]
+[ext_resource type="PackedScene" path="res://assets/models/cc0/blocks/character_i_rounded.glb" id="model"]
 [ext_resource type="PackedScene" path="res://assets/models/prop_stethoscope.glb" id="prop_stethoscope"]
 
 [sub_resource type="CapsuleShape3D" id="PlayerCollision"]
