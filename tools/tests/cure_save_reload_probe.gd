@@ -119,7 +119,7 @@ func _run_verify() -> void:
 		printerr("CURE_VERIFY_FAIL: %d assertions failed" % _failures)
 		quit(1)
 
-func _ready() -> void:
+func _initialize() -> void:
 	await process_frame
 	var mode: String = OS.get_environment(MODE_ENV)
 	if mode == "SETUP":
