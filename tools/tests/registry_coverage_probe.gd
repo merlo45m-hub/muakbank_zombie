@@ -61,7 +61,7 @@ func _initialize() -> void:
 	var animals: Array[String] = []
 	var spawner_src: String = FileAccess.get_file_as_string("res://scripts/characters/ZombieSpawner3D.gd")
 	var animal_re: RegEx = RegEx.new()
-	animal_re.compile("zombie_[a-z]+_scene.*\\[\"([a-z_]+)\"\\]")
+	animal_re.compile("zombie_[a-z]+_scene.*\\[\"([a-z_]+)\\"\\]")
 	for match in animal_re.search_all(spawner_src):
 		animals.append(match.get_string(1))
 	_assert(animals.size() == 5, "5 animal ids derived from ZombieSpawner3D table (%s)" % str(animals))
