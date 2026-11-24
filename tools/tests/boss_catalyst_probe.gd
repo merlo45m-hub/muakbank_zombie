@@ -52,6 +52,13 @@ func _initialize() -> void:
 		await process_frame
 
 	print("=== Issue #86: Boss Catalyst Tier Gate ===")
+	# Autoloads ARE registered under --script; remove real ones so stubs occupy
+	# the exact absolute paths production code resolves.
+	for _node_name in ["Save", "WorldProgression", "CollectionManager", "AchievementManager"]:
+		var _old: Node = root.get_node_or_null(_node_name)
+		if _old != null:
+			root.remove_child(_old)
+			_old.free()
 
 	# --- fixtures under root (autoloads are NOT registered under --script) ---
 	var save: Node = Node.new()
@@ -79,6 +86,7 @@ func _initialize() -> void:
 	var wm: Node = WM_SCRIPT.new()
 	wm.name = "WaveManager"
 	wm.boss_gate_blocked.connect(_on_gate_blocked)
+	root.add_child(wm)
 
 	# WorldProgression region 1 => active tier 1 < world level 2 => blocked.
 	wp.set("current_region", 1)
