@@ -148,6 +148,7 @@ func _init_survivors() -> void:
 func _ready() -> void:
 	_init_survivors()
 	_soften_bloom()
+	_soften_lighting()
 
 	var f := "res://assets/fonts/SpecialElite-Regular.ttf"
 	if ResourceLoader.exists(f):
@@ -200,10 +201,32 @@ func _soften_bloom() -> void:
 	if we == null or we.environment == null:
 		return
 	var env: Environment = we.environment.duplicate() as Environment
-	env.glow_intensity = 0.60
-	env.glow_bloom = 0.16
-	env.glow_hdr_threshold = 0.95
+	env.glow_intensity = 0.35
+	env.glow_bloom = 0.08
+	env.glow_hdr_threshold = 1.10
+	env.ambient_light_energy = 0.35
 	we.environment = env
+
+
+func _soften_lighting() -> void:
+	# Reference #12 is a dark misty graveyard with coloured pedestal pools, not
+	# an overexposed studio. The shared backdrop ships 11 omni lights; scale the
+	# character-select-only instances so props/readability survive on Vulkan.
+	var bg: Node = get_node_or_null("Background3D")
+	if bg == null:
+		return
+	var energy_by_name: Dictionary = {
+		"MoonLight": 0.9,
+		"RimLight": 0.2,
+		"Ambient": 0.2,
+		"MenuFill": 0.5,
+		"LeftFill": 0.7,
+		"RightFill": 0.6,
+	}
+	for light in bg.find_children("*", "Light3D", true, false):
+		var node_name: String = str((light as Node).name)
+		if energy_by_name.has(node_name):
+			(light as Light3D).light_energy = float(energy_by_name[node_name])
 
 
 func _get_camera() -> Camera3D:
@@ -385,7 +408,7 @@ func _build_pedestals(bg: Node3D) -> void:
 		var light := OmniLight3D.new()
 		light.position = Vector3(0.0, 0.68, 0.12)
 		light.light_color = col
-		light.light_energy = 0.5
+		light.light_energy = 0.25
 		light.omni_range = 2.8
 		light.omni_attenuation = 1.4
 		light.shadow_enabled = false
@@ -699,8 +722,8 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 			var c: Color = _survivors[i].color
 			_pedestal_inner_mats[i].albedo_color = Color(c.r, c.g, c.b, 0.65 if is_sel else 0.25)
 		if i < _pedestal_lights.size() and _pedestal_lights[i] != null:
-			_pedestal_lights[i].light_energy = 1.8 if is_sel else 0.45
-			_pedestal_lights[i].omni_range = 3.6 if is_sel else 2.6
+			_pedestal_lights[i].light_energy = 0.8 if is_sel else 0.22
+			_pedestal_lights[i].omni_range = 3.2 if is_sel else 2.4
 
 	# 2. Update animations: active holding idle on selected, idle on others
 	for i in range(_anim_players.size()):
