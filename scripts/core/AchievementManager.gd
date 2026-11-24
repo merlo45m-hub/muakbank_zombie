@@ -85,14 +85,14 @@ func get_world_total_count(world_id: int) -> int:
 	return count
 
 func has_majority_achievements() -> bool:
-	var world_ids := [1, 2, 3]
+	var world_ids: Array[int] = [1, 2, 3]
 	var total := get_total_count(world_ids)
 	if total == 0:
 		return false
 	return (float(get_unlocked_count(world_ids)) / float(total)) > 0.5
 
 func get_achievement_completion_ratio() -> float:
-	var world_ids := [1, 2, 3]
+	var world_ids: Array[int] = [1, 2, 3]
 	var total := get_total_count(world_ids)
 	if total == 0:
 		return 0.0
