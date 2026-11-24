@@ -819,6 +819,13 @@ func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 	var weapon_fire_rate: float = float(weapon_data.get("fire_rate", attack_cooldown))
 	var speed_mult: float = character_stats.attack_speed if character_stats else 1.0
 	attack_timer = weapon_fire_rate * speed_mult
+	# Bestiary power bonus from CollectionManager (capped at 0.5 by CollectionManager).
+	var bestiary_bonus: float = 0.0
+	var cm: Node = get_node_or_null("/root/CollectionManager")
+	if cm != null and cm.has_method("get_bonuses"):
+		var bonuses: Dictionary = cm.call("get_bonuses")
+		if bonuses.has("bestiary_power_bonus"):
+			bestiary_bonus = float(bonuses["bestiary_power_bonus"])
 	# Attack against the spawner's cached live-enemy list (O(1)) instead of a
 	# per-swing get_nodes_in_group("enemies") scan; distance-prefiltered so
 	# take_damage() only runs for in-range enemies.
@@ -837,6 +844,9 @@ func _apply_damage_to_enemies(weapon_data: Dictionary) -> void:
 			damage = int(damage * character_stats.weapon_damage_multiplier)
 		if is_rage_active:
 			damage *= 2
+		# Apply bestiary power bonus (deterministic integer rounding).
+		if bestiary_bonus > 0.0:
+			damage = int(damage * (1.0 + bestiary_bonus))
 		var is_crit: bool = false
 		if character_stats and randf() < character_stats.critical_chance:
 			damage = int(damage * character_stats.critical_multiplier)
