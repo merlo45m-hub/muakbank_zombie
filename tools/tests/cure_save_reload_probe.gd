@@ -22,7 +22,7 @@ func _assert(cond: bool, msg: String) -> void:
 		printerr("  FAIL: ", msg)
 
 func _get_save() -> Node:
-	var root: Node = get_tree().root
+	var root: Node = root
 	if root and root.has_node("Save"):
 		return root.get_node("Save")
 	return null
@@ -52,7 +52,7 @@ func _run_setup() -> void:
 
 	var am: AchievementManager = AchievementManager.new()
 	am.name = "CureSetupManager"
-	get_tree().root.add_child(am)
+	root.add_child(am)
 	_register_cure_achievements(am)
 
 	# All three world bosses defeated and a majority of achievements unlocked.
@@ -100,7 +100,7 @@ func _run_verify() -> void:
 
 	var am: AchievementManager = AchievementManager.new()
 	am.name = "CureVerifyManager"
-	get_tree().root.add_child(am)
+	root.add_child(am)
 	_register_cure_achievements(am)
 	am.load_progress()
 
