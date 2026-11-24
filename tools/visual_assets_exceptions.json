@@ -10,26 +10,6 @@
       "path": "scenes/main/game.tscn",
       "reason": "GroundMesh gameplay floor + debug player capsule are intentional collision/dev primitives; world dressing is owner creative lane (#63 out of scope)",
       "owner": "dressing-directive"
-    },
-    {
-      "path": "scenes/characters/character_doctor.tscn",
-      "reason": "Stethoscope accessory primitive — character fidelity pass #63 I4",
-      "owner": "#63 I4"
-    },
-    {
-      "path": "scenes/characters/character_gamer.tscn",
-      "reason": "Controller accessory primitive — #63 I4",
-      "owner": "#63 I4"
-    },
-    {
-      "path": "scenes/characters/character_nurse.tscn",
-      "reason": "Mask primitive replaced by contracted CC0 aid-mask.glb in #63 I4; remaining exception is the syringe primitive only.",
-      "owner": "#63 I4"
-    },
-    {
-      "path": "scenes/characters/character_streamer.tscn",
-      "reason": "Phone primitive — #63 I4",
-      "owner": "#63 I4"
     }
   ]
 }
