@@ -584,9 +584,14 @@ func end_game(survived: bool) -> void:
 func on_zombie_killed(zombie_type: String) -> void:
 	if not game_active:
 		return
-	
+
 	zombies_killed += 1
 	score += SCORE_PER_KILL
+
+	# Record defeated entity into CollectionManager
+	var cm: Node = get_node_or_null("/root/CollectionManager")
+	if cm != null and cm.has_method("record_defeat"):
+		cm.call("record_defeat", zombie_type)
 
 	if has_node("/root/Rules"):
 		var rules_node: Node = get_node("/root/Rules")

@@ -202,6 +202,16 @@ func _record_registries() -> void:
 		cm.call("record_dismantle", prop_asset_id, required_tool_tier)
 	if not bestiary_id.is_empty() and cm.has_method("record_defeat"):
 		cm.call("record_defeat", bestiary_id)
+	# Record deterministic loot items from the table entry
+	for entry in _loot_descriptor:
+		if entry is Dictionary and entry.has("drops"):
+			var drops: Array = entry["drops"]
+			for drop in drops:
+				if drop is Dictionary and drop.has("item_id") and drop.has("count"):
+					var item_id: String = drop["item_id"]
+					var count: int = int(drop["count"])
+					if cm.has_method("record_item"):
+						cm.call("record_item", item_id, count)
 
 
 func _begin_despawn() -> void:
