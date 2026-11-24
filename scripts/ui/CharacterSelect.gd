@@ -216,17 +216,20 @@ func _soften_lighting() -> void:
 	if bg == null:
 		return
 	var energy_by_name: Dictionary = {
-		"MoonLight": 0.9,
-		"RimLight": 0.2,
-		"Ambient": 0.2,
-		"MenuFill": 0.5,
-		"LeftFill": 0.7,
-		"RightFill": 0.6,
+		"MoonLight": 0.7,
+		"RimLight": 0.15,
+		"Ambient": 0.15,
+		"MenuFill": 0.3,
+		"LeftFill": 0.45,
+		"RightFill": 0.25,
 	}
 	for light in bg.find_children("*", "Light3D", true, false):
 		var node_name: String = str((light as Node).name)
 		if energy_by_name.has(node_name):
 			(light as Light3D).light_energy = float(energy_by_name[node_name])
+		elif light is OmniLight3D:
+			# Unnamed lantern/orb lights are spawned by TitleBackground at runtime.
+			(light as OmniLight3D).light_energy *= 0.35
 
 
 func _get_camera() -> Camera3D:
@@ -722,8 +725,8 @@ func _select_character(index: int, play_sound: bool = true, persist: bool = true
 			var c: Color = _survivors[i].color
 			_pedestal_inner_mats[i].albedo_color = Color(c.r, c.g, c.b, 0.65 if is_sel else 0.25)
 		if i < _pedestal_lights.size() and _pedestal_lights[i] != null:
-			_pedestal_lights[i].light_energy = 0.8 if is_sel else 0.22
-			_pedestal_lights[i].omni_range = 3.2 if is_sel else 2.4
+			_pedestal_lights[i].light_energy = 0.5 if is_sel else 0.18
+			_pedestal_lights[i].omni_range = 2.8 if is_sel else 2.2
 
 	# 2. Update animations: active holding idle on selected, idle on others
 	for i in range(_anim_players.size()):
