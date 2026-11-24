@@ -1,120 +1,71 @@
+## secret_transport_trigger_probe.gd — Issue #83 runtime proof.
+## Extends SceneTree: entry point is _initialize(), not _ready().
 extends SceneTree
-## GDD Issue #25 / #83 — secret-transport trigger regression probe.
-## Lightweight SceneTree probe — NO game scene boot, NO real autoloads.
-## Instantiates the real SecretTransportTriggers helper programmatically per
-## region and asserts:
-##   1. trigger exists with correct target per region
-##   2. unreachable link does not hop
-##   3. reachable link calls request_secret_hop exactly once
-##   4. no double fire on repeated enter
 
-class SecretProgressionStub extends Node:
-	var current_region: int = 1
-	var unlocked_regions: Array[int] = [1]
-	var reachable: Dictionary = {}   # "[from,to]" -> bool
+const ST := preload("res://scripts/world/SecretTransportTriggers.gd")
+const WP_STUB := preload("res://tools/tests/stubs/mock_world_progression.gd")
+const HOP_STUB := preload("res://tools/tests/stubs/mock_world_hop_manager.gd")
 
-	func is_secret_reachable(from_region: int, to_region: int) -> bool:
-		return bool(reachable.get("[%d,%d]" % [from_region, to_region], false))
+var _failures: int = 0
 
-class SecretHopSpy extends Node:
-	var calls: Array[int] = []
-
-	func request_secret_hop(to_region: int) -> void:
-		calls.append(to_region)
-
-var _stub: SecretProgressionStub = null
-var _spy: SecretHopSpy = null
-var _helper: Node = null
-var _failures: Array[String] = []
-
-# Mirrors SecretTransportTriggers.TRIGGER_DEFS.
-var DEFS: Array[Dictionary] = [
-	{"from": 1, "to": 2, "label": "secret_crypt_to_industrial"},
-	{"from": 2, "to": 3, "label": "secret_freight_to_biolab"},
-	{"from": 3, "to": 1, "label": "secret_decon_to_suburban"},
-	{"from": 3, "to": 2, "label": "secret_conduit_to_industrial"},
-]
-
-func _check(cond: bool, name: String) -> void:
-	if cond:
-		print("TRIGGER_OK ", name)
+func _assert(condition: bool, message: String) -> void:
+	if condition:
+		print("  PASS: ", message)
 	else:
-		print("TRIGGER_FAIL ", name)
-		_failures.append(name)
+		_failures += 1
+		printerr("  FAIL: ", message)
 
 func _initialize() -> void:
+	for _i in range(4):
+		await process_frame
+
+	var wp: Node = WP_STUB.new()
+	wp.name = "WorldProgression"
+	root.add_child(wp)
+	var hop: Node = HOP_STUB.new()
+	hop.name = "WorldHopManager"
+	root.add_child(hop)
+	var triggers: Node3D = ST.new()
+	triggers.name = "SecretTransportTriggersProbe"
+	root.add_child(triggers)
 	await process_frame
 
-	# --- stubs: WorldProgression + spy WorldHopManager under root -------
-	_stub = SecretProgressionStub.new()
-	_stub.name = "WorldProgression"
-	get_root().add_child(_stub)
+	# Unreachable link must not spawn a trigger.
+	triggers.spawn_triggers_for_region(1)
+	_assert(triggers.get_trigger_positions().is_empty(), "unreachable W1->2 spawns no trigger")
 
-	_spy = SecretHopSpy.new()
-	_spy.name = "WorldHopManager"
-	get_root().add_child(_spy)
+	# Reachable link spawns a named trigger.
+	wp.set_reachable(1, 2, true)
+	triggers.spawn_triggers_for_region(1)
+	var trigger: Node = triggers.find_child("secret_crypt_to_industrial", true, false)
+	_assert(trigger != null, "reachable W1->2 trigger exists")
+	if trigger == null:
+		printerr("SECRET_TRANSPORT_PROBE_FAIL: no trigger")
+		quit(1)
+		return
 
-	# --- real trigger helper, instantiated programmatically -------------
-	var helper_sc: GDScript = load("res://scripts/world/SecretTransportTriggers.gd") as GDScript
-	_helper = helper_sc.new()
-	get_root().add_child(_helper)
-	await process_frame
+	var area: Area3D = trigger as Area3D
+	_assert(area != null, "trigger is Area3D")
+	_assert(area.get_collision_mask_value(2), "trigger masks player layer 2")
 
-	# All secret links reachable by default.
-	for d in DEFS:
-		_stub.set_reachable(int(d.get("from")), int(d.get("to")), true)
+	# Simulate a player entering twice: hop exactly once.
+	var body: Node3D = Node3D.new()
+	body.name = "ProbePlayer"
+	body.add_to_group("player")
+	root.add_child(body)
+	area.emit_signal("body_entered", body)
+	area.emit_signal("body_entered", body)
+	var calls: Array[int] = hop.calls
+	_assert(calls.size() == 1, "body_entered fires request_secret_hop once: %d" % calls.size())
+	_assert(calls[0] == 2, "hop target is region 2")
 
-	var player: Node = Node.new()
-	player.add_to_group("player")
+	# Region change clears triggers.
+	triggers.clear_triggers()
+	_assert(triggers.find_child("secret_crypt_to_industrial", true, false) == null, "clear_triggers removes old triggers")
 
-	func fire(def: Dictionary) -> void:
-		_helper.call("_on_body_entered", player, def)
-
-	# --- 1) trigger exists with correct target per region ---------------
-	for rid in [1, 2, 3]:
-		_stub.current_region = rid
-		_helper.call("spawn_triggers_for_region", rid)
-		var expected: int = 0
-		for d in DEFS:
-			if int(d.get("from")) == rid and _stub.is_secret_reachable(rid, int(d.get("to"))):
-				expected += 1
-		var got: int = int(_helper.call("get_trigger_positions").size())
-		_check(got == expected, "spawn_count_region_%d" % [rid])
-
-	# --- 3) reachable link calls request_secret_hop exactly once --------
-	_stub.current_region = 1
-	_helper.call("spawn_triggers_for_region", 1)
-	var n0: int = _spy.calls.size()
-	fire({"from": 1, "to": 2, "label": "secret_crypt_to_industrial"})
-	_check(_spy.calls.size() == n0 + 1 and _spy.calls[-1] == 2,
-		"reachable_1_to_2_calls_once")
-	_check(_spy.calls[-1] == 2, "correct_target_region_2")
-
-	# --- 4) no double fire on repeated enter ----------------------------
-	fire({"from": 1, "to": 2, "label": "secret_crypt_to_industrial"})
-	fire({"from": 1, "to": 2, "label": "secret_crypt_to_industrial"})
-	_check(_spy.calls.size() == n0 + 1, "no_double_fire_calls")
-
-	# --- 2) unreachable link does not hop -------------------------------
-	_stub.set_reachable(1, 2, false)
-	_helper.call("spawn_triggers_for_region", 1)
-	_check(int(_helper.call("get_trigger_positions").size()) == 0,
-		"region1_no_triggers_when_unreachable")
-	var n1: int = _spy.calls.size()
-	fire({"from": 1, "to": 2, "label": "secret_crypt_to_industrial"})
-	_check(_spy.calls.size() == n1, "unreachable_1_to_2_no_hop")
-
-	# reachable cross-check on an always-open link (3->1).
-	_stub.current_region = 3
-	_helper.call("spawn_triggers_for_region", 3)
-	_check(int(_helper.call("get_trigger_positions").size()) == 2, "region3_two_triggers")
-	var n2: int = _spy.calls.size()
-	fire({"from": 3, "to": 1, "label": "secret_decon_to_suburban"})
-	_check(_spy.calls.size() == n2 + 1 and _spy.calls[-1] == 1,
-		"reachable_3_to_1_calls_once")
-
-	var ok: bool = _failures.is_empty()
-	print("SECRET_TRANSPORT_TRIGGER_PASS=", ok)
-	if not ok:
-		print("FAILURES=", _failures)
-	quit(0 if ok else 1)
+	if _failures == 0:
+		print("SECRET_TRANSPORT_PROBE_PASS=true")
+		quit(0)
+	else:
+		printerr("SECRET_TRANSPORT_PROBE_FAIL: %d assertions failed" % _failures)
+		quit(1)
