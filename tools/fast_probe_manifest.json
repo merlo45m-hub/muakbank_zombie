@@ -24,6 +24,11 @@
       "name": "dismantle_stress",
       "script": "tools/tests/dismantle_stress_playtest.gd",
       "marker": "DISMANTLE_STRESS_PASS=true"
+    },
+    {
+      "name": "registry_coverage",
+      "script": "tools/tests/registry_coverage_probe.gd",
+      "marker": "REGISTRY_COVERAGE_PASS=true"
     }
   ]
 }
