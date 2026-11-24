@@ -7,7 +7,7 @@ Scope: main `0c8a549e95bfeec748b18db1c66bcb0d83dacc85`.
 - `audit_project.py .`: after the GLB parent-path fix, `0 errors / 0 warnings`. Negative control with a fake missing parent segment produced `1 error`, then restored to 0.
 - `verify_scene_resolves.py`: `REF_SCAN: PASS`.
 - GDScript typing analyzer: `TYPING_FINDINGS=0`.
-- Batched full engine scene sweep (`MKB_SWEEP=full`): 10 batches, all rc=0; 94 shipped scenes loaded and instantiated; 5,040 resolved MeshInstance3D; 0 allowed-WIP failures. The collector intentionally skips `tools/` and `addons/`; those are covered by the static validator and the all-resources export.
+- Batched full engine scene sweep (`MKB_SWEEP=full`): 10 batches, all rc=0; 94 scenes loaded and instantiated (93 under `scenes/` plus 1 under `assets/` as resolved by the Godot collector); 5,040 resolved MeshInstance3D; 0 allowed-WIP failures. The collector intentionally skips `tools/` and `addons/`; those are covered by the static validator and the all-resources export.
 - All-resources Android export: valid signed APK (88,366,889 bytes, zip CRC clean, manifest/dex/arsc present); 0 non-leak parse/load errors. `rc=134` after the export is a benign post-export shutdown abort.
 
 ## Artifact fixes
