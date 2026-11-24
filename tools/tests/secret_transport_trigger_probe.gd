@@ -20,15 +20,16 @@ func _initialize() -> void:
 		await process_frame
 
 	var wp: Node = WP_STUB.new()
-	wp.name = "WorldProgression"
-	root.add_child(wp)
 	var hop: Node = HOP_STUB.new()
-	hop.name = "WorldHopManager"
-	root.add_child(hop)
 	var triggers: Node3D = ST.new()
 	triggers.name = "SecretTransportTriggersProbe"
 	root.add_child(triggers)
 	await process_frame
+
+	# Override autoload lookups with stubs after _ready so the probe never
+	# performs a real threaded hop or mutates the live WorldProgression.
+	triggers.set("_wp", wp)
+	triggers.set("_hop", hop)
 
 	# Unreachable link must not spawn a trigger.
 	triggers.spawn_triggers_for_region(1)
