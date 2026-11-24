@@ -84,7 +84,13 @@ for path in scene_files + res_files:
         ext_refs.append((r, lineno_of(text, m.start()), parse_attrs(m.group(1))))
     for m in SUB_RES.finditer(text):
         sub_blocks[r].append((parse_attrs(m.group(1)).get('type', ''), lineno_of(text, m.start())))
-    nodes = [(lineno_of(text, m.start()), parse_attrs(m.group(1))) for m in NODE_HDR.finditer(text)]
+    nodes = []
+    for m in NODE_HDR.finditer(text):
+        attrs = parse_attrs(m.group(1))
+        # instance=ExtResource("...") is unquoted, so parse_attrs skips it.
+        if 'instance=ExtResource(' in m.group(1):
+            attrs['instance'] = 'true'
+        nodes.append((lineno_of(text, m.start()), attrs))
     if nodes:
         node_decls[r] = nodes
 
