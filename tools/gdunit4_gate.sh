@@ -41,7 +41,7 @@ if [ ! -x "$GODOT" ] && ! command -v "$GODOT" >/dev/null 2>&1; then
 fi
 
 "$GODOT" --headless --path "$PROJECT_DIR" -s -d --remote-debug tcp://127.0.0.1:0 \
-  res://addons/gdUnit4/bin/GdUnitCmdTool.gd -a "$SUITE" > "$LOG" 2>&1
+  res://addons/gdUnit4/bin/GdUnitCmdTool.gd -a "$SUITE" --ignoreHeadlessMode > "$LOG" 2>&1
 rc=$?
 
 if [ "$rc" -eq 0 ]; then
