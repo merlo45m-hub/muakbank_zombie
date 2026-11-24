@@ -84,7 +84,13 @@ for path in scene_files + res_files:
         ext_refs.append((r, lineno_of(text, m.start()), parse_attrs(m.group(1))))
     for m in SUB_RES.finditer(text):
         sub_blocks[r].append((parse_attrs(m.group(1)).get('type', ''), lineno_of(text, m.start())))
-    nodes = [(lineno_of(text, m.start()), parse_attrs(m.group(1))) for m in NODE_HDR.finditer(text)]
+    nodes = []
+    for m in NODE_HDR.finditer(text):
+        attrs = parse_attrs(m.group(1))
+        # instance=ExtResource("...") is unquoted, so parse_attrs skips it.
+        if 'instance=ExtResource(' in m.group(1):
+            attrs['instance'] = 'true'
+        nodes.append((lineno_of(text, m.start()), attrs))
     if nodes:
         node_decls[r] = nodes
 
@@ -135,6 +141,9 @@ for r, ln, attrs in ext_refs:
 # E: node trees
 for r, nodes in node_decls.items():
     declared = {a.get('name', '') for _, a in nodes}
+    # Parent paths may drill into an instanced PackedScene/GLB. Those internal
+    # node names are not declared in the .tscn and must not be flagged.
+    instance_roots = {a.get('name', '') for _, a in nodes if 'instance' in a}
     by_name = collections.defaultdict(list)
     for ln, attrs in nodes:
         by_name[attrs.get('name', '')].append((ln, attrs))
@@ -150,7 +159,14 @@ for r, nodes in node_decls.items():
         parent = attrs.get('parent')
         if not parent or parent == '.':
             continue
-        missing_seg = [seg for seg in parent.split('/') if seg and seg not in declared]
+        missing_seg = []
+        for seg in parent.split('/'):
+            if not seg:
+                continue
+            if seg in instance_roots:
+                break
+            if seg not in declared:
+                missing_seg.append(seg)
         if missing_seg:
             issues.append(f"ERROR: {r}:{ln} node '{attrs.get('name')}' parent path '{parent}' has undeclared segment(s) {missing_seg}")
 
