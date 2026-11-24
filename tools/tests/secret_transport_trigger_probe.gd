@@ -65,7 +65,7 @@ func _initialize() -> void:
 	_assert(triggers.find_child("secret_crypt_to_industrial", true, false) == null, "clear_triggers removes old triggers")
 
 	if _failures == 0:
-		print("SECRET_TRANSPORT_PROBE_PASS=true")
+		print("SECRET_TRANSPORT_TRIGGER_PASS=true")
 		quit(0)
 	else:
 		printerr("SECRET_TRANSPORT_PROBE_FAIL: %d assertions failed" % _failures)
