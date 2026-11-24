@@ -5330,5 +5330,57 @@
         "VXZ_Wound"
       ]
     }
+  },
+  {
+    "file": "assets/models/prop_stethoscope.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.17,
+        "Y": 0.28,
+        "Z": 0.17
+      }
+    }
+  },
+  {
+    "file": "assets/models/prop_controller.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.31,
+        "Y": 0.14,
+        "Z": 0.16
+      }
+    }
+  },
+  {
+    "file": "assets/models/prop_syringe.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.05,
+        "Y": 0.29,
+        "Z": 0.05
+      }
+    }
+  },
+  {
+    "file": "assets/models/prop_phone.glb",
+    "dims_tolerance": 0.05,
+    "expect": {
+      "height_axis": "Y",
+      "min_height_frac": 0.0,
+      "dims": {
+        "X": 0.1,
+        "Y": 0.18,
+        "Z": 0.02
+      }
+    }
   }
 ]

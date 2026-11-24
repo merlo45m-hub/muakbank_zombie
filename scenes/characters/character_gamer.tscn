@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/core/Player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/gameplay/MobileControls.gd" id="2"]
 [ext_resource type="PackedScene" path="res://assets/models/cc0/blocks/character-b.glb" id="model"]
+[ext_resource type="PackedScene" path="res://assets/models/prop_controller.glb" id="prop_controller"]
 
 [sub_resource type="CapsuleShape3D" id="PlayerCollision"]
 radius = 0.3
@@ -19,15 +20,6 @@ roughness = 0.3
 emission_enabled = true
 emission = Color(0.35, 0.75, 1, 1)
 emission_energy_multiplier = 0.55
-[sub_resource type="BoxMesh" id="ControllerMesh"]
-size = Vector3(0.24, 0.08, 0.14)
-
-[sub_resource type="StandardMaterial3D" id="ControllerMaterial"]
-albedo_color = Color(0.8, 0.1, 0.3, 1.0)
-emission_enabled = true
-emission = Color(0.8, 0.1, 0.3, 1.0)
-emission_energy_multiplier = 0.5
-
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1")
 
@@ -41,10 +33,8 @@ transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 4.0, 0)
 mesh = SubResource("HeadsetMesh")
 material_override = SubResource("HeadsetMaterial")
 
-[node name="Prop" type="MeshInstance3D" parent="PlayerVisuals/Model/character-b/root/torso/arm-right"]
+[node name="Prop" type="Node3D" parent="PlayerVisuals/Model/character-b/root/torso/arm-right" instance=ExtResource("prop_controller")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, -1, 0.15)
-mesh = SubResource("ControllerMesh")
-material_override = SubResource("ControllerMaterial")
 
 [node name="PlayerCollision" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
