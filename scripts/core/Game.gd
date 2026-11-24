@@ -52,6 +52,7 @@ var difficulty_manager: Node = null
 var objective_manager: Node = null
 var achievement_manager: Node = null
 var camera_shake: Node = null
+var secret_transport_triggers: Node = null
 
 func _ready() -> void:
 	add_to_group("game")
@@ -63,6 +64,9 @@ func _ready() -> void:
 	objective_manager = get_node_or_null("ObjectiveManager")
 	achievement_manager = get_node_or_null("AchievementManager")
 	camera_shake = get_node_or_null("CameraShake")
+	# Secret transport triggers (spawned at runtime, not in scene)
+	secret_transport_triggers = load("res://scripts/world/SecretTransportTriggers.gd").instantiate()
+	add_child(secret_transport_triggers)
 	
 	# Set up level objectives
 	_setup_objectives()
@@ -113,9 +117,13 @@ func _load_environment() -> void:
 	if hop != null and hop.has_method("adopt"):
 		hop.adopt(env)
 	print("[Game] Loaded environment: ", env_scene)
-	
+
 	# Play ambient layer for this environment
 	Audio.play_ambient_for(Level.get_ambient_name(level))
+
+	# Spawn secret transport triggers for this region (Issue #83)
+	if secret_transport_triggers != null and secret_transport_triggers.has_method("spawn_triggers_for_region"):
+		secret_transport_triggers.call("spawn_triggers_for_region", level)
 
 ## Per-level spawn preference, in level-local coordinates. A HINT only: _place_player()
 ## probes the level's real collision and walks outward until it finds ground with room
