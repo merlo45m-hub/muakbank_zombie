@@ -147,8 +147,20 @@ func _roll_and_spawn_loot() -> Array:
 	var record: Array = []
 	var table: LootTable = get_node_or_null(loot_table_path) as LootTable
 	var parent3d: Node3D = get_parent() as Node3D
+	# Scavenge yield bonus from CollectionManager (capped at 0.5 by CollectionManager).
+	var scavenge_bonus: float = 0.0
+	var cm: Node = get_node_or_null("/root/CollectionManager")
+	if cm != null and cm.has_method("get_bonuses"):
+		var bonuses: Dictionary = cm.call("get_bonuses")
+		if bonuses.has("scavenge_yield_bonus"):
+			scavenge_bonus = float(bonuses["scavenge_yield_bonus"])
 	if table != null and parent3d != null:
+		# Apply scavenge yield bonus by rolling extra drops.
+		# Bonus is capped at 0.5 (50% extra), so max 1 extra drop per roll.
+		var extra_rolls: int = int(scavenge_bonus * 2.0)  # 0.5 -> 1 extra roll
 		table.spawn_drops(parent3d.global_position)
+		for _ in range(extra_rolls):
+			table.spawn_drops(parent3d.global_position)
 	# Deterministic descriptor from the asset-id-keyed dismantle table (NOT the
 	# random world drops): what CollectionLog / Bestiary display.
 	var entry: Dictionary = _table_entry()
