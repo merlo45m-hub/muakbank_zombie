@@ -159,7 +159,7 @@ func _roll_and_spawn_loot() -> Array:
 		# Bonus is capped at 0.5 (50% extra), so max 1 extra drop per roll.
 		var extra_rolls: int = int(scavenge_bonus * 2.0)  # 0.5 -> 1 extra roll
 		table.spawn_drops(parent3d.global_position)
-		for _ in range(extra_rolls):
+		for _roll_index in range(extra_rolls):
 			table.spawn_drops(parent3d.global_position)
 	# Deterministic descriptor from the asset-id-keyed dismantle table (NOT the
 	# random world drops): what CollectionLog / Bestiary display.
