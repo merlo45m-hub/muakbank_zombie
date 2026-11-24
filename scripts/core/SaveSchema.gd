@@ -129,6 +129,20 @@ static func deserialize(raw: Dictionary) -> Dictionary:
 	return out
 
 
+static func _to_bool(value: Variant, default: bool = false) -> bool:
+	if value is bool:
+		return value as bool
+	if value is String:
+		var lowered: String = (value as String).strip_edges().to_lower()
+		if lowered == "true":
+			return true
+		if lowered == "false":
+			return false
+	if value is int or value is float:
+		return int(value) != 0
+	return default
+
+
 static func _deserialize_field(ftype: int, value: Variant, default: Variant) -> Variant:
 	match ftype:
 		FieldType.TYPE_INT:
@@ -139,7 +153,7 @@ static func _deserialize_field(ftype: int, value: Variant, default: Variant) -> 
 		FieldType.TYPE_BOOL:
 			if value == null:
 				return default
-			return bool(value)
+			return _to_bool(value, bool(default))
 
 		FieldType.TYPE_STRING:
 			if value == null:
@@ -188,7 +202,7 @@ static func _deserialize_field(ftype: int, value: Variant, default: Variant) -> 
 			var out: Dictionary = {}
 			for k in value:
 				var nk := int(k)
-				var nv := bool(value[k])
+				var nv: bool = _to_bool(value[k], false)
 				out[nk] = nv
 			return out
 
