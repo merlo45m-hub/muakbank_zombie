@@ -9,6 +9,7 @@ signal wave_completed(wave_number)
 signal all_waves_cleared
 signal boss_spawned
 signal boss_defeated
+signal boss_gate_blocked(required: int, actual: int)
 
 @export var waves_per_level: int = 5
 @export var base_zombies_per_wave: int = 5
@@ -62,6 +63,16 @@ func _next_wave() -> void:
 	print("[WaveManager] Wave ", current_wave, " started — ", count, " zombies")
 
 func _spawn_boss() -> void:
+	# Gate boss spawn on WorldProgression active loot tier >= world level (1/2/3)
+	var wp := get_node_or_null("/root/WorldProgression")
+	var active_tier: int = 1
+	if wp != null and wp.has_method("get_active_loot_tier"):
+		active_tier = int(wp.get_active_loot_tier())
+	if active_tier < _level:
+		boss_gate_blocked.emit(_level, active_tier)
+		print("[WaveManager] Boss spawn blocked: required tier %d, actual %d" % [_level, active_tier])
+		return
+
 	var player = get_tree().get_first_node_in_group("player")
 	if not player:
 		return

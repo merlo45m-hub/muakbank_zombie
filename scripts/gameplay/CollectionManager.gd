@@ -42,6 +42,19 @@ func _load() -> void:
 		if not _regions.has(id):
 			_regions[id] = RegionStat.from_dict({"region_id": id}).to_dict()
 
+	# Backward-compat: if a save already has a world boss defeated but no catalyst item,
+	# seed the catalyst once. No duplicate grants.
+	var am := get_node_or_null("/root/AchievementManager")
+	if am != null and am.has_method("is_boss_defeated"):
+		for world_id in [1, 2, 3]:
+			if am.is_boss_defeated(world_id):
+				var cid = CureCatalysts.get_catalyst_id_for_world(world_id)
+				if not _items.has(cid) or int(_items.get(cid, 0)) <= 0:
+					_items[cid] = 1
+					if not _seen.has(cid):
+						_seen.append(cid)
+		_persist()
+
 
 func _persist() -> void:
 	var save := get_node_or_null("/root/Save")
@@ -133,6 +146,19 @@ func record_defeat(entity_id: String) -> void:
 		entry["lore"] = false
 	_bestiary[entity_id] = entry
 	_persist()
+
+
+func consume_item(asset_id: String, qty: int = 1) -> bool:
+	if asset_id.is_empty() or qty <= 0:
+		return false
+	var current: int = int(_items.get(asset_id, 0))
+	if current < qty:
+		return false
+	_items[asset_id] = current - qty
+	if _items[asset_id] <= 0:
+		_items.erase(asset_id)
+	_persist()
+	return true
 
 
 func get_dismantled_props() -> Dictionary:

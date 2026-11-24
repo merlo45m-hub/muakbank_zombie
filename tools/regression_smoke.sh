@@ -23,6 +23,10 @@
 #     asserting per-region secret-transport trigger behavior for GDD Issue #25 /
 #     issue #83 (target correctness, unreachable no-hop, single hop, no double
 #     fire). Stub WorldProgression + spy WorldHopManager; no game scene boot.
+#   * boss_catalyst_probe: supplementary (not counted above) — SceneTree probe
+#     proving GitHub Issue #86 boss catalyst tier gate: loot tier vs world level
+#     boss spawn gate, catalyst grant on boss defeat, catalyst-gated cure
+#     synthesis with exactly-once consume, and no-crash without managers.
 #   1. import            : headless engine import with a FRESH .godot cache
 #                          (rm -rf .godot), run in up to 3 passes until one pass is
 #                          CLEAN, gated on that pass. Multiple passes are required
@@ -621,6 +625,37 @@ if [ -f "${PROJECT_ROOT}/tools/tests/registry_record_probe.gd" ]; then
     fi
 else
     bad "registry_record_probe: probe file missing"
+fi
+
+# --- supplementary: GitHub Issue #86 boss catalyst tier gate probe ----------
+# SceneTree probe (_initialize(), no get_tree()): stub CollectionManager via
+# tools/tests/stubs/mock_catalyst_collection.gd, drive production
+# AchievementManager / WorldProgression / WaveManager / CureCatalysts by path
+# plus call(), and prove (a) the boss gate blocks spawn when active loot tier
+# < world level and allows when >=, (b) record_boss_defeat grants one catalyst
+# via CollectionManager, (c) can_synthesize_cure fails without catalysts,
+# succeeds with catalysts, and synthesize_cure consumes them exactly once, and
+# (d) no manager/gate node => no crash.
+# Clearly labeled supplementary check — NOT part of the numbered 23; the
+# denominator stays 23 and no existing label is renumbered.
+CATALYST_LOG="${WORKDIR}/boss_catalyst_probe.log"
+if [ -f "${PROJECT_ROOT}/tools/tests/boss_catalyst_probe.gd" ]; then
+    timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN" \
+        --headless --path "$PROJECT_ROOT" --script tools/tests/boss_catalyst_probe.gd > "$CATALYST_LOG" 2>&1
+    CATALYST_RC=$?
+    if [ "$CATALYST_RC" -ne 0 ]; then
+        if [ "$CATALYST_RC" -eq 124 ]; then
+            bad "boss_catalyst_probe: TIMEOUT after ${TIMEOUT_S}s"
+        else
+            bad "boss_catalyst_probe: engine exited rc=${CATALYST_RC}"
+        fi
+    elif grep -q "BOSS_CATALYST_PROBE_PASS=true" "$CATALYST_LOG"; then
+        log "  boss_catalyst_probe: BOSS_CATALYST_PROBE_PASS=true"
+    else
+        bad "boss_catalyst_probe: PASS marker missing ($(grep -E 'BOSS_CATALYST_PROBE_FAIL|SCRIPT ERROR' "$CATALYST_LOG" | tail -1))"
+    fi
+else
+    bad "boss_catalyst_probe: probe file missing"
 fi
 
 # ---------------------------------------------------------------------------
