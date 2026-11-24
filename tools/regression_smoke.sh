@@ -597,6 +597,32 @@ else
     bad "collection_bonus_probe: probe file missing"
 fi
 
+# --- supplementary: GDD Issue #85 registry record probe --------------------
+# SceneTree probe (_initialize(), no get_tree()): stub a registry manager and
+# prove dismantle loot ids (string drops) reach record_item() and boss/wave
+# kill ids reach record_defeat() at the CollectionManager API sink; the
+# no-manager case proves no crash.
+# Clearly labeled supplementary check — NOT part of the numbered 23; the
+# denominator stays 23 and no existing label is renumbered.
+REGISTRY_LOG="${WORKDIR}/registry_record_probe.log"
+if [ -f "${PROJECT_ROOT}/tools/tests/registry_record_probe.gd" ]; then
+    timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN"         --headless --path "$PROJECT_ROOT" --script tools/tests/registry_record_probe.gd > "$REGISTRY_LOG" 2>&1
+    REGISTRY_RC=$?
+    if [ "$REGISTRY_RC" -ne 0 ]; then
+        if [ "$REGISTRY_RC" -eq 124 ]; then
+            bad "registry_record_probe: TIMEOUT after ${TIMEOUT_S}s"
+        else
+            bad "registry_record_probe: engine exited rc=${REGISTRY_RC}"
+        fi
+    elif grep -q "REGISTRY_RECORD_PROBE_PASS=true" "$REGISTRY_LOG"; then
+        log "  registry_record_probe: REGISTRY_RECORD_PROBE_PASS=true"
+    else
+        bad "registry_record_probe: PASS marker missing ($(grep -E 'REGISTRY_RECORD_PROBE_FAIL|SCRIPT ERROR' "$REGISTRY_LOG" | tail -1))"
+    fi
+else
+    bad "registry_record_probe: probe file missing"
+fi
+
 # ---------------------------------------------------------------------------
 # Verdict — MUST be the last stdout line (machine-parseable).
 if [ "${ERRORS}" -eq 0 ]; then
