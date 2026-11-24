@@ -20,6 +20,7 @@ var WP_SCRIPT: GDScript = null
 var WM_SCRIPT: GDScript = null
 var CC_SCRIPT: GDScript = null
 var MOCK_CM: GDScript = null
+var SAVE_STUB: GDScript = null
 
 const WORLD_1 := 1
 const WORLD_2 := 2
@@ -48,6 +49,7 @@ func _initialize() -> void:
 	WM_SCRIPT = load("res://scripts/gameplay/WaveManager.gd") as GDScript
 	CC_SCRIPT = load("res://scripts/gameplay/CureCatalysts.gd") as GDScript
 	MOCK_CM = load("res://tools/tests/stubs/mock_catalyst_collection.gd") as GDScript
+	SAVE_STUB = load("res://tools/tests/stubs/mock_catalyst_save.gd") as GDScript
 	for _i in range(4):
 		await process_frame
 
@@ -63,6 +65,7 @@ func _initialize() -> void:
 	# --- fixtures under root (autoloads are NOT registered under --script) ---
 	var save: Node = Node.new()
 	save.name = "Save"
+	save.set_script(SAVE_STUB)
 	root.add_child(save)
 
 	var wp: Node = WP_SCRIPT.new()
