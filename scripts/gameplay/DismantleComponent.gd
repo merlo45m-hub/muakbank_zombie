@@ -207,11 +207,16 @@ func _record_registries() -> void:
 		if entry is Dictionary and entry.has("drops"):
 			var drops: Array = entry["drops"]
 			for drop in drops:
-				if drop is Dictionary and drop.has("item_id") and drop.has("count"):
-					var item_id: String = drop["item_id"]
-					var count: int = int(drop["count"])
-					if cm.has_method("record_item"):
-						cm.call("record_item", item_id, count)
+				var item_id: String = ""
+				var count: int = 1
+				if drop is Dictionary and drop.has("item_id"):
+					item_id = String(drop["item_id"])
+					if drop.has("count"):
+						count = int(drop["count"])
+				elif drop is String:
+					item_id = String(drop)
+				if not item_id.is_empty() and cm.has_method("record_item"):
+					cm.call("record_item", item_id, count)
 
 
 func _begin_despawn() -> void:
