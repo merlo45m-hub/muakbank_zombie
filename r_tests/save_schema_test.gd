@@ -21,7 +21,7 @@ func test_deserialize_types_and_defaults() -> void:
 func test_deserialize_dict_int_bool_normalizes_keys() -> void:
 	var raw := {"world_bosses_defeated": {"1": true, "2": false, "3": true}}
 	var out := SaveSchema.deserialize(raw)
-	var wb := out.get("world_bosses_defeated")
+	var wb: Variant = out.get("world_bosses_defeated")
 	assert_that(typeof(wb)).is_equal(TYPE_DICTIONARY)
 	assert_that(wb.has(1)).is_equal(true)
 	assert_that(wb.has(2)).is_equal(true)
@@ -33,7 +33,7 @@ func test_deserialize_dict_int_bool_normalizes_keys() -> void:
 func test_deserialize_array_int_coerces_elements() -> void:
 	var raw := {"unlocked_levels": [1, "2", 3.0]}
 	var out := SaveSchema.deserialize(raw)
-	var levels := out.get("unlocked_levels")
+	var levels: Variant = out.get("unlocked_levels")
 	assert_that(typeof(levels)).is_equal(TYPE_ARRAY)
 	assert_that(levels.size()).is_equal(3)
 	assert_that(int(levels[0])).is_equal(1)
