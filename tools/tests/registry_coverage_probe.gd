@@ -70,7 +70,9 @@ func _initialize() -> void:
 			if endq <= 0:
 				continue
 			var animal_id: String = rest.substr(0, endq)
-			if not animals.has(animal_id):
+			# Animal ids are the spawner aliases backed by a zombie_<id> model;
+			# humanoid runner/spitter aliases have no such model.
+			if ResourceLoader.exists("res://assets/models/zombie_%s.glb" % animal_id) and not animals.has(animal_id):
 				animals.append(animal_id)
 	_assert(animals.size() == 5, "5 animal ids derived from ZombieSpawner3D table (%s)" % str(animals))
 	var animal_before: Dictionary = cm.call("get_bestiary") as Dictionary
