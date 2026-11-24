@@ -47,7 +47,7 @@ func spawn_triggers_for_region(region_id: int) -> void:
 
 		var trigger := Area3D.new()
 		trigger.name = def.label
-		trigger.global_position = def.pos
+		trigger.position = def.pos
 
 		var shape := SphereShape3D.new()
 		shape.radius = 2.0
@@ -71,7 +71,10 @@ func spawn_triggers_for_region(region_id: int) -> void:
 func clear_triggers() -> void:
 	for t in _active_triggers:
 		if is_instance_valid(t):
-			t.queue_free()
+			var parent: Node = t.get_parent()
+			if parent != null:
+				parent.remove_child(t)
+			t.free()
 	_active_triggers.clear()
 	_fired.clear()
 
