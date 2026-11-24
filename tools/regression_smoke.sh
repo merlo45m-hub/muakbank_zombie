@@ -572,6 +572,31 @@ else
     bad "secret_transport_trigger: probe file missing"
 fi
 
+# --- supplementary: GDD Issue #84 collection bonus probe ---------------------
+# SceneTree probe (_initialize(), no get_tree()): stub CollectionManager and
+# prove zero-bonus baseline vs nonzero bonus at the effect sink (get_bonuses)
+# for both player damage and dismantle loot yield.
+# Clearly labeled supplementary check — NOT part of the numbered 23; the
+# denominator stays 23 and no existing label is renumbered.
+BONUS_LOG="${WORKDIR}/collection_bonus_probe.log"
+if [ -f "${PROJECT_ROOT}/tools/tests/collection_bonus_probe.gd" ]; then
+    timeout "${TIMEOUT_S}" env GODOT_SILENCE_ROOT_WARNING=1 "$GODOT_BIN"         --headless --path "$PROJECT_ROOT" --script tools/tests/collection_bonus_probe.gd > "$BONUS_LOG" 2>&1
+    BONUS_RC=$?
+    if [ "$BONUS_RC" -ne 0 ]; then
+        if [ "$BONUS_RC" -eq 124 ]; then
+            bad "collection_bonus_probe: TIMEOUT after ${TIMEOUT_S}s"
+        else
+            bad "collection_bonus_probe: engine exited rc=${BONUS_RC}"
+        fi
+    elif grep -q "COLLECTION_BONUS_PROBE_PASS=true" "$BONUS_LOG"; then
+        log "  collection_bonus_probe: COLLECTION_BONUS_PROBE_PASS=true"
+    else
+        bad "collection_bonus_probe: PASS marker missing ($(grep -E 'COLLECTION_BONUS_PROBE_FAIL|SCRIPT ERROR' "$BONUS_LOG" | tail -1))"
+    fi
+else
+    bad "collection_bonus_probe: probe file missing"
+fi
+
 # ---------------------------------------------------------------------------
 # Verdict — MUST be the last stdout line (machine-parseable).
 if [ "${ERRORS}" -eq 0 ]; then
